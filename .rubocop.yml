@@ -1,0 +1,139 @@
+inherit_from:
+  - .rubocop-refactor.yml
+
+require:
+  - rubocop-rspec
+  - rubocop-rails
+  - rubocop-performance
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - bin/**/*
+    - vendor/**/*
+    - spec/fixtures/**/*
+    - spec/translations/translation_keys_spec.rb
+    - tmp/**/*
+    - db/schema.rb
+
+# Layout ----------------------------------------------------------------------
+
+Layout/LineLength:
+  Max: 120
+  AllowedPatterns:
+    - \A *def
+    - '\A#  '
+
+# Layout ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# Lint ------------------------------------------------------------------------
+
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - 'spec/**/*'
+
+
+# Naming ----------------------------------------------------------------------
+
+Naming/VariableNumber:
+  EnforcedStyle: 'snake_case'
+
+Naming/RescuedExceptionsVariableName:
+  PreferredName: error
+
+# Naming ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# Performance -----------------------------------------------------------------
+
+Performance/CollectionLiteralInLoop:
+  Enabled: false
+
+Performance/MethodObjectAsBlock:
+  Enabled: false
+
+Performance/StringReplacement:
+  Exclude:
+    - spec/**/*
+
+# Performance ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# Rails -----------------------------------------------------------------------
+
+Rails/SkipsModelValidations:
+  AllowedMethods:
+    - touch
+    - update_all
+    - increment!
+
+Rails/I18nLocaleAssignment:
+  Enabled: false
+
+Rails/HasManyOrHasOneDependent:
+  Exclude:
+    - app/models/message_attachment.rb
+
+Rails/BulkChangeTable:
+  Enabled: false
+
+# Rails ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# RSpec -----------------------------------------------------------------------
+
+RSpec/AnyInstance:
+  Enabled: false
+
+RSpec/FactoryBot/CreateList:
+  Enabled: false
+
+RSpec/Rails/HttpStatus:
+  Enabled: false
+
+RSpec/RepeatedExampleGroupBody:
+  Enabled: false
+
+RSpec/LeakyConstantDeclaration:
+  Exclude:
+    - spec/lib/**/*.rb
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/StubbedMock:
+  Enabled: false
+
+RSpec/ImplicitSubject:
+  Exclude:
+    - 'spec/models/**/*'
+
+# RSpec ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# Style -----------------------------------------------------------------------
+
+Style/Documentation:
+  Enabled: false
+
+Style/ParallelAssignment:
+  Enabled: false
+
+Style/Lambda:
+  EnforcedStyle: literal
+
+Style/RegexpLiteral:
+  Enabled: false
+
+Style/ObjectThen:
+  Enabled: false
+
+Style/OpenStructUse:
+  Enabled: false
+
+Style/RedundantBegin:
+  Enabled: false
+
+# Style ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
