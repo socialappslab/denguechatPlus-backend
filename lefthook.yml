@@ -1,0 +1,32 @@
+linters:
+  parallel: true
+  commands:
+    rubocop:
+      run: rubocop --fail-level C --display-only-fail-level-offenses -P
+    reek:
+      run: reek
+    bundle-audit:
+      run: bundle-audit check --update
+    bundler-leak:
+      run: bundle leak update && bundle leak
+    fasterer:
+      run: fasterer
+    rails_best_practices:
+      run: rails_best_practices -e "app/views,app/mailers,app/controllers/concerns/endpoint.rb,app/models/" -c rails_best_practices.yml
+    database_consistency:
+      run: database_consistency
+    schema_check:
+      run: rake schema_check
+
+pre-commit:
+  parallel: true
+  commands:
+    reek:
+      glob: "*.rb"
+      run: reek {staged_files}
+    rubocop:
+      glob: "{Gemfile,*.rb}"
+      run: bundle exec rubocop {staged_files} --parallel --fail-level C --display-only-fail-level-offenses -P
+    fasterer:
+      glob: "*.rb"
+      run: fasterer {staged_files}
