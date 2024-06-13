@@ -66,4 +66,9 @@ yarn-debug.log*
 # Ignore uploaded files in development
 /storage/*
 !/storage/.keep
+!/tmp/.keep
 /public/uploads
+/.idea/denguechatPlus-backend.iml
+/.idea/misc.xml
+/.idea/vcs.xml
+/config/credentials.yml.enc
