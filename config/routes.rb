@@ -7,7 +7,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       namespace :users do
         resource :session, only: %i[create destroy], controller: :sessions
-        resource :accounts, only: %i[create destroy], controller: :accounts do
+        resource :accounts, only: %i[create], controller: :accounts do
           collection do
             post 'confirm_account'
           end
