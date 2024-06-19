@@ -1,0 +1,8 @@
+DATABASE_HOST: '127.0.0.1'
+DATABASE_USERNAME: joe
+DATABASE_PASSWORD: $password_example#
+DATABASE_NAME: development
+JWT_SECRET_KEY: secret_key_jwt
+REDIS_URL: redis://localhost:6379/
+CLIENT_URL: 'http://localhost:4000'
+PASSWORD_USER_DEFAULT: 'joeDoe2024*ASC'
