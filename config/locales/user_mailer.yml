@@ -1,0 +1,43 @@
+en:
+  user_mailer:
+    change_email:
+      subject: Confirm your email
+      greeting: "Hello %{user_first_name},"
+      body_first: "You requested a change to the email address that you use to sign in to the DengueChatPlus application."
+      body_second: "There's just one more step: click the link below to confirm that this is the right address."
+      confirm_link_text: "Confirm email"
+      respond_not_needed: "If you have received this email by mistake, please just ignore it. Your email will remain unchanged unless you click the confirmation button above."
+    deactivated:
+      subject: Your has been deactivated
+      greeting: "Hello %{user_first_name}!"
+      body: "You have successfully deactivated your DengueChatPlus account: %{user_email}"
+      note: To activate your account, please Log in with your login and password
+    banned:
+      subject: Your user account has been banned
+      greeting: Dear %{user_first_name} %{user_last_name}
+      body_header: Your DengueChatPlus account has been banned for violation of our policies.
+      body_middle: You will not be able to log in to the platform anymore
+      body_footer: Please, contact us if you need access
+      note: To continue using DengueChatPlus platform, please contact our support.
+
+es:
+  user_mailer:
+    change_email:
+      subject: Confirme su correo electrónico
+      greeting: "Saludos %{user_first_name},"
+      body_first: "Solicitó el cambio en la dirección de correo electrónico que usa para iniciar sesión en la aplicación DengueChatPlus."
+      body_second: "Solo hay un paso más: haga clic en el enlace de abajo para confirmar que está es la dirección correcta."
+      confirm_link_text: "Confirmar correo electrónico"
+      respond_not_needed: "Si ha recibido este correo electrónico por error, ignórelo. Su correo electrónico permanecerá sin cambios a menos que haga clic en el botón de confirmación de arriba."
+    deactivated:
+      subject: Tu cuenta ha sido desactivada
+      greeting: "Saludos %{user_first_name}!"
+      body: "Ha desactivado con éxito su cuenta de DengueChatPlus: %{user_email}"
+      note: Para activar su cuenta, inicie sesión con su nombre de usuario y contraseña
+    banned:
+      subject: Su cuenta de DengueChatPlus ha sido suspendida
+      greeting: Estimado %{user_first_name} %{user_last_name}
+      body_header: Su cuenta de DengueChatPlus ha sido prohibida por violar nuestras políticas.
+      body_middle: Ya no podrá iniciar sesión en la plataforma
+      body_footer: Por favor, contáctenos si necesita acceder nuevamente
+      note: Para continuar usando la plataforma DengueChatPlus, comuníquese con nuestro soporte.
