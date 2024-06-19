@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddResourceReferenceToRole < ActiveRecord::Migration[7.1]
   def change
     add_reference :roles, :resource, polymorphic: true
