@@ -1,10 +1,13 @@
 Metrics/MethodLength:
   Severity: refactor
+  Exclude:
+    - 'db/migrate/*'
 
 Metrics/BlockLength:
   Severity: refactor
   Exclude:
     - 'lib/tasks/**/*'
+    - 'db/migrate/*'
 
 RSpec/ContextWording:
   Severity: refactor
