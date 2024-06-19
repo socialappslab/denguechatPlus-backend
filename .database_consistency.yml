@@ -1,0 +1,22 @@
+DatabaseConsistencySettings:
+  color: true
+  log_level: DEBUG
+
+DatabaseConsistencyCheckers:
+  UniqueIndexChecker:
+    enabled: false
+
+JoinRequest:
+  email:
+    NullConstraintChecker:
+      enabled: false
+
+ActiveRecord::SchemaMigration:
+  version:
+    PrimaryKeyTypeChecker:
+      enabled: false
+
+DataMigrate::DataSchemaMigration:
+  version:
+    PrimaryKeyTypeChecker:
+      enabled: false
