@@ -19,6 +19,7 @@ Create a file called 'local_env.yml' in config/ folder. This file should contain
 - **PASSWORD_USER_DEFAULT:** your default_user_password
 
 After that, run these commands in the terminal:
+ - `bundle install`
  - `bundle exec rails db:create`
  - `bundle exec rails db:migrate`
  - `bundle exec rails db:seed`
