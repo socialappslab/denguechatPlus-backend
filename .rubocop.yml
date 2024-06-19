@@ -13,6 +13,9 @@ AllCops:
     - vendor/**/*
     - spec/fixtures/**/*
     - spec/translations/translation_keys_spec.rb
+    - app/controllers/concerns/endpoint.rb
+    - config/environments/*
+    - Gemfile
     - tmp/**/*
     - db/schema.rb
 

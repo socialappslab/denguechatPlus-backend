@@ -3,6 +3,8 @@ Metrics/MethodLength:
 
 Metrics/BlockLength:
   Severity: refactor
+  Exclude:
+    - 'lib/tasks/**/*'
 
 RSpec/ContextWording:
   Severity: refactor
@@ -24,6 +26,16 @@ Metrics/CyclomaticComplexity:
 
 Metrics/PerceivedComplexity:
   Severity: refactor
+
+Naming/VariableNumber:
+  EnforcedStyle: 'snake_case'
+  Exclude:
+    - 'spec/**/*'
+    - 'config/**/*'
+    - 'lib/tasks/**/*'
+
+Naming/RescuedExceptionsVariableName:
+  PreferredName: error
 
 Rails/FilePath:
   Severity: refactor

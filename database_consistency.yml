@@ -6,16 +6,6 @@ DatabaseConsistencyCheckers:
   UniqueIndexChecker:
     enabled: false
 
-PatientProfile:
-  patient_feedback:
-    MissingIndexChecker:
-      enabled: false
-
-Clinic:
-  clinic_type:
-    NullConstraintChecker:
-      enabled: false
-
 UserInvitation:
   inviter:
     BelongsToPresenceChecker:
@@ -28,28 +18,8 @@ UserInvitation:
     ColumnPresenceChecker:
       enabled: false
 
-PharmacistInvitation:
-  inviter:
-    BelongsToPresenceChecker:
-      enabled: false
-    ColumnPresenceChecker:
-      enabled: false
-    ForeignKeyChecker:
-      enabled: false
-  pharmacist_profile:
-    ColumnPresenceChecker:
-      enabled: false
-
 JoinRequest:
   email:
-    NullConstraintChecker:
-      enabled: false
-
-Appointment:
-  cancellable_until:
-    NullConstraintChecker:
-      enabled: false
-  reschedulable_until:
     NullConstraintChecker:
       enabled: false
 
@@ -61,12 +31,4 @@ ActiveRecord::SchemaMigration:
 DataMigrate::DataSchemaMigration:
   version:
     PrimaryKeyTypeChecker:
-      enabled: false
-
-QuestionnaireResponse:
-  guest_user:
-    ForeignKeyChecker:
-      enabled: false
-  appointment:
-    MissingIndexChecker:
       enabled: false
