@@ -1,39 +1,41 @@
-source "https://rubygems.org"
+# frozen_string_literal: true
 
-ruby "3.1.2"
+source 'https://rubygems.org'
+
+ruby '3.1.2'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 7.1.3", ">= 7.1.3.4"
+gem 'rails', '~> 7.1.3', '>= 7.1.3.4'
 
 # Use postgresql as the database for Active Record
-gem "pg", "~> 1.1"
+gem 'pg', '~> 1.1'
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", ">= 5.0"
+gem 'puma', '>= 5.0'
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 
 # Use Redis adapter to run Action Cable in production
-gem "redis", ">= 4.0.1"
+gem 'redis', '>= 4.0.1'
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-gem "bcrypt", "~> 3.1.7"
+gem 'bcrypt', '~> 3.1.7'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: %i[ mswin mswin64 mingw x64_mingw jruby ]
+gem 'tzinfo-data', platforms: %i[mswin mswin64 mingw x64_mingw jruby]
 
 # Reduces boot times through caching; required in config/boot.rb
-gem "bootsnap", require: false
+gem 'bootsnap', require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
-# gem "rack-cors"
+gem 'rack-cors'
 
 # Password Strength Estimation
 gem 'zxcvbn-ruby', require: 'zxcvbn'
@@ -47,7 +49,8 @@ gem 'pagy_cursor', '0.2.2'
 
 # JSON:API Serializer
 gem 'jsonapi-serializer', '~> 2.2'
-
+gem 'jwt'
+gem 'jwt_sessions'
 # Role management
 gem 'rolify', '~> 6.0'
 
@@ -60,7 +63,7 @@ gem 'dry-transaction'
 # Soft-delete for models
 gem 'discard', '~> 1.2'
 
-gem 'sidekiq', '~> 6'
+gem 'sidekiq', '~> 7.1.3'
 gem 'sidekiq-limit_fetch', '~> 4'
 gem 'sidekiq-scheduler', '~> 4'
 
@@ -76,22 +79,25 @@ gem 'activerecord-import', '~> 1.4'
 # Upload files to AWS S3
 gem 'aws-sdk-s3', require: false
 
-#dry gems
+# dry gems
 gem 'dry-monads'
-gem 'dry-transaction'
+gem 'dry-validation'
+gem 'dry-auto_inject'
+gem 'reform'
 gem 'simple_endpoint', '~> 2.0'
 
 group :development, :test do
-  gem "debug", platforms: %i[ mri mswin mswin64 mingw x64_mingw ]
   gem 'annotate'
-  gem 'lefthook', '~> 1.1', require: false
   gem 'brakeman', '~> 5.3', require: false
   gem 'bullet'
   gem 'bundler-audit', require: false
   gem 'bundler-leak', '~> 0.3', require: false
   gem 'database_consistency', '~> 1.2', require: false
+  gem 'debug', platforms: %i[mri mswin mswin64 mingw x64_mingw]
   gem 'factory_bot_rails', '~> 6.2'
   gem 'fasterer', '~> 0.10', require: false
+  gem 'ffaker'
+  gem 'lefthook', '~> 1.1', require: false
   gem 'pry-byebug'
   gem 'pry-rails'
   gem 'rails_best_practices', require: false
@@ -105,12 +111,11 @@ group :development, :test do
   gem 'simplecov', '~> 0.21'
   gem 'simplecov-lcov', '~> 0.8'
   gem 'undercover', '~> 0.4'
-  gem 'ffaker'
 end
 
 group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
-  gem "error_highlight", ">= 0.4.0", platforms: [:ruby]
+  gem 'error_highlight', '>= 0.4.0', platforms: [:ruby]
   gem 'spring', '~> 4.1'
   gem 'spring-watcher-listen', '~> 2.1'
 end
