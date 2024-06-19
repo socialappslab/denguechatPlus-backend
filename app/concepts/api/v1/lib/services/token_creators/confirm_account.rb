@@ -15,10 +15,10 @@ module Api
               new(user_account).call
             end
 
-            def initialize(user_account, **_deps)
+            def initialize(user_account, **deps)
               @user_account = user_account
-              @jwt_adapter = _deps[:jwt_adapter]
-              @redis_cache_repo = _deps[:redis_cache_repo]
+              @jwt_adapter = deps[:jwt_adapter]
+              @redis_cache_repo = deps[:redis_cache_repo]
             end
 
             def call
