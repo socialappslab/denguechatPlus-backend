@@ -72,3 +72,4 @@ yarn-debug.log*
 /.idea/misc.xml
 /.idea/vcs.xml
 /config/credentials.yml.enc
+/config/local_env.yml

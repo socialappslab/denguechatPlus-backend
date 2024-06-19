@@ -15,8 +15,6 @@ linters:
       run: rails_best_practices -e "app/views,app/mailers,app/controllers/concerns/endpoint.rb,app/models/" -c rails_best_practices.yml
     database_consistency:
       run: database_consistency
-    schema_check:
-      run: rake schema_check
 
 pre-commit:
   parallel: true

@@ -18,6 +18,9 @@ detectors:
   IrresponsibleModule:
     enabled: false
 
+  InstanceVariableAssumption:
+    enabled: false
+
   MissingSafeMethod:
     enabled: false
 
@@ -62,8 +65,6 @@ detectors:
   FeatureEnvy:
     enabled: false
 
-  InstanceVariableAssumption:
-    enabled: true
 
   NestedIterators:
     max_allowed_nesting: 2

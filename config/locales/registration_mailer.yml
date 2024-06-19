@@ -1,0 +1,17 @@
+en:
+  registration_mailer:
+    confirmation_instructions_for_user:
+      subject: "DemgueChatPlus email confirmation"
+      body: "Dear sir or madam you have started the sign up process on the DengueChatPlus app as a user. To finish the sign up process, please click the button below"
+      confirm_link_text: "Confirm account"
+      confirm_account: "It is not possible to respond to this email, click the button to confirm the account."
+      respond_not_needed: "If you didn't sign up to the DengueChatPlus app, please ignore this message"
+
+es:
+  registration_mailer:
+    confirmation_instructions_for_user:
+      subject: "Confirmación por correo electrónico de DengueChatPlus"
+      body: "Estimado señor o señora, ha iniciado el proceso de registro en la aplicación DengueChatPlus como usuario. Para finalizar el proceso de registro, haga clic en el botón de abajo"
+      confirm_link_text: "Confirmar cuenta"
+      confirm_account: "No es posible responder a este correo electrónico, haga click en el botón para confirmar la cuenta."
+      respond_not_needed: "Si no se registró en la aplicación DengueChatPlus, ignore este mensaje."
