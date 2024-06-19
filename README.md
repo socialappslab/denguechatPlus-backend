@@ -3,9 +3,21 @@ DengueChatPlus-Backend is a Ruby and Ruby on Rails application responsible for a
 
 ## Requirements
 - Rbenv with ruby 3.1.2
+  - [Tutorial install on mac](https://www.digitalocean.com/community/tutorials/how-to-install-ruby-on-rails-with-rbenv-on-macos)
+  - [Tutorial install linux](https://www.digitalocean.com/community/tutorials/how-to-install-ruby-on-rails-with-rbenv-on-ubuntu-20-04)
+  - [Tutorial install windows](https://github.com/ccmywish/rbenv-for-windows)
 - Redis 7.2.4
+  - [Tutorial install on mac](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-mac-os/)
+  - [Tutorial install linux](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+  - [Tutorial install windows](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-windows/)
 - Postgresql 15.3
+    - [Tutorial install on mac](https://www.devart.com/dbforge/postgresql/how-to-install-postgresql-on-macos/)
+    - [Tutorial install linux](https://utho.com/docs/linux/how-to-install-postgresql-15-on-ubuntu-22-04/)
+    - [Tutorial install windows](https://www.guru99.com/download-install-postgresql.html)
 - Mailcatcher
+  - [Tutorial install on mac](https://formulae.brew.sh/formula/mailcatcher)
+  - [Tutorial install linux](https://blog.eldernode.com/install-mailcatcher-on-ubuntu-20-04/)
+  - [Tutorial install windows](https://ipv6.rs/tutorial/Windows_10/MailCatcher/)
 
 ## Using this project
 Create a file called 'local_env.yml' in config/ folder. This file should contain the following data:
@@ -19,6 +31,7 @@ Create a file called 'local_env.yml' in config/ folder. This file should contain
 - **PASSWORD_USER_DEFAULT:** your default_user_password
 
 After that, run these commands in the terminal:
+ - `rbenv install 3.1.2`
  - `bundle install`
  - `bundle exec rails db:create`
  - `bundle exec rails db:migrate`
