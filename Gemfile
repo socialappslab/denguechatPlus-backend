@@ -85,6 +85,7 @@ gem 'dry-validation'
 gem 'dry-auto_inject'
 gem 'reform'
 gem 'simple_endpoint', '~> 2.0'
+gem 'dry-container'
 
 group :development, :test do
   gem 'annotate'
