@@ -1,6 +1,28 @@
 # DenguechatPlus-backend
 DengueChatPlus-Backend is a Ruby and Ruby on Rails application responsible for all backend-related matters
 
+## How this project is organized
+- **app/controllers:** This directory contains the application controllers. Controllers are responsible for handling incoming requests to the application and usually interact with models and views to send a response back to the client.  
+- **app/views:** This directory contains the application's views, which are responsible for generating the interface displayed to the user. The views are mostly HTML files with some embedded Ruby for data presentation.  
+- **app/helpers:** Helpers are modules that contain functions you can use globally in views and sometimes in controllers. They are useful for keeping the code DRY.  
+- **app/assets:** This directory contains assets such as CSS stylesheets, JavaScript scripts, and images used in the application.  
+- **app/mailers:** Mailers are objects similar to controllers that allow sending emails to users. Each mailer can have multiple actions, each corresponding to a specific email.  
+- **app/jobs:** Here you will find tasks and/or processes that run in the background.  
+- **app/channels:** Here you will find tasks and/or processes that run in real-time using WebSockets.  
+- **app/concepts:** This directory contains a folder for each concept (usually, each main model) of the application. A concept is a functionality of the application.  
+  - **lib:** This directory contains shared libraries and modules.  
+  - **operation:** Encapsulate the business logic and processes of the application.  
+  - **contract:** Define validations and schemas for the data. Contracts ensure the data is correct before proceeding to the business logic. They use Reform to define and validate forms more explicitly and modularly.  
+  - **serializers:** Used to define serializers responsible for transforming Ruby objects into specific formats, such as JSON or XML, that can be sent to a client through the API.  
+- **config:** This directory contains files for the configuration of the application, routing, databases, among others.  
+- **db:** Here we find the current schema and database migrations.  
+- **lib:** This directory contains rake tasks and extended libraries.  
+- **log:** Contains log files. Rails creates a log file for each environment.  
+- **public:** Here static and compiled files are stored that can be served directly by the web server.  
+- **spec:** This directory contains automated tests for the application.  
+- **tmp:** This directory contains temporary files for the application's runtime environment, such as sessions, file cache, server PID, etc.  
+- **vendor:** This is a place for third-party code. In Rails, this includes gems installed with => vendor/gem_name specified in the Gemfile.  
+
 ## Requirements
 - Rbenv with ruby 3.1.2
   - [Tutorial install on mac](https://www.digitalocean.com/community/tutorials/how-to-install-ruby-on-rails-with-rbenv-on-macos)
@@ -18,6 +40,10 @@ DengueChatPlus-Backend is a Ruby and Ruby on Rails application responsible for a
   - [Tutorial install on mac](https://formulae.brew.sh/formula/mailcatcher)
   - [Tutorial install linux](https://blog.eldernode.com/install-mailcatcher-on-ubuntu-20-04/)
   - [Tutorial install windows](https://ipv6.rs/tutorial/Windows_10/MailCatcher/)
+- Cmake
+  - MacOs: Run in your terminal `brew install cmake `
+  - Windows: [Download and install CMAKE](https://cmake.org/download/)
+  - Linux: [Install CMAKE on Linux](https://vpsie.com/knowledge-base/how-to-install-cmake-on-ubuntu-20-04/)
 
 ## Using this project
 Create a file called 'local_env.yml' in config/ folder. This file should contain the following data:
