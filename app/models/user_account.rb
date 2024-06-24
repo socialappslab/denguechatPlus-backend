@@ -31,6 +31,8 @@ class UserAccount < ApplicationRecord
 
   has_secure_password
 
+  belongs_to :user_profile, optional: true
+
   delegate :first_name,
            :last_name,
            :gender,
@@ -41,9 +43,4 @@ class UserAccount < ApplicationRecord
            :city,
            :language,
            :timezone, to: :user_profile
-
-  def dl
-    UserAccount.last.destroy
-    UserProfile.last.destroy
-  end
 end

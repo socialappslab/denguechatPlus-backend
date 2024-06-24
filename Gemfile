@@ -70,6 +70,9 @@ gem 'sidekiq-scheduler', '~> 4'
 # External API's
 gem 'httparty'
 
+#Audit tables
+gem 'paper_trail'
+
 # Fulltext search
 gem 'pg_search', '~> 2.3'
 
@@ -81,6 +84,7 @@ gem 'aws-sdk-s3', require: false
 
 # dry gems
 gem 'dry-monads'
+gem 'dry-container'
 gem 'dry-validation'
 gem 'dry-auto_inject'
 gem 'reform'
