@@ -10,6 +10,15 @@ require 'active_support/core_ext/integer/time'
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  config.before_configuration do
+    env_file = Rails.root.join('config/local_env.yml').to_s
+    if File.exist?(env_file)
+      YAML.load(File.open(env_file)).each do |key, value|
+        ENV[key.to_s] = value
+      end
+    end
+  end
+
   # While tests run files are not watched, reloading is not necessary.
   config.enable_reloading = false
 
@@ -63,4 +72,14 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions
   config.action_controller.raise_on_missing_callback_actions = true
+
+
+  config.jwt_token_store = :memory
+  config.client_url = 'http://localhost:4000'
+  config.api_host = 'http://localhost:3000'
+  config.redis_instance = MockRedis.new
+
+  config.i18n.default_locale = :en
+
+  config.support_email = 'support@denguechatplus.com'
 end

@@ -1,0 +1,76 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "additionalProperties": false,
+  "required": [
+    "data",
+    "meta"
+  ],
+  "properties": {
+    "data": {
+      "$id": "#/properties/data",
+      "type": "null",
+      "title": "The Data Schema",
+      "additionalProperties": false,
+      "default": null,
+      "examples": [
+        null
+      ]
+    },
+    "meta": {
+      "$id": "#/properties/meta",
+      "type": "object",
+      "title": "The Meta Schema",
+      "required": [
+        "jwt"
+      ],
+      "properties": {
+        "jwt": {
+          "$id": "#/properties/meta/properties/jwt",
+          "type": "object",
+          "title": "The Jwt Schema",
+          "required": [
+            "csrf",
+            "access",
+            "access_expires_at"
+          ],
+          "properties": {
+            "csrf": {
+              "$id": "#/properties/meta/properties/jwt/properties/csrf",
+              "type": "string",
+              "title": "The Csrf Schema",
+              "default": "",
+              "examples": [
+                "s/bL7yXUoxpDMPz1wWB+2tzduTVx/qmAiwVR+t4g03mrwwVFdVYHfWP2OX+qrTOM8DLIEBsxB4FQZNHnK8A4LQ=="
+              ],
+              "pattern": "^(.*)$"
+            },
+            "access": {
+              "$id": "#/properties/meta/properties/jwt/properties/access",
+              "type": "string",
+              "title": "The Access Schema",
+              "default": "",
+              "examples": [
+                "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NDY1MTkwOTAsImVtcGxveWVlX2FjY291bnRfaWQiOjQyMiwidWlkIjoiYzY0OWMxMDAtMGI4Ni00ZWY2LWFlMGEtZjFjMDU0MDM2YjYxIiwiZXhwIjoxNTQ2NTE5MDkwfQ.qZ6ekogH_gHg6-x9RkyS3M80hsE6s421DQELuKYM7x4"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "access_expires_at": {
+              "$id": "#/properties/meta/properties/jwt/properties/access_expires_at",
+              "type": "string",
+              "title": "The Access_expires_at Schema",
+              "default": "",
+              "examples": [
+                "2019-01-03T14:38:10.000+02:00"
+              ],
+              "pattern": "^(.*)$"
+            }
+          }
+        }
+      }
+    }
+  }
+}

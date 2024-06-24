@@ -1,0 +1,98 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "additionalProperties": false,
+  "required": [
+    "data",
+    "meta"
+  ],
+  "properties": {
+    "data": {
+      "$id": "#/properties/data",
+      "type": "null",
+      "title": "The Data Schema",
+      "additionalProperties": false,
+      "default": null,
+      "examples": [
+        null
+      ]
+    },
+    "meta": {
+      "$id": "#/properties/meta",
+      "type": "object",
+      "title": "The Meta Schema",
+      "required": [
+        "jwt"
+      ],
+      "properties": {
+        "jwt": {
+          "$id": "#/properties/meta/properties/jwt",
+          "type": "object",
+          "title": "The Jwt Schema",
+          "required": [
+            "csrf",
+            "access",
+            "access_expires_at",
+            "refresh",
+            "refresh_expires_at"
+          ],
+          "properties": {
+            "csrf": {
+              "$id": "#/properties/meta/properties/jwt/properties/csrf",
+              "type": "string",
+              "title": "The Csrf Schema",
+              "default": "",
+              "examples": [
+                "ojOcpVaYWXaV15VBnpYEPRDO9oURRj5zEgu8vbffNWA3lWuAbqQFvIe/VSDxMfBwtsb9tpzIzNmexUJZC+JFjQ=="
+              ],
+              "pattern": "^(.*)$"
+            },
+            "access": {
+              "$id": "#/properties/meta/properties/jwt/properties/access",
+              "type": "string",
+              "title": "The Access Schema",
+              "default": "",
+              "examples": [
+                "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NDg2ODQyMDgsImVtcGxveWVlX2FjY291bnRfaWQiOjUzNzUsInVpZCI6ImY0ZjlhZjgyLThiZjktNDE3Zi05NzlmLTU2OGQzYTg3MWVkMyIsImV4cCI6MTU0ODY4NDIwOH0.E5jsRT8viJCascNi3-awna117-nMKAibgWR_U4HuAkQ"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "access_expires_at": {
+              "$id": "#/properties/meta/properties/jwt/properties/access_expires_at",
+              "type": "string",
+              "title": "The Access_expires_at Schema",
+              "default": "",
+              "examples": [
+                "2019-01-28T16:03:28.000+02:00"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "refresh": {
+              "$id": "#/properties/meta/properties/jwt/properties/refresh",
+              "type": "string",
+              "title": "The Refresh Schema",
+              "default": "",
+              "examples": [
+                "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NDg2ODQyMDgsImVtcGxveWVlX2FjY291bnRfaWQiOjUzNzUsInVpZCI6ImI0YzE2ZmFjLTExYTMtNDA1NC1iYTc5LTk1ODA0OGM5MDY4NiIsImV4cCI6MTU0OTI4NTQwOH0.zeKBesT-3RUIeHp92rPORwv8HdkN-LpKntUgi8qOcB0"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "refresh_expires_at": {
+              "$id": "#/properties/meta/properties/jwt/properties/refresh_expires_at",
+              "type": "string",
+              "title": "The Refresh_expires_at Schema",
+              "default": "",
+              "examples": [
+                "2019-02-04T15:03:28.000+02:00"
+              ],
+              "pattern": "^(.*)$"
+            }
+          }
+        }
+      }
+    }
+  }
+}

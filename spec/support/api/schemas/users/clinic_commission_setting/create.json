@@ -1,0 +1,55 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "required": [
+        "data"
+    ],
+    "properties": {
+        "data": {
+            "$id": "#/properties/data",
+            "type": "object",
+            "required": [
+                "id",
+                "type",
+                "attributes"
+            ],
+            "properties": {
+                "id": {
+                    "$id": "#/properties/data/properties/id",
+                    "type": "string"
+                },
+                "type": {
+                    "$id": "#/properties/data/properties/type",
+                    "type": "string"
+                },
+                "attributes": {
+                    "$id": "#/properties/data/properties/attributes",
+                    "type": "object",
+                    "required": [
+                        "rate",
+                        "minimum",
+                        "maximum"
+                    ],
+                    "properties": {
+                        "rate": {
+                            "$id": "#/properties/data/properties/attributes/properties/rate",
+                            "type": "string"
+                        },
+                        "minimum": {
+                            "$id": "#/properties/data/properties/attributes/properties/minimum",
+                            "type": "integer"
+                        },
+                        "maximum": {
+                            "$id": "#/properties/data/properties/attributes/properties/maximum",
+                            "type": "integer"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+    "additionalProperties": false
+}

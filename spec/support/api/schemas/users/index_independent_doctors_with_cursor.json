@@ -1,0 +1,1162 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "type": "object",
+    "required": [
+        "data",
+        "included",
+        "meta",
+        "links"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "data": {
+            "type": "array",
+            "items": [
+                {
+                    "type": "object",
+                    "required": [
+                        "id",
+                        "type",
+                        "attributes",
+                        "relationships"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "type": {
+                            "type": "string"
+                        },
+                        "attributes": {
+                            "type": "object",
+                            "required": [
+                                "first-name",
+                                "last-name",
+                                "role-name",
+                                "active",
+                                "invited",
+                                "email",
+                                "avatar-urls",
+                                "clinic-specialities-count",
+                                "formatted-timezone"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "first-name": {
+                                    "type": "string"
+                                },
+                                "last-name": {
+                                    "type": "string"
+                                },
+                                "role-name": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean"
+                                },
+                                "invited": {
+                                    "type": "boolean"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "avatar-urls": {
+                                    "type": "object",
+                                    "required": [],
+                                    "additionalProperties": false,
+                                    "properties": {}
+                                },
+                                "clinic-specialities-count": {
+                                    "type": "integer"
+                                },
+                                "formatted-timezone": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "relationships": {
+                            "type": "object",
+                            "required": [
+                                "current-clinic-commission",
+                                "user-profiles-clinic-specialities",
+                                "clinic"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "current-clinic-commission": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "null"
+                                        }
+                                    }
+                                },
+                                "user-profiles-clinic-specialities": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "id",
+                                                    "type"
+                                                ],
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "clinic": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "required": [
+                                                "id",
+                                                "type"
+                                            ],
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "id",
+                        "type",
+                        "attributes",
+                        "relationships"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "type": {
+                            "type": "string"
+                        },
+                        "attributes": {
+                            "type": "object",
+                            "required": [
+                                "first-name",
+                                "last-name",
+                                "role-name",
+                                "active",
+                                "invited",
+                                "email",
+                                "avatar-urls",
+                                "clinic-specialities-count",
+                                "formatted-timezone"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "first-name": {
+                                    "type": "string"
+                                },
+                                "last-name": {
+                                    "type": "string"
+                                },
+                                "role-name": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean"
+                                },
+                                "invited": {
+                                    "type": "boolean"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "avatar-urls": {
+                                    "type": "object",
+                                    "required": [],
+                                    "additionalProperties": false,
+                                    "properties": {}
+                                },
+                                "clinic-specialities-count": {
+                                    "type": "integer"
+                                },
+                                "formatted-timezone": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "relationships": {
+                            "type": "object",
+                            "required": [
+                                "current-clinic-commission",
+                                "user-profiles-clinic-specialities",
+                                "clinic"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "current-clinic-commission": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "null"
+                                        }
+                                    }
+                                },
+                                "user-profiles-clinic-specialities": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "id",
+                                                    "type"
+                                                ],
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "clinic": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "required": [
+                                                "id",
+                                                "type"
+                                            ],
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "id",
+                        "type",
+                        "attributes",
+                        "relationships"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "type": {
+                            "type": "string"
+                        },
+                        "attributes": {
+                            "type": "object",
+                            "required": [
+                                "first-name",
+                                "last-name",
+                                "role-name",
+                                "active",
+                                "invited",
+                                "email",
+                                "avatar-urls",
+                                "clinic-specialities-count",
+                                "formatted-timezone"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "first-name": {
+                                    "type": "string"
+                                },
+                                "last-name": {
+                                    "type": "string"
+                                },
+                                "role-name": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean"
+                                },
+                                "invited": {
+                                    "type": "boolean"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "avatar-urls": {
+                                    "type": "object",
+                                    "required": [],
+                                    "additionalProperties": false,
+                                    "properties": {}
+                                },
+                                "clinic-specialities-count": {
+                                    "type": "integer"
+                                },
+                                "formatted-timezone": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "relationships": {
+                            "type": "object",
+                            "required": [
+                                "current-clinic-commission",
+                                "user-profiles-clinic-specialities",
+                                "clinic"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "current-clinic-commission": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "null"
+                                        }
+                                    }
+                                },
+                                "user-profiles-clinic-specialities": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "id",
+                                                    "type"
+                                                ],
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "clinic": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "required": [
+                                                "id",
+                                                "type"
+                                            ],
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "id",
+                        "type",
+                        "attributes",
+                        "relationships"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "type": {
+                            "type": "string"
+                        },
+                        "attributes": {
+                            "type": "object",
+                            "required": [
+                                "first-name",
+                                "last-name",
+                                "role-name",
+                                "active",
+                                "invited",
+                                "email",
+                                "avatar-urls",
+                                "clinic-specialities-count",
+                                "formatted-timezone"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "first-name": {
+                                    "type": "string"
+                                },
+                                "last-name": {
+                                    "type": "string"
+                                },
+                                "role-name": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean"
+                                },
+                                "invited": {
+                                    "type": "boolean"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "avatar-urls": {
+                                    "type": "object",
+                                    "required": [],
+                                    "additionalProperties": false,
+                                    "properties": {}
+                                },
+                                "clinic-specialities-count": {
+                                    "type": "integer"
+                                },
+                                "formatted-timezone": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "relationships": {
+                            "type": "object",
+                            "required": [
+                                "current-clinic-commission",
+                                "user-profiles-clinic-specialities",
+                                "clinic"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "current-clinic-commission": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "null"
+                                        }
+                                    }
+                                },
+                                "user-profiles-clinic-specialities": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "id",
+                                                    "type"
+                                                ],
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "clinic": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "required": [
+                                                "id",
+                                                "type"
+                                            ],
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "id",
+                        "type",
+                        "attributes",
+                        "relationships"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "type": {
+                            "type": "string"
+                        },
+                        "attributes": {
+                            "type": "object",
+                            "required": [
+                                "first-name",
+                                "last-name",
+                                "role-name",
+                                "active",
+                                "invited",
+                                "email",
+                                "avatar-urls",
+                                "clinic-specialities-count",
+                                "formatted-timezone"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "first-name": {
+                                    "type": "string"
+                                },
+                                "last-name": {
+                                    "type": "string"
+                                },
+                                "role-name": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean"
+                                },
+                                "invited": {
+                                    "type": "boolean"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "avatar-urls": {
+                                    "type": "object",
+                                    "required": [],
+                                    "additionalProperties": false,
+                                    "properties": {}
+                                },
+                                "clinic-specialities-count": {
+                                    "type": "integer"
+                                },
+                                "formatted-timezone": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "relationships": {
+                            "type": "object",
+                            "required": [
+                                "current-clinic-commission",
+                                "user-profiles-clinic-specialities",
+                                "clinic"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "current-clinic-commission": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "null"
+                                        }
+                                    }
+                                },
+                                "user-profiles-clinic-specialities": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "id",
+                                                    "type"
+                                                ],
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "clinic": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "required": [
+                                                "id",
+                                                "type"
+                                            ],
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "id",
+                        "type",
+                        "attributes",
+                        "relationships"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "type": {
+                            "type": "string"
+                        },
+                        "attributes": {
+                            "type": "object",
+                            "required": [
+                                "first-name",
+                                "last-name",
+                                "role-name",
+                                "active",
+                                "invited",
+                                "email",
+                                "avatar-urls",
+                                "clinic-specialities-count",
+                                "formatted-timezone"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "first-name": {
+                                    "type": "string"
+                                },
+                                "last-name": {
+                                    "type": "string"
+                                },
+                                "role-name": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean"
+                                },
+                                "invited": {
+                                    "type": "boolean"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "avatar-urls": {
+                                    "type": "object",
+                                    "required": [],
+                                    "additionalProperties": false,
+                                    "properties": {}
+                                },
+                                "clinic-specialities-count": {
+                                    "type": "integer"
+                                },
+                                "formatted-timezone": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "relationships": {
+                            "type": "object",
+                            "required": [
+                                "current-clinic-commission",
+                                "user-profiles-clinic-specialities",
+                                "clinic"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "current-clinic-commission": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "null"
+                                        }
+                                    }
+                                },
+                                "user-profiles-clinic-specialities": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "id",
+                                                    "type"
+                                                ],
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "clinic": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "required": [
+                                                "id",
+                                                "type"
+                                            ],
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "id",
+                        "type",
+                        "attributes",
+                        "relationships"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "type": {
+                            "type": "string"
+                        },
+                        "attributes": {
+                            "type": "object",
+                            "required": [
+                                "first-name",
+                                "last-name",
+                                "role-name",
+                                "active",
+                                "invited",
+                                "email",
+                                "avatar-urls",
+                                "clinic-specialities-count",
+                                "formatted-timezone"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "first-name": {
+                                    "type": "string"
+                                },
+                                "last-name": {
+                                    "type": "string"
+                                },
+                                "role-name": {
+                                    "type": "string"
+                                },
+                                "active": {
+                                    "type": "boolean"
+                                },
+                                "invited": {
+                                    "type": "boolean"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "avatar-urls": {
+                                    "type": "object",
+                                    "required": [],
+                                    "additionalProperties": false,
+                                    "properties": {}
+                                },
+                                "clinic-specialities-count": {
+                                    "type": "integer"
+                                },
+                                "formatted-timezone": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "relationships": {
+                            "type": "object",
+                            "required": [
+                                "current-clinic-commission",
+                                "user-profiles-clinic-specialities",
+                                "clinic"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "current-clinic-commission": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "null"
+                                        }
+                                    }
+                                },
+                                "user-profiles-clinic-specialities": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "id",
+                                                    "type"
+                                                ],
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "clinic": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "required": [
+                                                "id",
+                                                "type"
+                                            ],
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "included": {
+            "type": "array",
+            "items": [
+                {
+                    "type": "object",
+                    "required": [
+                        "id",
+                        "type",
+                        "attributes"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "type": {
+                            "type": "string"
+                        },
+                        "attributes": {
+                            "type": "object",
+                            "required": [
+                                "rate",
+                                "minimum",
+                                "maximum"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "rate": {
+                                    "type": "string"
+                                },
+                                "minimum": {
+                                    "type": "null"
+                                },
+                                "maximum": {
+                                    "type": "null"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "id",
+                        "type",
+                        "attributes",
+                        "relationships"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "type": {
+                            "type": "string"
+                        },
+                        "attributes": {
+                            "type": "object",
+                            "required": [
+                                "name",
+                                "logo-urls",
+                                "accept-extra-free-visits",
+                                "discarded-at"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "logo-urls": {
+                                    "type": "object",
+                                    "required": [],
+                                    "additionalProperties": false,
+                                    "properties": {}
+                                },
+                                "accept-extra-free-visits": {
+                                    "type": "boolean"
+                                },
+                                "discarded-at": {
+                                    "type": "null"
+                                }
+                            }
+                        },
+                        "relationships": {
+                            "type": "object",
+                            "required": [
+                                "current-platform-commission"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "current-platform-commission": {
+                                    "type": "object",
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "required": [
+                                                "id",
+                                                "type"
+                                            ],
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "meta": {
+            "type": "object",
+            "required": [
+                "has_more",
+                "total",
+                "system_members_size"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "has_more": {
+                    "type": "boolean"
+                },
+                "total": {
+                    "type": "null"
+                },
+                "system_members_size": {
+                    "type": "integer"
+                }
+            }
+        },
+        "links": {
+            "type": "object",
+            "required": [
+                "self",
+                "last"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "self": {
+                    "type": "null"
+                },
+                "last": {
+                    "type": "null"
+                }
+            }
+        }
+    }
+}

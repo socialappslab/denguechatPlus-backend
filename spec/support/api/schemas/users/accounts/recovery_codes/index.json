@@ -1,0 +1,577 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "required": [
+    "data",
+    "meta"
+  ],
+  "properties": {
+    "data": {
+      "$id": "#/properties/data",
+      "type": "array",
+      "additionalItems": true,
+      "items": [
+        {
+          "$id": "#/properties/data/items/0",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/0/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/0/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/0/properties/attributes",
+              "type": "object",
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "$id": "#/properties/data/items/0/properties/attributes/properties/code",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "$id": "#/properties/data/items/1",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/1/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/1/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/1/properties/attributes",
+              "type": "object",
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "$id": "#/properties/data/items/1/properties/attributes/properties/code",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "$id": "#/properties/data/items/2",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/2/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/2/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/2/properties/attributes",
+              "type": "object",
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "$id": "#/properties/data/items/2/properties/attributes/properties/code",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "$id": "#/properties/data/items/3",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/3/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/3/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/3/properties/attributes",
+              "type": "object",
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "$id": "#/properties/data/items/3/properties/attributes/properties/code",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "$id": "#/properties/data/items/4",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/4/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/4/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/4/properties/attributes",
+              "type": "object",
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "$id": "#/properties/data/items/4/properties/attributes/properties/code",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "$id": "#/properties/data/items/5",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/5/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/5/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/5/properties/attributes",
+              "type": "object",
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "$id": "#/properties/data/items/5/properties/attributes/properties/code",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "$id": "#/properties/data/items/6",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/6/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/6/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/6/properties/attributes",
+              "type": "object",
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "$id": "#/properties/data/items/6/properties/attributes/properties/code",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "$id": "#/properties/data/items/7",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/7/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/7/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/7/properties/attributes",
+              "type": "object",
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "$id": "#/properties/data/items/7/properties/attributes/properties/code",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "$id": "#/properties/data/items/8",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/8/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/8/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/8/properties/attributes",
+              "type": "object",
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "$id": "#/properties/data/items/8/properties/attributes/properties/code",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "$id": "#/properties/data/items/9",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/9/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/9/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/9/properties/attributes",
+              "type": "object",
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "$id": "#/properties/data/items/9/properties/attributes/properties/code",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "$id": "#/properties/data/items/10",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/10/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/10/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/10/properties/attributes",
+              "type": "object",
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "$id": "#/properties/data/items/10/properties/attributes/properties/code",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "$id": "#/properties/data/items/11",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/11/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/11/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/11/properties/attributes",
+              "type": "object",
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "$id": "#/properties/data/items/11/properties/attributes/properties/code",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "$id": "#/properties/data/items/12",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/12/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/12/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/12/properties/attributes",
+              "type": "object",
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "$id": "#/properties/data/items/12/properties/attributes/properties/code",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "$id": "#/properties/data/items/13",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/13/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/13/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/13/properties/attributes",
+              "type": "object",
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "$id": "#/properties/data/items/13/properties/attributes/properties/code",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "$id": "#/properties/data/items/14",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/14/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/14/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/14/properties/attributes",
+              "type": "object",
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "$id": "#/properties/data/items/14/properties/attributes/properties/code",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "$id": "#/properties/data/items/15",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/15/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/15/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/15/properties/attributes",
+              "type": "object",
+              "required": [
+                "code"
+              ],
+              "properties": {
+                "code": {
+                  "$id": "#/properties/data/items/15/properties/attributes/properties/code",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "meta": {
+      "$id": "#/properties/meta",
+      "type": "object",
+      "required": [
+        "provisioning_uri"
+      ],
+      "properties": {
+        "provisioning_uri": {
+          "$id": "#/properties/meta/properties/provisioning_uri",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

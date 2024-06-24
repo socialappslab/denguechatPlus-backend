@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "required": [
+    "data"
+  ],
+  "properties": {
+    "data": {
+      "$id": "#/properties/data",
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "attributes"
+      ],
+      "properties": {
+        "id": {
+          "$id": "#/properties/data/properties/id",
+          "type": "string"
+        },
+        "type": {
+          "$id": "#/properties/data/properties/type",
+          "type": "string"
+        },
+        "attributes": {
+          "$id": "#/properties/data/properties/attributes",
+          "type": "object",
+          "required": [
+            "role-name",
+            "onboarding-status",
+            "reset-2fa"
+          ],
+          "properties": {
+            "role-name": {
+              "$id": "#/properties/data/properties/attributes/properties/role-name",
+              "type": "string"
+            },
+            "onboarding-status": {
+              "$id": "#/properties/data/properties/attributes/properties/onboarding-status",
+              "type": "string"
+            },
+            "reset-2fa": {
+              "$id": "#/properties/data/properties/attributes/properties/reset-2fa",
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,540 @@
+{
+  "type": "object",
+  "required": [
+    "data",
+    "included"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "attributes",
+        "relationships"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "attributes": {
+          "type": "object",
+          "required": [
+            "first-name",
+            "last-name",
+            "avatar-urls",
+            "about"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "first-name": {
+              "type": "string"
+            },
+            "last-name": {
+              "type": "string"
+            },
+            "avatar-urls": {
+              "type": "object",
+              "required": [
+                "small",
+                "original"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "small": {
+                  "type": "string"
+                },
+                "original": {
+                  "type": "string"
+                }
+              }
+            },
+            "about": {
+              "type": "string"
+            }
+          }
+        },
+        "relationships": {
+          "type": "object",
+          "required": [
+            "user-profiles-clinic-specialities",
+            "clinic"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "user-profiles-clinic-specialities": {
+              "type": "object",
+              "required": [
+                "data"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "additionalItems": true,
+                  "items": [
+                    {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "type"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "type"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "type"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "clinic": {
+              "type": "object",
+              "required": [
+                "data"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "type"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "included": {
+      "type": "array",
+      "additionalItems": true,
+      "items": [
+        {
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "attributes": {
+              "type": "object",
+              "required": [
+                "name",
+                "children",
+                "status"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "children": {
+                  "type": "boolean"
+                },
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes",
+            "relationships"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "attributes": {
+              "type": "object",
+              "required": [
+                "price",
+                "accept-free-visits"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "price": {
+                  "type": "string"
+                },
+                "accept-free-visits": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "relationships": {
+              "type": "object",
+              "required": [
+                "speciality",
+                "clinic-speciality"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "speciality": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "type"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "clinic-speciality": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "type"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes",
+            "relationships"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "attributes": {
+              "type": "object",
+              "required": [
+                "price",
+                "accept-free-visits"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "price": {
+                  "type": "string"
+                },
+                "accept-free-visits": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "relationships": {
+              "type": "object",
+              "required": [
+                "speciality",
+                "clinic-speciality"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "speciality": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "type"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "clinic-speciality": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "type"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes",
+            "relationships"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "attributes": {
+              "type": "object",
+              "required": [
+                "price",
+                "accept-free-visits"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "price": {
+                  "type": "string"
+                },
+                "accept-free-visits": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "relationships": {
+              "type": "object",
+              "required": [
+                "speciality",
+                "clinic-speciality"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "speciality": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "type"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "clinic-speciality": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "type"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "attributes": {
+              "type": "object",
+              "required": [
+                "name",
+                "logo-urls",
+                "url",
+                "description",
+                "accept-extra-free-visits",
+                "clinic-type"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "logo-urls": {
+                  "type": "object",
+                  "required": [],
+                  "additionalProperties": false,
+                  "properties": {}
+                },
+                "url": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "accept-extra-free-visits": {
+                  "type": "boolean"
+                },
+                "clinic-type": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "required": [
+    "data"
+  ],
+  "properties": {
+    "data": {
+      "$id": "#/properties/data",
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "attributes"
+      ],
+      "properties": {
+        "id": {
+          "$id": "#/properties/data/properties/id",
+          "type": "string"
+        },
+        "type": {
+          "$id": "#/properties/data/properties/type",
+          "type": "string"
+        },
+        "attributes": {
+          "$id": "#/properties/data/properties/attributes",
+          "type": "object",
+          "required": [
+            "availability",
+            "clinic-specialities",
+            "congratulations",
+            "finished",
+            "user-profile-id",
+            "invite-virtual-clinic-doctor"
+          ],
+          "properties": {
+            "availability": {
+              "$id": "#/properties/data/properties/attributes/properties/availability",
+              "type": "boolean"
+            },
+            "clinic-specialities": {
+              "$id": "#/properties/data/properties/attributes/properties/clinic-specialities",
+              "type": "boolean"
+            },
+            "congratulations": {
+              "$id": "#/properties/data/properties/attributes/properties/congratulations",
+              "type": "boolean"
+            },
+            "finished": {
+              "$id": "#/properties/data/properties/attributes/properties/finished",
+              "type": "boolean"
+            },
+            "user-profile-id": {
+              "$id": "#/properties/data/properties/attributes/properties/user-profile-id",
+              "type": "number"
+            },
+            "invite-virtual-clinic-doctor": {
+              "$id": "#/properties/data/properties/attributes/properties/invite-virtual-clinic-doctor",
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
