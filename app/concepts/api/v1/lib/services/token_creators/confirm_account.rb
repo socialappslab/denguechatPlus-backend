@@ -26,7 +26,7 @@ module Api
               @redis_cache_repo.persist(
                 key: "confirm-user-account-#{@user_account.id}",
                 payload: { token: },
-                exp_at: 5.years.from_now.to_i
+                exp_at: Constants::Tokens::FIVE_YEARS.from_now.to_i
               )
               token
             end
