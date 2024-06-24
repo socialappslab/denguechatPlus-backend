@@ -13,7 +13,7 @@
 # Indexes
 #
 #  index_user_profiles_roles_on_role_id          (role_id)
-#  index_user_profiles_roles_on_user_profile_id  (user_profile_id) UNIQUE
+#  index_user_profiles_roles_on_user_profile_id  (user_profile_id)
 #
 # Foreign Keys
 #
