@@ -26,30 +26,28 @@
 #
 #  fk_rails_...  (user_profile_id => user_profiles.id)
 #
-RSpec.describe UserAccount do
+RSpec.describe Role do
   context 'fields' do
-    it { is_expected.to have_db_column(:email).of_type(:string) }
-    it { is_expected.to have_db_column(:password_digest).of_type(:string) }
-    it { is_expected.to have_db_column(:confirmed_at).of_type(:datetime) }
-    it { is_expected.to have_db_column(:discarded_at).of_type(:datetime) }
-    it { is_expected.to have_db_column(:banned).of_type(:boolean) }
+    it { is_expected.to have_db_column(:name).of_type(:string) }
+    it { is_expected.to have_db_column(:resource_type).of_type(:string) }
+    it { is_expected.to have_db_column(:resource_id).of_type(:integer) }
     it { is_expected.to have_db_column(:created_at).of_type(:datetime) }
     it { is_expected.to have_db_column(:updated_at).of_type(:datetime) }
   end
 
   context 'indexes' do
-    it { is_expected.to have_db_index(:email).unique }
-    it { is_expected.to have_db_index(:discarded_at) }
+    it { is_expected.to have_db_index([:name, :resource_type, :resource_id]) }
   end
 
-  it { is_expected.to have_secure_password }
 
   context 'relations' do
-    it { is_expected.to belong_to(:patient_profile) }
+    it { is_expected.to have_many(:user_profiles_roles).dependent(:destroy) }
+    it { is_expected.to have_many(:user_profiles).through(:user_profiles_roles) }
+    it { is_expected.to belong_to(:resource).optional }
   end
 
-  context 'delegated methods' do
-    it { is_expected.to delegate_method(:first_name).to(:patient_profile) }
-    it { is_expected.to delegate_method(:last_name).to(:patient_profile) }
+  context 'validations' do
+    it { is_expected.to validate_inclusion_of(:resource_type).in_array(Rolify.resource_types) }
+    it { is_expected.to validate_inclusion_of(:name).in_array(Constants::Role::ALLOWED_NAMES) }
   end
 end

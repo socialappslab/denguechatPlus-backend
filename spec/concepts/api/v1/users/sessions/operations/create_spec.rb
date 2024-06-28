@@ -17,7 +17,8 @@ RSpec.describe Api::V1::Users::Sessions::Operations::Create do
   describe 'Success' do
     let(:user_payload) do
       {
-        user_account_id: user_account.id,
+        account_id: user_account.id,
+        app: 'dengue_chat_plus',
         verify_aud: true
       }
     end
@@ -25,7 +26,6 @@ RSpec.describe Api::V1::Users::Sessions::Operations::Create do
       {
         payload: user_payload,
         refresh_payload: user_payload,
-        namespace: "user-account-#{user_account.id}",
         access_exp: 10.minutes.to_i,
         refresh_exp: 9.hours.to_i
       }
@@ -37,34 +37,26 @@ RSpec.describe Api::V1::Users::Sessions::Operations::Create do
       it 'creates tokens for login' do
         expect(JWTSessions::Session).to receive(:new).with(payload) { jwt_sessions }
         expect(jwt_sessions).to receive(:login).and_return(mocked_tokens)
-
-        expect(result[:model]).to eq(user_profile)
-        expect(result[:tokens]).to eq(mocked_tokens)
+        expect(result.success.dig(:ctx, :model)).to eq(user_account)
+        expect(result.success.dig(:ctx, :tokens)).to eq(mocked_tokens)
         expect(result).to be_success
       end
     end
 
     include_examples 'creates tokens for login'
 
-    context 'when user was deactivated by them own' do
+    context 'when user account was not confirmed' do
       let(:user_account) do
         create(:user_account,
                :with_profile,
-               :deactivated)
+               :without_confirmation)
       end
 
       include_examples 'creates tokens for login'
 
-      it 'undiscards account' do
-        expect { result }.to change { user_account.reload.discarded? }.from(true).to(false)
+      it 'confirmed_at have to be nil' do
+        expect(user_account).not_to be_confirmed_at
       end
-    end
-
-    context 'when user account was not confirmed' do
-      let(:confirmed_at) { nil }
-      let(:audience) { Constants::User::NON_CONFIRMED_user_AUD }
-
-      include_examples 'creates tokens for login'
     end
 
     context 'when user account email is not in lower case' do
@@ -85,7 +77,7 @@ RSpec.describe Api::V1::Users::Sessions::Operations::Create do
       end
 
       it 'finds user account anyway' do
-        expect(result[:model].user_account).to eq(user_account)
+        expect(result.success.dig(:ctx, :model)).to eq(user_account)
       end
     end
 
@@ -98,7 +90,7 @@ RSpec.describe Api::V1::Users::Sessions::Operations::Create do
       end
 
       it 'finds user account anyway' do
-        expect(result[:model].user_account).to eq(user_account)
+        expect(result.success.dig(:ctx, :model)).to eq(user_account)
       end
     end
   end

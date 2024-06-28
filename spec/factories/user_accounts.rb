@@ -41,8 +41,8 @@ FactoryBot.define do
       user_profile { association(:user_profile) }
     end
 
-    trait :deactivated do
-      discarded_at { Time.zone.now }
+    trait :without_confirmation do
+      confirmed_at { nil }
     end
 
     trait :locked do
