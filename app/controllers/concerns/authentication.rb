@@ -16,18 +16,18 @@ module Authentication
   end
 
   def current_user
-    @current_user ||= UserAccount.find_by(id: payload['user_account_id'])
+    @current_user ||= UserAccount.find_by(id: payload['account_id'])
   end
 
   private
 
-  def exception_response(message, status = :unprocessable_entity)
+  def exception_response(message, _status = :unprocessable_entity)
     errors = [{ field: :base, messages: [message] }]
 
     render Services::ComposeRenderHash.call(
       result: { model: errors },
       serializer: Api::V1::Lib::Serializers::Errors::Hash,
-      status:
+      status: 401
     )
   end
 end
