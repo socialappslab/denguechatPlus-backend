@@ -78,3 +78,21 @@ If you need to check the project's health, run this in the terminal
 - `fasterer`
 - `rails_best_practices -e "app/views,app/mailers,app/controllers/concerns/endpoint.rb,app/models/" -c rails_best_practices.yml`
 - `database_consistency`
+
+## Generate Documentation
+
+To generate the documentation for the endpoints, you need the following tools:
+- **Npx**: Run `npm install -g npx` on terminal.
+- **Http-Server**: Run `npm install -g http-server` on terminal.
+
+Then, from the terminal, execute:
+- `bundle exec rspec spec/requests/api/v1/ -f Dox::Formatter --tag dox --order defined --out public/api/docs/v1/apispec.json`
+
+This command runs the tests in spec/requests/api/v1 and generates a file in public/api/docs/v1/apispec.json.
+
+After that, you need to execute:
+- `npx redoc-cli bundle -o public/api/docs/v1/index.html public/api/docs/v1/apispec.json`
+
+Finally, to view the documentation, simply run:
+- `http-server -o /api/docs/v1/index.html -p 8088`
+
