@@ -30,11 +30,14 @@
           "required": [
             "first-name",
             "last-name",
-            "email",
-            "role-name",
+            "gender",
+            "phone-number",
+            "points",
+            "country",
+            "city",
+            "language",
             "timezone",
-            "onboarding-status",
-            "reset-2fa"
+            "email"
           ],
           "properties": {
             "first-name": {
@@ -49,21 +52,33 @@
               "$id": "#/properties/data/properties/attributes/properties/email",
               "type": "string"
             },
-            "role-name": {
-              "$id": "#/properties/data/properties/attributes/properties/role-name",
+            "gender": {
+              "$id": "#/properties/data/properties/attributes/properties/gender",
+              "type": "integer"
+            },
+            "phone-number": {
+              "$id": "#/properties/data/properties/attributes/properties/phone_number",
+              "type": "string"
+            },
+            "points": {
+              "$id": "#/properties/data/properties/attributes/properties/points",
+              "type": "integer"
+            },
+            "country": {
+              "$id": "#/properties/data/properties/attributes/properties/country",
+              "type": "string"
+            },
+            "city": {
+              "$id": "#/properties/data/properties/attributes/properties/city",
+              "type": "string"
+            },
+            "language": {
+              "$id": "#/properties/data/properties/attributes/properties/language",
               "type": "string"
             },
             "timezone": {
               "$id": "#/properties/data/properties/attributes/properties/timezone",
               "type": "string"
-            },
-            "onboarding-status": {
-              "$id": "#/properties/data/properties/attributes/properties/onboarding-status",
-              "type": "string"
-            },
-            "reset-2fa": {
-              "$id": "#/properties/data/properties/attributes/properties/reset-2fa",
-              "type": "boolean"
             }
           },
           "additionalProperties": false

@@ -16,13 +16,13 @@ module Helpers
   end
 
   def match_validation_errors(operation_result, error_messages)
-    errors = operation_result[:errors] || operation_result['contract.default'].errors.messages
+    errors = operation_result.failure[:ctx]['errors'] || operation_result.failure[:ctx]['contract.default'].errors.messages
     expect(operation_result).to be_failure
     expect(errors).to match error_messages
   end
 
   def create_jwt_token(sub: nil, exp: 1.day.from_now.to_i, **options)
-    JWT.encode({ sub:, exp: }.merge(options), Rails.application.credentials.secret_jwt_encryption_key)
+    JWT.encode({ sub:, exp: }.merge(options), ENV.fetch('JWT_SECRET_KEY', nil))
   end
 
   def auth_header(account, audience = nil)

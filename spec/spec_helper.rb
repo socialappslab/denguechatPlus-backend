@@ -33,7 +33,7 @@ RSpec.configure do |config|
   config.mock_with(:rspec) { |mocks| mocks.verify_partial_doubles = true }
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
-  config.fixture_path = "#{Rails.root.join('spec/fixtures')}"
+  config.fixture_path = Rails.root.join('spec/fixtures').to_s
   config.use_transactional_fixtures = true
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!
