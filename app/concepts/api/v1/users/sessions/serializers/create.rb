@@ -6,9 +6,18 @@ module Api
       module Sessions
         module Serializers
           class Create < ApplicationSerializer
-            set_type :user_account
+            set_type :user_profile
 
-            attributes :email
+            attributes :first_name,
+                       :last_name,
+                       :email,
+                       :gender,
+                       :phone_number,
+                       :points,
+                       :country,
+                       :city,
+                       :timezone,
+                       :language
           end
         end
       end

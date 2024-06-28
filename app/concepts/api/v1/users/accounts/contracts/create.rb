@@ -15,13 +15,13 @@ module Api
                 required(:password).filled(:string, min_size?: Constants::User::PASSWORD_MIN_LENGTH)
               end
 
-              # rule(:email).validate(:email_regex?)
+              rule(:email).validate(:email_regex?)
 
-              # rule(:email) do
-              #   next if rule_error?
-              #
-              #   key.failure(:user_email_unique?) if UserAccount.exists?(['LOWER(email) = LOWER(?)', value])
-              # end
+               rule(:email) do
+                 next if rule_error?
+
+                 key.failure(:user_email_unique?) if UserAccount.exists?(['LOWER(email) = LOWER(?)', value])
+              end
             end
           end
         end

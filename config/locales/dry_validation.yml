@@ -1,0 +1,11 @@
+en:
+  dry_validation:
+    errors:
+      email_regex?: Submitted email is invalid
+      user_email_unique?: That email address is being used by another account
+
+es:
+  dry_validation:
+    errors:
+      email_regex?: El correo electrónico ingresado no es válido
+      user_email_unique?: Esa dirección de correo electrónico está siendo utilizada por otra cuenta.

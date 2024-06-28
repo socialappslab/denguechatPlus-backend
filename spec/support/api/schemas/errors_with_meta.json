@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "required": [
+      "errors"
+  ],
+  "properties": {
+      "errors": {
+          "$id": "#/properties/errors",
+          "type": "array",
+          "additionalItems": true,
+          "items": {
+              "$id": "#/properties/errors/items/0",
+              "type": "object",
+              "required": [
+                  "detail",
+                  "meta",
+                  "source"
+              ],
+              "properties": {
+                  "detail": {
+                      "$id": "#/properties/errors/items/0/properties/detail",
+                      "type": "string"
+                  },
+                  "meta": {
+                      "$id": "#/properties/errors/items/0/properties/meta",
+                      "type": "object",
+                      "required": [
+                          "type"
+                      ],
+                      "properties": {
+                          "type": {
+                              "$id": "#/properties/errors/items/0/properties/meta/properties/type",
+                              "type": "string"
+                          }
+                      },
+                      "additionalProperties": false
+                  },
+                  "source": {
+                      "$id": "#/properties/errors/items/0/properties/source",
+                      "type": "object",
+                      "required": [
+                          "pointer"
+                      ],
+                      "properties": {
+                          "pointer": {
+                              "$id": "#/properties/errors/items/0/properties/source/properties/pointer",
+                              "type": "string"
+                          }
+                      },
+                      "additionalProperties": false
+                  }
+              },
+              "additionalProperties": false
+          }
+      }
+  },
+  "additionalProperties": false
+}

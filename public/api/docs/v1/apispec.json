@@ -1,0 +1,343 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "DengueChatPlus API Documentation",
+    "description": "# JSON API Doc\n\nThis api is implemented according to the JSON API spec.\n",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/v1/users/accounts/confirm_account": {
+      "post": {
+        "summary": "Create user account (sign up)",
+        "tags": [
+          "Accounts"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "example": "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "example": "application/x-www-form-urlencoded"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json; charset=utf-8": {
+                "examples": {
+                  "confirms user email": {
+                    "summary": "confirms user email",
+                    "value": {
+                      "data": {
+                        "id": "1867",
+                        "type": "user-account",
+                        "attributes": {
+                          "email": "maryann_larkin@shanahan.name",
+                          "confirmed-at": "2024-06-28T07:05:32.177Z"
+                        }
+                      },
+                      "meta": {
+                        "jwt": {
+                          "csrf": "0HeVAzSU9J1hY5EotyH+mQPQEuMM05DqMzOvOmebH3ser+qDzPtjbFInJGYNwfpwWKtRIUsMt2csKz0MN4bVHQ==",
+                          "access": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk1NTg5MzIsImFjY291bnRfaWQiOjE4NjcsImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiIxNTFjMjc0Ni1lZmM3LTQ5NWYtOTMxZS05MTIzYzY5ZjAwOGIifQ.yvwgbC5z6pqgS-ynCrLX0TO9IM72TelYcmi2p1UI9Uo",
+                          "access_expires_at": "2024-06-28T03:15:32.000-04:00",
+                          "refresh": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk1OTA3MzIsImFjY291bnRfaWQiOjE4NjcsImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiIzNjUyM2Y1YS0wN2JkLTRlOWYtYjg4Yy0zZTYyMTZjNTVhMDcifQ.OIkp-3kwGpU9psnKfIoYpAaWVsCXuNANHjadWGJhdbA",
+                          "refresh_expires_at": "2024-06-28T12:05:32.000-04:00"
+                        }
+                      }
+                    }
+                  },
+                  "creates new user account": {
+                    "summary": "creates new user account",
+                    "value": {
+                      "data": {
+                        "id": "1868",
+                        "type": "user-account",
+                        "attributes": {
+                          "email": "peggie@stamm.biz",
+                          "confirmed-at": null
+                        }
+                      },
+                      "meta": {
+                        "jwt": {
+                          "csrf": "Dcw6ZlHfo6fbqHkAh8r4jxj8zd6R4091wyPe3eKHdar6uRIs5hM2mbRUbGa4EmzXbxUTwQcYHxcuTlsEXZEOxA==",
+                          "access": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk1NTg5MzIsImFjY291bnRfaWQiOjE4NjksImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiIzNzI4YWMwMS1jOGYyLTQ1MDgtYmEyMS1iOWM4ZWM4Mjc4MDMifQ.k48HC0n6qd6zsJ2YRyIAzrJxgSkktHaZAPZJWkKLkFU",
+                          "access_expires_at": "2024-06-28T03:15:32.000-04:00",
+                          "refresh": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk1OTA3MzIsImFjY291bnRfaWQiOjE4NjksImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiJmY2Y1MWNkNS0yODg2LTQ0OWItOWE3My1hNDAwZGU1ZmVmNDgifQ.Ms7_HIoP98qm0vHlPkPf5LNmpvrPaLYg4t1Fk2z3hfY",
+                          "refresh_expires_at": "2024-06-28T12:05:32.000-04:00"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "description": "application/json; charset=utf-8"
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json; charset=utf-8": {
+                "examples": {
+                  "renders gone response status": {
+                    "summary": "renders gone response status",
+                    "value": {
+                      "errors": [
+                        {
+                          "detail": "Your token is invalid",
+                          "source": {
+                            "pointer": "/data/attributes/base"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "renders errors": {
+                    "summary": "renders errors",
+                    "value": {
+                      "errors": [
+                        {
+                          "detail": "must be filled",
+                          "source": {
+                            "pointer": "/data/attributes/email"
+                          }
+                        },
+                        {
+                          "detail": "must be filled",
+                          "source": {
+                            "pointer": "/data/attributes/password"
+                          }
+                        },
+                        {
+                          "detail": "size cannot be less than 8",
+                          "source": {
+                            "pointer": "/data/attributes/password"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "description": "application/json; charset=utf-8"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/session": {
+      "post": {
+        "summary": "Create user session (log in)",
+        "tags": [
+          "Session"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "example": "application/json"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "example": "application/json"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "renders user whose session was created": {
+                  "summary": "renders user whose session was created",
+                  "value": {
+                    "email": "maryann_larkin@shanahan.name",
+                    "password": "Password1!"
+                  }
+                },
+                "renders unauthenticated error": {
+                  "summary": "renders unauthenticated error",
+                  "value": {
+                    "email": "maryann_larkin@shanahan.name",
+                    "password": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json; charset=utf-8": {
+                "examples": {
+                  "renders user whose session was created": {
+                    "summary": "renders user whose session was created",
+                    "value": {
+                      "data": {
+                        "id": "1871",
+                        "type": "user-profile",
+                        "attributes": {
+                          "first-name": "Odette",
+                          "last-name": "Prosacco",
+                          "email": "maryann_larkin@shanahan.name",
+                          "gender": 1,
+                          "phone-number": "2749006796137",
+                          "points": 0,
+                          "country": "Svalbard and Jan Mayen",
+                          "city": "Nellyburgh",
+                          "timezone": "utc-4",
+                          "language": "es"
+                        }
+                      },
+                      "meta": {
+                        "jwt": {
+                          "csrf": "vnNEZQBSYYTO5oihzD7nxULugumkdGik4O+OaQ3QkPZZIlN7iALkDeFGEwlLUfLyEbqu5WplaBZJxT9Li+b6zQ==",
+                          "access": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk1NTg5MzIsImFjY291bnRfaWQiOjE4NzEsImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiI2YjMzZTk1MC05ODk5LTQ0ZGQtYjFjNS0wZDZlYWQ4ZWIzMGEifQ.NMogksjTB-nA2tEhuLpGmtSUpjuN8VFnhkvezt4dp-8",
+                          "access_expires_at": "2024-06-28T03:15:32.000-04:00",
+                          "refresh": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk1OTA3MzIsImFjY291bnRfaWQiOjE4NzEsImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiJjMDVjYTliYy1hMWI3LTRmMGMtYWNmNS1jNzRkNjk3N2ExOTgifQ.NkTQqWVOBDJ1yM-WYdecbaMNN8bXkJDjOrpt8JugzGw",
+                          "refresh_expires_at": "2024-06-28T12:05:32.000-04:00"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "description": "application/json; charset=utf-8"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json; charset=utf-8": {
+                "examples": {
+                  "renders unauthenticated error": {
+                    "summary": "renders unauthenticated error",
+                    "value": {
+                      "errors": [
+                        {
+                          "detail": "Wrong credentials",
+                          "source": {
+                            "pointer": "/data/attributes/base"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "description": "application/json; charset=utf-8"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Destroy user session (log out)",
+        "tags": [
+          "Session"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "example": "application/json"
+          },
+          {
+            "name": "X-Refresh-Token",
+            "in": "header",
+            "example": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MjAxNjMxMzIsInVzZXJfYWNjb3VudF9pZCI6MTg3MywidWlkIjoiMjE0NmRhNTctNjY1Yi00MjcwLTg2N2MtNjg4NmQ4OTJiN2MxIn0.JvcRXDgCBbxTrUrmqQgUS6ea22uIk6wqcnAxN0JhcFE"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "example": "application/json"
+          }
+        ],
+        "responses": {
+          "410": {
+            "description": "Gone",
+            "content": {
+              "application/json": {
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "description": "application/json"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json; charset=utf-8": {
+                "examples": {
+                  "renders unauthenticated error": {
+                    "summary": "renders unauthenticated error",
+                    "value": {
+                      "errors": [
+                        {
+                          "detail": "unauthorized",
+                          "source": {
+                            "pointer": "/data/attributes/base"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "description": "application/json; charset=utf-8"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Accounts",
+      "description": ""
+    },
+    {
+      "name": "Session",
+      "description": ""
+    }
+  ],
+  "x-tagGroups": [
+    {
+      "name": "Users",
+      "tags": [
+        "Accounts",
+        "Session"
+      ]
+    }
+  ]
+}

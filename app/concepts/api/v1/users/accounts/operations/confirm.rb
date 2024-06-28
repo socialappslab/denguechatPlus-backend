@@ -44,6 +44,7 @@ module Api
               begin
                 @ctx[:user_account_id] = jwt_adapter.decode(@ctx['contract.default'].model[:token]).first['sub']
                 @ctx[:redis_token_key] = "confirm-user-account-#{@ctx[:user_account_id]}"
+                Success(@ctx)
               rescue JWT::ExpiredSignature, JWT::DecodeError => error
                 error_type = error.instance_of?(JWT::ExpiredSignature) ? 'errors.token.expired' : 'errors.token.invalid'
                 @ctx['contract.default'].errors.add(:base, I18n.t(error_type))
@@ -71,6 +72,7 @@ module Api
 
             def find_user_account
               @ctx[:user_account] = UserAccount.find_by(id: @ctx[:user_account_id])
+              @ctx[:model] = @ctx[:user_account]
               return Success(@ctx) if @ctx[:user_account]
 
               @ctx['contract.default'].errors.add(:base, I18n.t('errors.token.invalid'))
