@@ -7,7 +7,7 @@ module Services
     end
 
     def initialize(result:, serializer:, status:)
-      @model = result[:model]
+      @model = result[:model] || result[:data]
       @serializer = serializer
       @include = result.to_hash.dig(:params, :include)
       @meta = result[:meta]
