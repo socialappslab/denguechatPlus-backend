@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :organizations
   get 'up' => 'rails/health#show', as: :rails_health_check
 
   namespace :api do
@@ -13,6 +14,7 @@ Rails.application.routes.draw do
           end
         end
       end
+      resources :organizations
     end
   end
 end
