@@ -68,25 +68,5 @@ RSpec.describe Api::V1::Users::Accounts::Operations::Create do
 
       include_examples 'has validation errors'
     end
-
-    context 'when password is invalid' do
-      let(:params) do
-        {
-          email: user_account.email,
-          password: 'password'
-        }
-      end
-      let(:errors) { { base: ['Wrong credentials'] } }
-    end
-
-    context 'when user does not exist' do
-      let(:params) do
-        {
-          email: 'email@example.com',
-          password:
-        }
-      end
-      let(:errors) { { base: ['Wrong credentials'] } }
-    end
   end
 end

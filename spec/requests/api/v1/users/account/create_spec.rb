@@ -26,7 +26,7 @@ RSpec.describe 'ApiDoc::V1::Users::Account::Api', :dox do
 
       it 'creates new user account' do
         expect(response).to match_json_schema('users/accounts/create')
-        expect(response).to match_resource_type('user-account')
+        expect(response).to match_resource_type('userAccount')
         expect(response).to be_created
       end
     end

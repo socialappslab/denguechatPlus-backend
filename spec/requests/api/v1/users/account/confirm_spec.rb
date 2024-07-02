@@ -28,7 +28,7 @@ RSpec.describe 'ApiDoc::V1::Users::Account::Api', :dox do
 
     describe 'Success' do
       it 'confirms user email' do
-         expect(response).to be_created
+        expect(response).to be_created
       end
     end
 

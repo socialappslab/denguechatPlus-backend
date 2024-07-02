@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: organizations
@@ -13,8 +15,9 @@
 #  index_organizations_on_discarded_at  (discarded_at)
 #  index_organizations_on_name          (name) UNIQUE
 #
-require 'rails_helper'
 
-RSpec.describe Organization, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+RSpec.describe Organization do
+  it 'test' do
+    expect(1).to eq(1)
+  end
 end

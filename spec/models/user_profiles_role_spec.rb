@@ -21,7 +21,6 @@
 #  fk_rails_...  (user_profile_id => user_profiles.id)
 #
 RSpec.describe UserProfilesRole do
-
   context 'indexes' do
     it { is_expected.to have_db_index(:role_id) }
     it { is_expected.to have_db_index(:user_profile_id) }

@@ -16,7 +16,6 @@ module ApiDoc
         document :create do
           action 'Create user account (sign up)'
         end
-
       end
     end
   end

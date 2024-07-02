@@ -12,12 +12,12 @@ module Api
           tee :cursor_and_paginate
           step :list
           tee :page_pagination?
+          tee :paginate
           tee :meta
 
           def params(input)
             @ctx = {}
             @params = input.fetch(:params)
-            @ctx['contract.paginate'] = @params[:page]
           end
 
           def validate_schema
@@ -42,14 +42,13 @@ module Api
           end
 
           def paginate
-            @pagy = Api::V1::Lib::Paginates::Paginate.new(@ctx, @ctx[:data])
+            @pagy = Api::V1::Lib::Paginates::Paginate.kall(ctx: @ctx, model: @ctx[:data], params: @params.slice("page"))
             Success({ ctx: @ctx, type: :success })
           end
 
           def meta
             @ctx[:meta] = {
-              # total: @pagy.count,
-              has_more: @pagy.try(:has_more)
+              total: @ctx[:pagy].count
             }
           end
         end

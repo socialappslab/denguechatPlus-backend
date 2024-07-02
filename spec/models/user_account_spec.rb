@@ -36,9 +36,8 @@ RSpec.describe Role do
   end
 
   context 'indexes' do
-    it { is_expected.to have_db_index([:name, :resource_type, :resource_id]) }
+    it { is_expected.to have_db_index(%i[name resource_type resource_id]) }
   end
-
 
   context 'relations' do
     it { is_expected.to have_many(:user_profiles_roles).dependent(:destroy) }
