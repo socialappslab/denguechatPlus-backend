@@ -20,7 +20,7 @@ RSpec.describe Api::V1::Users::Accounts::Operations::Confirm do
     let(:user_payload) do
       {
         account_id: user_account.id,
-        app: "dengue_chat_plus",
+        app: 'dengue_chat_plus',
         verify_aud: true
       }
     end
@@ -37,7 +37,7 @@ RSpec.describe Api::V1::Users::Accounts::Operations::Confirm do
 
     it 'confirms user account' do
       expect { result }.to change { mock_redis.hgetall(redis_key) }
-                             .from('token' => jwt_token).to({})
+        .from('token' => jwt_token).to({})
 
       expect(user_account.reload.confirmed_at).to be_present
       expect(result).to be_success
@@ -48,7 +48,7 @@ RSpec.describe Api::V1::Users::Accounts::Operations::Confirm do
       expect(jwt_sessions).to receive(:login).and_return(mocked_tokens)
       expect(result.success.dig(:ctx, :user_account)).to eq(user_account)
       expect(result.success.dig(:ctx, :tokens)).to eq(mocked_tokens)
-      expect(result.success?).to be_truthy
+      expect(result).to be_success
     end
   end
 
@@ -92,5 +92,4 @@ RSpec.describe Api::V1::Users::Accounts::Operations::Confirm do
       it { expect(result).to be_failure }
     end
   end
-
 end

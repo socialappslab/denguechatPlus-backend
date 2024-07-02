@@ -28,10 +28,10 @@
           "$id": "#/properties/data/properties/attributes",
           "type": "object",
           "required": [
-            "first-name",
-            "last-name",
+            "firstName",
+            "lastName",
             "gender",
-            "phone-number",
+            "phoneNumber",
             "points",
             "country",
             "city",
@@ -40,11 +40,11 @@
             "email"
           ],
           "properties": {
-            "first-name": {
+            "firstName": {
               "$id": "#/properties/data/properties/attributes/properties/first-name",
               "type": "string"
             },
-            "last-name": {
+            "lastName": {
               "$id": "#/properties/data/properties/attributes/properties/last-name",
               "type": "string"
             },
@@ -56,7 +56,7 @@
               "$id": "#/properties/data/properties/attributes/properties/gender",
               "type": "integer"
             },
-            "phone-number": {
+            "phoneNumber": {
               "$id": "#/properties/data/properties/attributes/properties/phone_number",
               "type": "string"
             },

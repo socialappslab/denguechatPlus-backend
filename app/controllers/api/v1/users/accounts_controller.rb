@@ -14,7 +14,6 @@ module Api
           endpoint operation: Api::V1::Users::Accounts::Operations::Confirm,
                    renderer_options: { serializer: Api::V1::Users::Accounts::Serializers::Create }
         end
-
       end
     end
   end

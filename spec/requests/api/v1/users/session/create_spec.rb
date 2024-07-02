@@ -34,7 +34,7 @@ RSpec.describe 'Api::V1::Users::Sessions', :dox do
     describe 'Success' do
       it 'renders user whose session was created' do
         expect(response).to match_json_schema('users/sessions/create')
-        expect(response).to match_resource_type('user-profile')
+        expect(response).to match_resource_type('userProfile')
         expect(response).to be_created
       end
     end

@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "required": [
+    "data"
+  ],
+  "properties": {
+    "data": {
+      "$id": "#/properties/data",
+      "type": "array",
+      "additionalItems": true,
+      "items": [
+        {
+          "$id": "#/properties/data/items/0",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/0/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/0/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/0/properties/attributes",
+              "type": "object",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "$id": "#/properties/data/items/0/properties/attributes/properties/name",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "$id": "#/properties/data/items/1",
+          "type": "object",
+          "required": [
+            "id",
+            "type",
+            "attributes"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/data/items/1/properties/id",
+              "type": "string"
+            },
+            "type": {
+              "$id": "#/properties/data/items/1/properties/type",
+              "type": "string"
+            },
+            "attributes": {
+              "$id": "#/properties/data/items/1/properties/attributes",
+              "type": "object",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "$id": "#/properties/data/items/1/properties/attributes/properties/name",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

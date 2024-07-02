@@ -6,6 +6,432 @@
     "version": "1.0"
   },
   "paths": {
+    "/organizations{?page}{?filter}": {
+      "get": {
+        "summary": "View the list of all organizations",
+        "tags": [
+          "Organizations"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "example": {
+              "number": 1,
+              "size": 2
+            },
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "example": {
+              "name": "name"
+            },
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "example": "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json; charset=utf-8": {
+                "examples": {
+                  "renders organizations": {
+                    "summary": "renders organizations",
+                    "value": {
+                      "data": [
+                        {
+                          "id": "671",
+                          "type": "organization",
+                          "attributes": {
+                            "name": "organization"
+                          }
+                        },
+                        {
+                          "id": "670",
+                          "type": "organization",
+                          "attributes": {
+                            "name": "test"
+                          }
+                        }
+                      ],
+                      "meta": {
+                        "total": 2
+                      },
+                      "links": {
+                        "self": 1,
+                        "last": 1
+                      }
+                    }
+                  },
+                  "renders organizations with name filter": {
+                    "summary": "renders organizations with name filter",
+                    "value": {
+                      "data": [
+                        {
+                          "id": "672",
+                          "type": "organization",
+                          "attributes": {
+                            "name": "test"
+                          }
+                        }
+                      ],
+                      "meta": {
+                        "total": 1
+                      },
+                      "links": {
+                        "self": 1,
+                        "last": 1
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "description": "application/json; charset=utf-8"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organizations{?include}": {
+      "get": {
+        "summary": "Show organization",
+        "tags": [
+          "Organizations"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "number"
+            },
+            "example": "674"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "example": "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json; charset=utf-8": {
+                "examples": {
+                  "render organization details": {
+                    "summary": "render organization details",
+                    "value": {
+                      "data": {
+                        "id": "674",
+                        "type": "organization",
+                        "attributes": {
+                          "name": "test"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "description": "application/json; charset=utf-8"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/html": {
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "description": "text/html"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organizations": {
+      "post": {
+        "summary": "Create a organization",
+        "tags": [
+          "Organizations"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": "required",
+            "example": "Tariki",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "example": "application/json"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "example": "application/json"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "returns organization info": {
+                  "summary": "returns organization info",
+                  "value": {
+                    "name": null,
+                    "discarded_at": "2024-06-28 03:13:06"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json; charset=utf-8": {
+                "examples": {
+                  "returns organization info": {
+                    "summary": "returns organization info",
+                    "value": {
+                      "data": {
+                        "id": "676",
+                        "type": "organization",
+                        "attributes": {
+                          "name": "Tariki"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "description": "application/json; charset=utf-8"
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json; charset=utf-8": {
+                "examples": {
+                  "returns organization info": {
+                    "summary": "returns organization info",
+                    "value": {
+                      "errors": [
+                        {
+                          "detail": "must be filled",
+                          "source": {
+                            "pointer": "/data/attributes/name"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "description": "application/json; charset=utf-8"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove organization/s",
+        "tags": [
+          "Organizations"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "example": "application/json"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "example": "application/json"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "returns 204": {
+                  "summary": "returns 204",
+                  "value": {
+                    "organization_ids": [
+                      679
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "content": {
+              "any": {
+              }
+            },
+            "headers": {
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/organizations/{id}": {
+      "put": {
+        "summary": "Update a organization",
+        "tags": [
+          "Organizations"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "number"
+            },
+            "example": "677"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": "required",
+            "example": "Tariki 2",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "example": "application/json"
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "example": "application/json"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "returns organization info": {
+                  "summary": "returns organization info",
+                  "value": {
+                    "name": null,
+                    "discarded_at": "2024-06-28 03:13:06"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json; charset=utf-8": {
+                "examples": {
+                  "returns organization info": {
+                    "summary": "returns organization info",
+                    "value": {
+                      "data": {
+                        "id": "677",
+                        "type": "organization",
+                        "attributes": {
+                          "name": "Tariki 2"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "description": "application/json; charset=utf-8"
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json; charset=utf-8": {
+                "examples": {
+                  "returns organization info": {
+                    "summary": "returns organization info",
+                    "value": {
+                      "errors": [
+                        {
+                          "detail": "must be filled",
+                          "source": {
+                            "pointer": "/data/attributes/name"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "description": "application/json; charset=utf-8"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/users/accounts/confirm_account": {
       "post": {
         "summary": "Create user account (sign up)",
@@ -35,20 +461,20 @@
                     "summary": "confirms user email",
                     "value": {
                       "data": {
-                        "id": "1867",
-                        "type": "user-account",
+                        "id": "1503",
+                        "type": "userAccount",
                         "attributes": {
-                          "email": "maryann_larkin@shanahan.name",
-                          "confirmed-at": "2024-06-28T07:05:32.177Z"
+                          "email": "saul@cruickshank.name",
+                          "confirmedAt": "2024-07-02T22:20:01.423Z"
                         }
                       },
                       "meta": {
                         "jwt": {
-                          "csrf": "0HeVAzSU9J1hY5EotyH+mQPQEuMM05DqMzOvOmebH3ser+qDzPtjbFInJGYNwfpwWKtRIUsMt2csKz0MN4bVHQ==",
-                          "access": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk1NTg5MzIsImFjY291bnRfaWQiOjE4NjcsImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiIxNTFjMjc0Ni1lZmM3LTQ5NWYtOTMxZS05MTIzYzY5ZjAwOGIifQ.yvwgbC5z6pqgS-ynCrLX0TO9IM72TelYcmi2p1UI9Uo",
-                          "access_expires_at": "2024-06-28T03:15:32.000-04:00",
-                          "refresh": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk1OTA3MzIsImFjY291bnRfaWQiOjE4NjcsImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiIzNjUyM2Y1YS0wN2JkLTRlOWYtYjg4Yy0zZTYyMTZjNTVhMDcifQ.OIkp-3kwGpU9psnKfIoYpAaWVsCXuNANHjadWGJhdbA",
-                          "refresh_expires_at": "2024-06-28T12:05:32.000-04:00"
+                          "csrf": "rpHHsZ58FUqX7GvcB1uDUTgTgXISyM+NDHgoVl7HbebBpxl5lw7sCisxh5HZsO2o+9YZMUXzBnAZcOsVAh6Mjg==",
+                          "access": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk5NTk0MDEsImFjY291bnRfaWQiOjE1MDMsImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiIyMGVhYWZhNy1hMDQ0LTQ2MWEtOTdiYS1iNjFkNzk1NjFmYWIifQ.-IcQR5Jl0GdbENKhsn5vcV_yzthrEyL33rAhfSvmReo",
+                          "access_expires_at": "2024-07-02T18:30:01.000-04:00",
+                          "refresh": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk5OTEyMDEsImFjY291bnRfaWQiOjE1MDMsImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiI2MjI5YWQwNi0wMWYyLTRmZWMtODdjZC1lMWFjYzNkMTlkOWUifQ.i2PqClDs2ti7sukXinDoXbSO7PIa6h9knMXOvIc4xZ4",
+                          "refresh_expires_at": "2024-07-03T03:20:01.000-04:00"
                         }
                       }
                     }
@@ -57,20 +483,20 @@
                     "summary": "creates new user account",
                     "value": {
                       "data": {
-                        "id": "1868",
-                        "type": "user-account",
+                        "id": "1505",
+                        "type": "userAccount",
                         "attributes": {
-                          "email": "peggie@stamm.biz",
-                          "confirmed-at": null
+                          "email": "marisol@tremblay.ca",
+                          "confirmedAt": null
                         }
                       },
                       "meta": {
                         "jwt": {
-                          "csrf": "Dcw6ZlHfo6fbqHkAh8r4jxj8zd6R4091wyPe3eKHdar6uRIs5hM2mbRUbGa4EmzXbxUTwQcYHxcuTlsEXZEOxA==",
-                          "access": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk1NTg5MzIsImFjY291bnRfaWQiOjE4NjksImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiIzNzI4YWMwMS1jOGYyLTQ1MDgtYmEyMS1iOWM4ZWM4Mjc4MDMifQ.k48HC0n6qd6zsJ2YRyIAzrJxgSkktHaZAPZJWkKLkFU",
-                          "access_expires_at": "2024-06-28T03:15:32.000-04:00",
-                          "refresh": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk1OTA3MzIsImFjY291bnRfaWQiOjE4NjksImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiJmY2Y1MWNkNS0yODg2LTQ0OWItOWE3My1hNDAwZGU1ZmVmNDgifQ.Ms7_HIoP98qm0vHlPkPf5LNmpvrPaLYg4t1Fk2z3hfY",
-                          "refresh_expires_at": "2024-06-28T12:05:32.000-04:00"
+                          "csrf": "Jrbfdvx7SzDn0Sn83tv1YTQn0hiCMZaFHSoUSGXBJ917ICksZIasHZ0fk2/QW1wCtCi2m3jVF8aMJr23lg/u5g==",
+                          "access": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk5NTk0MDEsImFjY291bnRfaWQiOjE1MDUsImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiJiZjg4ZDM1ZS1lMzljLTQzZjEtODQ0Yi1iNjQzMzQzMTMxYzgifQ.MOEqOkejRfLrfasv9p_g19DkIHn29zcKO8aSZ7c4vuo",
+                          "access_expires_at": "2024-07-02T18:30:01.000-04:00",
+                          "refresh": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk5OTEyMDEsImFjY291bnRfaWQiOjE1MDUsImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiJlYTE2ZTk5Ni00M2ExLTQyYjctYmZjOS1lMjQ2MjVmNjU4NWEifQ.bL9gr203KkW8xHf-hfAlZfJR8xO1UY7vfbwuK-rd2hM",
+                          "refresh_expires_at": "2024-07-03T03:20:01.000-04:00"
                         }
                       }
                     }
@@ -165,14 +591,14 @@
                 "renders user whose session was created": {
                   "summary": "renders user whose session was created",
                   "value": {
-                    "email": "maryann_larkin@shanahan.name",
+                    "email": "janae@buckridge.biz",
                     "password": "Password1!"
                   }
                 },
                 "renders unauthenticated error": {
                   "summary": "renders unauthenticated error",
                   "value": {
-                    "email": "maryann_larkin@shanahan.name",
+                    "email": "alana_daniel@mullerheathcote.us",
                     "password": "password"
                   }
                 }
@@ -190,28 +616,28 @@
                     "summary": "renders user whose session was created",
                     "value": {
                       "data": {
-                        "id": "1871",
-                        "type": "user-profile",
+                        "id": "1507",
+                        "type": "userProfile",
                         "attributes": {
-                          "first-name": "Odette",
-                          "last-name": "Prosacco",
-                          "email": "maryann_larkin@shanahan.name",
+                          "firstName": "Kirsten",
+                          "lastName": "Lemke",
+                          "email": "janae@buckridge.biz",
                           "gender": 1,
-                          "phone-number": "2749006796137",
+                          "phoneNumber": "8382348977048",
                           "points": 0,
-                          "country": "Svalbard and Jan Mayen",
-                          "city": "Nellyburgh",
+                          "country": "Chile",
+                          "city": "North Pattietown",
                           "timezone": "utc-4",
                           "language": "es"
                         }
                       },
                       "meta": {
                         "jwt": {
-                          "csrf": "vnNEZQBSYYTO5oihzD7nxULugumkdGik4O+OaQ3QkPZZIlN7iALkDeFGEwlLUfLyEbqu5WplaBZJxT9Li+b6zQ==",
-                          "access": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk1NTg5MzIsImFjY291bnRfaWQiOjE4NzEsImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiI2YjMzZTk1MC05ODk5LTQ0ZGQtYjFjNS0wZDZlYWQ4ZWIzMGEifQ.NMogksjTB-nA2tEhuLpGmtSUpjuN8VFnhkvezt4dp-8",
-                          "access_expires_at": "2024-06-28T03:15:32.000-04:00",
-                          "refresh": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk1OTA3MzIsImFjY291bnRfaWQiOjE4NzEsImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiJjMDVjYTliYy1hMWI3LTRmMGMtYWNmNS1jNzRkNjk3N2ExOTgifQ.NkTQqWVOBDJ1yM-WYdecbaMNN8bXkJDjOrpt8JugzGw",
-                          "refresh_expires_at": "2024-06-28T12:05:32.000-04:00"
+                          "csrf": "N6mpVMway+0NGk8Oo7Zxf8k1D8olS9IApK7QRhRBZpimNqk1wA1FwdSc78w8t3cESYkdziELUxh1GT6/UsYnJg==",
+                          "access": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk5NTk0MDEsImFjY291bnRfaWQiOjE1MDcsImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiJhZWMzMWMzMS0wN2Y3LTQ3OTYtYmUwMC1iMDQ1ZDBhMWY4MWQifQ.RbAqrPirrpyhhCZfvAx8fW6tJC95DQTY-SCbNDI_Wf8",
+                          "access_expires_at": "2024-07-02T18:30:01.000-04:00",
+                          "refresh": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTk5OTEyMDEsImFjY291bnRfaWQiOjE1MDcsImFwcCI6ImRlbmd1ZV9jaGF0X3BsdXMiLCJ2ZXJpZnlfYXVkIjp0cnVlLCJ1aWQiOiIyZDRmYmY0Yy02NjAwLTQ4OWQtYWUyYy1jNmIyZDYxYzEwNWQifQ.JlWMjcWfiXy4xLy1Lju0FwCzHOFz6Bo4CX9h2UVN48U",
+                          "refresh_expires_at": "2024-07-03T03:20:01.000-04:00"
                         }
                       }
                     }
@@ -269,7 +695,7 @@
           {
             "name": "X-Refresh-Token",
             "in": "header",
-            "example": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MjAxNjMxMzIsInVzZXJfYWNjb3VudF9pZCI6MTg3MywidWlkIjoiMjE0NmRhNTctNjY1Yi00MjcwLTg2N2MtNjg4NmQ4OTJiN2MxIn0.JvcRXDgCBbxTrUrmqQgUS6ea22uIk6wqcnAxN0JhcFE"
+            "example": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MjA1NjM2MDEsInVzZXJfYWNjb3VudF9pZCI6MTUwOSwidWlkIjoiYTQ3ZjkxYmItOTAzOS00ZTM3LWIyYTEtOGRhMTEwYWI5N2VkIn0.F8Xe0gvtx9-JfVYVHa3UH8LfyNXrjT4ByYy6Asd04mY"
           },
           {
             "name": "Content-Type",
@@ -323,6 +749,10 @@
   },
   "tags": [
     {
+      "name": "Organizations",
+      "description": ""
+    },
+    {
       "name": "Accounts",
       "description": ""
     },
@@ -332,6 +762,12 @@
     }
   ],
   "x-tagGroups": [
+    {
+      "name": "Organizations",
+      "tags": [
+        "Organizations"
+      ]
+    },
     {
       "name": "Users",
       "tags": [

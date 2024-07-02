@@ -17,7 +17,11 @@ module Api
 
           def find_organization
             @ctx[:data] = Organization.find_by(id: @params[:id])
-            Success({ ctx: @ctx, type: :success })
+            if @ctx[:data].nil?
+              Failure({ ctx: @ctx, type: :not_found })
+            else
+              Success({ ctx: @ctx, type: :success })
+            end
           end
         end
       end

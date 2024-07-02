@@ -17,10 +17,10 @@ module Api
 
               rule(:email).validate(:email_regex?)
 
-               rule(:email) do
-                 next if rule_error?
+              rule(:email) do
+                next if rule_error?
 
-                 key.failure(:user_email_unique?) if UserAccount.exists?(['LOWER(email) = LOWER(?)', value])
+                key.failure(:user_email_unique?) if UserAccount.exists?(['LOWER(email) = LOWER(?)', value])
               end
             end
           end

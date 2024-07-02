@@ -33,11 +33,11 @@
           ],
           "properties": {
             "email": {
-              "$id": "#/properties/data/properties/attributes/properties/first-name",
+              "$id": "#/properties/data/properties/attributes/properties/firstName",
               "type": "string"
             },
             "confirmed-at": {
-              "$id": "#/properties/data/properties/attributes/properties/last-name",
+              "$id": "#/properties/data/properties/attributes/properties/lastName",
               "type": "null"
             }
           },

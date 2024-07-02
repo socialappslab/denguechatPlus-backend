@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: organizations
@@ -15,7 +17,7 @@
 #
 FactoryBot.define do
   factory :organization do
-    name { "MyString" }
-    discarded_at { "2024-06-28 03:13:06" }
+    name { 'MyString' }
+    discarded_at { '2024-06-28 03:13:06' }
   end
 end
