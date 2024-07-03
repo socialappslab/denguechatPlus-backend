@@ -7,12 +7,12 @@ module Api
         def create
           endpoint operation: Api::V1::Users::Accounts::Operations::Create,
                    options: { current_user: },
-                   renderer_options: { serializer: Api::V1::Users::Accounts::Serializers::Create }
+                   renderer_options: { serializer: Api::V1::Users::Accounts::Serializers::UserAccount }
         end
 
         def confirm_account
           endpoint operation: Api::V1::Users::Accounts::Operations::Confirm,
-                   renderer_options: { serializer: Api::V1::Users::Accounts::Serializers::Create }
+                   renderer_options: { serializer: Api::V1::Users::Accounts::Serializers::UserAccount }
         end
       end
     end

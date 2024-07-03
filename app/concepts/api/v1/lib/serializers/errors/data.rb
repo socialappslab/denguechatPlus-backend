@@ -15,8 +15,8 @@ module Api
 
             def data
               {
-                detail: message,
                 **(title ? { title: } : {}),
+                detail: message,
                 **(meta ? { meta: } : {}),
                 source: {
                   pointer:
