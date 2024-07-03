@@ -1,13 +1,16 @@
-module Dox
-  module Formatters
-    class Plain < Dox::Formatters::Base
-      def format
-        body ||= ''
-        return body if body.encoding == Encoding::UTF_8
+unless Rails.env.production?
+  require 'dox'
+  module Dox
+    module Formatters
+      class Plain < Dox::Formatters::Base
+        def format
+          body ||= ''
+          return body if body.encoding == Encoding::UTF_8
 
-        body.encode(Encoding::UTF_8)
-      rescue Encoding::UndefinedConversionError
-        "#{body.encoding} stream"
+          body.encode(Encoding::UTF_8)
+        rescue Encoding::UndefinedConversionError
+          "#{body.encoding} stream"
+        end
       end
     end
   end

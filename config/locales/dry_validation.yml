@@ -1,11 +1,25 @@
 en:
   dry_validation:
     errors:
-      email_regex?: Submitted email is invalid
-      user_email_unique?: That email address is being used by another account
+      rules:
+        username:
+          user_username_unique?: This username is being used by another account
+          user_credential_requirement: You need provide us at least a username to continue.
+        email:
+          user_email_unique?: This email is being used by another account
+        phone:
+          user_phone_unique?: This phone number is being used by another account
+          user_credential_requirement: You need provide us at least a phone number to continue.
 
 es:
   dry_validation:
     errors:
-      email_regex?: El correo electrónico ingresado no es válido
-      user_email_unique?: Esa dirección de correo electrónico está siendo utilizada por otra cuenta.
+      rules:
+        username:
+          user_username_unique?: El nombre de usuario está siendo utilizada por otra cuenta.
+          user_credential_requirement: Debes proveernos al menos un usuario para continuar.
+        email:
+          user_email_unique?: El correo ya está siendo utilizado por otra cuenta.
+        phone:
+          user_phone_unique?: El numero de telefono ya está siendo utilizado por otra cuenta.
+          user_credential_requirement: Debes proveernos al menos un numero de telefono para continuar.

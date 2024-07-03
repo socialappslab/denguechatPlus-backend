@@ -5,16 +5,31 @@ module Api
     module Users
       module Sessions
         module Contracts
-          class Create < ApplicationReformContract
-            property :email, virtual: true
-            property :password, virtual: true
+          class Create < Dry::Validation::Contract
 
-            validation do
-              params do
-                required(:email).filled(:string)
-                required(:password).filled(:string)
+            def self.kall(...)
+              new.call(...)
+            end
+
+            params do
+              optional(:phone).filled(:string)
+              optional(:username).filled(:string)
+              required(:password).filled(:string)
+              required(:type).filled(:string, included_in?: %w[phone username])
+            end
+
+            rule(:phone) do |type, phone|
+              if values[:type].eql?('phone') && values[:phone].nil?
+                key.failure(:user_credential_requirement)
               end
             end
+
+            rule( :username) do |type, username|
+              if values[:type].eql?('username') && values[:username].nil?
+                key.failure(:user_credential_requirement)
+              end
+            end
+
           end
         end
       end

@@ -22,18 +22,20 @@ module Api
             end
 
             def validate_schema
-              @ctx['contract.default'] = Api::V1::Users::Sessions::Contracts::Create.new(@params)
-              @ctx['contract.default'].validate(@params)
-              return Success({ ctx: @ctx, type: :success }) if @ctx['contract.default'].valid?
+              @ctx['contract.default'] = Api::V1::Users::Sessions::Contracts::Create.kall(@params)
+              is_valid = @ctx['contract.default'].success?
+              return Success({ ctx: @ctx, type: :success }) if is_valid
 
-              Failure({ ctx: @ctx, type: :invalid }) unless @ctx['contract.default'].valid?
+              Failure({ ctx: @ctx, type: :invalid })
             end
 
             def model
-              model = UserAccount.find_by(['LOWER(email) = LOWER(?)', @params[:email]])
+              searched_field = @ctx['contract.default'][:type]
+              searched_value = @ctx['contract.default'][searched_field]
+              model = UserAccount.find_by(searched_field => searched_value)
 
               unless model
-                @ctx['contract.default'].errors.add(:base, I18n.t('errors.session.wrong_credentials'))
+                add_errors(@ctx['contract.default'].errors,'', I18n.t('errors.session.wrong_credentials'), '',[])
                 return Failure({ ctx: @ctx, type: :unauthenticated })
               end
               @ctx[:model] = model
@@ -42,7 +44,7 @@ module Api
 
             def authenticate
               unless @ctx[:model].authenticate(@params[:password])
-                @ctx['contract.default'].errors.add(:base, I18n.t('errors.session.wrong_credentials'))
+                add_errors(@ctx['contract.default'].errors,'', I18n.t('errors.session.wrong_credentials'), '',[])
                 return Failure({ ctx: @ctx, type: :unauthenticated })
               end
               Success({ ctx: @ctx, type: :success })

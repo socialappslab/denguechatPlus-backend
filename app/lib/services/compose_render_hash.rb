@@ -9,7 +9,7 @@ module Services
     def initialize(result:, serializer:, status:)
       @model = result[:model] || result[:data]
       @serializer = serializer
-      @include = result.to_hash.dig(:params, :include)
+      @include = result.to_hash.dig(:params, :include) || result[:include]
       @meta = result[:meta]
       @pagy = result[:pagy]
       @expose = result[:expose]

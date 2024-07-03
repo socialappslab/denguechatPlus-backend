@@ -102,7 +102,8 @@ module Endpoint
   end
 
   def error_serializer(result)
-    result.failure[:ctx]['errors'] ? Api::V1::Lib::Serializers::Errors::Hash : Api::V1::Lib::Serializers::Errors::Reform
+    errors = result.failure[:ctx]['contract.default']
+    errors.respond_to?(:to_result) ? Api::V1::Lib::Serializers::Errors::Reform : Api::V1::Lib::Serializers::Errors::Hash
   end
 
   def error_model(result)

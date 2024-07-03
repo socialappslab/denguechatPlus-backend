@@ -12,6 +12,8 @@
 #  locked               :boolean          default(FALSE), not null
 #  locked_at            :datetime
 #  password_digest      :string
+#  phone                :string
+#  username             :string
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  user_profile_id      :bigint
@@ -20,7 +22,9 @@
 #
 #  index_user_accounts_on_discarded_at     (discarded_at)
 #  index_user_accounts_on_email            (email) UNIQUE
+#  index_user_accounts_on_phone            (phone) UNIQUE
 #  index_user_accounts_on_user_profile_id  (user_profile_id)
+#  index_user_accounts_on_username         (username) UNIQUE
 #
 # Foreign Keys
 #
