@@ -11,7 +11,7 @@ module Api
           params do
             required(:country_id).maybe(:integer)
             optional(:filter).maybe(:hash) do
-              optional(:name).maybe(:string)
+              optional(:country_id).maybe(:string)
             end
 
             optional(:page).maybe(:hash) do

@@ -28,7 +28,7 @@ module Api
           def id_clause(relation)
             return relation if @filter.nil? || @filter[:country_id].blank?
 
-            relation.where(country: { id: @filter[:country_id] })
+            relation.where( id: @filter[:country_id])
           end
 
         end
