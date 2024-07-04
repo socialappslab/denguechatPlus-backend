@@ -4,17 +4,14 @@ module Api
   module V1
     module Organizations
       module Contracts
-        class Update < ApplicationReformContract
+        class Update < Dry::Validation::Contract
+          def self.kall(...)
+            new.call(...)
+          end
 
-          property :id, virtual: true
-          property :name, virtual: true
-
-          validation do
-            params do
-              required(:id).filled(:integer)
-              required(:name).filled(:string)
-            end
-
+          params do
+            required(:id).filled(:integer)
+            required(:name).filled(:string)
           end
         end
       end

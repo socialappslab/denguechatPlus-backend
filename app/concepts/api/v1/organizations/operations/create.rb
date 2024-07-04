@@ -17,9 +17,8 @@ module Api
           end
 
           def validate_schema
-            @ctx['contract.default'] = Api::V1::Organizations::Contracts::Create.new(@params)
-            @ctx['contract.default'].validate(@params)
-            is_valid = @ctx['contract.default'].valid?
+            @ctx['contract.default'] = Api::V1::Organizations::Contracts::Create.kall(@params)
+            is_valid = @ctx['contract.default'].success?
             return Success({ ctx: @ctx, type: :success }) if is_valid
 
             Failure({ ctx: @ctx, type: :invalid })

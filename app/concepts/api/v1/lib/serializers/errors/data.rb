@@ -6,27 +6,26 @@ module Api
       module Serializers
         module Errors
           class Data
-            def initialize(field, message, title, meta)
+            def initialize(field, message, title, meta, error_code)
               @field = field
               @message = message
               @title = title
               @meta = meta
+              @error_code = error_code
             end
 
             def data
               {
                 **(title ? { title: } : {}),
+                error_code: @error_code,
                 detail: message,
-                **(meta ? { meta: } : {}),
-                source: {
-                  pointer:
-                }
+                field: field
               }
             end
 
             private
 
-            attr_reader :field, :message, :title, :meta
+            attr_reader :field, :message, :title, :meta, :error_code
 
             # :reek:NilCheck
             def pointer

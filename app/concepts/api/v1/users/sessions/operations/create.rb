@@ -35,7 +35,7 @@ module Api
               model = UserAccount.find_by(searched_field => searched_value)
 
               unless model
-                add_errors(@ctx['contract.default'].errors,'', I18n.t('errors.session.wrong_credentials'), '',[])
+                add_errors(@ctx['contract.default'].errors,'', I18n.t('errors.session.wrong_credentials'), '',[], :credentials_wrong?)
                 return Failure({ ctx: @ctx, type: :unauthenticated })
               end
               @ctx[:model] = model
@@ -44,7 +44,7 @@ module Api
 
             def authenticate
               unless @ctx[:model].authenticate(@params[:password])
-                add_errors(@ctx['contract.default'].errors,'', I18n.t('errors.session.wrong_credentials'), '',[])
+                add_errors(@ctx['contract.default'].errors,'', I18n.t('errors.session.wrong_credentials'), '',[], :credentials_wrong?)
                 return Failure({ ctx: @ctx, type: :unauthenticated })
               end
               Success({ ctx: @ctx, type: :success })

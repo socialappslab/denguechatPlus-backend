@@ -4,7 +4,7 @@ en:
       rules:
         username:
           user_username_unique?: This username is being used by another account
-          user_credential_requirement: You need provide us at least a username to continue.
+          user_credential_requirement?: You need provide us at least a username to continue.
         email:
           user_email_unique?: This email is being used by another account
         phone:
@@ -17,7 +17,7 @@ es:
       rules:
         username:
           user_username_unique?: El nombre de usuario está siendo utilizada por otra cuenta.
-          user_credential_requirement: Debes proveernos al menos un usuario para continuar.
+          user_credential_requirement?: Debes proveernos al menos un usuario para continuar.
         email:
           user_email_unique?: El correo ya está siendo utilizado por otra cuenta.
         phone:

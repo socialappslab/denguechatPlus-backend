@@ -22,7 +22,7 @@ module Api
             def parse_errors(errors_hash)
               errors_hash.each_with_object([]) do |(field, error_value), memo|
                 if plain_errors?(error_value)
-                  memo << compose_errors(error_value, field)
+                  memo << compose_errors(error_value, field, nil, nil, set_code_error(error.predicate))
                 else
                   parse_nested_errors_arrays_array(error_value, field, memo)
                 end
