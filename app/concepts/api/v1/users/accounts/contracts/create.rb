@@ -30,7 +30,7 @@ module Api
             rule(:email) do
               if values[:email]
                 if UserAccount.exists?(['LOWER(email) = ?', values[:email].downcase])
-                  key(:email).failure(:user_email_unique?)
+                  key(:email).failure(text: :user_email_unique?,  predicate: :user_email_unique?)
                 end
               end
             end
@@ -38,17 +38,17 @@ module Api
 
             rule(:phone) do
               if values[:phone].nil? && values[:username].nil?
-                key(:phone).failure(:user_credential_requirement)
+                key(:phone).failure(text: :user_credential_requirement, predicate: :credentials_wrong?)
               elsif values[:phone] && UserAccount.exists?(phone: values[:phone])
-                key.failure(:user_phone_unique?)
+                key.failure(text: :user_phone_unique?, predicate: :user_phone_unique?)
               end
             end
 
             rule(:username) do
               if values[:username].nil? && values[:phone].nil?
-                key(:username).failure(:user_credential_requirement)
+                key(:username).failure(text: :user_credential_requirement, predicate: :credentials_wrong?)
               elsif values[:username] && UserAccount.exists?(username: value)
-                key.failure(:user_username_unique?)
+                key.failure(text: :user_username_unique?, predicate: :user_username_unique?)
               end
             end
 

@@ -49,7 +49,10 @@ module Constants
       uri?: 44,
       uri_rfc3986?: 45,
       credentials_wrong?: 46,
-      key?: 47
+      key?: 47,
+      user_username_unique?: 48,
+      user_phone_unique?: 49,
+      user_email_unique?: 50
     }.freeze
   end
 end
