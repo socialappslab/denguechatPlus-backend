@@ -18,6 +18,7 @@ Rails.application.routes.draw do
           delete :destroy
         end
       end
+      resources :locations, only: %i[index]
 
     end
   end
