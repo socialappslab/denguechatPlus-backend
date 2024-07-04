@@ -20,13 +20,13 @@ module Api
 
             rule(:phone) do |type, phone|
               if values[:type].eql?('phone') && values[:phone].nil?
-                key.failure(:user_credential_requirement)
+                key.failure(text: :user_credential_requirement, predicate: :filled?)
               end
             end
 
             rule( :username) do |type, username|
               if values[:type].eql?('username') && values[:username].nil?
-                key.failure(:user_credential_requirement)
+                key.failure(text: :user_credential_requirement?, predicate: :filled?)
               end
             end
 

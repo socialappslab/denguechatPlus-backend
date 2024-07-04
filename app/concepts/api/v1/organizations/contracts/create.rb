@@ -4,15 +4,14 @@ module Api
   module V1
     module Organizations
       module Contracts
-        class Create < ApplicationReformContract
+        class Create < Dry::Validation::Contract
 
-          property :name, virtual: true
+          def self.kall(...)
+            new.call(...)
+          end
 
-          validation do
-            params do
-              required(:name).filled(:string)
-            end
-
+          params do
+            required(:name).filled(:string)
           end
         end
       end

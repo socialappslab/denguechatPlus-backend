@@ -33,6 +33,12 @@ Dry::Validation.register_macro(:pagination_direction?) do
   key(:page).failure(:pagination_direction?)
 end
 
+Dry::Validation.register_macro(:username_exists?) do
+  if values[:type].eql?('username') && values[:username].nil?
+    key.failure(:user_credential_requirement?)
+  end
+end
+
 Dry::Validation.register_macro(:email_regex?) do
   key.failure(:email_regex?) unless value.match? Constants::Shared::EMAIL_REGEX
 end

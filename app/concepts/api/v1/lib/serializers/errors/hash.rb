@@ -25,11 +25,20 @@ module Api
 
             def compose_arguments(error)
               first_form = error.respond_to?(:text)
-              if first_form
-                res =  [[error.text], error.path.first, nil, error.meta ]
+              res = if first_form
+                [[error.text], error.path.first, nil, error.meta, set_code_error(error) ]
               else
-                res = [error[:messages], error[:field], error[:title], error[:meta] ]
+                [error[:messages], error[:field], error[:title], error[:meta] ]
               end
+            end
+
+            def set_code_error(error)
+              return '' if error.nil?
+              return '' if error.try(:predicate) && error.meta.blank? && error.try(:custom_predicate)
+              meta = error.meta.is_a?(::Hash)  && error.meta.key?(:predicate) ? error.meta[:predicate] : nil
+
+              text = error.try(:predicate) || meta || error.try(:custom_predicate)
+              Constants::ErrorCodes::CODE[text] || ''
             end
           end
         end
