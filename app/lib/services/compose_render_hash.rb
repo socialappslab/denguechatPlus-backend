@@ -18,61 +18,20 @@ module Services
 
     def call
       debug_response if %w[staging sandbox release].include? Rails.env
-      response_hash
+      params = {model: @model, serializer: @serializer,
+                include: @include,
+                pagy: @pagy,
+                expose: @expose,
+                status: @status}
+
+      return Services::FastJson.call(**params) if @serializer.superclass == ApplicationSerializer
+
+      Services::AlbaJson.call(**params) if @serializer.superclass
+
     end
 
     private
 
-    def serialized_json
-      serializable_hash = @serializer.new(@model, **options).serializable_hash
-      ActiveSupport::JSON.encode(serializable_hash)
-    end
 
-    def response_hash
-      @response_hash ||= {
-        json: serialized_json,
-        status: @status
-      }
-    end
-
-    def options
-      {
-        meta: @meta,
-        links:,
-        include:,
-        params: @expose
-      }
-    end
-
-    def links
-      @pagy ? pagination_links : nil
-    end
-
-    def pagination_links
-      {
-        self: @pagy.page,
-        last: @pagy.pages
-      }
-    end
-
-    def include
-      @include ? includes_array : nil
-    end
-
-    def includes_array
-      return @include.underscore.split(',') if @include.is_a?(String)
-
-      @include.map(&:underscore)
-    end
-
-    def debug_response
-      Rails.logger.debug(
-        ActiveSupport::LogSubscriber.new.send(
-          :color,
-          "RESPONSE: \n#{JSON.parse response_hash[:jsonapi]} \nwith status: #{response_hash[:status]}",
-          :yellow
-        )
-      )
-    end
   end
 end

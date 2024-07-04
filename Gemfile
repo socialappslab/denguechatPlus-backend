@@ -49,6 +49,7 @@ gem 'pagy_cursor', '0.2.2'
 
 # JSON:API Serializer
 gem 'jsonapi-serializer', '~> 2.2'
+gem 'alba'
 gem 'jwt'
 gem 'jwt_sessions'
 # Role management

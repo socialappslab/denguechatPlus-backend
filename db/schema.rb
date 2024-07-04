@@ -10,9 +10,46 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_02_225752) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_04_180612) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "cities", force: :cascade do |t|
+    t.string "name"
+    t.datetime "discarded_at"
+    t.bigint "state_id", null: false
+    t.bigint "country_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["country_id"], name: "index_cities_on_country_id"
+    t.index ["name", "discarded_at"], name: "index_cities_on_name_and_discarded_at", unique: true
+    t.index ["state_id", "country_id", "discarded_at"], name: "index_cities_on_state_id_and_country_id_and_discarded_at", unique: true
+    t.index ["state_id"], name: "index_cities_on_state_id"
+  end
+
+  create_table "countries", force: :cascade do |t|
+    t.string "name"
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["discarded_at"], name: "index_countries_on_discarded_at"
+    t.index ["name"], name: "index_countries_on_name"
+  end
+
+  create_table "neighborhoods", force: :cascade do |t|
+    t.string "name"
+    t.datetime "discarded_at"
+    t.bigint "country_id", null: false
+    t.bigint "state_id", null: false
+    t.bigint "city_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["city_id"], name: "index_neighborhoods_on_city_id"
+    t.index ["country_id", "state_id", "city_id", "discarded_at"], name: "idx_on_country_id_state_id_city_id_discarded_at_d4d773c91a", unique: true
+    t.index ["country_id"], name: "index_neighborhoods_on_country_id"
+    t.index ["name", "discarded_at"], name: "index_neighborhoods_on_name_and_discarded_at", unique: true
+    t.index ["state_id"], name: "index_neighborhoods_on_state_id"
+  end
 
   create_table "organizations", force: :cascade do |t|
     t.string "name"
@@ -31,6 +68,23 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_02_225752) do
     t.bigint "resource_id"
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource"
+  end
+
+  create_table "seed_tasks", force: :cascade do |t|
+    t.string "task_name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "states", force: :cascade do |t|
+    t.string "name"
+    t.datetime "discarded_at"
+    t.bigint "country_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["country_id", "discarded_at"], name: "index_states_on_country_id_and_discarded_at", unique: true
+    t.index ["country_id"], name: "index_states_on_country_id"
+    t.index ["name", "discarded_at"], name: "index_states_on_name_and_discarded_at", unique: true
   end
 
   create_table "user_accounts", force: :cascade do |t|
@@ -88,6 +142,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_02_225752) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
+  add_foreign_key "cities", "countries"
+  add_foreign_key "cities", "states"
+  add_foreign_key "neighborhoods", "cities"
+  add_foreign_key "neighborhoods", "countries"
+  add_foreign_key "neighborhoods", "states"
+  add_foreign_key "states", "countries"
   add_foreign_key "user_accounts", "user_profiles"
   add_foreign_key "user_profiles_roles", "roles"
   add_foreign_key "user_profiles_roles", "user_profiles"
