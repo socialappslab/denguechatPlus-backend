@@ -8,7 +8,7 @@ module Api
           class UserAccount < ApplicationSerializer
             set_type :user_account
 
-            attributes :id, :email, :username, :phone, :confirmed_at
+            attributes :id, :email, :username, :phone, :status, :locked, :confirmed_at
             belongs_to :user_profile, serializer: Api::V1::Users::Accounts::Serializers::UserProfile, include: true
 
           end

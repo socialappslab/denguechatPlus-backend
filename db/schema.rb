@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_04_180612) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_05_002308) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -100,6 +100,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_04_180612) do
     t.datetime "updated_at", null: false
     t.string "phone"
     t.string "username"
+    t.boolean "status", default: false
     t.index ["discarded_at"], name: "index_user_accounts_on_discarded_at"
     t.index ["email"], name: "index_user_accounts_on_email", unique: true
     t.index ["phone"], name: "index_user_accounts_on_phone", unique: true

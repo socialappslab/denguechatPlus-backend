@@ -24,7 +24,7 @@ module Services
                 expose: @expose,
                 status: @status}
 
-      return Services::FastJson.call(**params) if @serializer.superclass == ApplicationSerializer
+      return Services::FastJson.call(**params) if @serializer.superclass !=  Object
 
       Services::AlbaJson.call(**params) if @serializer.superclass
 
