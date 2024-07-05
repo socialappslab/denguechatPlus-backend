@@ -20,6 +20,7 @@ module Services
       debug_response if %w[staging sandbox release].include? Rails.env
       params = {model: @model, serializer: @serializer,
                 include: @include,
+                meta: @meta,
                 pagy: @pagy,
                 expose: @expose,
                 status: @status}
