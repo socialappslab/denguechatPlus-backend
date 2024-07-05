@@ -13,6 +13,7 @@
 #  locked_at            :datetime
 #  password_digest      :string
 #  phone                :string
+#  status               :boolean          default(FALSE)
 #  username             :string
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null

@@ -10,7 +10,6 @@ module Api
 
             attributes :id, :first_name, :last_name, :gender, :phone_number, :slug,
                        :points, :country, :city, :language, :timezone
-
             end
           end
         end

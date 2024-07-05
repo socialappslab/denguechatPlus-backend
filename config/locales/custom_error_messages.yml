@@ -16,8 +16,9 @@ en:
     users:
       restore_password:
         not_exists: User with such email doesn’t exist
-      deactivation:
-        no_account: This user has no account, so it can't be deactivated
+      status_change:
+        without_params: You should send locked or status params if you want change these information.
+      not_found: The user not exists
 
     rules:
       user_profile:
@@ -41,8 +42,10 @@ es:
     users:
       restore_password:
         not_exists: El usuario con dicho correo electrónico no existe
-      deactivation:
-        no_account: Este usuario no tiene cuenta, por lo que no se puede desactivar.
+      status_change:
+        without_params: Debes enviar locked o status para realizar un cambio.
+
+      not_found: El usuario no existe
 
     rules:
       user_profile:

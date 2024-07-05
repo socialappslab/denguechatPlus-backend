@@ -20,6 +20,13 @@ Rails.application.routes.draw do
       end
       resources :locations, only: %i[index]
 
+      namespace :admin do
+        resources :users do
+          member do
+            put 'change_status'
+          end
+        end
+      end
     end
   end
 end
