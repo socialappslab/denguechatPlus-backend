@@ -9,9 +9,8 @@ module Api
             new.call(...)
           end
           params do
-            required(:country_id).maybe(:integer)
-            optional(:filter).maybe(:hash) do
-              optional(:country_id).maybe(:string)
+            required(:filter).filled(:hash) do
+              required(:country_id).filled(:string)
             end
 
             optional(:page).maybe(:hash) do
