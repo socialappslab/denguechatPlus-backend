@@ -37,12 +37,12 @@ unless SeedTask.find_by(task_name: 'states_and_cities')
 
     #create cities
     state['cities']&.each do |city|
-      city_persisted = City.create(name: city['name'], state: state_persisted,  country:)
+      city_persisted = City.create(name: city['name'], state: state_persisted, country:)
 
 
       #create neighboorhoods
       city['neighborhoods']&.each do |neighborhood|
-        Neighborhood.new(name: neighborhood['name'], state: state_persisted, country:, city:city_persisted)
+        Neighborhood.create(name: neighborhood['name'], state: state_persisted, country:, city:city_persisted)
       end
     end
   end
