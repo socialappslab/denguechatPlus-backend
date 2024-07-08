@@ -9,6 +9,7 @@ module Api
             include Dry::Transaction
 
             tee :params
+            tee :to_snake_case
             step :validate_schema
             step :create_profile
             step :create_account
@@ -17,6 +18,10 @@ module Api
             def params(input)
               @ctx = {}
               @params = input.fetch(:params)
+            end
+
+            def to_snake_case
+              @params = Api::V1::Lib::Serializers::NamingConvention.new(@params, :to_snake_case).res
             end
 
             def validate_schema
