@@ -85,7 +85,6 @@ gem 'aws-sdk-s3', require: false
 
 # dry gems
 gem 'dry-monads'
-gem 'dry-container'
 gem 'dry-validation'
 gem 'dry-auto_inject'
 gem 'reform'

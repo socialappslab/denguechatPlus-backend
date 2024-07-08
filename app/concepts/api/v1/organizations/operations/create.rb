@@ -13,7 +13,7 @@ module Api
 
           def params(input)
             @ctx = {}
-            @params = input.fetch(:params)
+            @params = to_snake_case(input[:params])
           end
 
           def validate_schema

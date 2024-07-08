@@ -2,13 +2,14 @@
 
 module Api
   module V1
-    module Locations
+    module Teams
       module Operations
         class Index < ApplicationOperation
           include Dry::Transaction
 
           tee :params
           step :validate_schema
+          tee :cursor_and_paginate
           step :list
           tee :page_pagination?
           tee :paginate
@@ -21,15 +22,19 @@ module Api
           end
 
           def validate_schema
-            @ctx['contract.default'] = Api::V1::Locations::Contracts::Index.kall(@params)
+            @ctx['contract.default'] = Api::V1::Teams::Contracts::Index.kall(@params)
             is_valid = @ctx['contract.default'].success?
             return Success({ ctx: @ctx, type: :success }) if is_valid
 
             Failure({ ctx: @ctx, type: :invalid }) unless is_valid
           end
 
+          def cursor_and_paginate
+            @ctx[:sort] = { field: 'Teams.name', direction: 'asc' }
+          end
+
           def list
-            @ctx[:data] = Api::V1::Locations::Queries::Index.call(@ctx['contract.default']['filter'])
+            @ctx[:data] = Api::V1::Teams::Queries::Index.call(@ctx['contract.default']['filter'], @ctx[:sort])
             Success({ ctx: @ctx, type: :success })
           end
 
@@ -43,7 +48,7 @@ module Api
           end
 
           def includes
-            @ctx[:include] = ['states.cities']
+            @ctx[:include] = ['team_members']
           end
 
           def meta

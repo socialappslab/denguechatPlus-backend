@@ -9,7 +9,6 @@ module Api
             include Dry::Transaction
 
             tee :params
-            tee :to_snake_case
             step :validate_schema
             step :create_profile
             step :create_account
@@ -17,13 +16,8 @@ module Api
 
             def params(input)
               @ctx = {}
-              @params = input.fetch(:params)
+              @params = to_snake_case(input[:params])
             end
-
-            def to_snake_case
-              @params = Api::V1::Lib::Serializers::NamingConvention.new(@params, :to_snake_case).res
-            end
-
             def validate_schema
               @ctx['contract.default'] = Api::V1::Users::Accounts::Contracts::Create.kall(@params)
               is_valid = @ctx['contract.default'].success?

@@ -87,6 +87,31 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_08_142044) do
     t.index ["name", "discarded_at"], name: "index_states_on_name_and_discarded_at", unique: true
   end
 
+  create_table "team_members", force: :cascade do |t|
+    t.bigint "user_account_id", null: false
+    t.bigint "team_id", null: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["team_id"], name: "index_team_members_on_team_id"
+    t.index ["user_account_id"], name: "index_team_members_on_user_account_id"
+  end
+
+  create_table "teams", force: :cascade do |t|
+    t.string "name"
+    t.datetime "discarded_at"
+    t.boolean "locked", default: false
+    t.integer "points", default: 0
+    t.datetime "deleted_at"
+    t.bigint "organization_id", null: false
+    t.bigint "neighborhood_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name", "deleted_at"], name: "index_teams_on_name_and_deleted_at", unique: true
+    t.index ["neighborhood_id"], name: "index_teams_on_neighborhood_id"
+    t.index ["organization_id"], name: "index_teams_on_organization_id"
+  end
+
   create_table "user_accounts", force: :cascade do |t|
     t.string "email"
     t.string "password_digest"
@@ -148,6 +173,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_08_142044) do
   add_foreign_key "neighborhoods", "countries"
   add_foreign_key "neighborhoods", "states"
   add_foreign_key "states", "countries"
+  add_foreign_key "team_members", "teams"
+  add_foreign_key "team_members", "user_accounts"
+  add_foreign_key "teams", "neighborhoods"
+  add_foreign_key "teams", "organizations"
   add_foreign_key "user_accounts", "user_profiles"
   add_foreign_key "user_profiles_roles", "roles"
   add_foreign_key "user_profiles_roles", "user_profiles"
