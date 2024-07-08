@@ -26,6 +26,7 @@ Rails.application.routes.draw do
             put 'change_status'
           end
         end
+        resources :teams
       end
     end
   end

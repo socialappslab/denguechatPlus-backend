@@ -4,6 +4,7 @@ class ApiController < ApplicationController
   include Endpoint
   include Authentication
   include HttpAuthConcern
+  include Deserializer
 
   private
 
@@ -13,4 +14,5 @@ class ApiController < ApplicationController
     # Api::V1::Lib::Services::Users::HandleActivity.call(current_user:)
     true || head(:unauthorized)
   end
+
 end
