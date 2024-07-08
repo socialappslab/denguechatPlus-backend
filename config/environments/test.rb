@@ -74,12 +74,12 @@ Rails.application.configure do
   config.action_controller.raise_on_missing_callback_actions = true
 
 
-  config.jwt_token_store = :memory
-  config.client_url = 'http://localhost:4000'
-  config.api_host = 'http://localhost:3000'
-  config.redis_instance = MockRedis.new
-
-  config.i18n.default_locale = :en
-
-  config.support_email = 'support@denguechatplus.com'
+  # config.jwt_token_store = :memory
+  # config.client_url = 'http://localhost:4000'
+  # config.api_host = 'http://localhost:3000'
+  # config.redis_instance = MockRedis.new
+  #
+  # config.i18n.default_locale = :en
+  #
+  # config.support_email = 'support@denguechatplus.com'
 end
