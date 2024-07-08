@@ -4,7 +4,7 @@ module Api
   module V1
     module Organizations
       module Queries
-        class Index
+        class Update
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort)
