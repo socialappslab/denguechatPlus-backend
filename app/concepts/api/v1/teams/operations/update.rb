@@ -2,7 +2,7 @@
 
 module Api
   module V1
-    module Organizations
+    module Teams
       module Operations
         class Update < ApplicationOperation
           include Dry::Transaction
@@ -18,7 +18,7 @@ module Api
           end
 
           def validate_schema
-            @ctx['contract.default'] = Api::V1::Organizations::Contracts::Update.kall(@params)
+            @ctx['contract.default'] = Api::V1::Teams::Contracts::Update.kall(@params)
             is_valid = @ctx['contract.default'].success?
             return Success({ ctx: @ctx, type: :success }) if is_valid
 

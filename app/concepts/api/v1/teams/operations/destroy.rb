@@ -2,7 +2,7 @@
 
 module Api
   module V1
-    module Organizations
+    module Teams
       module Operations
         class Destroy <  ApplicationOperation
           include Dry::Transaction
@@ -10,7 +10,7 @@ module Api
           tee :params
           step :validate_schema
           tee :model
-          step :discard_organizations
+          step :discard_teams
 
           def params(input)
             @ctx = {}
@@ -18,7 +18,7 @@ module Api
           end
 
           def validate_schema
-            @ctx['contract.default'] = Api::V1::Organizations::Contracts::Destroy.kall(@params)
+            @ctx['contract.default'] = Api::V1::Teams::Contracts::Destroy.kall(@params)
             is_valid = @ctx['contract.default'].success?
             return Success({ ctx: @ctx, type: :success }) if is_valid
 
@@ -27,10 +27,10 @@ module Api
 
 
           def model
-            @ctx[:model] = Organization.kept.where(id: @ctx['contract.default']['organization_ids'])
+            @ctx[:model] = Team.kept.where(id: @ctx['contract.default']['team_ids'])
           end
 
-          def discard_organizations
+          def discard_teams
             ActiveRecord::Base.transaction do
               @ctx[:model].discard_all
               Success({ ctx: @ctx, type: :success })
