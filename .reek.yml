@@ -1,0 +1,104 @@
+exclude_paths:
+  - bin/
+  - vendor/
+  - spec/fixtures/
+  - tmp/
+  - db/
+  - app/controllers/concerns/endpoint.rb
+  - app/lib/macro
+
+detectors:
+  Attribute:
+    exclude:
+      - PagyCompositeCursor::Cursor
+
+  TooManyConstants:
+    enabled: false
+
+  IrresponsibleModule:
+    enabled: false
+
+  InstanceVariableAssumption:
+    enabled: false
+
+  MissingSafeMethod:
+    enabled: false
+
+  NilCheck:
+    enabled: false
+
+  LongParameterList:
+    enabled: false
+
+  UncommunicativeMethodName:
+    accept:
+      - /\A[A-Z].*/
+
+  UncommunicativeModuleName:
+    accept:
+      - V1
+
+  UtilityFunction:
+    enabled: false
+
+  TooManyStatements:
+    enabled: false
+
+  TooManyInstanceVariables:
+    enabled: false
+
+  TooManyMethods:
+    enabled: false
+
+  BooleanParameter:
+    enabled: false
+
+  ControlParameter:
+    enabled: false
+
+  DataClump:
+    enabled: true
+
+  DuplicateMethodCall:
+    enabled: true
+
+  FeatureEnvy:
+    enabled: false
+
+
+  NestedIterators:
+    max_allowed_nesting: 2
+    ignore_iterators:
+      - lambda
+
+  RepeatedConditional:
+    enabled: true
+
+  ManualDispatch:
+    enabled: false
+
+directories:
+  'spec/':
+    DuplicateMethodCall:
+      enabled: false
+  'app/concepts':
+    UtilityFunction:
+      enabled: false
+    FeatureEnvy:
+      enabled: false
+    DuplicateMethodCall:
+      enabled: false
+  'app/mailers':
+    InstanceVariableAssumption:
+      enabled: false
+    DuplicateMethodCall:
+      enabled: false
+  'lib/pagy':
+    FeatureEnvy:
+      enabled: false
+  'db/':
+    UncommunicativeVariableName:
+      enabled: false
+  'app/policies/':
+    DuplicateMethodCall:
+      enabled: false

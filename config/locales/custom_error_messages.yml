@@ -1,0 +1,52 @@
+en:
+  errors:
+    default: Something went wrong
+    unauthenticated: Authentication failed
+    not_found: Not found
+    unauthorized: Authorization failed
+    pagination_overflow: is out of limits
+
+    session:
+      confirmation_error: Confirmation letter was sent to this email. Please, follow the link and complete registration. Didn’t get email?
+      wrong_credentials: Wrong credentials
+      wrong_password: Is incorrect
+      deactivated: Your profile has been deactivated, contact your administrator for further details
+      invalid_password: Password is invalid
+
+    users:
+      restore_password:
+        not_exists: User with such email doesn’t exist
+      status_change:
+        without_params: You should send locked or status params if you want change these information.
+      not_found: The user not exists
+
+    rules:
+      user_profile:
+        filled?: can’t be blank
+
+es:
+  errors:
+    default: Algo salió mal
+    unauthenticated: Autenticación fallida
+    not_found: No se pudo encontrar
+    unauthorized: Autorización fallida
+    pagination_overflow: Está fuera de límites
+
+    session:
+      confirmation_error: Se envió una carta de confirmación a este correo electrónico. Por favor, siga el enlace y complete el registro. ¿No recibiste el correo electrónico?
+      wrong_credentials: Credenciales incorrectas
+      wrong_password: Es incorrecto
+      deactivated: Su perfil ha sido desactivado, comuníquese con su administrador para obtener más detalles.
+      invalid_password: Contraaseña inválida
+
+    users:
+      restore_password:
+        not_exists: El usuario con dicho correo electrónico no existe
+      status_change:
+        without_params: Debes enviar locked o status para realizar un cambio.
+
+      not_found: El usuario no existe
+
+    rules:
+      user_profile:
+        filled?: no puede estar en blanco

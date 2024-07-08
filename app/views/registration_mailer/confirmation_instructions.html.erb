@@ -1,0 +1,16 @@
+<p style="color: #13284C; font-size: 16px; letter-spacing: 0; line-height: 24px; text-align: center; margin-bottom: 32px;">
+  <%= I18n.t('registration_mailer.confirmation_instructions_for_user.body') %>
+</p>
+
+<div style="text-align: center; margin-bottom: 48px;">
+  <%= link_to I18n.t('registration_mailer.confirmation_instructions_for_user.confirm_link_text'), @link, clicktracking: :off, class: "mail-btn-link", style: "min-width: 120px; padding: 10px 8px; background-color: #0069BC; border-radius: 20px; text-decoration: none; display: inline-block; margin: auto; font-size: 14px;  font-weight: bold;  letter-spacing: -0.2px;  line-height: 20px; text-align: center; color: white;" %>
+</div>
+
+<p style="font-size: 14px; color: #13284C; letter-spacing: 0; line-height: 20px; text-align: center; margin: 16px 0 0;">
+  <%= I18n.t('registration_mailer.confirmation_instructions_for_user.confirm_account') %>
+</p>
+
+
+<p style="font-size: 14px; color: #13284C; letter-spacing: 0; line-height: 20px; text-align: center; margin: 16px 0 0;">
+  <%= I18n.t('registration_mailer.confirmation_instructions_for_user.respond_not_needed') %>
+</p>

@@ -1,0 +1,117 @@
+en:
+  errors:
+    app_version_deprecated: "Please update the app in Google Play/App Store to continue to log in."
+    or: "or"
+    array?: "must be an array"
+    empty?: "must be empty"
+    excludes?: "must not include %{value}"
+    excluded_from?:
+      arg:
+        default: "must not be one of: %{list}"
+        range: "must not be one of: %{list_left} - %{list_right}"
+    exclusion?: "must not be one of: %{list}"
+    eql?: "must be equal to %{left}"
+    not_eql?: "must not be equal to %{left}"
+    filled?: "must be filled"
+    format?: "is in invalid format"
+    number?: "must be a number"
+    odd?: "must be odd"
+    even?: "must be even"
+    gt?: "must be greater than %{num}"
+    gteq?: "must be greater than or equal to %{num}"
+    hash?: "must be a hash"
+    included_in?:
+      arg:
+        default: "must be one of: %{list}"
+        range: "must be one of: %{list_left} - %{list_right}"
+    inclusion?: "must be one of: %{list}"
+    includes?: "must include %{value}"
+    bool?: "must be boolean"
+    true?: "must be true"
+    false?: "must be false"
+    int?: "must be an integer"
+    float?: "must be a number"
+    decimal?: "must be a decimal"
+    date?: "must be a date"
+    date_time?: "must be a date time"
+    time?: "must be a time"
+    key?: "is missing"
+    attr?: "is missing"
+    lt?: "must be less than %{num}"
+    lteq?: "must be less than or equal to %{num}"
+    max_size?: "size cannot be greater than %{num}"
+    min_size?: "size cannot be less than %{num}"
+    none?: "cannot be defined"
+    str?: "must be a string"
+    type?: "must be %{type}"
+    size?:
+      arg:
+        default: "size must be %{size}"
+        range: "size must be within %{size_left} - %{size_right}"
+      value:
+        string:
+          arg:
+            default: "length must be %{size}"
+            range: "length must be within %{size_left} - %{size_right}"
+    token:
+      expired: "Your token had expired"
+      invalid: "Your token is invalid"
+
+es:
+  errors:
+    app_version_deprecated: "Por favor, actualice la aplicación en Google Play/App Store para continuar con el inicio de sesión."
+    or: "o"
+    array?: "debe ser una matriz"
+    empty?: "debe estar vacío"
+    excludes?: "no debe incluir %{value}"
+    excluded_from?:
+      arg:
+        default: "no debe ser uno de: %{list}"
+        range: "no debe ser uno de: %{list_left} - %{list_right}"
+    exclusion?: "no debe ser uno de: %{list}"
+    eql?: "no debe ser igual a %{left}"
+    not_eql?: "no debe ser igual a %{left}"
+    filled?: "debe ser rellenado"
+    format?: "el formato es inválido"
+    number?: "debe ser un número"
+    odd?: "debe ser extraño"
+    even?: "debe ser parejo"
+    gt?: "deber ser mayor que %{num}"
+    gteq?: "debe ser mayor o igual que %{num}"
+    hash?: "must be a hash"
+    included_in?:
+      arg:
+        default: "debe ser uno de: %{list}"
+        range: "debe ser uno de: %{list_left} - %{list_right}"
+    inclusion?: "debe ser uno de: %{list}"
+    includes?: "debe incluir %{value}"
+    bool?: "debe ser boleano"
+    true?: "debe ser verdadero"
+    false?: "debe ser falso"
+    int?: "debe ser un entero"
+    float?: "Debe ser un numero"
+    decimal?: "debe ser un decimal"
+    date?: "debe ser una fecha"
+    date_time?: "debe ser un espacio de tiempo"
+    time?: "debe ser un ahora"
+    key?: "falta"
+    attr?: "falta"
+    lt?: "debe ser menor a %{num}"
+    lteq?: "debe ser menor o igual a %{num}"
+    max_size?: "el tamaño no puede ser mayor que %{num}"
+    min_size?: "el tamaño no puede ser menor que %{num}"
+    none?: "no se puede definir"
+    str?: "debe ser una cadena de texto"
+    type?: "debe ser %{type}"
+    size?:
+      arg:
+        default: "el tamaño debe ser %{size}"
+        range: "el tamaño debe estar dentro de %{size_left} - %{size_right}"
+      value:
+        string:
+          arg:
+            default: "la longitud debe ser %{size}"
+            range: "la longitud debe estar dentro de %{size_left} - %{size_right}"
+    token:
+      expired: "El token a expirado"
+      invalid: "El token es inválido"

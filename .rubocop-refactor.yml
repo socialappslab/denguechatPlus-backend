@@ -1,0 +1,53 @@
+Metrics/MethodLength:
+  Severity: refactor
+  Exclude:
+    - 'db/migrate/*'
+
+Metrics/BlockLength:
+  Severity: refactor
+  Exclude:
+    - 'lib/tasks/**/*'
+    - 'db/migrate/*'
+
+RSpec/ContextWording:
+  Severity: refactor
+
+RSpec/ExampleLength:
+  Severity: refactor
+
+RSpec/NestedGroups:
+  Severity: refactor
+
+RSpec/MessageChain:
+  Severity: refactor
+
+Metrics/AbcSize:
+  Severity: refactor
+
+Metrics/CyclomaticComplexity:
+  Severity: refactor
+
+Metrics/PerceivedComplexity:
+  Severity: refactor
+
+Naming/VariableNumber:
+  EnforcedStyle: 'snake_case'
+  Exclude:
+    - 'spec/**/*'
+    - 'config/**/*'
+    - 'lib/tasks/**/*'
+
+Naming/RescuedExceptionsVariableName:
+  PreferredName: error
+
+Rails/FilePath:
+  Severity: refactor
+
+RSpec/ExpectChange:
+  Severity: refactor
+
+Style/RedundantFetchBlock:
+  Severity: refactor
+
+Rails/IndexWith:
+  Severity: refactor
