@@ -6,7 +6,6 @@ unless SeedTask.find_by(task_name: 'user_account')
   user_profile = UserProfile.create(first_name: 'John',
                                     last_name: 'Doe',
                                     gender: 'm',
-                                    phone_number: '595985123456',
                                     slug: 'john-doe',
                                     points: 100,
                                     country: 'Paraguay',
