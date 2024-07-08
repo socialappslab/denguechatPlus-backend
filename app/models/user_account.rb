@@ -37,11 +37,11 @@ class UserAccount < ApplicationRecord
   has_secure_password
 
   belongs_to :user_profile, optional: true
+  has_many :team_members
 
   delegate :first_name,
            :last_name,
            :gender,
-           :phone_number,
            :slug,
            :points,
            :country,
