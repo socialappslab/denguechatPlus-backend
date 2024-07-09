@@ -11,8 +11,20 @@ module Api
 
           params do
             required(:id).filled(:integer)
-            required(:name).filled(:string)
+            optional(:name).filled(:string)
+            optional(:organization_id).filled(:string)
+            optional(:team_members_attributes).array(:hash) do
+              optional(:user_account_id).filled(:integer)
+              optional(:_destroy).filled(:integer)
+            end
           end
+
+          rule(:team_members_attributes).each do
+            if value[:user_account_id] && TeamMember.exists?(team_id: values[:id], user_account_id: value[:user_account_id])
+              key.failure('member already exists in this team')
+            end
+          end
+
         end
       end
     end

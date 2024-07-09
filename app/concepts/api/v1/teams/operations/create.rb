@@ -9,8 +9,6 @@ module Api
 
           tee :params
           step :validate_schema
-          step :check_organization
-          step :check_user_accounts
           step :create_team
           tee :includes
 
@@ -27,27 +25,6 @@ module Api
             Failure({ ctx: @ctx, type: :invalid })
           end
 
-          def check_organization
-            return Success({ ctx: @ctx, type: :success }) if Organization.exists?(id: @params[:organization_id])
-
-            add_errors(@ctx['contract.default'].errors,:organization_id, I18n.t('errors.users.not_found'),
-                       custom_predicate: :not_found?)
-            Failure({ ctx: @ctx, type: :invalid, model: true })
-          end
-
-          def check_user_accounts
-            return Success({ ctx: @ctx,
-type: :success }) if @params[:team_members_attributes].nil? || @params[:team_members_attributes].empty?
-
-            ids = @params[:team_members_attributes].pluck('user_account_id')
-            valid = UserAccount.where(id: ids).count == ids.count
-            return Success({ ctx: @ctx, type: :success }) if valid
-
-            add_errors(@ctx['contract.default'].errors,:organization_id, I18n.t('errors.users.not_found'),
-                       custom_predicate: :not_found?)
-            Failure({ ctx: @ctx, type: :invalid, model: true })
-          end
-
           def create_team
             @ctx[:model] = Team.create(@ctx['contract.default'].values.data)
             return Success({ ctx: @ctx, type: :created }) if @ctx[:model].persisted?
@@ -56,7 +33,7 @@ type: :success }) if @params[:team_members_attributes].nil? || @params[:team_mem
           end
 
           def includes
-            @ctx[:include] = ['team_members']
+            @ctx[:include] = %w[team_members organization]
           end
         end
       end

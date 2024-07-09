@@ -4,7 +4,7 @@ module Api
   module V1
     module Teams
       module Queries
-        class Index
+        class Update
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort)
@@ -22,7 +22,7 @@ module Api
 
           private
 
-          attr_reader :Teams, :filter, :sort
+          attr_reader :teams, :filter, :sort
 
           def name_clause(relation)
             return relation if @filter.nil? || @filter[:name].blank?

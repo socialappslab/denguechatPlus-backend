@@ -9,7 +9,7 @@ module Api
             new.call(...)
           end
           params do
-            required(:organization_ids).filled(:array).each(:integer)
+            required(:team_ids).filled(:array).each(:integer)
           end
         end
       end
