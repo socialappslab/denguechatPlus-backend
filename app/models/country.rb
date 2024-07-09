@@ -17,4 +17,6 @@ class Country < ApplicationRecord
   include Discard::Model
 
   has_many :states, dependent: :destroy
+  accepts_nested_attributes_for :states, allow_destroy: true
+
 end

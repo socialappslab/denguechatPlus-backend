@@ -29,4 +29,6 @@ class City < ApplicationRecord
   belongs_to :country
 
   has_many :neighborhoods, dependent: :destroy
+  accepts_nested_attributes_for :neighborhoods, allow_destroy: true
+
 end

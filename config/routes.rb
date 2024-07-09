@@ -31,6 +31,26 @@ Rails.application.routes.draw do
             delete :destroy
           end
         end
+        resources :countries do
+          collection do
+            delete :destroy
+          end
+          resources :states do
+            collection do
+              delete :destroy
+            end
+            resources :cities do
+              collection do
+                delete :destroy
+              end
+              resources :neighborhoods do
+                collection do
+                  delete :destroy
+                end
+              end
+            end
+          end
+        end
       end
     end
   end
