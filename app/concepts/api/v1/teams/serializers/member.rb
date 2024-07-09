@@ -7,7 +7,7 @@ module Api
         class Member < ApplicationSerializer
           set_type :member_team
 
-          attributes  :first_name, :last_name
+          attributes  :user_account_id, :first_name, :last_name
 
         end
       end

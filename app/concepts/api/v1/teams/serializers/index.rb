@@ -9,6 +9,7 @@ module Api
 
           attributes :name
           has_many :team_members, serializer: Member
+          belongs_to :organization, serializer: Api::V1::Organizations::Serializers::Show
 
         end
       end
