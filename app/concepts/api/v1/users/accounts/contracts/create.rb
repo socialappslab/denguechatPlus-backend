@@ -19,7 +19,7 @@ module Api
               required(:user_profile).hash do
                 required(:first_name).filled(:string)
                 required(:last_name).filled(:string)
-                required(:gender).filled(:string)
+                required(:gender).filled(:integer)
                 required(:country).filled(:string)
                 required(:city).filled(:string)
                 required(:language).filled(:string)
