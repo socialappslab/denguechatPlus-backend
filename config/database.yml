@@ -33,10 +33,10 @@ development:
 
 test:
   <<: *default
-  database: denguechat_plus_test
+  database: denguechat_plus_test2
 
 production:
   <<: *default
   database: denguechat_plus_production
-  username: denguechat_plus
+  username: <%= ENV["DENGUECHAT_PLUS_DATABASE_USER"] %>
   password: <%= ENV["DENGUECHAT_PLUS_DATABASE_PASSWORD"] %>
