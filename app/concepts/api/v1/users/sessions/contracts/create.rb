@@ -3,7 +3,7 @@ require 'dry/validation/contract'
 module Api
   module V1
     module Users
-      module Accounts
+      module Sessions
         module Contracts
           class Create < Dry::Validation::Contract
             def self.kall(...)
