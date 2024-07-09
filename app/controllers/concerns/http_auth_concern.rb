@@ -6,7 +6,7 @@ module HttpAuthConcern
   included do
     include ActionController::HttpAuthentication::Basic::ControllerMethods
 
-    before_action :http_authenticate
+    #before_action :http_authenticate
   end
 
   def http_authenticate
