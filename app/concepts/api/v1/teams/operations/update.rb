@@ -11,6 +11,7 @@ module Api
           step :validate_schema
           step :model
           step :update_organization
+          tee :includes
 
           def params(input)
             @ctx = {}
@@ -26,22 +27,39 @@ module Api
           end
 
           def model
-            @ctx[:model] = Organization.kept.find_by(id: @params[:id])
+            @ctx[:model] = Team.kept.find_by(id: @params[:id])
             return Success({ ctx: @ctx, type: :success }) if @ctx[:model]
 
-            @ctx['contract.default'].errors.add(:base, I18n.t('errors.session.deactivated'))
+            add_errors(@ctx['contract.default'].errors,nil, I18n.t('errors.users.not_found'),
+                       custom_predicate: :not_found?)
             Failure({ ctx: @ctx, type: :invalid, model: true }) unless @ctx[:model]
           end
 
+          def update_members
+            user_account_ids = @ctx['contract.default'].values.data[:team_members_attributes].pluck(:_destroy)
+            team_id = @ctx['contract.default'].values.data[:id]
+            TeamMember.where(team_id: team_id, user_account_id: user_account_ids).destroy_all
+          end
+
           def update_organization
-            begin
-              @ctx[:model].update(@ctx['contract.default'].model[:organization])
-              return Success({ ctx: @ctx, type: :success })
-            rescue => error
-              @ctx['contract.default'].errors.add(:base, I18n.t('errors.session.deactivated'))
-              Failure({ ctx: @ctx, type: :invalid, model: true }) unless @ctx[:model]
+            ActiveRecord::Base.transaction do
+              begin
+                @ctx[:model].update!(@ctx['contract.default'].values.data)
+                update_members
+                return Success({ ctx: @ctx, type: :success })
+              rescue ActiveRecord::RecordInvalid => invalid
+                add_errors(@ctx['contract.default'].errors,nil, I18n.t('errors.users.not_found'),
+                           custom_predicate: :not_found?)
+                Failure({ ctx: @ctx, type: :invalid, model: true })
+                raise ActiveRecord::Rollback
+              end
             end
           end
+
+          def includes
+            @ctx[:include] = ['team_members']
+          end
+
         end
       end
     end

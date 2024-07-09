@@ -22,7 +22,7 @@ module Api
 
           private
 
-          attr_reader :Teams, :filter, :sort
+          attr_reader :teams, :filter, :sort
 
           def name_clause(relation)
             return relation if @filter.nil? || @filter[:name].blank?
