@@ -37,7 +37,7 @@ class UserAccount < ApplicationRecord
   delegate :first_name,
            :last_name,
            :gender,
-           :slug,
+           :email,
            :points,
            :city_id,
            :neighborhood_id,

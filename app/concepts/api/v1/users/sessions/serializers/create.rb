@@ -14,7 +14,8 @@ module Api
                        :gender,
                        :points,
                        :timezone,
-                       :language
+                       :language,
+                       :email
             has_one :city, serializer: City
             has_one :neighborhood, serializer: Neighborhood
             has_one :organization, serializer: Organization
