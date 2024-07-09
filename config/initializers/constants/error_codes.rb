@@ -52,7 +52,8 @@ module Constants
       key?: 47,
       user_username_unique?: 48,
       user_phone_unique?: 49,
-      user_email_unique?: 50
+      user_email_unique?: 50,
+      user_account_without_confirmation?: 51
     }.freeze
   end
 end

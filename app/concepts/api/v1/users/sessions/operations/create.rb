@@ -44,8 +44,8 @@ module Api
 
             def authenticate
               unless @ctx[:model].authenticate(@params[:password])
-                add_errors(@ctx['contract.default'].errors,'', I18n.t('errors.session.wrong_credentials'), '',[], :credentials_wrong?)
-                return Failure({ ctx: @ctx, type: :unauthenticated })
+                add_errors(@ctx['contract.default'].errors,'', 'unauthorized', '',[], :user_account_without_confirmation?)
+                return Failure({ ctx: @ctx, type: :invalid })
               end
               Success({ ctx: @ctx, type: :success })
             end
