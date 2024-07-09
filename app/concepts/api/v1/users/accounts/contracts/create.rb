@@ -18,7 +18,7 @@ module Api
               required(:user_profile).hash do
                 required(:first_name).filled(:string)
                 required(:last_name).filled(:string)
-                required(:gender).filled(:integer)
+                optional(:gender).filled(:integer)
                 required(:city_id).filled(:integer)
                 required(:neighborhood_id).filled(:integer)
                 required(:organization_id).filled(:integer)
@@ -32,6 +32,18 @@ module Api
               if value[:email]
                 if UserProfile.exists?(['LOWER(email) = ?', value[:email].downcase])
                   key(:email).failure(text: :user_email_unique?,  predicate: :user_email_unique?)
+                end
+              end
+
+              if value[:neighborhood_id]
+                unless Neighborhood.exists?(id: value[:neighborhood_id])
+                  key(:neighborhood_id).failure(text: 'neighborhood not exists',  predicate: :user_email_unique?)
+                end
+              end
+
+              if value[:city_id]
+                unless City.exists?(id: value[:city_id])
+                  key(:city_id).failure(text: 'city not exists',  predicate: :user_email_unique?)
                 end
               end
             end

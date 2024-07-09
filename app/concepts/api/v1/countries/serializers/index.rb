@@ -9,7 +9,7 @@ module Api
 
           attributes :name
           has_many :states, serializer: State do |object|
-            object.neighborhoods.kept
+            object.states.kept
           end
         end
       end
