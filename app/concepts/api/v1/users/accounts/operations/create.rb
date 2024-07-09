@@ -34,12 +34,12 @@ module Api
             end
 
             def create_account
-              @ctx[:model] = @ctx[:user_profile].create_user_account(email: @params[:email],
-                                                                     username: @params[:username],
+              @ctx[:model] = @ctx[:user_profile].create_user_account(username: @params[:username],
                                                                      phone: @params[:phone],
                                                                      password: @params[:password],
                                                                      password_confirmation: @params[:password])
               return Failure({ ctx: @ctx, type: :invalid }) unless @ctx[:model].persisted?
+
               Success({ ctx: @ctx, type: :success })
             end
 

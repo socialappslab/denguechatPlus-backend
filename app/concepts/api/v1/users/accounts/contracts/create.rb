@@ -13,28 +13,28 @@ module Api
             params do
               optional(:phone).filled(:string)
               optional(:username).filled(:string)
-              optional(:email).filled(:string)
               required(:password).filled(:string, min_size?: Constants::User::PASSWORD_MIN_LENGTH)
 
               required(:user_profile).hash do
                 required(:first_name).filled(:string)
                 required(:last_name).filled(:string)
                 required(:gender).filled(:integer)
-                required(:country).filled(:string)
-                required(:city).filled(:string)
-                required(:language).filled(:string)
-                required(:timezone).filled(:string)
+                required(:city_id).filled(:integer)
+                required(:neighborhood_id).filled(:integer)
+                required(:organization_id).filled(:integer)
+                optional(:timezone).filled(:string)
+                optional(:language).filled(:string)
+                optional(:email).filled(:string)
               end
             end
 
-            rule(:email) do
-              if values[:email]
-                if UserAccount.exists?(['LOWER(email) = ?', values[:email].downcase])
+            rule(:user_profile) do
+              if value[:email]
+                if UserProfile.exists?(['LOWER(email) = ?', value[:email].downcase])
                   key(:email).failure(text: :user_email_unique?,  predicate: :user_email_unique?)
                 end
               end
             end
-
 
             rule(:phone) do
               if values[:phone].nil? && values[:username].nil?

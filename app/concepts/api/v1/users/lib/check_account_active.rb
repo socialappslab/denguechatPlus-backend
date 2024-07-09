@@ -6,7 +6,7 @@ module Api
       module Lib
         class CheckAccountActive
           def self.call(_ctx, model:, **)
-            !model.discarded?
+            !model.discarded? && model.status
           end
         end
       end

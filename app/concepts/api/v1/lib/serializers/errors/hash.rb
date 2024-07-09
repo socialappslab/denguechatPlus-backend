@@ -26,7 +26,7 @@ module Api
             def compose_arguments(error)
               first_form = error.respond_to?(:text)
               res = if first_form
-                [[error.text], error.path.first, nil, error.meta, set_code_error(error) ]
+                [[error.text], error.path.last, nil, error.meta, set_code_error(error) ]
               else
                 [error[:messages], error[:field], error[:title], error[:meta] ]
               end

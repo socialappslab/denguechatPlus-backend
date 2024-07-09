@@ -56,7 +56,7 @@ module Api
               if is_active
                 Success({ ctx: @ctx, type: :success })
               else
-                @ctx['contract.default'].errors.add(:base, I18n.t('errors.session.deactivated'))
+                add_errors(@ctx['contract.default'].errors,nil, I18n.t('errors.unauthorized'))
                 Failure({ ctx: @ctx, type: :unauthenticated })
               end
             end
@@ -73,7 +73,7 @@ module Api
                 @ctx[:meta] = { jwt: Api::V1::Lib::Serializers::NamingConvention.new(result, :to_camel_case) }
                 Success({ ctx: @ctx, type: :created })
               else
-                @ctx['contract.default'].errors.add(:base, I18n.t('errors.session.deactivated'))
+                add_errors(@ctx['contract.default'].errors,nil, I18n.t('errors.session.deactivated'))
                 Failure({ ctx: @ctx, type: :unauthenticated })
               end
             end

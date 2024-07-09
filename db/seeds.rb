@@ -27,6 +27,12 @@ unless SeedTask.find_by(task_name: 'country')
   SeedTask.create(task_name: 'country') if country.persisted?
 end
 
+# default organization
+unless SeedTask.find_by(task_name: 'organization')
+  organization = Organization.create(name: 'Tariki')
+  SeedTask.create(task_name: 'organization') if organization.persisted?
+end
+
 # states_and_cities
 unless SeedTask.find_by(task_name: 'states_and_cities')
   country = Country.first

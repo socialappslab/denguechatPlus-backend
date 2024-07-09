@@ -10,14 +10,14 @@ module Api
 
             attributes :first_name,
                        :last_name,
-                       :email,
                        :phone,
                        :gender,
                        :points,
-                       :country,
-                       :city,
                        :timezone,
                        :language
+            has_one :city, serializer: City
+            has_one :neighborhood, serializer: Neighborhood
+            has_one :organization, serializer: Organization
           end
         end
       end

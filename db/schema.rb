@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_08_142044) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_09_182634) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -113,12 +113,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_08_142044) do
   end
 
   create_table "user_accounts", force: :cascade do |t|
-    t.string "email"
     t.string "password_digest"
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
     t.boolean "locked", default: false, null: false
-    t.datetime "locked_at"
     t.datetime "discarded_at"
     t.bigint "user_profile_id"
     t.datetime "created_at", null: false
@@ -127,7 +123,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_08_142044) do
     t.string "username"
     t.boolean "status", default: false
     t.index ["discarded_at"], name: "index_user_accounts_on_discarded_at"
-    t.index ["email"], name: "index_user_accounts_on_email", unique: true
     t.index ["phone"], name: "index_user_accounts_on_phone", unique: true
     t.index ["user_profile_id"], name: "index_user_accounts_on_user_profile_id"
     t.index ["username"], name: "index_user_accounts_on_username", unique: true
@@ -137,14 +132,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_08_142044) do
     t.string "first_name"
     t.string "last_name"
     t.integer "gender"
-    t.string "slug"
     t.integer "points"
-    t.string "country"
-    t.string "city"
     t.string "language"
     t.string "timezone"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "email"
+    t.bigint "city_id"
+    t.bigint "neighborhood_id"
+    t.bigint "organization_id"
+    t.index ["city_id"], name: "index_user_profiles_on_city_id"
+    t.index ["neighborhood_id"], name: "index_user_profiles_on_neighborhood_id"
+    t.index ["organization_id"], name: "index_user_profiles_on_organization_id"
   end
 
   create_table "user_profiles_roles", force: :cascade do |t|
@@ -178,6 +177,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_08_142044) do
   add_foreign_key "teams", "neighborhoods"
   add_foreign_key "teams", "organizations"
   add_foreign_key "user_accounts", "user_profiles"
+  add_foreign_key "user_profiles", "cities"
+  add_foreign_key "user_profiles", "neighborhoods"
+  add_foreign_key "user_profiles", "organizations"
   add_foreign_key "user_profiles_roles", "roles"
   add_foreign_key "user_profiles_roles", "user_profiles"
 end

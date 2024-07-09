@@ -16,8 +16,6 @@ module Services
       }
     end
 
-
-
     private
 
     def serialized_json

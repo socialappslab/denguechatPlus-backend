@@ -8,8 +8,8 @@ module Api
           class UserProfile < ApplicationSerializer
             set_type :user_profile
 
-            attributes :id, :first_name, :last_name, :gender, :slug,
-                       :points, :country, :city, :language, :timezone
+            attributes :id, :first_name, :last_name, :gender,
+                       :points, :language, :timezone, :email
             end
           end
         end

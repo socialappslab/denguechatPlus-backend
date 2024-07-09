@@ -37,6 +37,7 @@ module Api
             end
 
             def change_user_status
+
               return Success({ ctx: @ctx, type: :success }) if @ctx[:model].update(@ctx['contract.default'].values.data)
 
               Failure({ ctx: @ctx, type: :invalid })
