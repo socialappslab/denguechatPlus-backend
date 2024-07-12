@@ -20,7 +20,7 @@ module Api
 
           rule(:states_attributes).each do
             if value[:id] && State.exists?(id: values[:id], discarded_at: nil)
-              key.failure('state already exists in this country')
+              key(:state_id).failure('state already exists in this country')
             end
           end
 

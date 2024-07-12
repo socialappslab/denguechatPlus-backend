@@ -39,14 +39,14 @@ module Authentication
     return false unless current_user
 
     unless current_user.can?(action_name, controller_name)
-      exception_response(I18n.t('errors.unauthorized'))
+      exception_response(I18n.t('errors.unauthorized'), :unauthorized,"#{controller_name}_#{action_name}")
     end
   end
 
   private
 
   def exception_response(message, _status = :unprocessable_entity, resource = '')
-    errors = [{ field: :base, messages: [message], resource: }]
+    errors = ErrorFormater.new_error(field: :base, msg: message, resource: resource)
 
     render Services::ComposeRenderHash.call(
       result: { model: errors },

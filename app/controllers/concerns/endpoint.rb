@@ -88,7 +88,7 @@ module Endpoint
   def render_errors(result, status)
     render Services::ComposeRenderHash.call(
       result: { model: error_model(result) },
-      serializer: error_serializer(result),
+      serializer: Api::V1::Lib::Serializers::Errors::Hash,
       status:
     )
   end
@@ -101,13 +101,10 @@ module Endpoint
     )
   end
 
-  def error_serializer(result)
-    errors = result.failure[:ctx]['contract.default']
-    errors.respond_to?(:to_result) ? Api::V1::Lib::Serializers::Errors::Reform : Api::V1::Lib::Serializers::Errors::Hash
-  end
-
   def error_model(result)
-    result.failure[:ctx]['errors'] || result.failure[:ctx]['contract.default'].errors.messages
+    result.failure[:errors].presence ||
+      result.failure[:ctx]['errors'].presence ||
+      result.failure[:ctx]['contract.default'].errors.messages.presence
   end
 
   def render_send_data(result)

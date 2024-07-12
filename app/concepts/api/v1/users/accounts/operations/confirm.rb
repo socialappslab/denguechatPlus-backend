@@ -47,8 +47,8 @@ module Api
                 Success(@ctx)
               rescue JWT::ExpiredSignature, JWT::DecodeError => error
                 error_type = error.instance_of?(JWT::ExpiredSignature) ? 'errors.token.expired' : 'errors.token.invalid'
-                @ctx['contract.default'].errors.add(:base, I18n.t(error_type))
-                Failure({ ctx: @ctx, type: :invalid })
+                errors = ErrorFormater.new_error(field: :base, msg: I18n.t(error_type))
+                Failure({ ctx: @ctx, type: :invalid, errors: })
               end
             end
 
@@ -56,18 +56,16 @@ module Api
               @ctx[:redis_token_key] = cache_repo.find(key: @ctx[:redis_token_key])
               return Success(@ctx) if @ctx[:redis_token_key]
 
-              @ctx['contract.default'].errors.add(:base, I18n.t('errors.token.invalid'))
-
-              Failure({ ctx: @ctx, type: :invalid }) unless @ctx[:redis_token_key]
+              errors = ErrorFormater.new_error(field: :base, msg: I18n.t('errors.token.invalid'))
+              Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:redis_token_key]
             end
 
             def tokens_matches?
               is_equal = @ctx[:redis_token_key][:token].eql?(@params[:token])
               return Success(@ctx) if is_equal
 
-              @ctx['contract.default'].errors.add(:base, I18n.t('errors.token.invalid'))
-
-              Failure({ ctx: @ctx, type: :invalid }) unless is_equal
+              errors = ErrorFormater.new_error(field: :base, msg: I18n.t('errors.token.invalid'))
+              Failure({ ctx: @ctx, type: :invalid, errors: }) unless is_equal
             end
 
             def find_user_account
@@ -75,9 +73,8 @@ module Api
               @ctx[:model] = @ctx[:user_account]
               return Success(@ctx) if @ctx[:user_account]
 
-              @ctx['contract.default'].errors.add(:base, I18n.t('errors.token.invalid'))
-
-              Failure({ ctx: @ctx, type: :invalid }) unless @ctx[:user_account]
+              errors = ErrorFormater.new_error(field: :base, msg: I18n.t('errors.token.invalid'))
+              Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:user_account]
             end
 
             def confirm_account
@@ -95,8 +92,8 @@ module Api
                 @ctx[:meta] = { jwt: result }
                 Success({ ctx: @ctx, type: :created })
               else
-                @ctx['contract.default'].errors.add(:base, I18n.t('errors.session.deactivated'))
-                Failure({ ctx: @ctx, type: :unauthenticated })
+                errors = ErrorFormater.new_error(field: :base, msg: I18n.t('errors.session.deactivated'))
+                Failure({ ctx: @ctx, type: :unauthenticated, errors: })
               end
             end
           end
