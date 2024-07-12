@@ -2,6 +2,8 @@ en:
   errors:
     default: Something went wrong
     unauthenticated: Authentication failed
+    expired_token: Your token is expired
+    invalid_token: Your token is invalid
     not_found: Not found
     unauthorized: Authorization failed
     pagination_overflow: is out of limits
@@ -28,6 +30,8 @@ es:
   errors:
     default: Algo salió mal
     unauthenticated: Autenticación fallida
+    expired_token: Tu token expiro
+    invalid_token: Tu token es invalido
     not_found: No se pudo encontrar
     unauthorized: Autorización fallida
     pagination_overflow: Está fuera de límites
