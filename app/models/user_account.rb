@@ -29,10 +29,12 @@
 class UserAccount < ApplicationRecord
   include Discard::Model
 
+  rolify
   has_secure_password
 
   belongs_to :user_profile, optional: true
   has_many :team_members, dependent: :destroy
+  has_many :permissions, through: :roles
 
   delegate :first_name,
            :last_name,
@@ -44,4 +46,9 @@ class UserAccount < ApplicationRecord
            :organization_id,
            :language,
            :timezone, to: :user_profile
+
+
+  def can?(name, resource)
+    roles.joins(:permissions).exists?(permissions: { name:, resource: })
+  end
 end

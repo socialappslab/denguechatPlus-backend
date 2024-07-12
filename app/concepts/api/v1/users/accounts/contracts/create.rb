@@ -59,7 +59,7 @@ module Api
             rule(:username) do
               if values[:username].nil? && values[:phone].nil?
                 key(:username).failure(text: :user_credential_requirement, predicate: :credentials_wrong?)
-              elsif values[:username] && UserAccount.exists?(username: value)
+              elsif values[:username] && UserAccount.exists?(username: value.downcase)
                 key.failure(text: :user_username_unique?, predicate: :user_username_unique?)
               end
             end

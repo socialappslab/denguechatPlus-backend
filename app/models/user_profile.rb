@@ -31,8 +31,6 @@
 #  fk_rails_...  (organization_id => organizations.id)
 #
 class UserProfile < ApplicationRecord
-  has_one :user_profiles_role, dependent: :destroy
-  has_one :role, through: :user_profiles_role
   has_one :user_account, dependent: :destroy, autosave: true
   has_one :city
   has_one :neighborhood

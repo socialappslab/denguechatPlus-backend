@@ -32,7 +32,7 @@ module Api
             def model
               searched_field = @ctx['contract.default'][:type]
               searched_value = @ctx['contract.default'][searched_field]
-              model = UserAccount.find_by(searched_field => searched_value)
+              model = UserAccount.find_by(searched_field => searched_value.downcase)
 
               unless model
                 add_errors(@ctx['contract.default'].errors,'', I18n.t('errors.session.wrong_credentials'), '',[], :credentials_wrong?)
