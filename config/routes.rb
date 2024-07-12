@@ -2,7 +2,7 @@
 
 Rails.application.routes.draw do
   get 'up' => 'rails/health#show', as: :rails_health_check
-
+  get 'health' => 'health_checks#show', as: :health_check
   namespace :api do
     namespace :v1 do
       namespace :users do

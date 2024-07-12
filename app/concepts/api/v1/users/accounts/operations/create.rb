@@ -34,7 +34,7 @@ module Api
             end
 
             def create_account
-              @ctx[:model] = @ctx[:user_profile].create_user_account(username: @params[:username],
+              @ctx[:model] = @ctx[:user_profile].create_user_account(username: @params[:username].downcase,
                                                                      phone: @params[:phone],
                                                                      password: @params[:password],
                                                                      password_confirmation: @params[:password])

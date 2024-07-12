@@ -84,8 +84,8 @@ Rails.application.configure do
   # Raise error when a before_action's only/except options reference missing actions
   config.action_controller.raise_on_missing_callback_actions = true
 
-  config.jwt_token_store = :redis
-  config.redis_instance = Redis.new(url:  ENV.fetch('REDIS_URL', nil))
-  config.client_url = ENV.fetch('CLIENT_URL', nil)
+  # config.jwt_token_store = :redis
+  # config.redis_instance = Redis.new(url:  ENV.fetch('REDIS_URL', nil))
+  # config.client_url = ENV.fetch('CLIENT_URL', nil)
 
 end
