@@ -3,7 +3,7 @@
 module Api
   module V1
     module Admin
-      class TeamsController < ApiController
+      class TeamsController < AuthorizedApiController
 
         def index
           endpoint operation: Api::V1::Teams::Operations::Index,

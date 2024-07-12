@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: roles
@@ -17,12 +15,17 @@
 #  index_roles_on_resource                                (resource_type,resource_id)
 #
 class Role < ApplicationRecord
-  has_many :user_profiles_roles, dependent: :destroy
-  has_many :user_profiles, through: :user_profiles_roles
+  has_and_belongs_to_many :user_accounts, :join_table => :user_accounts_roles
+  has_and_belongs_to_many :permissions, join_table: "roles_permissions"
 
-  belongs_to :resource, polymorphic: true, optional: true
-  validates :resource_type, inclusion: { in: Rolify.resource_types }
-  validates :name, inclusion: { in: Constants::Role::ALLOWED_NAMES }
+  belongs_to :resource,
+             :polymorphic => true,
+             :optional => true
+
+
+  validates :resource_type,
+            :inclusion => { :in => Rolify.resource_types },
+            :allow_nil => true
 
   scopify
 end
