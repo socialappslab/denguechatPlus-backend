@@ -24,27 +24,34 @@ module Api
             end
 
             def compose_arguments(error)
-              if error.respond_to?(:text)
-                [[error.text], error.path.last, nil, error.meta, set_field_code_error(error) ]
-              else
-               [error[:messages], error[:field], error[:title], error[:meta], set_unauthorized(error[:resource]) ]
+              if error.respond_to?(:text) #if a dry error validation
+                [[error.text], error.path.last, nil, error.meta, set_code_error(error) ]
+              else # or is a custom error validator
+               [[error.messages], error.field, '', error.meta, set_code_error(error) ]
              end
+            end
+
+            def set_code_error(error)
+              return '' if error.nil?
+
+              error.try(:resource) ? set_unauthorized(error) : set_field_code_error(error)
             end
 
             def set_field_code_error(error)
               return '' if error.nil?
               return '' if error.try(:predicate) && error.meta.blank? && error.try(:custom_predicate)
 
-              meta = error.meta.is_a?(::Hash)  && error.meta.key?(:predicate) ? error.meta[:predicate] : nil
+              meta = error.try(:meta) && error.meta.is_a?(::Hash) && error.meta.key?(:predicate) ? error.meta[:predicate] : nil
 
               text = error.try(:predicate) || meta || error.try(:custom_predicate)
               Constants::ErrorCodes::CODE[text] || ''
             end
 
-            def set_unauthorized(resource)
+            def set_unauthorized(error)
+              resource = error.try(:resource)
               return '' if resource.nil? || resource.blank?
 
-              Constants::PermissionCodes::CODE.fetch(resource, Constants::PermissionCodes::CODE.first.last)
+              Constants::PermissionCodes::CODE.fetch(resource.to_sym)
             end
           end
         end

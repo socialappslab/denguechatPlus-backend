@@ -21,7 +21,7 @@ module Api
 
           rule(:team_members_attributes).each do
             if value[:user_account_id] && TeamMember.exists?(team_id: values[:id], user_account_id: value[:user_account_id])
-              key.failure('member already exists in this team')
+              key(:user_account_id).failure('member already exists in this team')
             end
           end
 

@@ -31,8 +31,5 @@ module Services
 
     end
 
-    private
-
-
   end
 end

@@ -20,7 +20,7 @@ module Api
 
           rule(:cities_attributes).each do
             if value[:id] && State.exists?(id: values[:id], discarded_at: nil)
-              key.failure('city already exists in this state')
+              key(:city_id).failure('city already exists in this state')
             end
           end
 

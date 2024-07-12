@@ -52,7 +52,7 @@ module Api
               if values[:phone].nil? && values[:username].nil?
                 key(:phone).failure(text: :user_credential_requirement, predicate: :credentials_wrong?)
               elsif values[:phone] && UserAccount.exists?(phone: values[:phone])
-                key.failure(text: :user_phone_unique?, predicate: :user_phone_unique?)
+                key(:phone).failure(text: :user_phone_unique?, predicate: :user_phone_unique?)
               end
             end
 
@@ -60,7 +60,7 @@ module Api
               if values[:username].nil? && values[:phone].nil?
                 key(:username).failure(text: :user_credential_requirement, predicate: :credentials_wrong?)
               elsif values[:username] && UserAccount.exists?(username: value.downcase)
-                key.failure(text: :user_username_unique?, predicate: :user_username_unique?)
+                key(:username).failure(text: :user_username_unique?, predicate: :user_username_unique?)
               end
             end
 

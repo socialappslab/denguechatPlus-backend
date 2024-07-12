@@ -16,7 +16,6 @@ module Api
 
             def data
               {
-                **(title ? { title: } : {}),
                 error_code: @error_code,
                 detail: message,
                 field: field

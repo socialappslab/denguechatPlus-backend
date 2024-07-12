@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 module Api
   module V1
     module Teams
@@ -19,7 +18,7 @@ module Api
 
           rule(:team_members_attributes).each do
             if value[:user_account_id] && !UserAccount.exists?(id: value[:user_account_id])
-              key.failure('user_account does not exist')
+              key(:user_account_id).failure(text: 'user_account does not exist', predicate: :filled?)
             end
           end
 

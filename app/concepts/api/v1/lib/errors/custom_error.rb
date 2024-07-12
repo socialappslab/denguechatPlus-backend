@@ -3,14 +3,19 @@ module Api
     module Lib
       module Errors
         class CustomError
-          attr_accessor :field, :text, :meta, :path, :custom_predicate
+          attr_reader :field, :messages, :meta, :path, :custom_predicate, :resource
 
-          def initialize(field, text, meta, path, custom_predicate=nil)
+          def initialize(field, messages, meta, path, custom_predicate, resource)
             @field = field
-            @text = text
+            @messages = messages
             @meta = meta
             @path = path
             @custom_predicate = custom_predicate
+            @resource = resource
+          end
+
+          def to_array
+            [self]
           end
         end
       end
