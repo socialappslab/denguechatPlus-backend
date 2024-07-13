@@ -11,10 +11,10 @@ module Api
 
           def sort_by_status_and_name(relation, table_name = nil)
             relation = relation.order(sort.values.join(' ').to_s)
-            return relation if sort[:field] == 'name'
-            return relation.order("name #{sort[:direction]}") if table_name.nil?
+            return relation if sort[:field] == 'first_name'
+            return relation.order("first_name #{sort[:direction]}") if table_name.nil?
 
-            relation.order("#{table_name}.name #{sort[:direction]}")
+            relation.order("#{table_name}.first_name #{sort[:direction]}")
           end
 
           def sort_by_table_columns(relation)

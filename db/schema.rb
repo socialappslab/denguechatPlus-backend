@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_11_144734) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_13_060915) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -103,13 +103,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_11_144734) do
   end
 
   create_table "team_members", force: :cascade do |t|
-    t.bigint "user_account_id", null: false
     t.bigint "team_id", null: false
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_profile_id", null: false
     t.index ["team_id"], name: "index_team_members_on_team_id"
-    t.index ["user_account_id"], name: "index_team_members_on_user_account_id"
+    t.index ["user_profile_id"], name: "index_team_members_on_user_profile_id"
   end
 
   create_table "teams", force: :cascade do |t|
@@ -129,14 +129,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_11_144734) do
 
   create_table "user_accounts", force: :cascade do |t|
     t.string "password_digest"
-    t.boolean "locked", default: false, null: false
     t.datetime "discarded_at"
     t.bigint "user_profile_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "phone"
     t.string "username"
-    t.boolean "status", default: false
+    t.integer "status", default: 0
     t.index ["discarded_at"], name: "index_user_accounts_on_discarded_at"
     t.index ["phone"], name: "index_user_accounts_on_phone", unique: true
     t.index ["user_profile_id"], name: "index_user_accounts_on_user_profile_id"
@@ -187,7 +186,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_11_144734) do
   add_foreign_key "neighborhoods", "states"
   add_foreign_key "states", "countries"
   add_foreign_key "team_members", "teams"
-  add_foreign_key "team_members", "user_accounts"
+  add_foreign_key "team_members", "user_profiles"
   add_foreign_key "teams", "neighborhoods"
   add_foreign_key "teams", "organizations"
   add_foreign_key "user_accounts", "user_profiles"

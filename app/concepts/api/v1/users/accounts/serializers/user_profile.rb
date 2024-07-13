@@ -10,9 +10,26 @@ module Api
 
             attributes :id, :first_name, :last_name, :gender,
                        :points, :language, :timezone, :email
+
+            attribute :city do |user_profile|
+              user_profile.city.name
             end
+
+            attribute :neighborhood do |user_profile|
+              user_profile.neighborhood&.name
+            end
+
+            attribute :organization do |user_profile|
+              user_profile.organization&.name
+            end
+
+            attribute :team do |user_profile|
+              user_profile.team&.name
+            end
+
           end
         end
       end
     end
   end
+end

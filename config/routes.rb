@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get 'health' => 'health_checks#show', as: :health_check
   namespace :api do
     namespace :v1 do
+      resources :users, only: %i[index]
       namespace :users do
         resource :session, only: %i[create destroy], controller: :sessions do
           post 'refresh_token'
