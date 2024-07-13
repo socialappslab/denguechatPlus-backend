@@ -12,14 +12,7 @@ module Api
 
             params do
               required(:id).filled(:integer)
-              optional(:locked).maybe(:bool)
-              optional(:status).maybe(:bool)
-            end
-
-            rule(:locked, :status) do
-              if values[:locked].nil? && values[:status].nil?
-                key(:id).failure(text: I18n.t('errors.users.status_change.without_params'), predicate: :filled?)
-              end
+              required(:status).maybe(:string, included_in?: %w[pending active inactive locked])
             end
 
           end

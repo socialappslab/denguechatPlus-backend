@@ -6,10 +6,9 @@
 #
 #  id              :bigint           not null, primary key
 #  discarded_at    :datetime
-#  locked          :boolean          default(FALSE), not null
 #  password_digest :string
 #  phone           :string
-#  status          :boolean          default(FALSE)
+#  status          :integer          default("pending")
 #  username        :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
@@ -46,6 +45,9 @@ class UserAccount < ApplicationRecord
            :organization_id,
            :language,
            :timezone, to: :user_profile
+
+  enum status: { pending: 0, active: 1, inactive: 2, locked: 3 }
+
 
 
   def can?(name, resource)

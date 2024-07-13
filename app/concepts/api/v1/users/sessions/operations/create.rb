@@ -52,9 +52,7 @@ module Api
             end
 
             def check_account_status
-              is_active = Api::V1::Users::Lib::CheckAccountActive.call(@ctx, model: @ctx[:model])
-
-              if is_active
+              if @ctx[:model].active?
                 Success({ ctx: @ctx, type: :success })
               else
                 Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'your account is inactive', custom_predicate: :user_account_without_confirmation? )})
