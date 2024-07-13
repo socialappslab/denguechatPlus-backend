@@ -31,8 +31,7 @@ module Api
                 @ctx[:meta] = { jwt: Api::V1::Lib::Serializers::NamingConvention.new(result, :to_camel_case) }
                 Success({ ctx: @ctx, type: :created })
               else
-                add_errors(@ctx['contract.default'].errors,nil, I18n.t('errors.session.deactivated'))
-                Failure({ ctx: @ctx, type: :unauthenticated })
+                Failure({ ctx: @ctx, type: :unauthenticated, errors: ErrorFormater.new_error(field: :base, msg: I18n.t('errors.session.deactivated')) })
               end
             end
           end

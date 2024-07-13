@@ -18,6 +18,7 @@ module Api
 
             def params(input)
               @ctx = {}
+              @ctx['errors'] = []
               @params = input.fetch(:params)
             end
 
@@ -35,8 +36,8 @@ module Api
               model = UserAccount.find_by(searched_field => searched_value.downcase)
 
               unless model
-                add_errors(@ctx['contract.default'].errors,'', I18n.t('errors.session.wrong_credentials'), '',[], :credentials_wrong?)
-                return Failure({ ctx: @ctx, type: :unauthenticated })
+                return Failure({ ctx: @ctx, type: :unauthenticated,
+                                 errors: ErrorFormater.new_error(field: :base, msg: I18n.t('errors.session.wrong_credentials'), custom_predicate: :credentials_wrong?) })
               end
               @ctx[:model] = model
               Success({ ctx: @ctx, type: :success })
@@ -44,21 +45,17 @@ module Api
 
             def authenticate
               unless @ctx[:model].authenticate(@params[:password])
-                add_errors(@ctx['contract.default'].errors,'', I18n.t('errors.session.wrong_credentials'), '',[], :credentials_wrong?)
-
-                return Failure({ ctx: @ctx, type: :unauthenticated })
+                return Failure({ ctx: @ctx, type: :unauthenticated, errors: ErrorFormater.new_error(field: :base, msg: I18n.t('errors.session.wrong_credentials'), custom_predicate: :credentials_wrong?) })
               end
+
               Success({ ctx: @ctx, type: :success })
             end
 
             def check_account_status
-              is_active = Api::V1::Users::Lib::CheckAccountActive.call(@ctx, model: @ctx[:model])
-
-              if is_active
+              if @ctx[:model].active?
                 Success({ ctx: @ctx, type: :success })
               else
-                add_errors(@ctx['contract.default'].errors,'', 'unauthorized', '',[], :user_account_without_confirmation?)
-                Failure({ ctx: @ctx, type: :invalid })
+                Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'your account is inactive', custom_predicate: :user_account_without_confirmation? )})
               end
             end
 
@@ -74,8 +71,7 @@ module Api
                 @ctx[:meta] = { jwt: Api::V1::Lib::Serializers::NamingConvention.new(result, :to_camel_case) }
                 Success({ ctx: @ctx, type: :created })
               else
-                add_errors(@ctx['contract.default'].errors,nil, I18n.t('errors.session.deactivated'))
-                Failure({ ctx: @ctx, type: :unauthenticated })
+                Failure({ ctx: @ctx, type: :unauthenticated, errors: ErrorFormater.new_error(field: :base, msg: I18n.t('errors.session.deactivated'), custom_predicate: :credentials_wrong? ) })
               end
             end
           end

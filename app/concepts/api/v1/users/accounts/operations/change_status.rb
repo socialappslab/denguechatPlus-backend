@@ -31,8 +31,8 @@ module Api
               @ctx[:model] = UserAccount.find_by(id: @ctx['contract.default']['id'])
               return Success({ ctx: @ctx, type: :success }) if @ctx[:model]
 
-              add_errors(@ctx['contract.default'].errors,'', I18n.t('errors.users.not_found'),  custom_predicate: :not_found?)
-              return Failure({ ctx: @ctx, type: :invalid }) if @ctx[:model].nil?
+              errors = ErrorFormater.new_error(field: :base, msg: I18n.t('errors.users.not_found'), custom_predicate: :not_found? )
+              return Failure({ ctx: @ctx, type: :invalid, errors: errors }) if @ctx[:model].nil?
 
             end
 

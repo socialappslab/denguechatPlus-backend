@@ -6,5 +6,6 @@ module Constants
     REFRESH_TOKEN_EXPIRATION = 9.hours.to_i
     ACCESS_TOKEN_EXPIRATION = 10.minutes.to_i
     PASSWORD_MIN_LENGTH = 8
+    STATUS = %w[active inactive pending locked]
   end
 end

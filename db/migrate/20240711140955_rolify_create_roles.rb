@@ -1,8 +1,8 @@
 class RolifyCreateRoles < ActiveRecord::Migration[7.1]
   def change
 
-    drop_table :user_accounts_roles
-    drop_table :roles
+    drop_table :user_accounts_roles if ActiveRecord::Base.connection.table_exists?('user_accounts_roles')
+    drop_table :roles if ActiveRecord::Base.connection.table_exists?('roles')
 
     create_table(:roles) do |t|
       t.string :name

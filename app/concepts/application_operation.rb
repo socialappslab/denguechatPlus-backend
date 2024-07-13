@@ -9,10 +9,6 @@ class ApplicationOperation
     new.call(*args)
   end
 
-  def add_errors(errors, field, msg, meta= '', path = [], custom_predicate=nil)
-    errors.add( Api::V1::Lib::Errors::CustomError.new(field, msg, meta, path, custom_predicate))
-  end
-
   def to_snake_case(params_to_convert = params)
     Api::V1::Lib::Serializers::NamingConvention.new(params_to_convert, :to_snake_case).res
   end

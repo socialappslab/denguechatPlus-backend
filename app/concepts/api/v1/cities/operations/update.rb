@@ -30,7 +30,7 @@ module Api
             @ctx[:model] = City.kept.find_by(id: @params[:id], state_id: @params[:state_id], country_id: @params[:country_id])
             return Success({ ctx: @ctx, type: :success }) if @ctx[:model]
 
-            add_errors(@ctx['contract.default'].errors,nil, I18n.t('errors.users.not_found'),
+            ErrorFormater.new_error(@ctx['contract.default'].errors,nil, I18n.t('errors.users.not_found'),
                        custom_predicate: :not_found?)
             Failure({ ctx: @ctx, type: :invalid, model: true }) unless @ctx[:model]
           end
@@ -48,7 +48,7 @@ module Api
                 update_neighborhoods
                 Success({ ctx: @ctx, type: :success })
               rescue ActiveRecord::RecordInvalid => invalid
-                add_errors(@ctx['contract.default'].errors,nil, I18n.t('errors.users.not_found'),
+                 ErrorFormater.new_error(@ctx['contract.default'].errors,nil, I18n.t('errors.users.not_found'),
                            custom_predicate: :not_found?)
                 Failure({ ctx: @ctx, type: :invalid, model: true })
                 raise ActiveRecord::Rollback

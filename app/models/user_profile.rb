@@ -32,9 +32,16 @@
 #
 class UserProfile < ApplicationRecord
   has_one :user_account, dependent: :destroy, autosave: true
-  has_one :city
-  has_one :neighborhood
+  belongs_to :city
+  belongs_to :neighborhood
+  belongs_to :organization
+  has_one :team_member
+  has_one :team, through: :team_member
 
-  delegate :confirmed_at, :phone, to: :user_account, allow_nil: true
+  delegate :confirmed_at, :phone, :username, :status, to: :user_account, allow_nil: true
   delegate :name, to: :role, prefix: true, allow_nil: true
+  delegate :name, to: :team, prefix: true, allow_nil: true
+  delegate :name, to: :organization, prefix: true, allow_nil: true
+  delegate :name, to: :city, prefix: true, allow_nil: true
+  delegate :name, to: :neighborhood, prefix: true, allow_nil: true
 end
