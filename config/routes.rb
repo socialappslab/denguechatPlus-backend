@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :users, only: %i[index]
+      resources :roles, only: %i[index]
       namespace :users do
         resource :session, only: %i[create destroy], controller: :sessions do
           post 'refresh_token'
