@@ -32,7 +32,7 @@ class UserAccount < ApplicationRecord
   has_secure_password
 
   belongs_to :user_profile, optional: true
-  has_many :team_members, dependent: :destroy
+  has_many :teams, through: :user_profile
   has_many :permissions, through: :roles
 
   delegate :first_name,
