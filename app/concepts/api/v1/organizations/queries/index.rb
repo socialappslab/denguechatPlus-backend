@@ -18,7 +18,7 @@ module Api
           end
 
           def call
-            @model.where(discarded_at: nil)
+            @model.yield_self(&method(:status_clause))
                   .yield_self(&method(:name_clause))
                   .yield_self(&method(:sort_clause))
           end
@@ -26,6 +26,33 @@ module Api
           private
 
           attr_reader :organizations, :filter, :sort
+
+          def status_clause(relation)
+            return active_organizations(relation) if @filter.nil? || @filter[:status].blank?
+
+            case @filter[:status]
+            when 'all'
+              all_organizations(relation)
+            when 'active'
+              active_organizations(relation)
+            when 'inactive'
+              inactive_organizations(relation)
+            else
+              active_organizations(relation)
+            end
+          end
+
+          def active_organizations(relation)
+            relation.where(discarded_at: nil)
+          end
+
+          def inactive_organizations(relation)
+            relation.where.not(discarded_at: nil)
+          end
+
+          def all_organizations(relation)
+            relation.all
+          end
 
           def name_clause(relation)
             return relation if @filter.nil? || @filter[:name].blank?
