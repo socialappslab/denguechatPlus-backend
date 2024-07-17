@@ -17,8 +17,11 @@ module Api
             relation.order("#{table_name}.first_name #{sort[:direction]}")
           end
 
-          def sort_by_table_columns(relation)
-            relation.order(sort.values.join(' ').to_s)
+          def sort_by_table_columns(relation, lower_case: false)
+            return relation.order(sort.values.join(' ').to_s) unless lower_case
+
+            column, direction = sort.values
+            relation.order(Arel.sql("LOWER(#{relation.connection.quote_table_name(column)}) #{direction}"))
           end
 
           def sort_by_table_columns_with_null_position(relation)

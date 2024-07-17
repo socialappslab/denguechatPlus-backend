@@ -3,6 +3,7 @@
 # Table name: roles
 #
 #  id            :bigint           not null, primary key
+#  discarded_at  :datetime
 #  name          :string
 #  resource_type :string
 #  created_at    :datetime         not null
@@ -15,8 +16,12 @@
 #  index_roles_on_resource                                (resource_type,resource_id)
 #
 class Role < ApplicationRecord
-  has_and_belongs_to_many :user_accounts, :join_table => :user_accounts_roles
-  has_and_belongs_to_many :permissions, join_table: "roles_permissions"
+  include Discard::Model
+
+  has_many :role_permissions
+  has_many :permissions, through: :role_permissions
+  accepts_nested_attributes_for :role_permissions, allow_destroy: true
+
 
   belongs_to :resource,
              :polymorphic => true,
