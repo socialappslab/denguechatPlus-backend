@@ -10,8 +10,8 @@ module Api
           end
           params do
             optional(:filter).maybe(:hash) do
-              optional(:name).filled(:string)
-              optional(:status).filled(:string)
+              optional(:name).maybe(:string)
+              optional(:status).maybe(:string, included_in?: %w[active inactive all])
             end
 
             optional(:page).maybe(:hash) do

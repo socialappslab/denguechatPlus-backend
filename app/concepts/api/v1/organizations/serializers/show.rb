@@ -7,7 +7,11 @@ module Api
         class Show < ApplicationSerializer
           set_type :organization
 
-          attributes :name
+          attributes :name, :created_at
+
+          attribute :status do |organization|
+            organization.discarded_at.nil?
+          end
         end
       end
     end
