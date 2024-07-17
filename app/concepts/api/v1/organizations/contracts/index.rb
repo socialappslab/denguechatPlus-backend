@@ -10,7 +10,8 @@ module Api
           end
           params do
             optional(:filter).maybe(:hash) do
-              optional(:name).maybe(:string)
+              optional(:name).filled(:string)
+              optional(:status).filled(:string)
             end
 
             optional(:page).maybe(:hash) do

@@ -13,6 +13,13 @@ module Api
           params do
             required(:name).filled(:string)
           end
+
+          rule(:name) do
+            if Organization.exists?(name: values['name'].downcase)
+              key(:name).failure(text: 'The organization name is used, please choose another name',
+                                 predicate: :unique?)
+            end
+          end
         end
       end
     end
