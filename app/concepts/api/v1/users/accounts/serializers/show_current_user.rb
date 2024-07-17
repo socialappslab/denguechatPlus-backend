@@ -11,7 +11,7 @@ module Api
             attributes :id, :username
 
 
-            has_one :user_profile, record_type: :user_profile, serializer: Api::V1::Users::Accounts::Serializers::UserProfile, included: true
+            has_one :user_profile, record_type: :user_profile, serializer: Api::V1::Users::Accounts::Serializers::UserProfile
 
             attribute :roles do |user_account|
               user_account.roles.map { |rol| rol.name }.join(' ')

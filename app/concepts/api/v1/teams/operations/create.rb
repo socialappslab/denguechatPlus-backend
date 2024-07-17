@@ -26,7 +26,7 @@ module Api
           end
 
           def create_team
-            @ctx[:model] = Team.create(@ctx['contract.default'].values.data)
+            @ctx[:model] = Team.new(@ctx['contract.default'].values.data)
             return Success({ ctx: @ctx, type: :created }) if @ctx[:model].persisted?
 
             Failure({ ctx: @ctx, type: :invalid, model: true })

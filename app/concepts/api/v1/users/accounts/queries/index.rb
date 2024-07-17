@@ -76,8 +76,11 @@ module Api
 
             def sort_clause(relation)
               return relation if @sort.nil? || @sort.blank?
-
-              sort_by_table_columns(relation)
+              lower_case = %w[user_profiles.first_name
+                    user_profiles.last_name
+                    user_profiles.email
+                     user_account.username].include? @sort[:field]
+              sort_by_table_columns(relation, lower_case:)
             end
           end
         end
