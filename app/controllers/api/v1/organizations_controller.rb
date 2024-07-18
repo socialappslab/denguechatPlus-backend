@@ -5,13 +5,13 @@ module Api
     class OrganizationsController < AuthorizedApiController
       def index
         endpoint operation: Api::V1::Organizations::Operations::Index,
-                 renderer_options: { serializer: Api::V1::Organizations::Serializers::Index },
+                 renderer_options: { serializer: Api::V1::Organizations::Serializers::IndexA },
                  options: { current_user: }
       end
 
       def show
         endpoint operation: Api::V1::Organizations::Operations::Show,
-                 renderer_options: { serializer: Api::V1::Organizations::Serializers::Index },
+                 renderer_options: { serializer: Api::V1::Organizations::Serializers::ShowA },
                  options: { current_user: }
       end
 

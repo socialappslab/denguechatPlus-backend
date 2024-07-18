@@ -90,6 +90,7 @@ gem 'dry-auto_inject'
 gem 'reform'
 gem 'simple_endpoint', '~> 2.0'
 gem 'dry-container'
+gem 'active_model_serializers', '~> 0.10.0'
 
 group :development, :test do
   gem 'annotate'

@@ -36,7 +36,7 @@ module Api
           end
 
           def valid_page?
-            @ctx[:pagy].overflow?
+            !@ctx[:pagy].overflow?
           end
 
           def assign_paginate_errors(ctx, **)
