@@ -23,7 +23,7 @@ module Constants
       lteq?: 18,
       gteq?: 19,
       size?: 20,
-      min_size?: 21,
+      _min_size?: 21,
       max_size?: 22,
       bytesize?: 23,
       min_bytesize?: 24,
