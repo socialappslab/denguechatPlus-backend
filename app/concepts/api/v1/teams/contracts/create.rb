@@ -11,14 +11,18 @@ module Api
           params do
             required(:name).filled(:string)
             required(:organization_id).filled(:integer)
-            optional(:team_members_attributes).array(:hash) do
-              optional(:user_account_id).filled(:integer)
+            optional(:user_profile_ids).filled(:array).each(:integer)
+          end
+
+          rule(:user_profile_ids).each do
+            if values[:user_profile_ids] && !UserProfile.exists?(id: values[:user_profile_ids])
+              key(:user_profile_ids).failure(text: 'user_profile does not exist', predicate: :not_found?)
             end
           end
 
-          rule(:team_members_attributes).each do
-            if value[:user_account_id] && !UserAccount.exists?(id: value[:user_account_id])
-              key(:user_account_id).failure(text: 'user_account does not exist', predicate: :filled?)
+          rule(:name) do
+            if values[:name] && Team.exists?(name: values[:name].downcase)
+              key(:name).failure(text: 'the team name is already in use', predicate: :unique?)
             end
           end
 

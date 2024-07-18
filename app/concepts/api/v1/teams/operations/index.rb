@@ -30,7 +30,9 @@ module Api
           end
 
           def cursor_and_paginate
-            @ctx[:sort] = { field: 'Teams.name', direction: 'asc' }
+            @ctx[:sort] = { field: 'teams.name', direction: 'asc' } if @params['sort'].nil?
+            direction = @params['order'].nil? ? 'asc' : @params['order']
+            @ctx[:sort] = {field: @params['sort'], direction: } if @params['sort']
           end
 
           def list
@@ -48,7 +50,7 @@ module Api
           end
 
           def includes
-            @ctx[:include] = ['team_members']
+            @ctx[:include] = ['user_profiles']
           end
 
           def meta

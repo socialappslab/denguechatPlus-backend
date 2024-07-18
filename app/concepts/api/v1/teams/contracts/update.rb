@@ -13,15 +13,12 @@ module Api
             required(:id).filled(:integer)
             optional(:name).filled(:string)
             optional(:organization_id).filled(:string)
-            optional(:team_members_attributes).array(:hash) do
-              optional(:user_account_id).filled(:integer)
-              optional(:_destroy).filled(:integer)
-            end
+            optional(:user_profile_ids).filled(:array).each(:integer)
           end
 
-          rule(:team_members_attributes).each do
-            if value[:user_account_id] && TeamMember.exists?(team_id: values[:id], user_account_id: value[:user_account_id])
-              key(:user_account_id).failure('member already exists in this team')
+          rule(:user_profile_ids).each do
+            if values[:user_profile_ids] && !UserProfile.exists?(id: values[:user_profile_ids])
+              key(:user_profile_ids).failure(text: 'user_profile does not exist', predicate: :filled?)
             end
           end
 

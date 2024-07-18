@@ -17,26 +17,28 @@
 #  city_id         :bigint
 #  neighborhood_id :bigint
 #  organization_id :bigint
+#  team_id         :bigint
 #
 # Indexes
 #
 #  index_user_profiles_on_city_id          (city_id)
 #  index_user_profiles_on_neighborhood_id  (neighborhood_id)
 #  index_user_profiles_on_organization_id  (organization_id)
+#  index_user_profiles_on_team_id          (team_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (city_id => cities.id)
 #  fk_rails_...  (neighborhood_id => neighborhoods.id)
 #  fk_rails_...  (organization_id => organizations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 class UserProfile < ApplicationRecord
   has_one :user_account, dependent: :destroy, autosave: true
   belongs_to :city
   belongs_to :neighborhood
   belongs_to :organization
-  has_one :team_member
-  has_one :team, through: :team_member
+  belongs_to :team, optional: true
 
   delegate :confirmed_at, :phone, :username, :status, to: :user_account, allow_nil: true
   delegate :name, to: :role, prefix: true, allow_nil: true

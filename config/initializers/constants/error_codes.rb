@@ -54,7 +54,9 @@ module Constants
       user_phone_unique?: 49,
       user_email_unique?: 50,
       user_account_without_confirmation?: 51,
-      unique?: 52
+      unique?: 52,
+      not_exists?: 53,
+      not_found?: 54
     }.freeze
   end
 end
