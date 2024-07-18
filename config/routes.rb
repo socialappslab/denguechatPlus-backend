@@ -8,7 +8,7 @@ Rails.application.routes.draw do
       resources :users, only: %i[index] do
         get 'me', on: :collection, action: :show_current_user
       end
-      resources :roles, only: %i[index update]
+      resources :roles, only: %i[index update create]
       namespace :users do
         resource :session, only: %i[create destroy], controller: :sessions do
           post 'refresh_token'
