@@ -8,7 +8,7 @@ module Api
           set_type :team
 
           attributes :name
-          has_many :team_members, serializer: Member
+          has_many :user_profiles, serializer: UserProfile
           belongs_to :organization, serializer: Api::V1::Organizations::Serializers::Show
 
         end

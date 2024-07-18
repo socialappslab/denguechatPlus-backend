@@ -18,10 +18,8 @@
 class Role < ApplicationRecord
   include Discard::Model
 
-  has_many :role_permissions
-  has_many :permissions, through: :role_permissions
-  accepts_nested_attributes_for :role_permissions, allow_destroy: true
-
+  has_and_belongs_to_many :permissions, join_table: :roles_permissions
+  has_and_belongs_to_many :user_accounts, join_table: :user_accounts_roles
 
   belongs_to :resource,
              :polymorphic => true,

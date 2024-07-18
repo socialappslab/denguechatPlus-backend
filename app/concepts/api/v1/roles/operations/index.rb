@@ -11,7 +11,6 @@ module Api
           step :validate_schema
           tee :cursor_and_paginate
           step :list
-          #tee :includes
           tee :page_pagination?
           tee :paginate
           tee :meta
