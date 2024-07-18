@@ -6,6 +6,7 @@
 #
 #  id              :bigint           not null, primary key
 #  discarded_at    :datetime
+#  failed_attempts :integer          default(0)
 #  password_digest :string
 #  phone           :string
 #  status          :integer          default("pending")

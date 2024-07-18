@@ -17,18 +17,21 @@
 #  city_id         :bigint
 #  neighborhood_id :bigint
 #  organization_id :bigint
+#  team_id         :bigint
 #
 # Indexes
 #
 #  index_user_profiles_on_city_id          (city_id)
 #  index_user_profiles_on_neighborhood_id  (neighborhood_id)
 #  index_user_profiles_on_organization_id  (organization_id)
+#  index_user_profiles_on_team_id          (team_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (city_id => cities.id)
 #  fk_rails_...  (neighborhood_id => neighborhoods.id)
 #  fk_rails_...  (organization_id => organizations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 class UserProfile < ApplicationRecord
   has_one :user_account, dependent: :destroy, autosave: true

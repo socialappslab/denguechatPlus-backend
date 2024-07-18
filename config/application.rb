@@ -43,5 +43,7 @@ module DenguechatPlus
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
     config.redis_url = ENV.fetch('REDIS_URL', nil)
+    config.active_job.queue_adapter = :sidekiq
+    config.middleware.use ActionDispatch::Session::CookieStore
   end
 end

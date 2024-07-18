@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_17_051134) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_18_083902) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -25,6 +25,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_17_051134) do
     t.index ["name", "discarded_at"], name: "index_cities_on_name_and_discarded_at", unique: true
     t.index ["state_id", "country_id", "discarded_at"], name: "index_cities_on_state_id_and_country_id_and_discarded_at", unique: true
     t.index ["state_id"], name: "index_cities_on_state_id"
+  end
+
+  create_table "configurations", force: :cascade do |t|
+    t.string "field_name", null: false
+    t.string "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "countries", force: :cascade do |t|
@@ -137,6 +144,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_17_051134) do
     t.string "phone"
     t.string "username"
     t.integer "status", default: 0
+    t.integer "failed_attempts", default: 0
     t.index ["discarded_at"], name: "index_user_accounts_on_discarded_at"
     t.index ["phone"], name: "index_user_accounts_on_phone", unique: true
     t.index ["user_profile_id"], name: "index_user_accounts_on_user_profile_id"
@@ -164,9 +172,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_17_051134) do
     t.bigint "city_id"
     t.bigint "neighborhood_id"
     t.bigint "organization_id"
+    t.bigint "team_id"
     t.index ["city_id"], name: "index_user_profiles_on_city_id"
     t.index ["neighborhood_id"], name: "index_user_profiles_on_neighborhood_id"
     t.index ["organization_id"], name: "index_user_profiles_on_organization_id"
+    t.index ["team_id"], name: "index_user_profiles_on_team_id"
   end
 
   create_table "versions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -194,4 +204,5 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_17_051134) do
   add_foreign_key "user_profiles", "cities"
   add_foreign_key "user_profiles", "neighborhoods"
   add_foreign_key "user_profiles", "organizations"
+  add_foreign_key "user_profiles", "teams"
 end

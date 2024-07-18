@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
   get 'up' => 'rails/health#show', as: :rails_health_check
   get 'health' => 'health_checks#show', as: :health_check
@@ -60,4 +62,6 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  mount Sidekiq::Web => "/sidekiq"
 end
