@@ -11,12 +11,20 @@ module Api
                  }
       end
 
+      def create
+        endpoint operation: Api::V1::Roles::Operations::Create,
+                 renderer_options: {
+                   serializer: Api::V1::Roles::Serializers::Show
+                 }
+      end
+
       def update
         endpoint operation: Api::V1::Roles::Operations::Update,
                  renderer_options: {
-                   serializer: Api::V1::Roles::Serializers::Update
+                   serializer: Api::V1::Roles::Serializers::Show
                  }
       end
+
 
     end
   end

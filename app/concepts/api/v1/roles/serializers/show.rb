@@ -4,7 +4,7 @@ module Api
   module V1
     module Roles
       module Serializers
-        class Update < ApplicationSerializer
+        class Show < ApplicationSerializer
           set_type :roles
 
           attributes :id, :name
