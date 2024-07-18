@@ -11,6 +11,13 @@ module Api
                  }
       end
 
+      def update
+        endpoint operation: Api::V1::Users::Accounts::Operations::Update,
+                 renderer_options: {
+                   serializer: Api::V1::Users::Accounts::Serializers::ShowCurrentUser
+                 }
+      end
+
       def show_current_user
         endpoint operation: Api::V1::Users::Accounts::Operations::ShowCurrentUser,
                  renderer_options: {

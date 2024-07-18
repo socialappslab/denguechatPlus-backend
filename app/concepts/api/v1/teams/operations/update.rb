@@ -30,22 +30,14 @@ module Api
             @ctx[:model] = Team.kept.find_by(id: @params[:id])
             return Success({ ctx: @ctx, type: :success }) if @ctx[:model]
 
-            add_errors(@ctx['contract.default'].errors,nil, I18n.t('errors.users.not_found'),
-                       custom_predicate: :not_found?)
-            Failure({ ctx: @ctx, type: :invalid, model: true }) unless @ctx[:model]
-          end
-
-          def update_members
-            user_account_ids = @ctx['contract.default'].values.data[:team_members_attributes].pluck(:_destroy)
-            team_id = @ctx['contract.default'].values.data[:id]
-            TeamMember.where(team_id: team_id, user_account_id: user_account_ids).destroy_all
+            errors = ErrorFormater.new_error(field: :base, msg: 'Team not found', custom_predicate: :not_found?)
+            Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
           end
 
           def update_organization
             ActiveRecord::Base.transaction do
               begin
                 @ctx[:model].update!(@ctx['contract.default'].values.data)
-                update_members
                 return Success({ ctx: @ctx, type: :success })
               rescue ActiveRecord::RecordInvalid => invalid
                 add_errors(@ctx['contract.default'].errors,nil, I18n.t('errors.users.not_found'),
@@ -57,7 +49,7 @@ module Api
           end
 
           def includes
-            @ctx[:include] = ['team_members']
+            @ctx[:include] = ['user_profiles']
           end
 
         end

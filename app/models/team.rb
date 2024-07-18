@@ -29,8 +29,6 @@ class Team < ApplicationRecord
 
   belongs_to :organization
   belongs_to :neighborhood, optional: true
-  has_many :team_members, dependent: :destroy
-
-  accepts_nested_attributes_for :team_members, allow_destroy: true
+  has_many :user_profiles
 
 end

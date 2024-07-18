@@ -37,13 +37,19 @@ module Api
 
               if value[:neighborhood_id]
                 unless Neighborhood.exists?(id: value[:neighborhood_id])
-                  key(:neighborhood_id).failure(text: 'neighborhood not exists',  predicate: :user_email_unique?)
+                  key(:neighborhood_id).failure(text: 'neighborhood not exists',  predicate: :not_exists?)
+                end
+              end
+
+              if value[:organization_id]
+                unless Organization.exists?(id: value[:organization_id])
+                  key(:organization_id).failure(text: 'organization not exists',  predicate: :not_exists?)
                 end
               end
 
               if value[:city_id]
                 unless City.exists?(id: value[:city_id])
-                  key(:city_id).failure(text: 'city not exists',  predicate: :user_email_unique?)
+                  key(:city_id).failure(text: 'city not exists',  predicate: :not_exists?)
                 end
               end
             end

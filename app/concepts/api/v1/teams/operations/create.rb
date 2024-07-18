@@ -26,14 +26,14 @@ module Api
           end
 
           def create_team
-            @ctx[:model] = Team.new(@ctx['contract.default'].values.data)
+            @ctx[:model] = Team.create(@ctx['contract.default'].values.data)
             return Success({ ctx: @ctx, type: :created }) if @ctx[:model].persisted?
 
             Failure({ ctx: @ctx, type: :invalid, model: true })
           end
 
           def includes
-            @ctx[:include] = %w[team_members organization]
+            @ctx[:include] = %w[user_profiles organization]
           end
         end
       end
