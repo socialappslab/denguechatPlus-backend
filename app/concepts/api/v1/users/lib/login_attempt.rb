@@ -16,12 +16,12 @@ module Api
 
           def increase_attempts_count!
             @user.increment!(:failed_attempts)
-            lock_account! if @user.failed_attempts >= 3
+            lock_account! if @user.failed_attempts >= Configuration.attempts_number
           end
 
           def lock_account!
             @user.update(status: 'locked')
-            ::Users::UnlockAccountWorker.perform_in(1.minutes, @user.id)
+            ::Users::UnlockAccountWorker.perform_in(Configuration.time_locked.minutes, @user.id)
           end
 
           def reset_attempts_count!
