@@ -2,6 +2,8 @@
 
 require 'sidekiq/web'
 
+Sidekiq::Web.use Rack::Session::Cookie, secret: ENV.fetch("SIDEKIQ_WEBTOKEN")
+
 Rails.application.routes.draw do
   get 'up' => 'rails/health#show', as: :rails_health_check
   get 'health' => 'health_checks#show', as: :health_check
@@ -63,5 +65,20 @@ Rails.application.routes.draw do
     end
   end
 
-  mount Sidekiq::Web => "/sidekiq"
+  Sidekiq::Web.use Rack::Auth::Basic do |username, password|
+    username_match = ActiveSupport::SecurityUtils.secure_compare(
+      ::Digest::SHA256.hexdigest(username),
+      ::Digest::SHA256.hexdigest(ENV.fetch('SIDEKIQ_USERNAME', ''))
+    )
+
+    password_match = ActiveSupport::SecurityUtils.secure_compare(
+      ::Digest::SHA256.hexdigest(password),
+      ::Digest::SHA256.hexdigest(ENV.fetch('SIDEKIQ_PASSWORD', ''))
+    )
+
+    username_match & password_match
+  end
+
+  mount Sidekiq::Web => '/sidekiq'
+
 end
