@@ -64,9 +64,9 @@ gem 'dry-transaction'
 # Soft-delete for models
 gem 'discard', '~> 1.2'
 
-gem 'sidekiq', '~> 7.1.3'
-gem 'sidekiq-limit_fetch', '~> 4'
-gem 'sidekiq-scheduler', '~> 4'
+gem 'sidekiq'
+gem 'sidekiq-limit_fetch'
+gem 'sidekiq-scheduler'
 
 # External API's
 gem 'httparty'

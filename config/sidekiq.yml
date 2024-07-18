@@ -1,0 +1,14 @@
+---
+  :concurrency: 5
+  :pidfile: tmp/pids/sidekiq.pid
+  :max_retries: 3
+
+  production:
+    :concurrency: 20
+
+  :queues:
+    - default
+    - mailers
+
+  :process_limits:
+    mailers: 1

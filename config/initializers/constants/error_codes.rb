@@ -56,7 +56,8 @@ module Constants
       user_account_without_confirmation?: 51,
       unique?: 52,
       not_exists?: 53,
-      not_found?: 54
+      not_found?: 54,
+      user_account_locked?: 55
     }.freeze
   end
 end
