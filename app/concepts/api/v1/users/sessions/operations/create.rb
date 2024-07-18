@@ -48,6 +48,8 @@ module Api
                 Success({ ctx: @ctx, type: :success })
               elsif @ctx[:model].inactive?
                 Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'your account is inactive', custom_predicate: :user_account_without_confirmation? )})
+              elsif @ctx[:model].pending?
+                Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'your account is pending to active', custom_predicate: :user_account_without_confirmation? )})
               else
                 Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'your account is locked', custom_predicate: :user_account_locked? )})
               end
