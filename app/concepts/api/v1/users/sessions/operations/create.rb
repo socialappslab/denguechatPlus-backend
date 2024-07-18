@@ -11,8 +11,8 @@ module Api
             tee :params
             step :validate_schema
             step :model
-            step :authenticate
             step :check_account_status
+            step :authenticate
             tee :access_expiration
             step :create_tokens
 
@@ -43,20 +43,24 @@ module Api
               Success({ ctx: @ctx, type: :success })
             end
 
+            def check_account_status
+              if @ctx[:model].active?
+                Success({ ctx: @ctx, type: :success })
+              elsif @ctx[:model].inactive?
+                Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'your account is inactive', custom_predicate: :user_account_without_confirmation? )})
+              else
+                Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'your account is locked', custom_predicate: :user_account_locked? )})
+              end
+            end
+
             def authenticate
               unless @ctx[:model].authenticate(@params[:password])
+                Api::V1::Users::Lib::LoginAttempt.call(@ctx[:model]).increase_attempts_count!
+
                 return Failure({ ctx: @ctx, type: :unauthenticated, errors: ErrorFormater.new_error(field: :base, msg: I18n.t('errors.session.wrong_credentials'), custom_predicate: :credentials_wrong?) })
               end
 
               Success({ ctx: @ctx, type: :success })
-            end
-
-            def check_account_status
-              if @ctx[:model].active?
-                Success({ ctx: @ctx, type: :success })
-              else
-                Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'your account is inactive', custom_predicate: :user_account_without_confirmation? )})
-              end
             end
 
             def access_expiration
