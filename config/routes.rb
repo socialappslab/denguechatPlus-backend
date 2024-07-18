@@ -5,10 +5,10 @@ Rails.application.routes.draw do
   get 'health' => 'health_checks#show', as: :health_check
   namespace :api do
     namespace :v1 do
-      resources :users, only: %i[index] do
+      resources :users, only: %i[index update] do
         get 'me', on: :collection, action: :show_current_user
       end
-      resources :roles, only: %i[index update]
+      resources :roles, only: %i[index update create]
       namespace :users do
         resource :session, only: %i[create destroy], controller: :sessions do
           post 'refresh_token'

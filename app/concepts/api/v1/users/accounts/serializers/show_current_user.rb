@@ -8,7 +8,7 @@ module Api
           class ShowCurrentUser < ApplicationSerializer
             set_type :user
 
-            attributes :id, :username
+            attributes :id, :username, :status
 
 
             has_one :user_profile, record_type: :user_profile, serializer: Api::V1::Users::Accounts::Serializers::UserProfile
@@ -20,6 +20,7 @@ module Api
             attribute :permissions do |user_account|
               user_account.permissions.map { |permission| "#{permission.resource}_#{permission.name}" }.join(' ')
             end
+
           end
         end
       end

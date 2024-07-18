@@ -28,9 +28,12 @@ module Api
 
             def create_profile
               @ctx[:user_profile] = UserProfile.create(@ctx['contract.default'][:user_profile])
-              return Failure({ ctx: @ctx, type: :invalid }) unless @ctx[:user_profile].persisted?
+              return Success({ ctx: @ctx, type: :success }) if @ctx[:user_profile].persisted?
 
-              Success({ ctx: @ctx, type: :success })
+              errors = ErrorFormater.new_error(field: :base, msg: @ctx[:user_profile].errors.full_messages.join(' '),
+                                               custom_predicate: :format? )
+              Failure({ ctx: @ctx, type: :invalid, errors: errors })
+
             end
 
             def create_account

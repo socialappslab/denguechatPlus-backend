@@ -26,7 +26,7 @@ module Api
           end
 
           def includes
-            @ctx[:include] = ['team_members']
+            @ctx[:include] = ['user_profiles']
           end
         end
       end
