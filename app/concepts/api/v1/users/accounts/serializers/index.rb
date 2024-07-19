@@ -19,6 +19,10 @@ module Api
                        :city_name,
                        :neighborhood_name,
                        :team_name
+
+            attribute :created_at do |user|
+              user.created_at.strftime('%Y-%m-%d')
+            end
           end
         end
       end
