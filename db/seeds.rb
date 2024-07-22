@@ -93,7 +93,7 @@ unless SeedTask.find_by(task_name: 'permissions')
 end
 
 #assign permissions to roles
-unless SeedTask.find_by(task_name: 'assign permissions1')
+unless SeedTask.find_by(task_name: 'assign permissions')
   admin_role = Role.find_by(name: 'admin')
   Permission.all.each do |permission|
     unless admin_role.permissions.include?(permission)
