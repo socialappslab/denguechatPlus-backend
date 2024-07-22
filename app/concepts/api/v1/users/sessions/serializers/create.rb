@@ -19,6 +19,14 @@ module Api
             has_one :city, serializer: City
             has_one :neighborhood, serializer: Neighborhood
             has_one :organization, serializer: Organization
+
+            attribute :roles do |user_account|
+              user_account.roles.map { |rol| rol.name }.join(' ')
+            end
+
+            attribute :permissions do |user_account|
+              user_account.permissions.map { |permission| "#{permission.resource}_#{permission.name}" }.join(' ')
+            end
           end
         end
       end
