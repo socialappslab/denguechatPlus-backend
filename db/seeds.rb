@@ -95,7 +95,11 @@ end
 #assign permissions to roles
 unless SeedTask.find_by(task_name: 'assign permissions')
   admin_role = Role.find_by(name: 'admin')
-  Permission.all.each{|permission| admin_role.permissions << permission}
+  Permission.all.each do |permission|
+    unless admin_role.permissions.include?(permission)
+      admin_role.permissions << permission
+    end
+  end
   admin_role.save!
 
   SeedTask.create(task_name: 'permissions')
