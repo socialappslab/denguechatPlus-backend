@@ -107,7 +107,7 @@ unless SeedTask.find_by(task_name: 'assign permissions1')
 end
 
 #assign roles to users
-unless SeedTask.find_by(task_name: 'assign_roles1')
+unless SeedTask.find_by(task_name: 'assign_roles')
   user_account = UserAccount.find_by(username: 'tariki_admin')
   user_account.roles << Role.find_by(name: 'admin')
   user_account.save!
