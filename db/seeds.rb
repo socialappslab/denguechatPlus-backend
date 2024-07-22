@@ -93,9 +93,13 @@ unless SeedTask.find_by(task_name: 'permissions')
 end
 
 #assign permissions to roles
-unless SeedTask.find_by(task_name: 'assign permissions')
+unless SeedTask.find_by(task_name: 'assign permissions1')
   admin_role = Role.find_by(name: 'admin')
-  Permission.all.each{|permission| admin_role.permissions << permission}
+  Permission.all.each do |permission|
+    unless admin_role.permissions.include?(permission)
+      admin_role.permissions << permission
+    end
+  end
   admin_role.save!
 
   SeedTask.create(task_name: 'permissions')
@@ -103,7 +107,7 @@ unless SeedTask.find_by(task_name: 'assign permissions')
 end
 
 #assign roles to users
-unless SeedTask.find_by(task_name: 'assign_roles')
+unless SeedTask.find_by(task_name: 'assign_roles1')
   user_account = UserAccount.find_by(username: 'tariki_admin')
   user_account.roles << Role.find_by(name: 'admin')
   user_account.save!
