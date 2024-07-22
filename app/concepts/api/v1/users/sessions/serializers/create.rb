@@ -21,11 +21,11 @@ module Api
             has_one :organization, serializer: Organization
 
             attribute :roles do |user_account|
-              user_account.roles.map { |rol| rol.name }.join(' ')
+              user_account.roles.map { |rol| rol.name }
             end
 
             attribute :permissions do |user_account|
-              user_account.permissions.map { |permission| "#{permission.resource}_#{permission.name}" }.join(' ')
+              user_account.permissions.map { |permission| "#{permission.resource}_#{permission.name}" }
             end
           end
         end
