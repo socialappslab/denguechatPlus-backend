@@ -11,6 +11,11 @@ module Api
                  }
       end
 
+      def show
+        endpoint operation: Api::V1::Users::Accounts::Operations::Show,
+                 renderer_options: { serializer: Api::V1::Users::Accounts::Serializers::Show }
+      end
+
       def update
         endpoint operation: Api::V1::Users::Accounts::Operations::Update,
                  renderer_options: {
