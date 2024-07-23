@@ -13,6 +13,7 @@ module Api
             params do
               required(:id).filled(:integer)
               optional(:phone).filled(:string)
+              optional(:password).filled(:string, min_size?: Constants::User::PASSWORD_MIN_LENGTH)
               optional(:username).filled(:string)
               optional(:role_ids).filled(:array)
               optional(:status).filled(:string, included_in?: %w[pending active inactive locked])

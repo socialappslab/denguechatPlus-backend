@@ -17,6 +17,7 @@ module Api
             def params(input)
               @ctx = {}
               @params = to_snake_case(input[:params])
+              @input = input[:params]
             end
             def validate_schema
               @ctx['contract.default'] = Api::V1::Users::Accounts::Contracts::Update.kall(@params)
@@ -35,7 +36,11 @@ module Api
             end
 
             def update_user
-              unless @ctx[:model].update(@ctx['contract.default'].values.data)
+              attrs = @ctx['contract.default'].values.data
+              if @input['password']
+                attrs['password'] = @input[:password]
+              end
+              unless @ctx[:model].update(attrs)
                 return Failure({ ctx: @ctx, type: :invalid })
               end
 
