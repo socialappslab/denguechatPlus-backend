@@ -46,4 +46,5 @@ class UserProfile < ApplicationRecord
   delegate :name, to: :organization, prefix: true, allow_nil: true
   delegate :name, to: :city, prefix: true, allow_nil: true
   delegate :name, to: :neighborhood, prefix: true, allow_nil: true
+  delegate :roles, to: :user_account, allow_nil: true
 end

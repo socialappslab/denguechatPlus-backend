@@ -9,8 +9,9 @@ Rails.application.routes.draw do
   get 'health' => 'health_checks#show', as: :health_check
   namespace :api do
     namespace :v1 do
-      resources :users, only: %i[index update] do
+      resources :users, only: %i[index update show] do
         get 'me', on: :collection, action: :show_current_user
+        get 'get_by_id/:id', on: :collection, action: :show
       end
       resources :roles, only: %i[index update create]
       namespace :users do
