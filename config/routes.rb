@@ -63,6 +63,8 @@ Rails.application.routes.draw do
           end
         end
       end
+
+      get 'get_last_params', controller: 'get_last_params', action: 'index'
     end
   end
 
