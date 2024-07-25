@@ -45,7 +45,14 @@ module Api
           end
 
           def get_data(model, allowed_columns)
-            model.kept.pluck(*allowed_columns).map { |record| allowed_columns.zip(record).to_h }
+            records = model.kept.select(*allowed_columns)
+            records.map do |record|
+              data = allowed_columns.map { |column| [column, record.send(column)] }.to_h
+              if record.respond_to?(:photo) && record.photo.attached?
+                data["photo_url"] = Rails.application.routes.url_helpers.url_for(record.photo)
+              end
+              data
+            end
           end
 
           def create_version_param(param_version, data)

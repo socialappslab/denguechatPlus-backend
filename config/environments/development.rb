@@ -98,3 +98,5 @@ Rails.application.configure do
   # config.client_url = ENV.fetch('CLIENT_URL', nil)
 
 end
+Rails.application.routes.default_url_options[:host] = 'localhost:3000'
+
