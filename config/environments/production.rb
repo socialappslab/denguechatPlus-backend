@@ -91,4 +91,4 @@ Rails.application.configure do
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 end
 
-Rails.application.routes.default_url_options[:host] = 'apisandbox.denguechatplus.org'
+Rails.application.routes.default_url_options[:host] = ENV.fetch("APP_DOMAIN") || 'localhost:3000'
