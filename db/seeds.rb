@@ -1,5 +1,43 @@
 # frozen_string_literal: true
 require 'json'
+require 'open-uri'
+
+###################################
+###################################
+# Auxiliary methods
+###################################
+###################################
+
+# get images from internet for container type
+def get_all_images_for_containers
+  results = []
+  types = {
+    tanque: 'https://thumbs.dreamstime.com/z/tanque-de-agua-cemento-227472829.jpg?ct=jpeg',
+    bidon: 'https://www.um.es/grzba/Vigilancia_Mosquito_Tigre/Imagenes/cria/Bidones.jpg',
+    pozo: 'https://www.iagua.es/sites/default/files/styles/thumbnail-830x455/public/pozo_agua_portada.jpg?itok=yAUNA4_N',
+    house_parts: 'https://www.um.es/grzba/Vigilancia_Mosquito_Tigre/Imagenes/cria/fuente.jpg',
+    tires: 'https://www.um.es/grzba/Vigilancia_Mosquito_Tigre/Imagenes/cria/neumaticos.jpg',
+    others: 'https://www.um.es/grzba/Vigilancia_Mosquito_Tigre/Imagenes/cria/Cubo.jpg',
+    natural_elements: 'https://pacificsprings.com.au/wp-content/uploads/2023/08/natural-spring-water.jpg'
+  }.freeze
+
+  types.each do |key, url|
+    begin
+      res = URI.open(url)
+    rescue => error
+      p error
+      res = nil
+    end
+    results << { io: res, filename: key.to_s, content_type: 'image/jpg' }
+  end
+  results
+end
+
+###################################
+###################################
+# Create initial data
+###################################
+###################################
 
 # default country
 unless SeedTask.find_by(task_name: 'country')
@@ -48,6 +86,7 @@ unless SeedTask.find_by(task_name: 'user_account')
                                     timezone: 'America/Asuncion')
 
   user_profile.create_user_account(username: 'tariki_admin',
+                                   status: 'active',
                                    password: ENV.fetch('PASSWORD_USER_DEFAULT', nil),
                                    password_confirmation: ENV.fetch('PASSWORD_USER_DEFAULT', nil))
   SeedTask.create(task_name: 'user_account') if user_profile.persisted? && user_profile.user_account.persisted?
@@ -112,5 +151,66 @@ unless SeedTask.find_by(task_name: 'assign_roles')
   user_account.roles << Role.find_by(name: 'admin')
   user_account.save!
   SeedTask.create(task_name: 'assign_roles') if Permission.count == 63
+end
 
+#create breeding site types
+unless SeedTask.find_by(task_name: 'create_breeding_site_types')
+  BreedingSiteType.create([{ name: 'permanente' }, { name: 'no permanente' }])
+  SeedTask.create(task_name: 'create_breeding_site_types')
+end
+
+#create container types
+unless SeedTask.find_by(task_name: 'create_container_types')
+  breeding_site_first, breeding_site_second = BreedingSiteType.first, BreedingSiteType.second
+
+  ContainerType.create(name: 'Tanques (cemento, polietileno, metal, otra) ',
+                       breeding_site_type: breeding_site_first)
+
+  ContainerType.create(name: 'Bidones/Cilindros (metal, plástico)',
+                       breeding_site_type: breeding_site_first)
+
+  ContainerType.create(name: 'Pozos',
+                       breeding_site_type: breeding_site_first)
+
+  ContainerType.create(name: 'Estructura o Partes de la Casa',
+                       breeding_site_type: breeding_site_first)
+
+  ContainerType.create(name: 'Llanta',
+                       breeding_site_type: breeding_site_second)
+
+  ContainerType.create(name: 'Otros',
+                       breeding_site_type: breeding_site_second)
+
+  ContainerType.create(name: 'Elementos naturales',
+                       breeding_site_type: breeding_site_second)
+
+  SeedTask.create(task_name: 'create_container_types')
+end
+
+# assign images to container types
+unless SeedTask.find_by(task_name: 'assign_images_to_container_types')
+  images = get_all_images_for_containers
+  ContainerType.all.zip(images).each do |container, image_hash|
+    container.photo.attach(image_hash)
+    image_hash[:io].unlink
+  end
+  SeedTask.create(task_name: 'assign_images_to_container_types')
+end
+
+#create elimination methods
+unless SeedTask.find_by(task_name: 'create_method_elimination')
+  EliminationMethodType.create([{ name: 'Quimico' }, { name: 'Tapa' }])
+  SeedTask.create(task_name: 'create_method_elimination')
+end
+
+#create water sources types
+unless SeedTask.find_by(task_name: 'create_water_sources_types')
+  WaterSourceType.create([{ name: 'Naturaleza' }, { name: 'Residente' }])
+  SeedTask.create(task_name: 'create_water_sources_types')
+end
+
+#create house-places
+unless SeedTask.find_by(task_name: 'create_places')
+  Place.create([{ name: 'Cementerio' }, { name: 'Plaza' }])
+  SeedTask.create(task_name: 'create_places')
 end

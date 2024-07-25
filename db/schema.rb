@@ -10,9 +10,44 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_18_083902) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_25_035902) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "breeding_site_types", force: :cascade do |t|
+    t.string "name"
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "cities", force: :cascade do |t|
     t.string "name"
@@ -34,6 +69,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_18_083902) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "container_types", force: :cascade do |t|
+    t.string "name"
+    t.bigint "breeding_site_type_id", null: false
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["breeding_site_type_id"], name: "index_container_types_on_breeding_site_type_id"
+  end
+
   create_table "countries", force: :cascade do |t|
     t.string "name"
     t.datetime "discarded_at"
@@ -41,6 +85,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_18_083902) do
     t.datetime "updated_at", null: false
     t.index ["discarded_at"], name: "index_countries_on_discarded_at"
     t.index ["name"], name: "index_countries_on_name"
+  end
+
+  create_table "elimination_method_types", force: :cascade do |t|
+    t.string "name"
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "neighborhoods", force: :cascade do |t|
@@ -70,6 +121,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_18_083902) do
   create_table "permissions", force: :cascade do |t|
     t.string "name"
     t.string "resource"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "places", force: :cascade do |t|
+    t.string "name"
+    t.string "category"
+    t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -190,8 +249,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_18_083902) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
+  create_table "water_source_types", force: :cascade do |t|
+    t.string "name"
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "cities", "countries"
   add_foreign_key "cities", "states"
+  add_foreign_key "container_types", "breeding_site_types"
   add_foreign_key "neighborhoods", "cities"
   add_foreign_key "neighborhoods", "countries"
   add_foreign_key "neighborhoods", "states"
