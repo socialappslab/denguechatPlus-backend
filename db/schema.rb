@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_25_035902) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_25_080730) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -87,6 +87,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_035902) do
     t.index ["name"], name: "index_countries_on_name"
   end
 
+  create_table "create_visit_param_versions", force: :cascade do |t|
+    t.string "name"
+    t.integer "version", default: 1
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "elimination_method_types", force: :cascade do |t|
     t.string "name"
     t.datetime "discarded_at"
@@ -127,7 +134,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_035902) do
 
   create_table "places", force: :cascade do |t|
     t.string "name"
-    t.string "category"
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -247,6 +253,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_035902) do
     t.datetime "created_at"
     t.text "object_changes"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+  end
+
+  create_table "visit_param_versions", force: :cascade do |t|
+    t.string "name"
+    t.integer "version", default: 1
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "water_source_types", force: :cascade do |t|

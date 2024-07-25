@@ -127,7 +127,7 @@ end
 unless SeedTask.find_by(task_name: 'permissions')
   actions = %w[index show new create edit update destroy]
   resources = %w[teams organizations users roles permissions countries cities states neighborhoods ]
-  resources.product(actions).each{| resource, action| Permission.create(name: action, resource: resource) }
+  resources.product(actions).each { | resource, action| Permission.create(name: action, resource: resource) }
   SeedTask.create(task_name: 'permissions') if Permission.count == 63
 end
 
@@ -141,7 +141,7 @@ unless SeedTask.find_by(task_name: 'assign permissions')
   end
   admin_role.save!
 
-  SeedTask.create(task_name: 'permissions')
+  SeedTask.create(task_name: 'assign permissions')
 
 end
 
@@ -213,4 +213,12 @@ end
 unless SeedTask.find_by(task_name: 'create_places')
   Place.create([{ name: 'Cementerio' }, { name: 'Plaza' }])
   SeedTask.create(task_name: 'create_places')
+end
+
+
+#create default versions params
+unless SeedTask.find_by(task_name: 'create_visit_params')
+  data = Constants::VisitParams::RESOURCES
+  data.each { |value_params| VisitParamVersion.find_or_create_by(name: value_params) }
+  SeedTask.create(task_name: 'create_visit_params')
 end

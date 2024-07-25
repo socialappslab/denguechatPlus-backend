@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: elimination_method_types
+# Table name: water_source_types
 #
 #  id           :bigint           not null, primary key
 #  discarded_at :datetime

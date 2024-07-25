@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: place
+# Table name: places
 #
 #  id           :bigint           not null, primary key
 #  discarded_at :datetime
