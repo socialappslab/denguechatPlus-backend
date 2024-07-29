@@ -17,4 +17,6 @@
 #
 class Organization < ApplicationRecord
   include Discard::Model
+
+  has_many :brigades, foreign_key: :organization_id
 end

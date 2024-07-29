@@ -8,7 +8,7 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort)
-            @model = Team
+            @model = Brigade
             @filter = filter
             @sort = sort
           end

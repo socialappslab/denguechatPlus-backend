@@ -9,7 +9,7 @@ module Api
 
           tee :params
           step :find_team
-          tee :includes
+          # tee :includes
 
           def params(input)
             @ctx = {}
@@ -17,7 +17,7 @@ module Api
           end
 
           def find_team
-            @ctx[:data] = Team.find_by(id: @params[:id], deleted_at: nil)
+            @ctx[:data] = Brigade.find_by(id: @params[:id], deleted_at: nil)
             if @ctx[:data].nil?
               Failure({ ctx: @ctx, type: :not_found })
             else

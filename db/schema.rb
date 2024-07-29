@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_25_080730) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_29_182757) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -109,11 +109,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_080730) do
     t.bigint "city_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "wedge_id"
     t.index ["city_id"], name: "index_neighborhoods_on_city_id"
     t.index ["country_id", "state_id", "city_id", "discarded_at"], name: "idx_on_country_id_state_id_city_id_discarded_at_d4d773c91a", unique: true
     t.index ["country_id"], name: "index_neighborhoods_on_country_id"
     t.index ["name", "discarded_at"], name: "index_neighborhoods_on_name_and_discarded_at", unique: true
     t.index ["state_id"], name: "index_neighborhoods_on_state_id"
+    t.index ["wedge_id"], name: "index_neighborhoods_on_wedge_id"
   end
 
   create_table "organizations", force: :cascade do |t|
@@ -175,16 +177,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_080730) do
     t.index ["name", "discarded_at"], name: "index_states_on_name_and_discarded_at", unique: true
   end
 
-  create_table "team_members", force: :cascade do |t|
-    t.bigint "team_id", null: false
-    t.datetime "deleted_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "user_profile_id", null: false
-    t.index ["team_id"], name: "index_team_members_on_team_id"
-    t.index ["user_profile_id"], name: "index_team_members_on_user_profile_id"
-  end
-
   create_table "teams", force: :cascade do |t|
     t.string "name"
     t.datetime "discarded_at"
@@ -195,9 +187,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_080730) do
     t.bigint "neighborhood_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "leader_id"
+    t.bigint "wedge_id"
+    t.index ["leader_id"], name: "index_teams_on_leader_id"
     t.index ["name", "deleted_at"], name: "index_teams_on_name_and_deleted_at", unique: true
     t.index ["neighborhood_id"], name: "index_teams_on_neighborhood_id"
     t.index ["organization_id"], name: "index_teams_on_organization_id"
+    t.index ["wedge_id"], name: "index_teams_on_wedge_id"
   end
 
   create_table "user_accounts", force: :cascade do |t|
@@ -269,6 +265,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_080730) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "wedges", force: :cascade do |t|
+    t.string "name"
+    t.datetime "discarded_at"
+    t.bigint "neighborhood_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["neighborhood_id", "discarded_at"], name: "index_wedges_on_neighborhood_id_and_discarded_at", unique: true
+    t.index ["neighborhood_id"], name: "index_wedges_on_neighborhood_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "cities", "countries"
@@ -277,14 +283,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_25_080730) do
   add_foreign_key "neighborhoods", "cities"
   add_foreign_key "neighborhoods", "countries"
   add_foreign_key "neighborhoods", "states"
+  add_foreign_key "neighborhoods", "wedges"
   add_foreign_key "states", "countries"
-  add_foreign_key "team_members", "teams"
-  add_foreign_key "team_members", "user_profiles"
   add_foreign_key "teams", "neighborhoods"
   add_foreign_key "teams", "organizations"
+  add_foreign_key "teams", "user_profiles", column: "leader_id"
+  add_foreign_key "teams", "wedges"
   add_foreign_key "user_accounts", "user_profiles"
   add_foreign_key "user_profiles", "cities"
   add_foreign_key "user_profiles", "neighborhoods"
   add_foreign_key "user_profiles", "organizations"
   add_foreign_key "user_profiles", "teams"
+  add_foreign_key "wedges", "neighborhoods"
 end

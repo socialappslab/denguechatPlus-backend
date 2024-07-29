@@ -27,7 +27,7 @@ module Api
 
 
           def model
-            @ctx[:model] = Team.kept.where(id: @ctx['contract.default']['team_ids'])
+            @ctx[:model] = Brigade.kept.where(id: @ctx['contract.default']['team_ids'])
           end
 
           def discard_teams

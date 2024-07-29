@@ -9,8 +9,9 @@ module Api
 
           tee :params
           step :validate_schema
+          tee :change_sector_for_neighborhood
           step :create_team
-          tee :includes
+          # tee :includes
 
           def params(input)
             @ctx = {}
@@ -25,8 +26,13 @@ module Api
             Failure({ ctx: @ctx, type: :invalid })
           end
 
+          def change_sector_for_neighborhood
+            @data = @ctx['contract.default'].values.data
+            @data[:neighborhood_id] = @data.delete(:sector_id)
+          end
+
           def create_team
-            @ctx[:model] = Team.create(@ctx['contract.default'].values.data)
+            @ctx[:model] = Brigade.create(@data)
             return Success({ ctx: @ctx, type: :created }) if @ctx[:model].persisted?
 
             Failure({ ctx: @ctx, type: :invalid, model: true })

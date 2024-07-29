@@ -33,7 +33,7 @@ class UserAccount < ApplicationRecord
   has_secure_password
 
   belongs_to :user_profile, optional: true
-  has_many :teams, through: :user_profile
+  has_many :brigades, through: :user_profile
   has_and_belongs_to_many :roles,  join_table: :user_accounts_roles
   has_many :permissions, through: :roles
   accepts_nested_attributes_for :user_profile,  update_only: true
