@@ -30,12 +30,11 @@
 #  fk_rails_...  (organization_id => organizations.id)
 #  fk_rails_...  (wedge_id => wedges.id)
 #
-class Brigade < ApplicationRecord
+class Team < ApplicationRecord
   include Discard::Model
 
-  self.table_name = 'teams'
 
-  has_many :user_profiles, foreign_key: :team_id
+  has_many :user_profiles
   belongs_to :leader, class_name: 'UserProfile', foreign_key: 'leader_id', optional: true
   belongs_to :organization
   belongs_to :sector, class_name: 'Neighborhood', foreign_key: 'neighborhood_id'
