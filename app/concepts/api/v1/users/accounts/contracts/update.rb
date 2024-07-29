@@ -55,7 +55,7 @@ module Api
                 key(:organization_id).failure(text: 'organization not exists', predicate: :not_exists?)
               end
 
-              if value[:team_id] && !Brigade.exists?(id: value[:team_id])
+              if value[:team_id] && !Team.exists?(id: value[:team_id])
                 key(:team_id).failure(text: "The brigade with id #{value[:team_id]} not exists", predicate: :not_exists?)
               end
 
