@@ -11,7 +11,6 @@ module Api
           step :validate_schema
           step :model
           step :update_organization
-          tee :includes
 
           def params(input)
             @ctx = {}
@@ -40,16 +39,12 @@ module Api
                 @ctx[:model].update!(@ctx['contract.default'].values.data)
                 return Success({ ctx: @ctx, type: :success })
               rescue ActiveRecord::RecordInvalid => invalid
-                add_errors(@ctx['contract.default'].errors,nil, I18n.t('errors.users.not_found'),
+                add_errors(@ctx['contract.default'].errors, nil, I18n.t('errors.users.not_found'),
                            custom_predicate: :not_found?)
                 Failure({ ctx: @ctx, type: :invalid, model: true })
                 raise ActiveRecord::Rollback
               end
             end
-          end
-
-          def includes
-            @ctx[:include] = ['user_profiles']
           end
 
         end

@@ -38,7 +38,8 @@ class UserProfile < ApplicationRecord
   belongs_to :city
   belongs_to :neighborhood
   belongs_to :organization
-  belongs_to :team, optional: true
+  belongs_to :team, foreign_key: 'team_id', optional: true
+
 
   delegate :confirmed_at, :phone, :username, :status, to: :user_account, allow_nil: true
   delegate :name, to: :role, prefix: true, allow_nil: true
