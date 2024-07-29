@@ -26,10 +26,10 @@ module Api
           end
 
           def model
-            @ctx[:model] = Brigade.kept.find_by(id: @params[:id])
+            @ctx[:model] = Team.kept.find_by(id: @params[:id])
             return Success({ ctx: @ctx, type: :success }) if @ctx[:model]
 
-            errors = ErrorFormater.new_error(field: :base, msg: 'Brigade not found', custom_predicate: :not_found?)
+            errors = ErrorFormater.new_error(field: :base, msg: 'Team not found', custom_predicate: :not_found?)
             Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
           end
 

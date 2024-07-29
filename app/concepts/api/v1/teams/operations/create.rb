@@ -32,7 +32,7 @@ module Api
           end
 
           def create_team
-            @ctx[:model] = Brigade.create(@data)
+            @ctx[:model] = Team.create(@data)
             return Success({ ctx: @ctx, type: :created }) if @ctx[:model].persisted?
 
             Failure({ ctx: @ctx, type: :invalid, model: true })

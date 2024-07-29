@@ -34,7 +34,7 @@ module Api
               key(:leader_id).failure(text: 'leader does not exist', predicate: :not_found?)
             end
 
-            if values[:leader_id] && Brigade.exists?(leader_id: values[:leader_id])
+            if values[:leader_id] && Team.exists?(leader_id: values[:leader_id])
               key(:leader_id).failure(text: 'leader profile is already assigned to a brigade', predicate: :unique?)
             end
 
@@ -59,7 +59,7 @@ module Api
           end
 
           rule(:name) do
-            if values[:name] && Brigade.exists?(name: values[:name].downcase)
+            if values[:name] && Team.exists?(name: values[:name].downcase)
               key(:name).failure(text: 'the team name is already in use', predicate: :unique?)
             end
           end
