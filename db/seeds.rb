@@ -222,3 +222,19 @@ unless SeedTask.find_by(task_name: 'create_visit_params')
   data.each { |value_params| VisitParamVersion.find_or_create_by(name: value_params) }
   SeedTask.create(task_name: 'create_visit_params')
 end
+
+#create default wedges
+unless SeedTask.find_by(task_name: 'create_wedges')
+  Wedge.create(name: 'Cuña 1', sector: Neighborhood.last)
+  Wedge.create(name: 'Cuña 2', sector: Neighborhood.last)
+  Wedge.create(name: 'Cuña 3', sector: Neighborhood.last)
+  Wedge.create(name: 'Cuña 4', sector: Neighborhood.last)
+  SeedTask.create(task_name: 'create_wedges')
+end
+
+#create default special_places
+unless SeedTask.find_by(task_name: 'create_special_places')
+  SpecialPlace.create(name: 'Cementerio')
+  SpecialPlace.create(name: 'Colegio')
+  SeedTask.create(task_name: 'create_special_places')
+end

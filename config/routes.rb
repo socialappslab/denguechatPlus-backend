@@ -30,6 +30,7 @@ Rails.application.routes.draw do
         end
       end
       resources :locations, only: %i[index]
+      resources :special_places
 
       namespace :admin do
         resources :users do
