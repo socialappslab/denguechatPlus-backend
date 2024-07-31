@@ -8,7 +8,7 @@ module Api
           class ShowCurrentUser < ApplicationSerializer
             set_type :user
 
-            attributes :id, :username, :status
+            attributes :id, :username, :phone, :status
 
 
             has_one :user_profile, record_type: :user_profile, serializer: Api::V1::Users::Accounts::Serializers::UserProfile

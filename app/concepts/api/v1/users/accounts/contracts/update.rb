@@ -11,8 +11,9 @@ module Api
             end
 
             params do
+              config.validate_keys = true
               required(:id).filled(:integer)
-              optional(:phone).filled(:string)
+              optional(:phone).filled(:integer)
               optional(:password).filled(:string, min_size?: Constants::User::PASSWORD_MIN_LENGTH)
               optional(:username).filled(:string)
               optional(:role_ids).filled(:array)
@@ -39,23 +40,23 @@ module Api
             end
 
             rule(:user_profile_attributes) do
-              if value[:email] && UserProfile.exists?(['LOWER(email) = ?', value[:email].downcase])
+              if value && value[:email] && UserProfile.exists?(['LOWER(email) = ?', value[:email].downcase])
                 key(:email).failure(text: :user_email_unique?, predicate: :user_email_unique?)
               end
 
-              if value[:neighborhood_id] && !Neighborhood.exists?(id: value[:neighborhood_id])
+              if value && value[:neighborhood_id] && !Neighborhood.exists?(id: value[:neighborhood_id])
                 key(:neighborhood_id).failure(text: 'neighborhood not exists', predicate: :not_exists?)
               end
 
-              if value[:city_id] && !City.exists?(id: value[:city_id])
+              if value && value[:city_id] && !City.exists?(id: value[:city_id])
                 key(:city_id).failure(text: 'city not exists', predicate: :not_exists?)
               end
 
-              if value[:organization_id] && !Organization.exists?(id: value[:organization_id])
+              if value && value[:organization_id] && !Organization.exists?(id: value[:organization_id])
                 key(:organization_id).failure(text: 'organization not exists', predicate: :not_exists?)
               end
 
-              if value[:team_id] && !Team.exists?(id: value[:team_id])
+              if value && value[:team_id] && !Team.exists?(id: value[:team_id])
                 key(:team_id).failure(text: "The brigade with id #{value[:team_id]} not exists", predicate: :not_exists?)
               end
 
@@ -65,15 +66,15 @@ module Api
             rule(:phone) do
               if !values[:phone].nil? && values[:phone].blank?
                 key(:phone).failure(text: "Phone can't be null", predicate: :credentials_wrong?)
-              elsif values[:phone] && UserAccount.exists?(phone: values[:phone])
+              elsif values[:phone] && UserAccount.where.not(id: values[:id]).exists?(phone: values[:phone])
                 key(:phone).failure(text: 'The phone already use by other user', predicate: :user_phone_unique?)
               end
             end
 
             rule(:username) do
-              if !values[:username].nil? && values[:phone].blank?
+              if !values[:username].nil? && values[:username].blank?
                 key(:username).failure(text: "Username can't be null", predicate: :credentials_wrong?)
-              elsif values[:username] && UserAccount.exists?(username: value.downcase)
+              elsif values[:username] && UserAccount.where.not(id: values[:id]).exists?(username: value.downcase)
                 key(:username).failure(text: 'The username already used by other user', predicate: :user_username_unique?)
               end
             end
