@@ -76,6 +76,7 @@ module Api
 
             def sort_clause(relation)
               return relation if @sort.nil? || @sort.blank?
+
               lower_case = %w[user_profiles.first_name
                     user_profiles.last_name
                     user_profiles.email
