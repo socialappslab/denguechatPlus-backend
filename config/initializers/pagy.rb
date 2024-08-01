@@ -2,4 +2,4 @@
 
 require 'pagy/extras/overflow'
 
-Pagy::VARS[:overflow] = :empty_page
+Pagy::VARS[:overflow] = :last_page
