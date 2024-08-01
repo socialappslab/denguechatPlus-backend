@@ -125,7 +125,7 @@ end
 
 #permissions
 unless SeedTask.find_by(task_name: 'permissions')
-  actions = %w[index show new create edit update destroy]
+  actions = %w[index show create edit update destroy]
   resources = %w[teams organizations users roles permissions countries cities states neighborhoods ]
   resources.product(actions).each { | resource, action| Permission.create(name: action, resource: resource) }
   SeedTask.create(task_name: 'permissions') if Permission.count == 63
@@ -237,4 +237,13 @@ unless SeedTask.find_by(task_name: 'create_special_places')
   SpecialPlace.create(name: 'Cementerio')
   SpecialPlace.create(name: 'Colegio')
   SeedTask.create(task_name: 'create_special_places')
+end
+
+unless SeedTask.find_by(task_name: 'create_authorize_user_permission_task')
+  confirm_account = Permission.create(name: 'users_confirm_account', resource: 'users')
+  rol_admin = Role.find_by_name('admin')
+  rol_admin.permissions << confirm_account
+  rol_admin.save
+  SeedTask.create(task_name: 'create_authorize_user_permission_task')
+
 end
