@@ -16,9 +16,6 @@ module Api
                        :timezone,
                        :language,
                        :email
-            has_one :city, serializer: City
-            has_one :neighborhood, serializer: Neighborhood
-            has_one :organization, serializer: Organization
 
             attribute :roles do |user_account|
               user_account.roles.map { |rol| rol.name }
@@ -26,6 +23,42 @@ module Api
 
             attribute :permissions do |user_account|
               user_account.permissions.map { |permission| "#{permission.resource}_#{permission.name}" }
+            end
+
+            attribute :state do |user_account|
+              next unless user_account.user_profile.city
+
+              {
+                id: user_account.user_profile.city.state.id,
+                name: user_account.user_profile.city.state.name
+              }
+            end
+
+            attribute :city do |user_account|
+              next unless user_account.user_profile.city
+
+              {
+                id: user_account.user_profile.city.id,
+                name: user_account.user_profile.city.name
+              }
+            end
+
+            attribute :neighborhood do |user_account|
+              next unless user_account.user_profile.neighborhood
+
+              {
+                id: user_account.user_profile.neighborhood.id,
+                name: user_account.user_profile.neighborhood.name
+              }
+            end
+
+            attribute :organization do |user_account|
+              next unless user_account.user_profile.organization
+
+              {
+                id: user_account.user_profile.organization.id,
+                name: user_account.user_profile.organization.name
+              }
             end
           end
         end
