@@ -14,6 +14,7 @@ Rails.application.routes.draw do
         get 'get_by_id/:id', on: :collection, action: :show
       end
       resources :roles, only: %i[index update create]
+      resources :permissions, only: %i[index show]
       namespace :users do
         resource :session, only: %i[create destroy], controller: :sessions do
           post 'refresh_token'
