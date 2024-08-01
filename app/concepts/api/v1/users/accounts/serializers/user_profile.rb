@@ -12,18 +12,26 @@ module Api
                        :points, :email
 
             attribute :city do |user_profile|
+              next if user_profile.city.blank?
+
               user_profile.city.name
             end
 
             attribute :neighborhood do |user_profile|
+              next if user_profile.neighborhood.blank?
+
               user_profile.neighborhood&.name
             end
 
             attribute :organization do |user_profile|
+              next if user_profile.organization.blank?
+
               user_profile.organization&.name
             end
 
             attribute :team do |user_profile|
+              next if user_profile.team.blank?
+
               user_profile.team&.name
             end
 
