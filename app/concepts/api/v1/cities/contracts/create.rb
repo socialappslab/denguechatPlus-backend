@@ -25,6 +25,14 @@ module Api
               end
             end
           end
+
+          rule(:state_id) do
+            unless State.exists?(id: value)
+              key(:state_id).failure(text: "The state with id: #{value} does not exist",
+                                 predicate: :not_exists?)
+            end
+          end
+
         end
       end
     end
