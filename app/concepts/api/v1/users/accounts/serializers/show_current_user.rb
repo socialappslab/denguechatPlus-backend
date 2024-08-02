@@ -14,11 +14,15 @@ module Api
             has_one :user_profile, record_type: :user_profile, serializer: Api::V1::Users::Accounts::Serializers::UserProfile
 
             attribute :roles do |user_account|
+              next unless user_account.roles.any?
+
               user_account.roles.map { |rol| rol.name }
             end
 
             attribute :permissions do |user_account|
-              user_account.permissions.map { |permission| "#{permission.resource}_#{permission.name}" }
+              next unless user_account.permissions.any?
+
+              user_account.permissions.map { |permission| "#{permission.resource}-#{permission.name}" }
             end
 
           end

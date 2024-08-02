@@ -22,7 +22,7 @@ module Api
             end
 
             attribute :permissions do |user_account|
-              user_account.permissions.map { |permission| "#{permission.resource}_#{permission.name}" }
+              user_account.permissions.map { |permission| "#{permission.resource}-#{permission.name}" }
             end
 
             attribute :state do |user_account|
