@@ -29,7 +29,8 @@ module Api
             @ctx[:model] = City.create(@ctx['contract.default'].values.data)
             return Success({ ctx: @ctx, type: :created }) if @ctx[:model].persisted?
 
-            Failure({ ctx: @ctx, type: :invalid, model: true })
+            errors = ErrorFormater.new_error(field: :base, msg: @ctx[:model].errors.full_messages, custom_predicate: :not_found? )
+            Failure({ ctx: @ctx, type: :invalid, errors: })
           end
 
           def includes
