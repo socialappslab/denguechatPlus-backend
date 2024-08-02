@@ -23,6 +23,15 @@ module Api
             attribute :created_at do |user|
               user.created_at.strftime('%Y-%m-%d')
             end
+
+            attribute :roles do |user|
+              user.roles.map do |role|
+                {
+                  id: role.id,
+                  name: role.name
+                }
+              end
+            end
           end
         end
       end
