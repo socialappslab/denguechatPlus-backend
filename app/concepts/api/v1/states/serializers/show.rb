@@ -8,8 +8,16 @@ module Api
           set_type :state
 
           attributes :name
-          has_many :cities, serializer: City do |object|
-            object.neighborhoods.kept
+
+          attributes :cities do |state|
+            next unless state.cities.any?
+
+            state.cities.each do |city|
+              {
+                id: city.id,
+                name: city.name
+              }
+            end
           end
 
         end

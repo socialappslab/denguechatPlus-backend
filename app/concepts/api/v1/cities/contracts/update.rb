@@ -14,13 +14,14 @@ module Api
             optional(:name).filled(:string)
             optional(:neighborhoods_attributes).array(:hash) do
               optional(:id).filled(:integer)
+              optional(:name).filled(:string)
               optional(:_destroy).filled(:integer)
             end
           end
 
           rule(:neighborhoods_attributes).each do
-            if value[:id] && Neighborhood.exists?(id: values[:id], discarded_at: nil)
-              key.failure('Neighborhood already exists in this city')
+            if value[:name] && Neighborhood.exists?(name: value[:name].downcase, discarded_at: nil)
+              key.failure('Neighborhood already exists in this neighborhood')
             end
           end
 

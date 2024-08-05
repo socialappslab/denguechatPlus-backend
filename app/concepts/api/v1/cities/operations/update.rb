@@ -27,11 +27,12 @@ module Api
           end
 
           def model
-            @ctx[:model] = City.kept.find_by(id: @params[:id], state_id: @params[:state_id], country_id: @params[:country_id])
+            @ctx[:model] =
+              City.kept.find_by(id: @params[:id], state_id: @params[:state_id], country_id: @params[:country_id])
             return Success({ ctx: @ctx, type: :success }) if @ctx[:model]
 
             ErrorFormater.new_error(@ctx['contract.default'].errors,nil, I18n.t('errors.users.not_found'),
-                       custom_predicate: :not_found?)
+                                    custom_predicate: :not_found?)
             Failure({ ctx: @ctx, type: :invalid, model: true }) unless @ctx[:model]
           end
 
@@ -44,14 +45,18 @@ module Api
           def update_city
             ActiveRecord::Base.transaction do
               begin
-                @ctx[:model].update!(@ctx['contract.default'].values.data)
+                data = @ctx['contract.default'].values.data
+                data[:neighborhoods_attributes].map do |obj_hash|
+                  obj_hash[:state_id] = @ctx[:model].state_id
+                  obj_hash[:country_id] = @ctx[:model].country_id
+                end
+                @ctx[:model].update!(data)
                 update_neighborhoods
                 Success({ ctx: @ctx, type: :success })
               rescue ActiveRecord::RecordInvalid => invalid
-                 ErrorFormater.new_error(@ctx['contract.default'].errors,nil, I18n.t('errors.users.not_found'),
-                           custom_predicate: :not_found?)
-                Failure({ ctx: @ctx, type: :invalid, model: true })
-                raise ActiveRecord::Rollback
+                errors = ErrorFormater.new_error(field: :base, msg: @ctx[:model].errors.full_messages,
+                                                 custom_predicate: :not_found? )
+                Failure({ ctx: @ctx, type: :invalid, errors: })
               end
             end
           end
