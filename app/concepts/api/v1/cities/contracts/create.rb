@@ -16,13 +16,10 @@ module Api
             end
           end
 
-          rule(:neighborhoods_attributes) do
-            if value.is_a?(Array)
-              value.each do |city|
-                city[:country_id] = values[:country_id].to_s
-                city[:state_id] = values[:state_id].to_s
 
-              end
+          rule(:neighborhoods_attributes).each do
+            if value[:id] && Neighborhood.exists?(id: values[:id], discarded_at: nil)
+              key.failure('Neighborhood already exists in this city')
             end
           end
 

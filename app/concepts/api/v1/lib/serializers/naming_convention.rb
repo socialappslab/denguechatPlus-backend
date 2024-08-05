@@ -27,7 +27,8 @@ module Api
             when Array
               params.map { |value| to_snake_case(value) }
             else
-              return params.underscore if params.is_a?(String)
+              return params if params.is_a?(String)
+
               params
             end
           end

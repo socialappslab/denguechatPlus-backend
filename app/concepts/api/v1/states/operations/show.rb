@@ -9,7 +9,6 @@ module Api
 
           tee :params
           step :find_state
-          tee :includes
 
           def params(input)
             @ctx = {}
@@ -17,7 +16,7 @@ module Api
           end
 
           def find_state
-            @ctx[:data] = State.find_by(id: @params[:id], discarded_at: nil)
+            @ctx[:data] = State.includes(:cities).find_by(id: @params[:id], discarded_at: nil)
             if @ctx[:data].nil?
               Failure({ ctx: @ctx, type: :not_found })
             else
@@ -25,9 +24,7 @@ module Api
             end
           end
 
-          def includes
-            @ctx[:include] = ['cities']
-          end
+
         end
       end
     end
