@@ -5,12 +5,14 @@ module Api
     class SpecialPlacesController < AuthorizedApiController
       def index
         endpoint operation: Api::V1::SpecialPlaces::Operations::Index,
-                 renderer_options: { serializer: Api::V1::SpecialPlaces::Serializers::Index }
+                 renderer_options: { serializer: Api::V1::SpecialPlaces::Serializers::Index },
+                 options: { current_user: }
       end
 
       def show
         endpoint operation: Api::V1::SpecialPlaces::Operations::Show,
-                 renderer_options: { serializer: Api::V1::SpecialPlaces::Serializers::Index }
+                 renderer_options: { serializer: Api::V1::SpecialPlaces::Serializers::Index },
+                 options: { current_user: }
       end
 
       def create

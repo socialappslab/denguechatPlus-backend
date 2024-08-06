@@ -19,7 +19,7 @@ module Api
           end
 
           def validate_schema
-            @ctx['contract.default'] = Api::V1::Cities::Contracts::Update.kall(@params)
+            @ctx['contract.default'] = Api::V1::Cities::Contracts::Update.kall(@params.to_h)
             is_valid = @ctx['contract.default'].success?
             return Success({ ctx: @ctx, type: :success }) if is_valid
 
@@ -31,9 +31,9 @@ module Api
               City.kept.find_by(id: @params[:id], state_id: @params[:state_id], country_id: @params[:country_id])
             return Success({ ctx: @ctx, type: :success }) if @ctx[:model]
 
-            ErrorFormater.new_error(@ctx['contract.default'].errors,nil, I18n.t('errors.users.not_found'),
-                                    custom_predicate: :not_found?)
-            Failure({ ctx: @ctx, type: :invalid, model: true }) unless @ctx[:model]
+            errors = ErrorFormater.new_error(field: :base, msg: @ctx['contract.default'].errors,
+                                             custom_predicate: :not_found? )
+            Failure({ ctx: @ctx, type: :invalid, errors:  }) unless @ctx[:model]
           end
 
           def update_neighborhoods
@@ -46,12 +46,14 @@ module Api
             ActiveRecord::Base.transaction do
               begin
                 data = @ctx['contract.default'].values.data
-                data[:neighborhoods_attributes].map do |obj_hash|
-                  obj_hash[:state_id] = @ctx[:model].state_id
-                  obj_hash[:country_id] = @ctx[:model].country_id
+                if @ctx['contract.default'].values.data[:neighborhoods_attributes]
+                  data[:neighborhoods_attributes].map do |obj_hash|
+                    obj_hash[:state_id] = @ctx[:model].state_id
+                    obj_hash[:country_id] = @ctx[:model].country_id
+                  end
                 end
                 @ctx[:model].update!(data)
-                update_neighborhoods
+                update_neighborhoods  if @ctx['contract.default'].values.data[:neighborhoods_attributes]
                 Success({ ctx: @ctx, type: :success })
               rescue ActiveRecord::RecordInvalid => invalid
                 errors = ErrorFormater.new_error(field: :base, msg: @ctx[:model].errors.full_messages,
