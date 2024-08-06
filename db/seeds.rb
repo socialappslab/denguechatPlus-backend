@@ -247,3 +247,17 @@ unless SeedTask.find_by(task_name: 'create_authorize_user_permission_task')
   SeedTask.create(task_name: 'create_authorize_user_permission_task')
 
 end
+
+
+unless SeedTask.find_by(task_name: 'create_locations_special_places_permissions')
+  locations_index = Permission.create(resource: 'locations', name: 'index')
+  special_places_index = Permission.create(resource: 'special_places', name: 'index')
+  special_places_create = Permission.create(resource: 'special_places', name: 'create')
+  special_places_update = Permission.create(resource: 'special_places', name: 'update')
+  special_places_destroy = Permission.create(resource: 'special_places', name: 'destroy')
+  rol_admin = Role.find_by_name('admin')
+  rol_admin.permissions << [locations_index, special_places_create, special_places_destroy, special_places_index, special_places_update]
+  rol_admin.save
+  SeedTask.create(task_name: 'create_locations_special_places_permissions')
+
+end

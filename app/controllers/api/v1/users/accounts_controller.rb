@@ -12,7 +12,8 @@ module Api
 
         def confirm_account
           endpoint operation: Api::V1::Users::Accounts::Operations::Confirm,
-                   renderer_options: { serializer: Api::V1::Users::Accounts::Serializers::UserAccount }
+                   renderer_options: { serializer: Api::V1::Users::Accounts::Serializers::UserAccount },
+                   options: { current_user: }
         end
       end
     end

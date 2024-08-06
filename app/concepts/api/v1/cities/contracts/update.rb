@@ -12,17 +12,13 @@ module Api
           params do
             required(:id).filled(:integer)
             optional(:name).filled(:string)
-            optional(:neighborhoods_attributes).array(:hash) do
-              optional(:id).filled(:integer)
-              optional(:name).filled(:string)
-              optional(:_destroy).filled(:integer)
-            end
+            optional(:neighborhoods_attributes).filled(:array)
           end
 
           rule(:neighborhoods_attributes).each do
-            if value[:name] && Neighborhood.exists?(name: value[:name].downcase, discarded_at: nil)
+            if values[:neighborhoods_attributes] && Neighborhood.exists?(name: value[:name].downcase, discarded_at: nil)
               key.failure('Neighborhood already exists in this neighborhood')
-            end
+             end
           end
 
         end

@@ -2,7 +2,7 @@
 
 module Api
   module V1
-    class GetLastParamsController < ApiController
+    class GetLastParamsController < AuthorizedApiController
       def index
         endpoint operation: Api::V1::GetLastParams::Operations::Index,
                  renderer_options: { serializer: Api::V1::GetLastParams::Serializers::Index },

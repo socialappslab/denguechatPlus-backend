@@ -7,7 +7,8 @@ module Api
 
         def change_status
           endpoint operation: Api::V1::Users::Accounts::Operations::ChangeStatus,
-                   renderer_options: { serializer: Api::V1::Users::Accounts::Serializers::UserAccount }
+                   renderer_options: { serializer: Api::V1::Users::Accounts::Serializers::UserAccount },
+                   options: { current_user: }
         end
       end
     end
