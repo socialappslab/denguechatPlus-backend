@@ -57,6 +57,10 @@ module Constants
       visits_create: :visits_create,
       visits_edit: :visits_edit,
       visits_update: :visits_update,
+      cities_create: :cities_create,
+      cities_index: :cities_index,
+      cities_show: :cities_show,
+      cities_destroy: :cities_destroy
     }.freeze
   end
 end
