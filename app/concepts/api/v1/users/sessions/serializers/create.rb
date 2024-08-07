@@ -25,6 +25,17 @@ module Api
               user_account.permissions.map { |permission| "#{permission.resource}-#{permission.name}" }
             end
 
+            attribute :country do |user_account|
+              city = user_account.user_profile.city
+              next unless city
+              next unless city&.country
+
+              {
+                id: city.country.id,
+                name: city.country.name
+              }
+            end
+
             attribute :state do |user_account|
               next unless user_account.user_profile.city
 
