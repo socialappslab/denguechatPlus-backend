@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_30_140540) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_07_181557) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -99,6 +99,48 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_30_140540) do
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "house_blocks", force: :cascade do |t|
+    t.datetime "discarded_at"
+    t.bigint "team_id", null: false
+    t.bigint "user_profile_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["team_id"], name: "index_house_blocks_on_team_id"
+    t.index ["user_profile_id"], name: "index_house_blocks_on_user_profile_id"
+  end
+
+  create_table "houses", force: :cascade do |t|
+    t.bigint "country_id", null: false
+    t.bigint "state_id", null: false
+    t.bigint "city_id", null: false
+    t.bigint "neighborhood_id", null: false
+    t.bigint "wedge_id", null: false
+    t.bigint "house_block_id"
+    t.bigint "special_place_id"
+    t.bigint "team_id"
+    t.bigint "user_profile_id", null: false
+    t.datetime "discarded_at"
+    t.string "reference_code"
+    t.string "house_type"
+    t.string "address"
+    t.float "latitude"
+    t.float "longitude"
+    t.string "notes"
+    t.string "status"
+    t.integer "container_count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["city_id"], name: "index_houses_on_city_id"
+    t.index ["country_id"], name: "index_houses_on_country_id"
+    t.index ["house_block_id"], name: "index_houses_on_house_block_id"
+    t.index ["neighborhood_id"], name: "index_houses_on_neighborhood_id"
+    t.index ["special_place_id"], name: "index_houses_on_special_place_id"
+    t.index ["state_id"], name: "index_houses_on_state_id"
+    t.index ["team_id"], name: "index_houses_on_team_id"
+    t.index ["user_profile_id"], name: "index_houses_on_user_profile_id"
+    t.index ["wedge_id"], name: "index_houses_on_wedge_id"
   end
 
   create_table "neighborhoods", force: :cascade do |t|
@@ -287,6 +329,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_30_140540) do
   add_foreign_key "cities", "countries"
   add_foreign_key "cities", "states"
   add_foreign_key "container_types", "breeding_site_types"
+  add_foreign_key "house_blocks", "teams"
+  add_foreign_key "house_blocks", "user_profiles"
+  add_foreign_key "houses", "cities"
+  add_foreign_key "houses", "countries"
+  add_foreign_key "houses", "house_blocks"
+  add_foreign_key "houses", "neighborhoods"
+  add_foreign_key "houses", "special_places"
+  add_foreign_key "houses", "states"
+  add_foreign_key "houses", "teams"
+  add_foreign_key "houses", "user_profiles"
+  add_foreign_key "houses", "wedges"
   add_foreign_key "neighborhoods", "cities"
   add_foreign_key "neighborhoods", "countries"
   add_foreign_key "neighborhoods", "states"
