@@ -26,7 +26,14 @@ module Api
           end
 
           def create_city
-            @ctx[:model] = City.create(@ctx['contract.default'].values.data)
+            data = @ctx['contract.default'].values.data
+            if @ctx['contract.default'].values.data[:neighborhoods_attributes]
+              data[:neighborhoods_attributes].map do |obj_hash|
+                obj_hash[:state_id] = @params[:state_id]
+                obj_hash[:country_id] = @params[:country_id]
+              end
+            end
+            @ctx[:model] = City.create(data)
             return Success({ ctx: @ctx, type: :created }) if @ctx[:model].persisted?
 
             errors = ErrorFormater.new_error(field: :base, msg: @ctx[:model].errors.full_messages, custom_predicate: :not_found? )
