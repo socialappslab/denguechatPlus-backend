@@ -11,8 +11,12 @@ module Api
             required(:name).filled(:string)
             required(:country_id).filled(:string)
             required(:state_id).filled(:string)
-            optional(:neighborhoods_attributes).array(:hash) do
-              optional(:name).filled(:string)
+            optional(:neighborhoods_attributes).filled(:array)
+          end
+
+          rule(:name) do
+            if values[:name] && City.exists?(name: value, state_id: values[:state_id])
+              key(:name).failure(text: 'City name already exists', predicate: :user_username_unique?)
             end
           end
 
@@ -29,7 +33,6 @@ module Api
                                  predicate: :not_exists?)
             end
           end
-
         end
       end
     end
