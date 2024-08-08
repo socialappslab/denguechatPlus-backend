@@ -261,3 +261,54 @@ unless SeedTask.find_by(task_name: 'create_locations_special_places_permissions'
   SeedTask.create(task_name: 'create_locations_special_places_permissions')
 
 end
+
+
+unless SeedTask.find_by(task_name: 'create_house_blocks')
+
+  team = Team.first
+  team.members << UserProfile.first(2) unless team.members.any?
+  team.members.each_with_index {|brigadist, index| HouseBlock.create(name: "Bloque #{index}", team_id: team.id, brigadist:)}
+
+  SeedTask.create(task_name: 'create_house_blocks')
+end
+
+
+
+unless SeedTask.find_by(task_name: 'create_houses')
+
+  house_blocks = HouseBlock.all
+  (1..10).each do |index|
+    house_block = house_blocks.sample
+    house = House.new
+    house.country = Country.first
+    house.state = State.first
+    house.city = City.first
+    house.neighborhood = Neighborhood.first
+    house.wedge = Wedge.first
+    house.house_block = house_block
+    house.created_by = UserProfile.first
+    house.reference_code = SecureRandom.uuid
+    house.status = 'green'
+    house.longitude = rand(680000.0..681000.0).round(10)
+    house.latitude = rand(7471000.0..7472000.0).round(10)
+    house.save
+  end
+
+  SeedTask.create(task_name: 'create_houses')
+end
+
+unless SeedTask.find_by(task_name: 'add_houses_permissions')
+  houses_index = Permission.create(resource: 'houses', name: 'index')
+  houses_create = Permission.create(resource: 'houses', name: 'create')
+  houses_update = Permission.create(resource: 'houses', name: 'update')
+  houses_destroy = Permission.create(resource: 'houses', name: 'destroy')
+  role = Role.first
+  role.permissions << houses_index
+  role.permissions << houses_create
+  role.permissions << houses_update
+  role.permissions << houses_destroy
+  role.save
+
+SeedTask.create(task_name: 'add_houses_permissions')
+
+end

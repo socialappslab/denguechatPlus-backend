@@ -49,8 +49,15 @@
 #  fk_rails_...  (wedge_id => wedges.id)
 #
 class House < ApplicationRecord
-  belongs_to :house_block
-  belongs_to :sector
+  belongs_to :country
+  belongs_to :state
+  belongs_to :city
+  belongs_to :neighborhood
   belongs_to :wedge
-  belongs_to :special_place
+  belongs_to :house_block
+  belongs_to :created_by, class_name: 'UserProfile', optional: true, foreign_key: 'user_profile_id'
+  belongs_to :special_place, optional: true
+
+  enum status: { green: 0, orange: 1, red: 2 }
+
 end
