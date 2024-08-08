@@ -60,7 +60,8 @@ module Constants
       cities_create: :cities_create,
       cities_index: :cities_index,
       cities_show: :cities_show,
-      cities_destroy: :cities_destroy
+      cities_destroy: :cities_destroy,
+      house_blocks: :house_blocks_index
     }.freeze
   end
 end

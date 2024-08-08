@@ -12,11 +12,7 @@ module Api
           attribute :leader do |brigade|
             next if brigade.leader.nil?
 
-            {
-              id: brigade.leader.id,
-              first_name: brigade.leader.first_name,
-              last_name: brigade.leader.last_name
-            }
+            "#{brigade.leader.first_name}, #{brigade.leader.last_name}"
           end
 
           attribute :user_profiles do |brigade|
