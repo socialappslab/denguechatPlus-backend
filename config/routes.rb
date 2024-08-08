@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       end
       resources :locations, only: %i[index]
       resources :special_places
+      resources :houses, only: %i[index]
 
       namespace :admin do
         resources :users do

@@ -4,6 +4,7 @@
 #
 #  id              :bigint           not null, primary key
 #  discarded_at    :datetime
+#  name            :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  team_id         :bigint           not null
@@ -22,5 +23,5 @@
 class HouseBlock < ApplicationRecord
   has_many :houses, dependent: :nullify
   belongs_to :team
-  belongs_to :created_by, class_name: 'UserProfile'
+  belongs_to :brigadist, class_name: 'UserProfile', foreign_key: 'user_profile_id'
 end

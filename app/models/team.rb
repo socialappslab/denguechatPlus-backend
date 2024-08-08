@@ -34,8 +34,8 @@ class Team < ApplicationRecord
   include Discard::Model
 
 
-  has_many :user_profiles
-  belongs_to :leader, class_name: 'UserProfile', foreign_key: 'leader_id', optional: true
+  has_many :members, class_name: 'UserProfile'
+  belongs_to :leader, class_name: 'UserProfile', optional: true
   belongs_to :organization
   belongs_to :sector, class_name: 'Neighborhood', foreign_key: 'neighborhood_id'
   belongs_to :wedge, class_name: 'Wedge'
