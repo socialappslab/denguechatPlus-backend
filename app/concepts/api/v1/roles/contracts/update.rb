@@ -15,7 +15,7 @@ module Api
           end
 
           rule(:name) do
-            if values[:name].present? && Role.exists?(name: values[:name].downcase)
+            if values[:name].present? && Role.where.not(id: values[:id]).exists?(['LOWER(name) = ?', values[:name].downcase])
               key(:name).failure(text: 'Role name is already used, please choose other name', predicate: :unique?)
               end
           end

@@ -34,29 +34,11 @@ module Api
             Failure({ ctx: @ctx, type: :invalid, model: true }) unless @ctx[:model]
           end
 
-          def add_permissions!
-            return nil unless @params.key? 'role_permissions_attributes'
-
-            data = @ctx['contract.default'].values.data[:role_permissions_attributes].pluck(:permission_id)
-            permission_ids = data - @ctx[:model].permissions.pluck(:id)
-            @ctx[:model].permissions << Permission.where(id: permission_ids) if permission_ids&.any?
-          end
-
-          def destroy_permissions!
-            return nil unless @params.key? 'role_permissions_attributes'
-
-            permission_id = @ctx['contract.default'].values.data[:role_permissions_attributes].pluck(:_destroy)
-            role_id = @ctx['contract.default'].values.data[:id]
-            RolePermission.where(role_id:, permission_id:).destroy_all
-          end
-
           def update_rol
             ActiveRecord::Base.transaction do
               begin
-                data_processed = @ctx['contract.default'].values.data.except(:role_permissions_attributes)
+                data_processed = @ctx['contract.default'].values.data
                 @ctx[:model].update!(data_processed)
-                add_permissions!
-                destroy_permissions!
                 next Success({ ctx: @ctx, type: :success })
               rescue ActiveRecord::RecordInvalid => invalid
                 errors = ErrorFormater.new_error(field: :base, msg: @ctx[:model].errors.full_messages.join(' '), custom_predicate: :credentials_wrong?)

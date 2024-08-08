@@ -18,11 +18,11 @@ module Api
                        :email
 
             attribute :roles do |user_account|
-              user_account.roles.map { |rol| rol.name }
+              user_account.roles.map { |rol| rol.name }&.uniq
             end
 
             attribute :permissions do |user_account|
-              user_account.permissions.map { |permission| "#{permission.resource}-#{permission.name}" }
+              user_account.permissions.map { |permission| "#{permission.resource}-#{permission.name}" }&.uniq
             end
 
             attribute :country do |user_account|
