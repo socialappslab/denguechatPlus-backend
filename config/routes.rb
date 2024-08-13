@@ -33,6 +33,7 @@ Rails.application.routes.draw do
       resources :locations, only: %i[index]
       resources :special_places
       resources :houses, only: %i[index]
+      resources :house_blocks, only: %i[index]
 
       namespace :admin do
         resources :users do
