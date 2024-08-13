@@ -9,6 +9,16 @@ module Api
 
           attributes :name
 
+          attribute :wedges do |neigborhood|
+            next if neigborhood&.wedges.nil? || neigborhood&.wedges.empty?
+            neigborhood.wedges.map do |wedge|
+              {
+                id: wedge.id,
+                name: wedge.name
+              }
+            end
+          end
+
         end
       end
     end
