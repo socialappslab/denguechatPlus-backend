@@ -35,5 +35,6 @@ class Neighborhood < ApplicationRecord
   belongs_to :state
   belongs_to :country
   has_many :user_profiles
+  has_many :wedges
 
 end
