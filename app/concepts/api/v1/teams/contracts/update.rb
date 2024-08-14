@@ -57,7 +57,7 @@ module Api
           end
 
           rule(:name) do
-            if values[:name] && Team.exists?(name: values[:name].downcase)
+            if values[:name] && Team.where.not(id: values[:id]).exists?(name: values[:name].downcase)
               key(:name).failure(text: 'the team name is already in use', predicate: :unique?)
             end
           end
