@@ -17,6 +17,7 @@ module Api
                 optional(:email).maybe(:string)
                 optional(:username).maybe(:string)
                 optional(:status).maybe(:array)
+                optional(:role_name).maybe(:string)
               end
 
               optional(:page).maybe(:hash) do
