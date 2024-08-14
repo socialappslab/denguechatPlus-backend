@@ -24,10 +24,6 @@ module Api
               key(:member_ids).failure(text: 'user_profile does not exist', predicate: :not_found?)
             end
 
-            if values[:member_ids] &&
-              UserProfile.where(id: values[:member_ids], team_id: nil).count != values[:member_ids].count
-              key(:member_ids).failure(text: "user_profile with id: '#{value}' is already assigned to a brigade", predicate: :unique?)
-            end
 
           end
 
