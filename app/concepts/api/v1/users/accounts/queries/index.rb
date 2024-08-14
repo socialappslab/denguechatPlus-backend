@@ -28,6 +28,7 @@ module Api
                     .yield_self(&method(:username_clause))
                     .yield_self(&method(:status_clause))
                     .yield_self(&method(:status_clause))
+                    .yield_self(&method(:role_name_clause))
                     .yield_self(&method(:sort_clause))
             end
 
@@ -73,6 +74,12 @@ module Api
               return relation if @filter.nil? || @filter[:status].blank?
 
               relation.where(user_account: { status: @filter[:status] })
+            end
+
+            def role_name_clause(relation)
+              return relation if @filter.nil? || @filter[:role_name].blank?
+
+              relation.joins(user_account: :roles).where('roles.name ILIKE ?', "%#{@filter[:role_name]}%")
             end
 
             def sort_clause(relation)

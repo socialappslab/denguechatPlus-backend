@@ -20,6 +20,8 @@ module Api
           def call
             @model.where(discarded_at: nil)
                   .yield_self(&method(:name_clause))
+                  .yield_self(&method(:sector_id_clause))
+                  .yield_self(&method(:sector_name_clause))
                   .yield_self(&method(:sort_clause))
           end
 
@@ -31,6 +33,18 @@ module Api
             return relation if @filter.nil? || @filter[:name].blank?
 
             relation.where('teams.name ilike :query', query: "%#{@filter[:name]}%")
+          end
+
+          def sector_id_clause(relation)
+            return relation if @filter.nil? || @filter[:sector_id].nil? || @filter[:sector_id].blank?
+
+            relation.where(neighborhood_id: @filter[:sector_id])
+          end
+
+          def sector_name_clause(relation)
+            return relation if @filter.nil? || @filter[:sector_name].blank?
+
+            relation.joins(:sector).where('neighborhoods.name ILIKE ?', "%#{@filter[:sector_name]}%")
           end
 
           def sort_clause(relation)

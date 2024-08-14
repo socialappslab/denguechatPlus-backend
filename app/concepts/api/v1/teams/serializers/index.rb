@@ -19,6 +19,10 @@ module Api
             brigade.members.map { |user| "#{user.first_name}, #{user.last_name}"  }
           end
 
+          attribute :members do |brigade|
+            brigade.members.map { |user| { id: user.id, fullName: "#{user.first_name} #{user.last_name}" } }
+          end
+
           attribute :organization do |brigade|
             next if brigade.organization.nil?
 
