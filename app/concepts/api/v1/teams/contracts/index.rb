@@ -11,6 +11,8 @@ module Api
           params do
             optional(:filter).maybe(:hash) do
               optional(:name).maybe(:string)
+              optional(:sector_id).maybe(:integer)
+              optional(:sector_name).maybe(:string)
             end
 
             optional(:page).maybe(:hash) do
