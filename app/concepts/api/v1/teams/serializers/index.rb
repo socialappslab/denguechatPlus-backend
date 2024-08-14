@@ -15,7 +15,7 @@ module Api
             "#{brigade.leader.first_name}, #{brigade.leader.last_name}"
           end
 
-          attribute :user_profiles do |brigade|
+          attribute :members do |brigade|
             brigade.members.map { |user| "#{user.first_name}, #{user.last_name}"  }
           end
 

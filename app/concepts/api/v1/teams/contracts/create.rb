@@ -12,19 +12,19 @@ module Api
             required(:name).filled(:string)
             required(:organization_id).filled(:integer)
             required(:leader_id).filled(:integer)
-            required(:user_profile_ids).filled(:array).each(:integer)
+            required(:member_ids).filled(:array).each(:integer)
             required(:sector_id).filled(:integer)
             required(:wedge_id).filled(:integer)
           end
 
-          rule(:user_profile_ids).each do
-            if values[:user_profile_ids] && !UserProfile.exists?(id: values[:user_profile_ids])
-              key(:user_profile_ids).failure(text: 'user_profile does not exist', predicate: :not_found?)
+          rule(:member_ids).each do
+            if values[:member_ids] && !UserProfile.exists?(id: values[:member_ids])
+              key(:member_ids).failure(text: 'member (user) does not exist', predicate: :not_found?)
             end
 
-            if values[:user_profile_ids] &&
-               UserProfile.where(id: values[:user_profile_ids], team_id: nil).count != values[:user_profile_ids].count
-              key(:user_profile_ids).failure(text: "user_profile with id: '#{value}' is already assigned to a brigade", predicate: :unique?)
+            if values[:member_ids] &&
+               UserProfile.where(id: values[:member_ids], team_id: nil).count != values[:member_ids].count
+              key(:member_ids).failure(text: "user_profile with id: '#{value}' is already assigned to a brigade", predicate: :unique?)
             end
 
           end
