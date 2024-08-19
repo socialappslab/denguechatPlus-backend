@@ -2,7 +2,7 @@
 
 module Api
   module V1
-    module Teams
+    module Wedges
       module Contracts
         class Index < Dry::Validation::Contract
           def self.kall(...)
@@ -11,8 +11,7 @@ module Api
           params do
             optional(:filter).maybe(:hash) do
               optional(:name).maybe(:string)
-              optional(:sector_id).maybe(:integer)
-              optional(:sector).maybe(:string)
+              optional(:neighborhood_id).maybe(:integer)
             end
 
             optional(:page).maybe(:hash) do
