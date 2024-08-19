@@ -12,7 +12,7 @@ module Api
             optional(:filter).maybe(:hash) do
               optional(:name).maybe(:string)
               optional(:sector_id).maybe(:integer)
-              optional(:sector_name).maybe(:string)
+              optional(:sector).maybe(:string)
             end
 
             optional(:page).maybe(:hash) do

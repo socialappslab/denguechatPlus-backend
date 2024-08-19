@@ -42,9 +42,9 @@ module Api
           end
 
           def sector_name_clause(relation)
-            return relation if @filter.nil? || @filter[:sector_name].blank?
+            return relation if @filter.nil? || @filter[:sector].blank?
 
-            relation.joins(:sector).where('neighborhoods.name ILIKE ?', "%#{@filter[:sector_name]}%")
+            relation.joins(:sector).where('neighborhoods.name ILIKE ?', "%#{@filter[:sector]}%")
           end
 
           def sort_clause(relation)
