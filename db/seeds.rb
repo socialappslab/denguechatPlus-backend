@@ -148,6 +148,7 @@ end
 #assign roles to users
 unless SeedTask.find_by(task_name: 'assign_roles')
   user_account = UserAccount.find_by(username: 'tariki_admin')
+
   user_account.roles << Role.find_by(name: 'admin')
   user_account.save!
   SeedTask.create(task_name: 'assign_roles') if Permission.count == 63
@@ -310,5 +311,20 @@ unless SeedTask.find_by(task_name: 'add_houses_permissions')
   role.save
 
 SeedTask.create(task_name: 'add_houses_permissions')
+
+end
+
+
+unless SeedTask.find_by(task_name: 'add_wedges_and_house_blocks_permissions')
+  house_blocks_index = Permission.create(resource: 'house_blocks', name: 'index')
+  house_blocks_show = Permission.create(resource: 'house_blocks', name: 'show')
+  wedges_index = Permission.create(resource: 'wedges', name: 'index')
+  role = Role.first
+  role.permissions << house_blocks_index
+  role.permissions << house_blocks_show
+  role.permissions << wedges_index
+  role.save
+
+  SeedTask.create(task_name: 'add_wedges_and_house_blocks_permissions')
 
 end

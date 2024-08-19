@@ -62,6 +62,7 @@ Rails.application.routes.draw do
                 collection do
                   delete :destroy
                 end
+                resources :wedges, only: :index
               end
             end
           end
