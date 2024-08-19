@@ -9,6 +9,10 @@ module Api
 
           attributes :name
 
+          attribute :member_count do |brigade|
+            brigade.members&.count
+          end
+
           attribute :leader do |brigade|
             next if brigade.leader.nil?
 
@@ -27,6 +31,16 @@ module Api
             next if brigade.organization.nil?
 
             brigade.organization.name
+          end
+
+          attribute :city do |brigade|
+            sector = brigade.sector
+            next if sector.nil?
+
+            city = sector.city
+            next if city.nil?
+
+            city.name
           end
 
           attribute :sector do |brigade|
