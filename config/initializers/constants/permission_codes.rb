@@ -62,7 +62,8 @@ module Constants
       cities_show: :cities_show,
       cities_destroy: :cities_destroy,
       house_blocks: :house_blocks_index,
-      users_change_status: :users_change_status
+      users_change_status: :users_change_status,
+      wedges_index: :wedges_index
     }.freeze
   end
 end
