@@ -7,8 +7,8 @@ module Api
         class House < Dry::Validation::Contract
           params do
             required(:address).filled(:string)
-            optional(:latitude).filled(:float)
-            optional(:longitude).filled(:float)
+            required(:latitude).filled(:float)
+            required(:longitude).filled(:float)
             optional(:notes).filled(:string)
             optional(:reference_code).filled(:string)
             required(:house_block_id).filled(:integer)
@@ -18,7 +18,7 @@ module Api
           rule(:house_block_id) do
             unless HouseBlock.exists?(id: value)
               key(:house_block_id_on_house).failure(text: "The house block with id: #{value} does not exist",
-                                     predicate: :not_exists?)
+                                                    predicate: :not_exists?)
             end
           end
 

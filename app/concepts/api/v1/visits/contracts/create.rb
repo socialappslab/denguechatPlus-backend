@@ -29,7 +29,8 @@ module Api
           rule(:house_id) do
             house_exists = ::House.find_by(id: value).present?
             if !house_exists && !values[:house]
-              key.failure('The house not exists in the database, you need to send a house hash with the new house data')
+              key(:house_id).failure(text: 'The house not exists, you need to send a house obj with the new house data',
+                                     predicate: :not_exists?)
             end
           end
 

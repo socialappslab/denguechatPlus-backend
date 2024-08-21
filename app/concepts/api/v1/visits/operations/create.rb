@@ -40,14 +40,9 @@ module Api
           end
 
           def create_house_if_necessary
-            house_exists = @params[:house_id]
+            return existing_house_result if params_include_house?
 
-            if house_exists
-              @house = House.find_by(id: @params[:house_id])
-              return Success({ ctx: @ctx, type: :success })
-            end
-
-            @params[:house_id] = create_and_get_house_id
+            @params[:house_id] = find_similar_or_create_house_id
             Success({ ctx: @ctx, type: :success })
           end
 
@@ -56,7 +51,7 @@ module Api
               @ctx[:model] = Visit.create(@params)
               Success({ ctx: @ctx, type: :created })
             rescue => error
-              errors = ErrorFormater.new_error(field: :base, msg: error, custom_predicate: :user_account_without_confirmation? )
+              errors = ErrorFormater.new_error(field: :base, msg: error, custom_predicate: :user_account_without_confirmation?)
 
               return Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
             end
@@ -88,6 +83,23 @@ module Api
             rand_number = Time.now.to_i.to_s
 
             "#{country_name}-#{state_name}-#{city_name}-#{wedge_name}-#{block_name}-#{rand_number}"
+          end
+
+          def params_include_house?
+            @params[:house_id].present?
+          end
+
+          def existing_house_result
+            @house = House.find_by(id: @params[:house_id])
+            Success({ ctx: @ctx, type: :success })
+          end
+
+          def find_similar_or_create_house_id
+            similar_house = Api::V1::Visits::Services::HouseFinderByCoordsService.find_similar_house(latitude: @house_info[:latitude],
+                                                                          longitude: @house_info[:longitude],
+                                                                          house_block_id: @house_info[:house_block_id])
+
+            similar_house ? similar_house.id : create_and_get_house_id
           end
 
           def create_and_get_house_id
