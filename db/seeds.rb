@@ -399,7 +399,7 @@ unless SeedTask.find_by(task_name: 'create_visit_and_list_house_permissions')
   permissions_array = []
 
   permissions.each do |permission|
-    permissions_array = Permission.create(permission)
+    permissions_array << Permission.create(permission)
   end
   role = Role.first
   role.permissions << permissions_array

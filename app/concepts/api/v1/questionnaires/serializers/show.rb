@@ -26,7 +26,7 @@ module Api
               {
                 id: question.id,
                 question: question.question,
-                type_field: question.type_field,
+                typeField: question.type_field,
                 next: question.next,
                 image: get_image_obj.call(question),
                 options: question.options.map do |option|
@@ -35,7 +35,8 @@ module Api
                     name: option.name,
                     required: option.required,
                     textArea: option.text_area,
-                    image: get_image_obj.call(option)
+                    image: get_image_obj.call(option),
+                    next: option.next
                   }
                 end
               }
