@@ -9,6 +9,11 @@ module Api
             new.call(...)
           end
           params do
+
+            optional(:filter).maybe(:hash) do
+              optional(:reference_code).maybe(:string)
+            end
+
             optional(:page).maybe(:hash) do
               optional(:is_cursor).maybe(:bool)
             end

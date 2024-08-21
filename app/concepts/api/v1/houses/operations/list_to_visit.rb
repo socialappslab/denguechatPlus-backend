@@ -36,7 +36,7 @@ module Api
           end
 
           def list
-            @ctx[:data] = Api::V1::Houses::Queries::ListToVisit.call(@user_account)
+            @ctx[:data] = Api::V1::Houses::Queries::ListToVisit.call(@user_account, @ctx['contract.default']['filter'])
             Success({ ctx: @ctx, type: :success })
           end
 
