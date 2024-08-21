@@ -5,8 +5,9 @@
 #  id           :bigint           not null, primary key
 #  discarded_at :datetime
 #  name         :string
-#  required     :boolean
-#  text_area    :boolean
+#  next         :integer
+#  required     :boolean          default(FALSE)
+#  text_area    :boolean          default(FALSE)
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  question_id  :bigint           not null

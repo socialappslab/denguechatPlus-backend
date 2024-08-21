@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 require 'json'
 require 'open-uri'
+require_relative '../db/files/questions'
 
 ###################################
 ###################################
@@ -326,5 +327,27 @@ unless SeedTask.find_by(task_name: 'add_wedges_and_house_blocks_permissions')
   role.save
 
   SeedTask.create(task_name: 'add_wedges_and_house_blocks_permissions')
+
+end
+
+unless SeedTask.find_by(task_name: 'create_questions')
+
+  questionnaire = Questionnaire.create!(
+    name: 'Cuestionario de Zancudos',
+    current_form: true,
+    initial_question: 8,
+    final_question: 7
+  )
+
+  QUESTIONS_DATA.each do |question_data|
+    options_data = question_data.delete(:options)
+    question = questionnaire.questions.create!(question_data)
+
+    options_data&.each do |option_data|
+      question.options.create!(option_data)
+    end
+  end
+
+  SeedTask.create(task_name: 'create_questions')
 
 end

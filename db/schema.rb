@@ -188,8 +188,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_21_022813) do
   create_table "options", force: :cascade do |t|
     t.bigint "question_id", null: false
     t.string "name"
-    t.boolean "required"
-    t.boolean "text_area"
+    t.boolean "required", default: false
+    t.boolean "text_area", default: false
+    t.integer "next"
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
