@@ -34,6 +34,7 @@ Rails.application.routes.draw do
       resources :special_places
       resources :houses, only: %i[index]
       resources :house_blocks, only: %i[index]
+      resources :visits, only: %i[create]
 
       namespace :admin do
         resources :users do

@@ -12,5 +12,7 @@
 #  updated_at       :datetime         not null
 #
 class Questionnaire < ApplicationRecord
+  include Discard::Model
+
   has_many :questions
 end

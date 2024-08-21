@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_21_022813) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_21_035743) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -108,8 +108,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_21_022813) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name"
+    t.bigint "wedge_id"
     t.index ["team_id"], name: "index_house_blocks_on_team_id"
     t.index ["user_profile_id"], name: "index_house_blocks_on_user_profile_id"
+    t.index ["wedge_id"], name: "index_house_blocks_on_wedge_id"
   end
 
   create_table "houses", force: :cascade do |t|
@@ -410,6 +412,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_21_022813) do
   add_foreign_key "container_types", "breeding_site_types"
   add_foreign_key "house_blocks", "teams"
   add_foreign_key "house_blocks", "user_profiles"
+  add_foreign_key "house_blocks", "wedges"
   add_foreign_key "houses", "cities"
   add_foreign_key "houses", "countries"
   add_foreign_key "houses", "house_blocks"

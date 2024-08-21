@@ -33,7 +33,9 @@
 #
 class Visit < ApplicationRecord
   belongs_to :house
-  belongs_to :brigadist, class_name: 'UserAccount'
-  belongs_to :brigade, class_name: 'Team'
+  belongs_to :user_account
+  belongs_to :team
   belongs_to :questionnaire
+  has_many :inspections
+  accepts_nested_attributes_for :inspections
 end
