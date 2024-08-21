@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_08_035809) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_21_035743) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -108,8 +108,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_08_035809) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name"
+    t.bigint "wedge_id"
     t.index ["team_id"], name: "index_house_blocks_on_team_id"
     t.index ["user_profile_id"], name: "index_house_blocks_on_user_profile_id"
+    t.index ["wedge_id"], name: "index_house_blocks_on_wedge_id"
   end
 
   create_table "houses", force: :cascade do |t|
@@ -144,6 +146,30 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_08_035809) do
     t.index ["wedge_id"], name: "index_houses_on_wedge_id"
   end
 
+  create_table "inspections", force: :cascade do |t|
+    t.bigint "visit_id", null: false
+    t.bigint "breeding_site_type_id", null: false
+    t.bigint "elimination_method_type_id", null: false
+    t.bigint "water_source_type_id", null: false
+    t.bigint "created_by_id", null: false
+    t.bigint "treated_by_id", null: false
+    t.string "code_reference"
+    t.boolean "in_use"
+    t.boolean "has_lid"
+    t.boolean "has_water"
+    t.boolean "was_chemically_treated"
+    t.string "container_test_result"
+    t.string "tracking_type_required"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["breeding_site_type_id"], name: "index_inspections_on_breeding_site_type_id"
+    t.index ["created_by_id"], name: "index_inspections_on_created_by_id"
+    t.index ["elimination_method_type_id"], name: "index_inspections_on_elimination_method_type_id"
+    t.index ["treated_by_id"], name: "index_inspections_on_treated_by_id"
+    t.index ["visit_id"], name: "index_inspections_on_visit_id"
+    t.index ["water_source_type_id"], name: "index_inspections_on_water_source_type_id"
+  end
+
   create_table "neighborhoods", force: :cascade do |t|
     t.string "name"
     t.datetime "discarded_at"
@@ -159,6 +185,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_08_035809) do
     t.index ["name", "discarded_at"], name: "index_neighborhoods_on_name_and_discarded_at", unique: true
     t.index ["state_id"], name: "index_neighborhoods_on_state_id"
     t.index ["wedge_id"], name: "index_neighborhoods_on_wedge_id"
+  end
+
+  create_table "options", force: :cascade do |t|
+    t.bigint "question_id", null: false
+    t.string "name"
+    t.boolean "required", default: false
+    t.boolean "text_area", default: false
+    t.integer "next"
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["question_id"], name: "index_options_on_question_id"
   end
 
   create_table "organizations", force: :cascade do |t|
@@ -182,6 +220,28 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_08_035809) do
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "questionnaires", force: :cascade do |t|
+    t.string "name"
+    t.boolean "current_form"
+    t.datetime "discarded_at"
+    t.integer "initial_question"
+    t.integer "final_question"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "questions", force: :cascade do |t|
+    t.bigint "questionnaire_id", null: false
+    t.string "question_text"
+    t.string "description"
+    t.string "type_field"
+    t.integer "next"
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["questionnaire_id"], name: "index_questions_on_questionnaire_id"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -308,6 +368,26 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_08_035809) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "visits", force: :cascade do |t|
+    t.bigint "house_id", null: false
+    t.datetime "visited_at"
+    t.bigint "user_account_id", null: false
+    t.bigint "team_id", null: false
+    t.boolean "visit_permission", default: false
+    t.string "notes"
+    t.string "host"
+    t.jsonb "questions"
+    t.bigint "questionnaire_id", null: false
+    t.jsonb "answers"
+    t.integer "visit_status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["house_id"], name: "index_visits_on_house_id"
+    t.index ["questionnaire_id"], name: "index_visits_on_questionnaire_id"
+    t.index ["team_id"], name: "index_visits_on_team_id"
+    t.index ["user_account_id"], name: "index_visits_on_user_account_id"
+  end
+
   create_table "water_source_types", force: :cascade do |t|
     t.string "name"
     t.datetime "discarded_at"
@@ -332,6 +412,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_08_035809) do
   add_foreign_key "container_types", "breeding_site_types"
   add_foreign_key "house_blocks", "teams"
   add_foreign_key "house_blocks", "user_profiles"
+  add_foreign_key "house_blocks", "wedges"
   add_foreign_key "houses", "cities"
   add_foreign_key "houses", "countries"
   add_foreign_key "houses", "house_blocks"
@@ -341,10 +422,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_08_035809) do
   add_foreign_key "houses", "teams"
   add_foreign_key "houses", "user_profiles"
   add_foreign_key "houses", "wedges"
+  add_foreign_key "inspections", "breeding_site_types"
+  add_foreign_key "inspections", "elimination_method_types"
+  add_foreign_key "inspections", "user_accounts", column: "created_by_id"
+  add_foreign_key "inspections", "user_accounts", column: "treated_by_id"
+  add_foreign_key "inspections", "visits"
+  add_foreign_key "inspections", "water_source_types"
   add_foreign_key "neighborhoods", "cities"
   add_foreign_key "neighborhoods", "countries"
   add_foreign_key "neighborhoods", "states"
   add_foreign_key "neighborhoods", "wedges"
+  add_foreign_key "options", "questions"
+  add_foreign_key "questions", "questionnaires"
   add_foreign_key "states", "countries"
   add_foreign_key "teams", "neighborhoods"
   add_foreign_key "teams", "organizations"
@@ -355,5 +444,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_08_035809) do
   add_foreign_key "user_profiles", "neighborhoods"
   add_foreign_key "user_profiles", "organizations"
   add_foreign_key "user_profiles", "teams"
+  add_foreign_key "visits", "houses"
+  add_foreign_key "visits", "questionnaires"
+  add_foreign_key "visits", "teams"
+  add_foreign_key "visits", "user_accounts"
   add_foreign_key "wedges", "neighborhoods"
 end

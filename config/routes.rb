@@ -32,8 +32,18 @@ Rails.application.routes.draw do
       end
       resources :locations, only: %i[index]
       resources :special_places
-      resources :houses, only: %i[index]
+      resources :houses, only: %i[index] do
+        collection do
+          get :list_to_visit
+        end
+      end
       resources :house_blocks, only: %i[index]
+      resources :visits, only: %i[create]
+      resources :questionnaires, only: %i[current] do
+        collection do
+          get :current
+        end
+      end
 
       namespace :admin do
         resources :users do
