@@ -48,6 +48,7 @@ class UserAccount < ApplicationRecord
            :neighborhood_id,
            :organization_id,
            :language,
+           :house_blocks,
            :timezone, to: :user_profile
 
   enum status: { pending: 0, active: 1, inactive: 2, locked: 3 }
