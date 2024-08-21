@@ -389,3 +389,20 @@ unless SeedTask.find_by(task_name: 'create_questions')
   SeedTask.create(task_name: 'create_questions')
 
 end
+
+unless SeedTask.find_by(task_name: 'create_visit_and_list_house_permissions')
+  permissions = [
+    { name: 'create', resource: 'visits' },
+    { name: 'current', resource: 'questionnaires' },
+    { name: 'list_to_visit', resource: 'houses' }
+  ]
+  permissions_array = []
+
+  permissions.each do |permission|
+    permissions_array = Permission.create(permission)
+  end
+  role = Role.first
+  role.permissions << permissions_array
+  role.save
+  SeedTask.create(task_name: 'create_visit_and_list_house_permissions')
+end
