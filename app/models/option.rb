@@ -21,5 +21,6 @@
 #  fk_rails_...  (question_id => questions.id)
 #
 class Option < ApplicationRecord
+  has_one_attached :image
   belongs_to :question
 end

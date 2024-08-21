@@ -34,6 +34,32 @@ def get_all_images_for_containers
   results
 end
 
+def get_images_for_questionnaire
+  results = []
+  types = {
+    'En la huerta': 'https://i.imghippo.com/files/lBlRv1724220223.png',
+    'En la casa': 'https://i.imghippo.com/files/hfv801724220367.png',
+    'Tanques (cemento, polietileno, metal, otro material)': 'https://i.imghippo.com/files/owjeu1724220878.png',
+    'Bidones o cilindros (metal, plástico)': 'https://i.imghippo.com/files/ta0H31724220912.png',
+    'Pozos': 'https://i.imghippo.com/files/PXsOQ1724220823.png',
+    'Estructura o partes de la casa': 'https://i.imghippo.com/files/z8Yex1724220962.png',
+    'Llanta': 'https://i.imghippo.com/files/hYKbi1724220688.png',
+    'Elementos naturales': 'https://i.imghippo.com/files/JjdHE1724220604.png',
+    'Otros': 'https://i.imghippo.com/files/hxNCm1724220325.png',
+  }.freeze
+
+  types.each do |key, url|
+    begin
+      res = URI.open(url)
+    rescue => error
+      p error
+      res = nil
+    end
+    results << { io: res, filename: key.to_s, content_type: 'image/jpg' }
+  end
+  results
+end
+
 ###################################
 ###################################
 # Create initial data
@@ -332,6 +358,8 @@ end
 
 unless SeedTask.find_by(task_name: 'create_questions')
 
+  images = get_images_for_questionnaire
+
   questionnaire = Questionnaire.create!(
     name: 'Cuestionario de Zancudos',
     current_form: true,
@@ -347,6 +375,16 @@ unless SeedTask.find_by(task_name: 'create_questions')
       question.options.create!(option_data)
     end
   end
+
+  images.each do |image|
+    resource = Question.find_by(question: image[:filename])
+    resource ||= Option.find_by(name: image[:filename])
+    next unless resource
+
+    resource.image.attach(image)
+    image[:io].unlink
+  end
+
 
   SeedTask.create(task_name: 'create_questions')
 

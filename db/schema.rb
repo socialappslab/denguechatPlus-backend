@@ -234,7 +234,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_21_035743) do
 
   create_table "questions", force: :cascade do |t|
     t.bigint "questionnaire_id", null: false
-    t.string "question"
+    t.string "question_text"
     t.string "description"
     t.string "type_field"
     t.integer "next"

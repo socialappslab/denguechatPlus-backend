@@ -32,7 +32,7 @@ QUESTIONS_DATA = [
     id: 3,
     question: "En la casa",
     description: "Vamos a buscar todos los recipientes que contienen agua y potencialmente son criaderos de zancudos.",
-    type_field: "plash",
+    type_field: "splash",
     next: 5
   },
   {

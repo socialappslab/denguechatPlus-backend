@@ -35,6 +35,11 @@ Rails.application.routes.draw do
       resources :houses, only: %i[index]
       resources :house_blocks, only: %i[index]
       resources :visits, only: %i[create]
+      resources :questionnaires, only: %i[current] do
+        collection do
+          get :current
+        end
+      end
 
       namespace :admin do
         resources :users do
