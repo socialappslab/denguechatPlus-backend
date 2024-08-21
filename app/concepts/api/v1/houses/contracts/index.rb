@@ -10,7 +10,7 @@ module Api
           end
           params do
             optional(:filter).maybe(:hash) do
-              optional(:reference_code).maybe(:integer)
+              optional(:reference_code).maybe(:string)
               optional(:house_block_id).maybe(:integer)
               optional(:country_id).maybe(:integer)
               optional(:state_id).maybe(:integer)
