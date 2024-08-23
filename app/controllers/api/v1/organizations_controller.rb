@@ -3,8 +3,10 @@
 module Api
   module V1
     class OrganizationsController < AuthorizedApiController
+      before_action :do_full_public_endpoint!, only: [:index]
       skip_before_action :check_permissions!, only: [:index]
       skip_before_action :authorize_access_request!, only: [:index]
+
 
       def index
         endpoint operation: Api::V1::Organizations::Operations::Index,

@@ -19,7 +19,7 @@ module Api
           end
 
           def call
-            @model.where(discarded_at: nil)
+            @model.kept
                   .yield_self(&method(:name_clause))
                   .yield_self(&method(:country_clause))
                   .yield_self(&method(:state_clause))
