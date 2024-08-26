@@ -12,6 +12,9 @@ Rails.application.routes.draw do
       resources :users, only: %i[index update show] do
         get 'me', on: :collection, action: :show_current_user
         get 'get_by_id/:id', on: :collection, action: :show
+        member do
+          put 'change_status'
+        end
       end
       resources :roles, only: %i[index update create]
       resources :permissions, only: %i[index show]
@@ -44,35 +47,39 @@ Rails.application.routes.draw do
           get :current
         end
       end
-
-      namespace :admin do
-        resources :users do
-          member do
-            put 'change_status'
-          end
+      resources :teams do
+        collection do
+          delete :destroy
         end
-        resources :teams do
+      end
+      resources :countries do
+        collection do
+          delete :destroy
+        end
+        resources :states do
           collection do
             delete :destroy
           end
-        end
-        resources :countries do
-          collection do
-            delete :destroy
-          end
-          resources :states do
+          resources :cities do
             collection do
               delete :destroy
             end
-            resources :cities do
+            resources :neighborhoods do
               collection do
                 delete :destroy
               end
-              resources :neighborhoods do
-                collection do
-                  delete :destroy
-                end
-                resources :wedges, only: :index
+              resources :wedges, only: :index
+            end
+          end
+        end
+      end
+
+      namespace :public do
+        resources :countries, only: %i[show index] do
+          resources :states, only: %i[show index] do
+            resources :cities, only: %i[show index] do
+              resources :neighborhoods, only: %i[show index] do
+                resources :wedges, only: %i[show index]
               end
             end
           end

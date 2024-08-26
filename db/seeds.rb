@@ -2,6 +2,7 @@
 require 'json'
 require 'open-uri'
 require_relative '../db/files/questions'
+require_relative '../db/files/permissions'
 
 ###################################
 ###################################
@@ -25,8 +26,8 @@ def get_all_images_for_containers
   types.each do |key, url|
     begin
       res = URI.open(url)
-    rescue => error
-      p error
+    rescue StandardError => error
+      Rails.logger.debug error
       res = nil
     end
     results << { io: res, filename: key.to_s, content_type: 'image/jpg' }
@@ -51,8 +52,8 @@ def get_images_for_questionnaire
   types.each do |key, url|
     begin
       res = URI.open(url)
-    rescue => error
-      p error
+    rescue StandardError => error
+      Rails.logger.debug error
       res = nil
     end
     results << { io: res, filename: key.to_s, content_type: 'image/jpg' }
@@ -120,6 +121,46 @@ unless SeedTask.find_by(task_name: 'user_account')
 
 end
 
+# roles
+unless SeedTask.find_by(task_name: 'create_roles_v2')
+  Role.destroy_all
+  Constants::Role::ALLOWED_NAMES.each { |rol| Role.create!(name: rol) }
+  SeedTask.create(task_name: 'create_roles_v2') if Role.count == 4
+end
+
+# permissions
+unless SeedTask.find_by(task_name: 'create_permissions_v2')
+  Permission.destroy_all
+  Permission.insert_all(ACTION_AND_RESOURCES) # rubocop:disable Rails/SkipsModelValidations
+  SeedTask.create(task_name: 'create_permissions_v2') if Permission.count == 79
+end
+
+# assign permissions to roles
+unless SeedTask.find_by(task_name: 'assign_permissions_to_roles_v2')
+  ROLES_PERMISSIONS[:roles].each do |item|
+    begin
+      rol = Role.find_by(name: item[:name])
+      permissions = []
+      not_found = []
+      item[:permissions].each do |permission|
+        permission_found = Permission.find_by(name: permission[:name], resource: permission[:resource])
+        if permission_found
+          permissions << permission_found
+        else
+          not_found << "name: #{permission[:name]} - resource: #{permission[:resource]}"
+          Rails.logger.debug not_found
+        end
+      end
+    rescue StandardError => error
+      Rails.logger.debug error
+      Rails.logger.debug not_found
+    end
+    rol.permissions = permissions if permissions.any?
+  end
+
+  SeedTask.create(task_name: 'assign_permissions_to_roles_v2')
+end
+
 # teams
 unless SeedTask.find_by(task_name: 'user_account')
   user_profile = UserProfile.create(first_name: 'John',
@@ -138,47 +179,6 @@ unless SeedTask.find_by(task_name: 'user_account')
                                    confirmed_at: Time.zone.now)
   SeedTask.create(task_name: 'user_account') if user_profile.persisted? && user_profile.user_account.persisted?
 
-end
-
-#roles
-unless SeedTask.find_by(task_name: 'roles')
-  admin = Role.create(name: 'admin')
-  local_facilitator = Role.create(name: 'local_facilitator')
-  brigadist = Role.create(name: 'brigadista')
-  if admin.persisted? && brigadist.persisted? && local_facilitator.persisted?
-    SeedTask.create(task_name: 'roles')
-  end
-end
-
-#permissions
-unless SeedTask.find_by(task_name: 'permissions')
-  actions = %w[index show create edit update destroy]
-  resources = %w[teams organizations users roles permissions countries cities states neighborhoods ]
-  resources.product(actions).each { | resource, action| Permission.create(name: action, resource: resource) }
-  SeedTask.create(task_name: 'permissions') if Permission.count == 63
-end
-
-#assign permissions to roles
-unless SeedTask.find_by(task_name: 'assign permissions')
-  admin_role = Role.find_by(name: 'admin')
-  Permission.all.each do |permission|
-    unless admin_role.permissions.include?(permission)
-      admin_role.permissions << permission
-    end
-  end
-  admin_role.save!
-
-  SeedTask.create(task_name: 'assign permissions')
-
-end
-
-#assign roles to users
-unless SeedTask.find_by(task_name: 'assign_roles')
-  user_account = UserAccount.find_by(username: 'tariki_admin')
-
-  user_account.roles << Role.find_by(name: 'admin')
-  user_account.save!
-  SeedTask.create(task_name: 'assign_roles') if Permission.count == 63
 end
 
 #create breeding site types
@@ -243,7 +243,6 @@ unless SeedTask.find_by(task_name: 'create_places')
   SeedTask.create(task_name: 'create_places')
 end
 
-
 #create default versions params
 unless SeedTask.find_by(task_name: 'create_visit_params')
   data = Constants::VisitParams::RESOURCES
@@ -267,41 +266,17 @@ unless SeedTask.find_by(task_name: 'create_special_places')
   SeedTask.create(task_name: 'create_special_places')
 end
 
-unless SeedTask.find_by(task_name: 'create_authorize_user_permission_task')
-  confirm_account = Permission.create(name: 'users_confirm_account', resource: 'users')
-  rol_admin = Role.find_by_name('admin')
-  rol_admin.permissions << confirm_account
-  rol_admin.save
-  SeedTask.create(task_name: 'create_authorize_user_permission_task')
-
-end
-
-
-unless SeedTask.find_by(task_name: 'create_locations_special_places_permissions')
-  locations_index = Permission.create(resource: 'locations', name: 'index')
-  special_places_index = Permission.create(resource: 'special_places', name: 'index')
-  special_places_create = Permission.create(resource: 'special_places', name: 'create')
-  special_places_update = Permission.create(resource: 'special_places', name: 'update')
-  special_places_destroy = Permission.create(resource: 'special_places', name: 'destroy')
-  rol_admin = Role.find_by_name('admin')
-  rol_admin.permissions << [locations_index, special_places_create, special_places_destroy, special_places_index, special_places_update]
-  rol_admin.save
-  SeedTask.create(task_name: 'create_locations_special_places_permissions')
-
-end
-
-
+#create default_house_blocks
 unless SeedTask.find_by(task_name: 'create_house_blocks')
 
   team = Team.first
   team.members << UserProfile.first(2) unless team.members.any?
-  team.members.each_with_index {|brigadist, index| HouseBlock.create(name: "Bloque #{index}", team_id: team.id, brigadist:)}
+  team.members.each_with_index { |brigadist, index| HouseBlock.create(name: "Bloque #{index}", team_id: team.id, brigadist:) }
 
   SeedTask.create(task_name: 'create_house_blocks')
 end
 
-
-
+#create houses
 unless SeedTask.find_by(task_name: 'create_houses')
 
   house_blocks = HouseBlock.all
@@ -325,37 +300,7 @@ unless SeedTask.find_by(task_name: 'create_houses')
   SeedTask.create(task_name: 'create_houses')
 end
 
-unless SeedTask.find_by(task_name: 'add_houses_permissions')
-  houses_index = Permission.create(resource: 'houses', name: 'index')
-  houses_create = Permission.create(resource: 'houses', name: 'create')
-  houses_update = Permission.create(resource: 'houses', name: 'update')
-  houses_destroy = Permission.create(resource: 'houses', name: 'destroy')
-  role = Role.first
-  role.permissions << houses_index
-  role.permissions << houses_create
-  role.permissions << houses_update
-  role.permissions << houses_destroy
-  role.save
-
-SeedTask.create(task_name: 'add_houses_permissions')
-
-end
-
-
-unless SeedTask.find_by(task_name: 'add_wedges_and_house_blocks_permissions')
-  house_blocks_index = Permission.create(resource: 'house_blocks', name: 'index')
-  house_blocks_show = Permission.create(resource: 'house_blocks', name: 'show')
-  wedges_index = Permission.create(resource: 'wedges', name: 'index')
-  role = Role.first
-  role.permissions << house_blocks_index
-  role.permissions << house_blocks_show
-  role.permissions << wedges_index
-  role.save
-
-  SeedTask.create(task_name: 'add_wedges_and_house_blocks_permissions')
-
-end
-
+#create questions
 unless SeedTask.find_by(task_name: 'create_questions')
 
   images = get_images_for_questionnaire
@@ -388,21 +333,4 @@ unless SeedTask.find_by(task_name: 'create_questions')
 
   SeedTask.create(task_name: 'create_questions')
 
-end
-
-unless SeedTask.find_by(task_name: 'create_visit_and_list_house_permissions')
-  permissions = [
-    { name: 'create', resource: 'visits' },
-    { name: 'current', resource: 'questionnaires' },
-    { name: 'list_to_visit', resource: 'houses' }
-  ]
-  permissions_array = []
-
-  permissions.each do |permission|
-    permissions_array << Permission.create(permission)
-  end
-  role = Role.first
-  role.permissions << permissions_array
-  role.save
-  SeedTask.create(task_name: 'create_visit_and_list_house_permissions')
 end
