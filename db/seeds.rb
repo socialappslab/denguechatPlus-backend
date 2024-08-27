@@ -3,6 +3,7 @@ require 'json'
 require 'open-uri'
 require_relative '../db/files/questions'
 require_relative '../db/files/permissions'
+require_relative '../db/files/users'
 
 ###################################
 ###################################
@@ -73,12 +74,6 @@ unless SeedTask.find_by(task_name: 'country')
   SeedTask.create(task_name: 'country') if country.persisted?
 end
 
-# default organization
-unless SeedTask.find_by(task_name: 'organization')
-  organization = Organization.create(name: 'Tariki')
-  SeedTask.create(task_name: 'organization') if organization.persisted?
-end
-
 # states_and_cities
 unless SeedTask.find_by(task_name: 'states_and_cities')
   country = Country.first
@@ -101,25 +96,28 @@ unless SeedTask.find_by(task_name: 'states_and_cities')
   SeedTask.create(task_name: 'states_and_cities') if State.count > 24 && City.count > 482
 end
 
-# user account and user_profile
-unless SeedTask.find_by(task_name: 'user_account')
-  user_profile = UserProfile.create(first_name: 'John',
-                                    last_name: 'Doe',
-                                    gender: 1,
-                                    points: 100,
-                                    city_id: City.first.id,
-                                    neighborhood_id: Neighborhood.first.id,
-                                    organization_id: Organization.first.id,
-                                    language: 'es',
-                                    timezone: 'America/Asuncion')
-
-  user_profile.create_user_account(username: 'tariki_admin',
-                                   status: 'active',
-                                   password: ENV.fetch('PASSWORD_USER_DEFAULT', nil),
-                                   password_confirmation: ENV.fetch('PASSWORD_USER_DEFAULT', nil))
-  SeedTask.create(task_name: 'user_account') if user_profile.persisted? && user_profile.user_account.persisted?
-
+#create default wedges
+unless SeedTask.find_by(task_name: 'create_wedges')
+  Wedge.create(name: 'Cuña 1', sector: Neighborhood.last)
+  Wedge.create(name: 'Cuña 2', sector: Neighborhood.last)
+  Wedge.create(name: 'Cuña 3', sector: Neighborhood.last)
+  Wedge.create(name: 'Cuña 4', sector: Neighborhood.last)
+  SeedTask.create(task_name: 'create_wedges')
 end
+
+#create default special_places
+unless SeedTask.find_by(task_name: 'create_special_places')
+  SpecialPlace.create(name: 'Cementerio')
+  SpecialPlace.create(name: 'Colegio')
+  SeedTask.create(task_name: 'create_special_places')
+end
+
+# default organization
+unless SeedTask.find_by(task_name: 'organization')
+  organization = Organization.create(name: 'Tariki')
+  SeedTask.create(task_name: 'organization') if organization.persisted?
+end
+
 
 # roles
 unless SeedTask.find_by(task_name: 'create_roles_v2')
@@ -161,24 +159,59 @@ unless SeedTask.find_by(task_name: 'assign_permissions_to_roles_v2')
   SeedTask.create(task_name: 'assign_permissions_to_roles_v2')
 end
 
-# teams
-unless SeedTask.find_by(task_name: 'user_account')
-  user_profile = UserProfile.create(first_name: 'John',
-                                    last_name: 'Doe',
-                                    gender: 1,
-                                    points: 100,
-                                    city_id: City.first.id,
-                                    neighborhood_id: Neighborhood.first.id,
-                                    organization_id: Organization.first.id,
-                                    language: 'es',
-                                    timezone: 'America/Asuncion')
+#teams
+unless SeedTask.find_by(task_name: 'create_teams_v2')
+  Visit.destroy_all
+  HouseBlock.destroy_all
+  House.destroy_all
+  Team.destroy_all
+  Team.create!(name: 'Dengue killers', organization: Organization.first, sector: Neighborhood.last, wedge: Wedge.last)
+  Team.create!(name: 'Anti Aedes', organization: Organization.first, sector: Neighborhood.last, wedge: Wedge.last)
+  SeedTask.create!(task_name: 'create_teams_v2')
 
-  user_profile.create_user_account(username: 'tariki_admin',
-                                   password: ENV.fetch('PASSWORD_USER_DEFAULT', nil),
-                                   password_confirmation: ENV.fetch('PASSWORD_USER_DEFAULT', nil),
-                                   confirmed_at: Time.zone.now)
-  SeedTask.create(task_name: 'user_account') if user_profile.persisted? && user_profile.user_account.persisted?
+end
 
+# user account and user_profile
+unless SeedTask.find_by(task_name: 'user_account_v2')
+  UserAccount.destroy_all
+  create_default_users
+  SeedTask.create(task_name: 'user_account_v2')
+end
+
+#create default_house_blocks
+unless SeedTask.find_by(task_name: 'create_house_blocks_v2')
+
+  team = Team.first
+  team.members << UserProfile.first(2) unless team.members.any?
+  team.members.each_with_index { |brigadist, index|
+ HouseBlock.create!(name: "Bloque #{index}", team_id: team.id, wedge: Wedge.last, brigadist:) }
+
+  SeedTask.create(task_name: 'create_house_blocks_v2')
+end
+
+
+#create houses
+unless SeedTask.find_by(task_name: 'create_houses_v2')
+
+  house_blocks = HouseBlock.all
+  (1..10).each_with_index do |obj, index|
+    house_block = house_blocks.sample
+    house = House.new
+    house.country = Country.first
+    house.state = State.first
+    house.city = City.first
+    house.neighborhood = Neighborhood.first
+    house.wedge = Wedge.first
+    house.house_block = house_block
+    house.created_by = UserProfile.first
+    house.reference_code = index
+    house.status = 'green'
+    house.longitude = rand(680000.0..681000.0).round(10)
+    house.latitude = rand(7471000.0..7472000.0).round(10)
+    house.save!
+  end
+
+  SeedTask.create(task_name: 'create_houses_v2')
 end
 
 #create breeding site types
@@ -248,56 +281,6 @@ unless SeedTask.find_by(task_name: 'create_visit_params')
   data = Constants::VisitParams::RESOURCES
   data.each { |value_params| VisitParamVersion.find_or_create_by(name: value_params) }
   SeedTask.create(task_name: 'create_visit_params')
-end
-
-#create default wedges
-unless SeedTask.find_by(task_name: 'create_wedges')
-  Wedge.create(name: 'Cuña 1', sector: Neighborhood.last)
-  Wedge.create(name: 'Cuña 2', sector: Neighborhood.last)
-  Wedge.create(name: 'Cuña 3', sector: Neighborhood.last)
-  Wedge.create(name: 'Cuña 4', sector: Neighborhood.last)
-  SeedTask.create(task_name: 'create_wedges')
-end
-
-#create default special_places
-unless SeedTask.find_by(task_name: 'create_special_places')
-  SpecialPlace.create(name: 'Cementerio')
-  SpecialPlace.create(name: 'Colegio')
-  SeedTask.create(task_name: 'create_special_places')
-end
-
-#create default_house_blocks
-unless SeedTask.find_by(task_name: 'create_house_blocks')
-
-  team = Team.first
-  team.members << UserProfile.first(2) unless team.members.any?
-  team.members.each_with_index { |brigadist, index| HouseBlock.create(name: "Bloque #{index}", team_id: team.id, brigadist:) }
-
-  SeedTask.create(task_name: 'create_house_blocks')
-end
-
-#create houses
-unless SeedTask.find_by(task_name: 'create_houses')
-
-  house_blocks = HouseBlock.all
-  (1..10).each do |index|
-    house_block = house_blocks.sample
-    house = House.new
-    house.country = Country.first
-    house.state = State.first
-    house.city = City.first
-    house.neighborhood = Neighborhood.first
-    house.wedge = Wedge.first
-    house.house_block = house_block
-    house.created_by = UserProfile.first
-    house.reference_code = SecureRandom.uuid
-    house.status = 'green'
-    house.longitude = rand(680000.0..681000.0).round(10)
-    house.latitude = rand(7471000.0..7472000.0).round(10)
-    house.save
-  end
-
-  SeedTask.create(task_name: 'create_houses')
 end
 
 #create questions
