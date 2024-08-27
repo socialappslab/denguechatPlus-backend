@@ -27,6 +27,7 @@ module Api
                 id: question.id,
                 question: question.question,
                 typeField: question.type_field,
+                description: question.description,
                 next: question.next,
                 image: get_image_obj.call(question),
                 options: question.options.map do |option|
