@@ -174,6 +174,7 @@ end
 # user account and user_profile
 unless SeedTask.find_by(task_name: 'user_account_v2')
   UserAccount.destroy_all
+  UserProfile.destroy_all
   create_default_users
   SeedTask.create(task_name: 'user_account_v2')
 end
