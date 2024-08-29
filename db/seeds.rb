@@ -85,6 +85,8 @@ unless SeedTask.find_by(task_name: 'clean_db_v1')
   Neighborhood.destroy_all
   State.destroy_all
   SeedTask.where(task_name: task_to_re_run).destroy_all
+  SeedTask.create!(task_name: 'clean_db_v1') if State.count > 0 && City.count > 0
+
 end
 
 # default country
