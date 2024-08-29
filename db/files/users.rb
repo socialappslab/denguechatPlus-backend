@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-USERS = %i[brigadista team_leader backoffice admin].freeze
+USERS = %i[brigadista team_leader admin].freeze
 
 def create_default_users
   USERS.each do |user|

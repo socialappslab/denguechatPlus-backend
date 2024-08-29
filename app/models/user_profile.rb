@@ -39,7 +39,7 @@ class UserProfile < ApplicationRecord
   belongs_to :neighborhood
   belongs_to :organization
   belongs_to :team, foreign_key: 'team_id', optional: true
-  has_many :house_blocks
+  has_many :house_blocks, dependent: :nullify
 
 
   delegate :confirmed_at, :phone, :username, :status, to: :user_account, allow_nil: true

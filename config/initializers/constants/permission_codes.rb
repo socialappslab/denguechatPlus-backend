@@ -66,7 +66,10 @@ module Constants
       wedges_index: :wedges_index,
       get_last_params_index: :get_last_params,
       questionnaires_current: :questionnaires_current,
-      houses_list_to_visit: :houses_list_to_visit
+      houses_list_to_visit: :houses_list_to_visit,
+      cities_list_by_country_and_state_assumption: :cities_list_by_country_and_state_assumption,
+      cities_show_by_country_and_state_assumption: :cities_show_by_country_and_state_assumption,
+      list_by_iquitos_location: :list_by_iquitos_location
     }.freeze
   end
 end

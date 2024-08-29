@@ -68,69 +68,85 @@ end
 ###################################
 ###################################
 
+unless SeedTask.find_by(task_name: 'clean_db_v1')
+  task_to_re_run = %i[create_wedges create_roles_v2 create_permissions_v2
+                      assign_permissions_to_roles_v2 create_teams_v2 user_account_v2
+                      create_house_blocks_v2 create_houses_v2 states_and_cities_v2]
+  HouseBlock.destroy_all
+  House.destroy_all
+  UserAccount.destroy_all
+  UserProfile.destroy_all
+  Role.destroy_all
+  Permission.destroy_all
+  Inspection.destroy_all
+  Visit.destroy_all
+  Team.destroy_all
+  Wedge.destroy_all
+  Neighborhood.destroy_all
+  State.destroy_all
+  SeedTask.where(task_name: task_to_re_run).destroy_all
+end
+
 # default country
 unless SeedTask.find_by(task_name: 'country')
-  country = Country.create(name: 'Peru')
-  SeedTask.create(task_name: 'country') if country.persisted?
+  country = Country.create!(name: 'Peru')
+  SeedTask.create!(task_name: 'country') if country.persisted?
 end
 
 # states_and_cities
-unless SeedTask.find_by(task_name: 'states_and_cities')
+unless SeedTask.find_by(task_name: 'states_and_cities_v2')
   country = Country.first
   data = JSON.parse(Rails.root.join('db/files/states_cities.json').read)
   data.each do |state|
-    state_persisted = State.create(name: state['state_name'], country:)
+    state_persisted = State.create!(name: state['state_name'], country:)
 
     #create cities
     state['cities']&.each do |city|
-      city_persisted = City.create(name: city['name'], state: state_persisted, country:)
+      city_persisted = City.create!(name: city['name'], state: state_persisted, country:)
 
 
       #create neighboorhoods
       city['neighborhoods']&.each do |neighborhood|
-        Neighborhood.create(name: neighborhood['name'], state: state_persisted, country:, city:city_persisted)
+        Neighborhood.create!(name: neighborhood['name'], state: state_persisted, country:, city:city_persisted)
       end
     end
   end
 
-  SeedTask.create(task_name: 'states_and_cities') if State.count > 24 && City.count > 482
+  SeedTask.create!(task_name: 'states_and_cities_v2') if State.count > 0 && City.count > 0
 end
 
 #create default wedges
 unless SeedTask.find_by(task_name: 'create_wedges')
-  Wedge.create(name: 'Cuña 1', sector: Neighborhood.last)
-  Wedge.create(name: 'Cuña 2', sector: Neighborhood.last)
-  Wedge.create(name: 'Cuña 3', sector: Neighborhood.last)
-  Wedge.create(name: 'Cuña 4', sector: Neighborhood.last)
-  SeedTask.create(task_name: 'create_wedges')
+  Wedge.create!(name: 'Cuña 1', sector: Neighborhood.last)
+  Wedge.create!(name: 'Cuña 2', sector: Neighborhood.last)
+  Wedge.create!(name: 'Cuña 3', sector: Neighborhood.last)
+  Wedge.create!(name: 'Cuña 4', sector: Neighborhood.last)
+  SeedTask.create!(task_name: 'create_wedges')
 end
 
 #create default special_places
 unless SeedTask.find_by(task_name: 'create_special_places')
-  SpecialPlace.create(name: 'Cementerio')
-  SpecialPlace.create(name: 'Colegio')
-  SeedTask.create(task_name: 'create_special_places')
+  SpecialPlace.create!(name: 'Cementerio')
+  SpecialPlace.create!(name: 'Colegio')
+  SeedTask.create!(task_name: 'create_special_places')
 end
 
 # default organization
 unless SeedTask.find_by(task_name: 'organization')
-  organization = Organization.create(name: 'Tariki')
-  SeedTask.create(task_name: 'organization') if organization.persisted?
+  organization = Organization.create!(name: 'Tariki')
+  SeedTask.create!(task_name: 'organization') if organization.persisted?
 end
-
 
 # roles
 unless SeedTask.find_by(task_name: 'create_roles_v2')
-  Role.destroy_all
   Constants::Role::ALLOWED_NAMES.each { |rol| Role.create!(name: rol) }
-  SeedTask.create(task_name: 'create_roles_v2') if Role.count == 4
+  SeedTask.create!(task_name: 'create_roles_v2') if Role.count == 4
 end
 
 # permissions
 unless SeedTask.find_by(task_name: 'create_permissions_v2')
-  Permission.destroy_all
   Permission.insert_all(ACTION_AND_RESOURCES) # rubocop:disable Rails/SkipsModelValidations
-  SeedTask.create(task_name: 'create_permissions_v2') if Permission.count == 79
+  SeedTask.create!(task_name: 'create_permissions_v2') if Permission.count == 79
 end
 
 # assign permissions to roles
@@ -156,15 +172,11 @@ unless SeedTask.find_by(task_name: 'assign_permissions_to_roles_v2')
     rol.permissions = permissions if permissions.any?
   end
 
-  SeedTask.create(task_name: 'assign_permissions_to_roles_v2')
+  SeedTask.create!(task_name: 'assign_permissions_to_roles_v2')
 end
 
 #teams
 unless SeedTask.find_by(task_name: 'create_teams_v2')
-  Visit.destroy_all
-  HouseBlock.destroy_all
-  House.destroy_all
-  Team.destroy_all
   Team.create!(name: 'Dengue killers', organization: Organization.first, sector: Neighborhood.last, wedge: Wedge.last)
   Team.create!(name: 'Anti Aedes', organization: Organization.first, sector: Neighborhood.last, wedge: Wedge.last)
   SeedTask.create!(task_name: 'create_teams_v2')
@@ -173,10 +185,8 @@ end
 
 # user account and user_profile
 unless SeedTask.find_by(task_name: 'user_account_v2')
-  UserAccount.destroy_all
-  UserProfile.destroy_all
   create_default_users
-  SeedTask.create(task_name: 'user_account_v2')
+  SeedTask.create!(task_name: 'user_account_v2')
 end
 
 #create default_house_blocks
@@ -187,9 +197,8 @@ unless SeedTask.find_by(task_name: 'create_house_blocks_v2')
   team.members.each_with_index { |brigadist, index|
  HouseBlock.create!(name: "Bloque #{index}", team_id: team.id, wedge: Wedge.last, brigadist:) }
 
-  SeedTask.create(task_name: 'create_house_blocks_v2')
+  SeedTask.create!(task_name: 'create_house_blocks_v2')
 end
-
 
 #create houses
 unless SeedTask.find_by(task_name: 'create_houses_v2')
@@ -212,41 +221,41 @@ unless SeedTask.find_by(task_name: 'create_houses_v2')
     house.save!
   end
 
-  SeedTask.create(task_name: 'create_houses_v2')
+  SeedTask.create!(task_name: 'create_houses_v2')
 end
 
 #create breeding site types
 unless SeedTask.find_by(task_name: 'create_breeding_site_types')
-  BreedingSiteType.create([{ name: 'permanente' }, { name: 'no permanente' }])
-  SeedTask.create(task_name: 'create_breeding_site_types')
+  BreedingSiteType.create!([{ name: 'permanente' }, { name: 'no permanente' }])
+  SeedTask.create!(task_name: 'create_breeding_site_types')
 end
 
 #create container types
 unless SeedTask.find_by(task_name: 'create_container_types')
   breeding_site_first, breeding_site_second = BreedingSiteType.first, BreedingSiteType.second
 
-  ContainerType.create(name: 'Tanques (cemento, polietileno, metal, otra) ',
+  ContainerType.create!(name: 'Tanques (cemento, polietileno, metal, otra) ',
                        breeding_site_type: breeding_site_first)
 
-  ContainerType.create(name: 'Bidones/Cilindros (metal, plástico)',
+  ContainerType.create!(name: 'Bidones/Cilindros (metal, plástico)',
                        breeding_site_type: breeding_site_first)
 
-  ContainerType.create(name: 'Pozos',
+  ContainerType.create!(name: 'Pozos',
                        breeding_site_type: breeding_site_first)
 
-  ContainerType.create(name: 'Estructura o Partes de la Casa',
+  ContainerType.create!(name: 'Estructura o Partes de la Casa',
                        breeding_site_type: breeding_site_first)
 
-  ContainerType.create(name: 'Llanta',
+  ContainerType.create!(name: 'Llanta',
                        breeding_site_type: breeding_site_second)
 
-  ContainerType.create(name: 'Otros',
+  ContainerType.create!(name: 'Otros',
                        breeding_site_type: breeding_site_second)
 
-  ContainerType.create(name: 'Elementos naturales',
+  ContainerType.create!(name: 'Elementos naturales',
                        breeding_site_type: breeding_site_second)
 
-  SeedTask.create(task_name: 'create_container_types')
+  SeedTask.create!(task_name: 'create_container_types')
 end
 
 # assign images to container types
@@ -256,32 +265,32 @@ unless SeedTask.find_by(task_name: 'assign_images_to_container_types')
     container.photo.attach(image_hash)
     image_hash[:io].unlink
   end
-  SeedTask.create(task_name: 'assign_images_to_container_types')
+  SeedTask.create!(task_name: 'assign_images_to_container_types')
 end
 
 #create elimination methods
 unless SeedTask.find_by(task_name: 'create_method_elimination')
-  EliminationMethodType.create([{ name: 'Quimico' }, { name: 'Tapa' }])
-  SeedTask.create(task_name: 'create_method_elimination')
+  EliminationMethodType.create!([{ name: 'Quimico' }, { name: 'Tapa' }])
+  SeedTask.create!(task_name: 'create_method_elimination')
 end
 
 #create water sources types
 unless SeedTask.find_by(task_name: 'create_water_sources_types')
-  WaterSourceType.create([{ name: 'Naturaleza' }, { name: 'Residente' }])
-  SeedTask.create(task_name: 'create_water_sources_types')
+  WaterSourceType.create!([{ name: 'Naturaleza' }, { name: 'Residente' }])
+  SeedTask.create!(task_name: 'create_water_sources_types')
 end
 
 #create house-places
 unless SeedTask.find_by(task_name: 'create_places')
-  Place.create([{ name: 'Cementerio' }, { name: 'Plaza' }])
-  SeedTask.create(task_name: 'create_places')
+  Place.create!([{ name: 'Cementerio' }, { name: 'Plaza' }])
+  SeedTask.create!(task_name: 'create_places')
 end
 
 #create default versions params
 unless SeedTask.find_by(task_name: 'create_visit_params')
   data = Constants::VisitParams::RESOURCES
   data.each { |value_params| VisitParamVersion.find_or_create_by(name: value_params) }
-  SeedTask.create(task_name: 'create_visit_params')
+  SeedTask.create!(task_name: 'create_visit_params')
 end
 
 #create questions
@@ -315,6 +324,6 @@ unless SeedTask.find_by(task_name: 'create_questions')
   end
 
 
-  SeedTask.create(task_name: 'create_questions')
+  SeedTask.create!(task_name: 'create_questions')
 
 end

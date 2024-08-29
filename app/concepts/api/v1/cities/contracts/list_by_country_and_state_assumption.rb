@@ -4,7 +4,7 @@ module Api
   module V1
     module Cities
       module Contracts
-        class Index < Dry::Validation::Contract
+        class ListByCountryAndStateAssumption < Dry::Validation::Contract
           def self.kall(...)
             new.call(...)
           end
