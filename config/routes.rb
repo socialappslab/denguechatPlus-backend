@@ -12,6 +12,7 @@ Rails.application.routes.draw do
       resources :users, only: %i[index update show] do
         get 'me', on: :collection, action: :show_current_user
         get 'get_by_id/:id', on: :collection, action: :show
+        put 'change_team/', on: :collection, action: :change_team
       end
       resources :roles, only: %i[index update create]
       resources :permissions, only: %i[index show]

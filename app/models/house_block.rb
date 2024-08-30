@@ -7,8 +7,8 @@
 #  name            :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
-#  team_id         :bigint           not null
-#  user_profile_id :bigint           not null
+#  team_id         :bigint
+#  user_profile_id :bigint
 #  wedge_id        :bigint
 #
 # Indexes
@@ -25,7 +25,7 @@
 #
 class HouseBlock < ApplicationRecord
   has_many :houses, dependent: :nullify
-  belongs_to :team
-  belongs_to :brigadist, class_name: 'UserProfile', foreign_key: 'user_profile_id'
+  belongs_to :team, optional: true
+  belongs_to :brigadist, class_name: 'UserProfile', foreign_key: 'user_profile_id', optional: true
   belongs_to :wedge, class_name: 'Wedge', foreign_key: 'wedge_id'
 end

@@ -35,6 +35,16 @@ module Api
               user_profile.team&.name
             end
 
+            attribute :house_block do |user_profile|
+              next if user_profile.house_blocks.blank?
+
+              {
+                id: user_profile.house_blocks.first.id,
+                name: user_profile.house_blocks.first.name,
+                house_ids: Api::V1::Houses::Queries::ListToVisit.call(user_profile.user_account, nil)&.pluck(:id)
+              }
+            end
+
           end
         end
       end
