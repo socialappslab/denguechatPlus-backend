@@ -34,13 +34,6 @@ module Api
             end
           end
 
-          rule(:team_id) do
-            unless Team.exists?(id: value)
-              key(:team_id).failure(text: "The Team with id: #{value} does not exist",
-                                    predicate: :not_exists?)
-            end
-          end
-
           rule(:questionnaire_id) do
             unless Questionnaire.kept.exists?(id: value)
               key(:team_id).failure(text: "The Questionnaire with id: #{value} does not exist",
