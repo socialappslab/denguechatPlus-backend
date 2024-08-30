@@ -73,6 +73,14 @@ Rails.application.routes.draw do
           end
         end
       end
+      resources :neighborhoods, only: %i[show index] do
+        get '/', to: 'neighborhoods#list_by_iquitos_location', on: :collection
+        get '/', to: 'neighborhoods#show', on: :member
+      end
+      resources :cities, only: %i[show index] do
+        get '/', to: 'cities#list_by_country_and_state_assumption', on: :collection
+        get '/', to: 'cities#show_by_country_and_state_assumption', on: :member
+      end
 
       namespace :public do
         resources :countries, only: %i[show index] do
