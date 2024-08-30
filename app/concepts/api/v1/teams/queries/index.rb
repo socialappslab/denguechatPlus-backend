@@ -22,6 +22,8 @@ module Api
                   .yield_self(&method(:name_clause))
                   .yield_self(&method(:sector_id_clause))
                   .yield_self(&method(:sector_name_clause))
+                  .yield_self(&method(:wedge_id_clause))
+                  .yield_self(&method(:wedge_name_clause))
                   .yield_self(&method(:sort_clause))
           end
 
@@ -45,6 +47,18 @@ module Api
             return relation if @filter.nil? || @filter[:sector].blank?
 
             relation.joins(:sector).where('neighborhoods.name ILIKE ?', "%#{@filter[:sector]}%")
+          end
+
+          def wedge_id_clause(relation)
+            return relation if @filter.nil? || @filter[:wedge_id].nil? || @filter[:wedge_id].blank?
+
+            relation.where(wedge_id: @filter[:wedge_id])
+          end
+
+          def wedge_name_clause(relation)
+            return relation if @filter.nil? || @filter[:wedge].blank?
+
+            relation.joins(:wedge).where('wedges.name ILIKE ?', "%#{@filter[:wedge]}%")
           end
 
           def sort_clause(relation)
