@@ -66,7 +66,8 @@ module Constants
       wedges_index: :wedges_index,
       get_last_params_index: :get_last_params,
       questionnaires_current: :questionnaires_current,
-      houses_list_to_visit: :houses_list_to_visit
+      houses_list_to_visit: :houses_list_to_visit,
+      users_show_current_user: :users_show_current_user
     }.freeze
   end
 end

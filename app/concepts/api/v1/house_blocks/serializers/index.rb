@@ -19,6 +19,10 @@ module Api
             house_block.houses&.pluck(:id)&.compact
           end
 
+          attribute :in_use do |house_block|
+            !house_block.brigadist.nil?
+          end
+
           attribute :brigadist do |house_block|
             "#{house_block.brigadist&.first_name}, #{house_block.brigadist&.last_name}"
           end

@@ -11,6 +11,7 @@ module Api
           step :validate_schema
           tee :split_data
           step :create_house_if_necessary
+          step :add_team
           step :create_visit
           tee :set_extra_info_to_inspections
           step :create_inspections
@@ -43,6 +44,14 @@ module Api
             return existing_house_result if params_include_house?
 
             @params[:house_id] = find_similar_or_create_house_id
+            Success({ ctx: @ctx, type: :success })
+          end
+
+          def add_team
+            return  Success({ ctx: @ctx, type: :success }) if @params[:team_id]&.present?
+            return nil unless @current_user.teams.any?
+
+            @params[:team_id] = @current_user.teams.first.id
             Success({ ctx: @ctx, type: :success })
           end
 
