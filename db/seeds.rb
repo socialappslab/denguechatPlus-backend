@@ -68,7 +68,7 @@ end
 ###################################
 ###################################
 
-unless SeedTask.find_by(task_name: 'clean_db_v1')
+unless SeedTask.find_by(task_name: 'clean_db_v2')
   task_to_re_run = %i[create_wedges create_roles_v2 create_permissions_v2
                       assign_permissions_to_roles_v2 create_teams_v2 user_account_v2
                       create_house_blocks_v2 create_houses_v2 states_and_cities_v2]

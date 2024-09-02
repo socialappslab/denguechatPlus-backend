@@ -34,7 +34,7 @@ module Api
             end
 
             rule(:id) do
-              if values[:id] && !UserAccount.exists?(id: values[:id])
+              if values[:id] && !UserProfile.exists?(id: values[:id])
                 key(:id).failure(text: 'The user not exists', predicate: :not_exists?)
               end
             end
