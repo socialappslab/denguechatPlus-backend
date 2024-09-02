@@ -356,7 +356,10 @@ unless SeedTask.find_by(task_name: 'add_wedges_and_house_blocks_permissions')
 
 end
 
-unless SeedTask.find_by(task_name: 'create_questions')
+unless SeedTask.find_by(task_name: 'create_questions_v2')
+  Option.destroy_all
+  Question.destroy_all
+  Questionnaire.destroy_all
 
   images = get_images_for_questionnaire
 
@@ -367,7 +370,7 @@ unless SeedTask.find_by(task_name: 'create_questions')
     final_question: 7
   )
 
-  QUESTIONS_DATA.each do |question_data|
+  QUESTIONS_DATA2.each do |question_data|
     options_data = question_data.delete(:options)
     question = questionnaire.questions.create!(question_data)
 
@@ -377,8 +380,8 @@ unless SeedTask.find_by(task_name: 'create_questions')
   end
 
   images.each do |image|
-    resource = Question.find_by(question: image[:filename])
-    resource ||= Option.find_by(name: image[:filename])
+    resource = Question.find_by(question_text_es: image[:filename])
+    resource ||= Option.find_by(name_es: image[:filename])
     next unless resource
 
     resource.image.attach(image)
@@ -386,7 +389,7 @@ unless SeedTask.find_by(task_name: 'create_questions')
   end
 
 
-  SeedTask.create(task_name: 'create_questions')
+  SeedTask.create(task_name: 'create_questions_v2')
 
 end
 
