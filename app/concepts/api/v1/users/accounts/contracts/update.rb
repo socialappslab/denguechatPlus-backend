@@ -46,7 +46,7 @@ module Api
             end
 
             rule(:user_profile_attributes) do
-              if value && value[:email] && UserProfile.exists?(['LOWER(email) = ?', value[:email].downcase])
+              if value && value[:email] && UserProfile.where.not(id: values[:id]).exists?(['LOWER(email) = ?', value[:email].downcase])
                 key(:email).failure(text: :user_email_unique?, predicate: :user_email_unique?)
               end
 
@@ -73,7 +73,7 @@ module Api
               if result.success?
                 if !values[:phone].nil? && values[:phone].blank?
                   key(:phone).failure(text: "Phone can't be null", predicate: :credentials_wrong?)
-                elsif values[:phone] && UserAccount.where.not(id: values[:id]).exists?(phone: values[:phone])
+                elsif values[:phone] && UserAccount.where.not(user_profile_id: values[:id]).exists?(phone: values[:phone])
                   key(:phone).failure(text: 'The phone already use by other user', predicate: :user_phone_unique?)
                 end
               end
@@ -83,7 +83,7 @@ module Api
               if result.success?
                 if !values[:username].nil? && values[:username].blank?
                   key(:username).failure(text: "Username can't be null", predicate: :credentials_wrong?)
-                elsif values[:username] && UserAccount.where.not(id: values[:id]).exists?(username: value.downcase)
+                elsif values[:username] && UserAccount.where.not(user_profile_id: values[:id]).exists?(username: value.downcase)
                   key(:username).failure(text: 'The username already used by other user', predicate: :user_username_unique?)
                 end
               end

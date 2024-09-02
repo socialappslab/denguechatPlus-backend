@@ -38,6 +38,7 @@ module Api
 
             def update_user
               attrs = @ctx['contract.default'].values.data
+              attrs.delete(:id)
               if @input['password']
                 attrs['password'] = @input[:password]
               end
