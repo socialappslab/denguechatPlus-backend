@@ -3,6 +3,8 @@
 module Api
   module V1
     class UsersController < AuthorizedApiController
+      skip_before_action :check_permissions!, only: %i[show_current_user]
+      skip_before_action :authorize_access_request!, only: %i[show_current_user]
 
       def index
         endpoint operation: Api::V1::Users::Accounts::Operations::Index,

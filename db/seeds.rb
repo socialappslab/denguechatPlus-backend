@@ -68,7 +68,7 @@ end
 ###################################
 ###################################
 
-unless SeedTask.find_by(task_name: 'clean_db_v2')
+unless SeedTask.find_by(task_name: 'clean_db_v4')
   task_to_re_run = %i[create_wedges create_roles_v2 create_permissions_v2
                       assign_permissions_to_roles_v2 create_teams_v2 user_account_v2
                       create_house_blocks_v2 create_houses_v2 states_and_cities_v2]
@@ -85,7 +85,7 @@ unless SeedTask.find_by(task_name: 'clean_db_v2')
   Neighborhood.destroy_all
   State.destroy_all
   SeedTask.where(task_name: task_to_re_run).destroy_all
-  SeedTask.create!(task_name: 'clean_db_v1') if State.count > 0 && City.count > 0
+  SeedTask.create!(task_name: 'clean_db_v4') if State.count > 0 && City.count > 0
 
 end
 
@@ -195,7 +195,7 @@ end
 unless SeedTask.find_by(task_name: 'create_house_blocks_v2')
 
   team = Team.first
-  team.members << UserProfile.first(2) unless team.members.any?
+  team.members << UserAccount.find_by(username: 'brigadista').user_profile
   team.members.each_with_index { |brigadist, index|
  HouseBlock.create!(name: "Bloque #{index}", team_id: team.id, wedge: Wedge.last, brigadist:) }
 
