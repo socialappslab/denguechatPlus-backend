@@ -17,7 +17,7 @@ module Api
           end
 
           def find_city
-            @ctx[:data] = City.find_by(id: @params[:id], country_id: @params['country_id'], state_id: @params['state_id'],  discarded_at: nil)
+            @ctx[:data] = City.kept.find_by(id: @params[:id])
             if @ctx[:data].nil?
               Failure({ ctx: @ctx, type: :not_found })
             else
@@ -26,7 +26,7 @@ module Api
           end
 
           def includes
-            @ctx[:include] = ['neighborhoods']
+            @ctx[:include] = ['neighborhoods'] if @params[:action] != 'show_by_country_and_state_assumption'
           end
         end
       end

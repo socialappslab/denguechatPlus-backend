@@ -3,6 +3,8 @@
 module Api
   module V1
     class RolesController < AuthorizedApiController
+      skip_before_action :check_permissions!, only: [:index]
+
 
       def index
         endpoint operation: Api::V1::Roles::Operations::Index,

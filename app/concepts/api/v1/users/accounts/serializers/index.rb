@@ -25,6 +25,8 @@ module Api
             end
 
             attribute :roles do |user|
+              next unless user.roles
+
               user.roles.map do |role|
                 {
                   id: role.id,

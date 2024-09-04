@@ -72,7 +72,7 @@ QUESTIONS_DATA = [
   {
     id: 7,
     question: "¿Registrar otro contenedor?",
-    type_field: "inspection",
+    type_field: "list",
     options: [
       { name: "Sí, registrar", next: 5 },
       { name: "No, no es necesario", next: 7 }

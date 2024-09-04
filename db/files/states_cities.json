@@ -103,6 +103,21 @@
          { "name": "Simón Bolívar" },
          { "name": "Víctor Raual Haya de la Torre" }
        ]
+    },
+    {
+      "name": "Cuzco",
+      "neighborhoods": [
+        { "name": "San Blas" },
+        { "name": "Santiago" },
+        { "name": "Wanchaq" },
+        { "name": "Centro Histórico" },
+        { "name": "Santa Ana" },
+        { "name": "Huancaro" },
+        { "name": "Magisterio" },
+        { "name": "Ttio" },
+        { "name": "Zaguán del Cielo" },
+        { "name": "Rosaspata" }
+      ]
     }
   ]
 }
