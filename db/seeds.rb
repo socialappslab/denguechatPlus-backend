@@ -218,6 +218,7 @@ unless SeedTask.find_by(task_name: 'create_houses_v2')
     house.created_by = UserProfile.first
     house.reference_code = index
     house.status = 'green'
+    house.team = Team.first
     house.longitude = rand(680000.0..681000.0).round(10)
     house.latitude = rand(7471000.0..7472000.0).round(10)
     house.save!
