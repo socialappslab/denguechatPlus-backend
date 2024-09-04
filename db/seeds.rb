@@ -329,3 +329,11 @@ unless SeedTask.find_by(task_name: 'create_questions')
   SeedTask.create!(task_name: 'create_questions')
 
 end
+
+
+unless SeedTask.find_by(task_name: 'permissions_for_change_brigade')
+  roles = Role.where(name: %w[admin brigadista])
+  permission = Permission.create(name: 'change_team', resource: 'users')
+  roles.each{|rol| rol.permissions << permission}
+  SeedTask.create(task_name: 'permissions_for_change_brigade')
+end

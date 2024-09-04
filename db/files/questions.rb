@@ -24,14 +24,14 @@ QUESTIONS_DATA = [
   {
     id: 2,
     question: "En la huerta",
-    description: "Vamos a buscar todos los recipientes que contienen agua y potencialmente son criaderos de zancudos.",
+    description: "Vamos a buscar todos los recipientes que contienen agua y potencialmente son criaderos de zancudos.\n\nIniciamos la revisión de la vivienda por la derecha y finalizamos por la izquierda.",
     type_field: "splash",
     next: 4
   },
   {
     id: 3,
     question: "En la casa",
-    description: "Vamos a buscar todos los recipientes que contienen agua y potencialmente son criaderos de zancudos.",
+    description: "Lleguemos a la casa con mucho respeto.\n\nEs importante que las personas nos sientan como alguien que les llega a apoyar para prevenir el dengue.\n\nPidamos permiso para pasar.\n\nNo lleguemos como inspectores, o para juzgar al hogar.",
     type_field: "splash",
     next: 5
   },

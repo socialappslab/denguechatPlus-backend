@@ -12,6 +12,7 @@ Rails.application.routes.draw do
       resources :users, only: %i[index update show] do
         get 'me', on: :collection, action: :show_current_user
         get 'get_by_id/:id', on: :collection, action: :show
+        put 'change_team/', on: :collection, action: :change_team
         member do
           put 'change_status'
         end
@@ -47,47 +48,35 @@ Rails.application.routes.draw do
           get :current
         end
       end
-      resources :teams do
-        collection do
-          delete :destroy
+
+      namespace :admin do
+        resources :users do
+          member do
+            put 'change_status'
+          end
         end
-      end
-      resources :countries do
-        collection do
-          delete :destroy
-        end
-        resources :states do
+        resources :teams do
           collection do
             delete :destroy
           end
-          resources :cities do
+        end
+        resources :countries do
+          collection do
+            delete :destroy
+          end
+          resources :states do
             collection do
               delete :destroy
             end
-            resources :neighborhoods do
+            resources :cities do
               collection do
                 delete :destroy
               end
-              resources :wedges, only: :index
-            end
-          end
-        end
-      end
-      resources :neighborhoods, only: %i[show index] do
-        get '/', to: 'neighborhoods#list_by_iquitos_location', on: :collection
-        get '/', to: 'neighborhoods#show', on: :member
-      end
-      resources :cities, only: %i[show index] do
-        get '/', to: 'cities#list_by_country_and_state_assumption', on: :collection
-        get '/', to: 'cities#show_by_country_and_state_assumption', on: :member
-      end
-
-      namespace :public do
-        resources :countries, only: %i[show index] do
-          resources :states, only: %i[show index] do
-            resources :cities, only: %i[show index] do
-              resources :neighborhoods, only: %i[show index] do
-                resources :wedges, only: %i[show index]
+              resources :neighborhoods do
+                collection do
+                  delete :destroy
+                end
+                resources :wedges, only: :index
               end
             end
           end

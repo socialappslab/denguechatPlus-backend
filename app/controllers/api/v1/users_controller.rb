@@ -42,6 +42,14 @@ module Api
                  options: { current_user: }
       end
 
+      def change_team
+        endpoint operation: Api::V1::Users::Accounts::Operations::ChangeTeam,
+                 renderer_options: {
+                   serializer: Api::V1::Users::Accounts::Serializers::ShowCurrentUser
+                 },
+                 options: { current_user: }
+      end
+
     end
   end
 end

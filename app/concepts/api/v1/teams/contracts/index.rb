@@ -13,6 +13,8 @@ module Api
               optional(:name).maybe(:string)
               optional(:sector_id).maybe(:integer)
               optional(:sector).maybe(:string)
+              optional(:wedge_id).maybe(:integer)
+              optional(:wedge).maybe(:string)
             end
 
             optional(:page).maybe(:hash) do

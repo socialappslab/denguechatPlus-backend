@@ -49,6 +49,19 @@ module Api
             }
           end
 
+          attribute :visits do |brigade|
+            Visit.where(team_id: brigade.id).count
+          end
+
+          attribute :visits do |brigade|
+            Visit.where(team_id: brigade.id).count
+          end
+
+          attribute :sites_statuses do |brigade|
+            House.where(team_id: brigade.id)
+                 .group(:status)
+                 .count
+          end
         end
       end
     end
