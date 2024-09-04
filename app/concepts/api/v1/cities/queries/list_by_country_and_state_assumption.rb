@@ -4,7 +4,7 @@ module Api
   module V1
     module Cities
       module Queries
-        class Index
+        class ListByCountryAndStateAssumption
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort, params)
@@ -33,19 +33,21 @@ module Api
           def name_clause(relation)
             return relation if @filter.nil? || @filter[:name].blank?
 
-            relation.where('Cities.name ilike :query', query: "%#{@filter[:name]}%")
+            relation.where('cities.name ilike :query', query: "%#{@filter[:name]}%")
           end
 
           def country_clause(relation)
-            return relation if @params['country_id'].nil? || @params['country_id'].blank?
+            country_id = Country.find_by(name: 'Peru')&.id || @params[:country_id]
+            return relation if country_id.nil?
 
-            relation.where(cities: { country_id: @params['country_id'] })
+            relation.where(cities: { country_id: country_id })
           end
 
           def state_clause(relation)
-            return relation if @params['state_id'].nil? || @params['state_id'].blank?
+            state_id = State.find_by(name: 'Loreto')&.id || @params['state_id']
+            return relation if state_id.nil?
 
-            relation.where(cities: { state_id: @params['state_id'] })
+            relation.where(cities: { state_id: state_id  })
           end
 
 

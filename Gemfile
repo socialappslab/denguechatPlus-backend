@@ -88,6 +88,8 @@ gem 'dry-auto_inject'
 gem 'reform'
 gem 'simple_endpoint', '~> 2.0'
 gem 'dry-container'
+gem 'ffaker'
+
 
 group :development, :test do
   gem 'annotate'
@@ -99,7 +101,6 @@ group :development, :test do
   gem 'debug', platforms: %i[mri mswin mswin64 mingw x64_mingw]
   gem 'factory_bot_rails', '~> 6.2'
   gem 'fasterer', '~> 0.10', require: false
-  gem 'ffaker'
   gem 'lefthook', '~> 1.1', require: false
   gem 'pry-byebug'
   gem 'pry-rails'

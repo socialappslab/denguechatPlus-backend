@@ -2,13 +2,13 @@
 
 module Api
   module V1
-    module Cities
+    module Neighborhoods
       module Queries
-        class Index
+        class ListByIquitosLocation
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort, params)
-            @model = City
+            @model = Neighborhood
             @filter = filter
             @sort = sort
             @params = params
@@ -19,42 +19,51 @@ module Api
           end
 
           def call
-            @model.kept
+            @model.where(discarded_at: nil)
                   .yield_self(&method(:name_clause))
                   .yield_self(&method(:country_clause))
                   .yield_self(&method(:state_clause))
+                  .yield_self(&method(:city_clause))
                   .yield_self(&method(:sort_clause))
           end
 
           private
 
-          attr_reader :cities, :filter, :sort
+          attr_reader :neighborhoods, :filter, :sort
 
           def name_clause(relation)
             return relation if @filter.nil? || @filter[:name].blank?
 
-            relation.where('Cities.name ilike :query', query: "%#{@filter[:name]}%")
+            relation.where('neighborhoods.name ilike :query', query: "%#{@filter[:name]}%")
           end
 
           def country_clause(relation)
-            return relation if @params['country_id'].nil? || @params['country_id'].blank?
+            country_id = ::Country.find_by(name: 'Peru') || @params['country_id']
+            return relation if country_id.nil?
 
-            relation.where(cities: { country_id: @params['country_id'] })
+            relation.where(neighborhoods: { country_id: })
           end
 
           def state_clause(relation)
-            return relation if @params['state_id'].nil? || @params['state_id'].blank?
+            state_id = ::State.find_by(name: 'Loreto') || @params['state_id']
+            return relation if state_id.nil?
 
-            relation.where(cities: { state_id: @params['state_id'] })
+            relation.where(neighborhoods: { state_id: })
           end
 
+          def city_clause(relation)
+            city_id = @params['city_id']
+            return relation if city_id.nil?
+
+            relation.where(neighborhoods: { city_id: })
+          end
 
           def sort_clause(relation)
             return relation if @sort.nil? || @sort.blank?
 
             case @sort[:field]
-            when 'name', 'status' then sort_by_status_and_name(relation, :cities)
-            when 'Cities.name' then sort_by_table_columns(relation)
+            when 'name', 'status' then sort_by_status_and_name(relation, :neighborhoods)
+            when 'neighborhoods.name' then sort_by_table_columns(relation)
             else relation
             end
           end

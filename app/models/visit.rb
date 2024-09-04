@@ -36,6 +36,6 @@ class Visit < ApplicationRecord
   belongs_to :user_account
   belongs_to :team
   belongs_to :questionnaire
-  has_many :inspections
+  has_many :inspections, dependent: :destroy
   accepts_nested_attributes_for :inspections
 end

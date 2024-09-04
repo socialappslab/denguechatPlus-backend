@@ -2,9 +2,9 @@
 
 module Api
   module V1
-    module Countries
+    module Cities
       module Operations
-        class Index < ApplicationOperation
+        class ListByCountryAndStateAssumption < ApplicationOperation
           include Dry::Transaction
 
           tee :params
@@ -21,7 +21,7 @@ module Api
           end
 
           def validate_schema
-            @ctx['contract.default'] = Api::V1::Countries::Contracts::Index.kall(@params)
+            @ctx['contract.default'] = Api::V1::Cities::Contracts::ListByCountryAndStateAssumption.kall(@params)
             is_valid = @ctx['contract.default'].success?
             return Success({ ctx: @ctx, type: :success }) if is_valid
 
@@ -29,11 +29,11 @@ module Api
           end
 
           def cursor_and_paginate
-            @ctx[:sort] = { field: 'Countries.name', direction: 'asc' }
+            @ctx[:sort] = { field: 'Cities.name', direction: 'asc' }
           end
 
           def list
-            @ctx[:data] = Api::V1::Countries::Queries::Index.call(@ctx['contract.default']['filter'], @ctx[:sort])
+            @ctx[:data] = Api::V1::Cities::Queries::ListByCountryAndStateAssumption.call(@ctx['contract.default']['filter'], @ctx[:sort], @params)
             Success({ ctx: @ctx, type: :success })
           end
 
@@ -44,6 +44,10 @@ module Api
           def paginate
             @pagy = Api::V1::Lib::Paginates::Paginate.kall(ctx: @ctx, model: @ctx[:data], params: @params.slice("page"))
             Success({ ctx: @ctx, type: :success })
+          end
+
+          def includes
+            @ctx[:include] = ['neighborhoods']
           end
 
           def meta

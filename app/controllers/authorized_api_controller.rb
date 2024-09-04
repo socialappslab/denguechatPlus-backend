@@ -11,4 +11,10 @@ class AuthorizedApiController < ApiController
   def self.call(*args)
     new.call(*args)
   end
+
+  protected
+
+  def do_full_public_endpoint!
+    request.headers['X-Authorization'] = nil
+  end
 end

@@ -17,8 +17,7 @@ module Api
 
           def find_neighborhood
             @ctx[:data] =
-              Neighborhood.find_by(id: @params[:id], country_id: @params['country_id'], state_id: @params['state_id'],
-                                   city_id: @params['city_id'],  discarded_at: nil)
+              Neighborhood.kept.find_by(id: @params[:id])
             if @ctx[:data].nil?
               Failure({ ctx: @ctx, type: :not_found })
             else

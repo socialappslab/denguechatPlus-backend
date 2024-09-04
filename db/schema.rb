@@ -99,13 +99,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_04_123451) do
     t.index ["name"], name: "index_countries_on_name"
   end
 
-  create_table "create_visit_param_versions", force: :cascade do |t|
-    t.string "name"
-    t.integer "version", default: 1
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "elimination_method_types", force: :cascade do |t|
     t.string "name"
     t.datetime "discarded_at"
