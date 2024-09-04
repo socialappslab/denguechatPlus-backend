@@ -13,6 +13,7 @@ def create_default_users
 
       account = user_profile.create_user_account(username: user,
                                                  status: 'active',
+                                                 phone: FFaker::Number.number(digits: 8),
                                                  password: ENV.fetch("#{user.upcase}_PASSWORD", nil))
 
       account.roles << Role.where(name: user)
