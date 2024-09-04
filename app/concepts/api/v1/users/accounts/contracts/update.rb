@@ -27,6 +27,7 @@ module Api
                 optional(:neighborhood_id).filled(:integer)
                 optional(:organization_id).filled(:integer)
                 optional(:team_id).filled(:integer)
+                optional(:house_block_id).filled(:integer)
                 optional(:timezone).filled(:string)
                 optional(:language).filled(:string)
                 optional(:email).filled(:string)
@@ -62,8 +63,20 @@ module Api
                 key(:organization_id).failure(text: 'organization not exists', predicate: :not_exists?)
               end
 
-              if value && value[:team_id] && !Team.exists?(id: value[:team_id])
+              if value && value[:team_id] && !Team.kept.exists?(id: value[:team_id])
                 key(:team_id).failure(text: "The brigade with id #{value[:team_id]} not exists", predicate: :not_exists?)
+              end
+
+              if value && value[:house_block_id] && !HouseBlock.exists?(id: value[:house_block_id])
+                if value[:house_block_id] && !HouseBlock.exists?(id: value[:house_block_id])
+                  key(:team_id).failure(text: "The HouseBlock with id #{value[:house_block_id]} not exists",
+                                        predicate: :not_exists?)
+                end
+
+                if value[:team_id] && value[:house_block_id] && HouseBlock.find_by(id: value[:house_block_id])&.team_id != value[:team_id]
+                  key(:house_team_id).failure(
+                    text: "The HouseBlock with id #{values[:house_block_id]} is not belongs to the new team", predicate: :is_new?)
+                end
               end
 
 
@@ -88,9 +101,6 @@ module Api
                 end
               end
             end
-
-
-
           end
         end
       end
