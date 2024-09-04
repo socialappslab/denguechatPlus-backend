@@ -32,7 +32,7 @@ class UserAccount < ApplicationRecord
   rolify
   has_secure_password
 
-  belongs_to :user_profile, optional: true
+  belongs_to :user_profile, optional: true, dependent: :destroy
   has_many :teams, through: :user_profile
   has_and_belongs_to_many :roles,  join_table: :user_accounts_roles
   has_many :permissions, through: :roles

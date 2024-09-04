@@ -8,9 +8,6 @@ module Api
           set_type :country
 
           attributes :name
-          has_many :states, serializer: State do |object|
-            object.states.kept
-          end
         end
       end
     end

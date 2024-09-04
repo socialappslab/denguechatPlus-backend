@@ -3,7 +3,7 @@
 module Constants
   module Role
     ADMIN = 'admin'
-    BRIGADIST = 'brigadist'
+    BRIGADIST = 'brigadista'
     TEAM_LEADER = 'team_leader'
     BACKOFFICE = 'backoffice'
 

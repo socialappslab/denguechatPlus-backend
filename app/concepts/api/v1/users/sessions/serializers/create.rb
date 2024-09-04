@@ -71,6 +71,15 @@ module Api
                 name: user_account.user_profile.organization.name
               }
             end
+
+            attribute :team do |user_account|
+              next if user_account.teams.blank?
+
+              {
+                id: user_account.teams.first.id,
+                name: user_account.teams.first.name
+              }
+            end
           end
         end
       end

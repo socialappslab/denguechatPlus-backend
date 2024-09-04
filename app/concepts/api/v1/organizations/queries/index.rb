@@ -18,7 +18,8 @@ module Api
           end
 
           def call
-            @model.yield_self(&method(:status_clause))
+            @model.kept
+                  .yield_self(&method(:status_clause))
                   .yield_self(&method(:name_clause))
                   .yield_self(&method(:sort_clause))
           end
