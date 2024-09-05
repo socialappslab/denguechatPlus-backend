@@ -2,19 +2,14 @@
 
 module Api
   module V1
-    module Neighborhoods
+    module Posts
       module Contracts
-        class Index < Dry::Validation::Contract
+        class Like < Dry::Validation::Contract
           def self.kall(...)
             new.call(...)
           end
           params do
-            optional(:filter).maybe(:hash) do
-              optional(:name).maybe(:string)
-              optional(:country_id).maybe(:integer)
-              optional(:state_id).maybe(:integer)
-              optional(:city_id).maybe(:integer)
-            end
+            required(:post_id).filled(:integer)
 
             optional(:page).maybe(:hash) do
               optional(:is_cursor).maybe(:bool)
@@ -22,6 +17,13 @@ module Api
 
             optional(:sort).maybe(:string)
           end
+
+          rule(:post_id) do
+            unless Post.find_by(id: values[:post_id])
+              key(:post_id).failure(text: 'the post not exist', predicate: :not_found?)
+            end
+          end
+
         end
       end
     end
