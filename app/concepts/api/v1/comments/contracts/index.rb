@@ -20,7 +20,7 @@ module Api
 
           rule(:post_id) do
             unless Post.find_by(id: values[:post_id])
-              key(:user_account_id).failure(text: 'the post not exist', predicated: :not_found?)
+              key(:user_account_id).failure(text: 'the post not exist', predicate: :not_found?)
             end
           end
 

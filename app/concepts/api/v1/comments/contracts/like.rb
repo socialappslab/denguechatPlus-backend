@@ -21,13 +21,13 @@ module Api
 
           rule(:post_id) do
             unless Post.find_by(id: values[:post_id])
-              key(:post_id).failure(text: 'the post not exist', predicated: :not_found?)
+              key(:post_id).failure(text: 'the post not exist', predicate: :not_found?)
             end
           end
 
           rule(:comment_id) do
             unless Comment.find_by(id: values[:comment_id])
-              key(:comment_id).failure(text: 'the comment not exist', predicated: :not_found?)
+              key(:comment_id).failure(text: 'the comment not exist', predicate: :not_found?)
             end
           end
 

@@ -21,23 +21,23 @@ module Api
             user = UserAccount.find_by(id: values[:user_account_id])
 
             unless user
-              key(:user_account_id).failure(text: 'the user has not exist', predicated: :not_found?)
+              key(:user_account_id).failure(text: 'the user has not exist', predicate: :not_found?)
             end
 
             unless user&.teams&.any?
-              key(:user_account_id).failure(text: 'the user has no team assigned', predicated: :not_found?)
+              key(:user_account_id).failure(text: 'the user has no team assigned', predicate: :not_found?)
             end
 
             unless user&.city_id
-              key(:user_account_id).failure(text: 'the user has no city assigned', predicated: :not_found?)
+              key(:user_account_id).failure(text: 'the user has no city assigned', predicate: :not_found?)
             end
 
             unless user&.neighborhood_id
-              key(:user_account_id).failure(text: 'the user has no sector assigned', predicated: :not_found?)
+              key(:user_account_id).failure(text: 'the user has no sector assigned', predicate: :not_found?)
             end
 
             if Neighborhood.find_by(id: user&.neighborhood_id)&.country.nil?
-              key(:user_account_id).failure(text: 'the user has no country assigned', predicated: :not_found?)
+              key(:user_account_id).failure(text: 'the user has no country assigned', predicate: :not_found?)
             end
 
           end
