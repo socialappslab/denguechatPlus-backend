@@ -1,6 +1,6 @@
 module Api
   module V1
-    class CommentsController < ApplicationController
+    class CommentsController < AuthorizedApiController
       def index
         endpoint operation: Api::V1::Comments::Operations::Index,
                  renderer_options: { serializer: Api::V1::Comments::Serializers::Index },
@@ -9,7 +9,7 @@ module Api
 
       def show
         endpoint operation: Api::V1::Comments::Operations::Show,
-                 renderer_options: { serializer: Api::V1::Comments::Serializers::Index },
+                 renderer_options: { serializer: Api::V1::Comments::Serializers::Show },
                  options: { current_user: }
       end
 
@@ -19,14 +19,9 @@ module Api
                  options: { current_user: }
       end
 
-      def update
-        endpoint operation: Api::V1::Comments::Operations::Update,
+      def like
+        endpoint operation: Api::V1::Comments::Operations::Like,
                  renderer_options: { serializer: Api::V1::Comments::Serializers::Show },
-                 options: { current_user: }
-      end
-
-      def destroy
-        endpoint operation: Api::V1::Comments::Operations::Destroy,
                  options: { current_user: }
       end
     end

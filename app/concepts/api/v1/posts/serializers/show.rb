@@ -23,6 +23,15 @@ module Api
               end
             res
           end
+
+          attribute :comments do |post|
+            next unless post.comments.any?
+
+            like_counts = post.comments.map do |comment|
+              Api::V1::Comments::Serializers::Show.new(comment).serializable_hash
+            end
+            like_counts
+          end
         end
       end
     end

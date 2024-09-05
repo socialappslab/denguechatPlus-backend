@@ -178,9 +178,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_04_123451) do
   create_table "likes", force: :cascade do |t|
     t.string "likeable_type", null: false
     t.bigint "likeable_id", null: false
+    t.bigint "user_account_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["likeable_type", "likeable_id"], name: "index_likes_on_likeable"
+    t.index ["user_account_id"], name: "index_likes_on_user_account_id"
   end
 
   create_table "neighborhoods", force: :cascade do |t|
@@ -202,15 +204,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_04_123451) do
 
   create_table "options", force: :cascade do |t|
     t.bigint "question_id", null: false
-    t.string "name_es"
+    t.string "name"
     t.boolean "required", default: false
     t.boolean "text_area", default: false
     t.integer "next"
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "name_en"
-    t.string "name_pt"
     t.index ["question_id"], name: "index_options_on_question_id"
   end
 
@@ -267,17 +267,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_04_123451) do
 
   create_table "questions", force: :cascade do |t|
     t.bigint "questionnaire_id", null: false
-    t.string "question_text_es"
-    t.string "description_es"
+    t.string "question_text"
+    t.string "description"
     t.string "type_field"
     t.integer "next"
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "description_en"
-    t.string "description_pt"
-    t.string "question_text_en"
-    t.string "question_text_pt"
     t.index ["questionnaire_id"], name: "index_questions_on_questionnaire_id"
   end
 
@@ -467,6 +463,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_04_123451) do
   add_foreign_key "inspections", "user_accounts", column: "treated_by_id"
   add_foreign_key "inspections", "visits"
   add_foreign_key "inspections", "water_source_types"
+  add_foreign_key "likes", "user_accounts"
   add_foreign_key "neighborhoods", "cities"
   add_foreign_key "neighborhoods", "countries"
   add_foreign_key "neighborhoods", "states"

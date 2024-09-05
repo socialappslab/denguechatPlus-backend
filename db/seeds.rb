@@ -338,3 +338,17 @@ unless SeedTask.find_by(task_name: 'permissions_for_change_brigade')
   roles.each{|rol| rol.permissions << permission}
   SeedTask.create(task_name: 'permissions_for_change_brigade')
 end
+
+unless SeedTask.find_by(task_name: 'permissions_for_posts_likes_and_comments')
+  roles = Role.all
+  actions = %i[create index show update destroy like]
+  resources = %i[posts comments]
+  permissions = []
+
+  resources.product(actions).each do |resource, action|
+    permissions << Permission.create(name: action, resource:)
+  end
+
+  roles.each{|rol| rol.permissions << permission}
+  SeedTask.create(task_name: 'permissions_for_posts_likes_and_comments')
+end

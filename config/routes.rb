@@ -49,10 +49,15 @@ Rails.application.routes.draw do
         end
       end
       resources :posts, only: %i[create show] do
-        resources :comments, only: %i[index create show]
-        resources :likes, only: %i[create destroy]
+        member do
+          post 'like'
+        end
+        resources :comments, only: %i[index create show] do
+          member do
+            post 'like'
+          end
+        end
       end
-
       resources :comments, only: [] do
         resources :likes, only: %i[create destroy]
       end

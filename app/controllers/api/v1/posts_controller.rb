@@ -15,6 +15,13 @@ module Api
                  renderer_options: { serializer: Api::V1::Posts::Serializers::Show },
                  options: { current_user: }
       end
+
+      def like
+        endpoint operation: Api::V1::Posts::Operations::Like,
+                 renderer_options: { serializer: Api::V1::Posts::Serializers::Show },
+                 options: { current_user: }
+      end
+
     end
   end
 end

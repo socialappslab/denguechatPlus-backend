@@ -4,10 +4,10 @@ module Api
   module V1
     module Comments
       module Serializers
-        class Show < ApplicationSerializer
-          set_type :comment
+        class Index < ApplicationSerializer
+          set_type :comments
 
-          attributes :id, :content, :created_at, :updated_at
+          attributes :id, :content, :created_at, :updated_at, :post_id
 
           attribute :likesCount do |comment|
             comment.likes.count
