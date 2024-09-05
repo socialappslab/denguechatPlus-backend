@@ -13,6 +13,7 @@ module Api
               optional(:name).maybe(:string)
               optional(:country_id).maybe(:integer)
               optional(:state_id).maybe(:integer)
+              optional(:city_id).maybe(:integer)
             end
 
             optional(:page).maybe(:hash) do
