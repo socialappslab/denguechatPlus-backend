@@ -191,6 +191,15 @@ unless SeedTask.find_by(task_name: 'user_account_v2')
   SeedTask.create!(task_name: 'user_account_v2')
 end
 
+# assign team_leader to teams
+unless SeedTask.find_by(task_name: 'assign_team_leader_to_teams')
+  user_account = UserAccount.find_by(username: 'team_leader')
+  team = Team.find_by(name: 'Dengue killers')
+  team.leader_id = user_account.id
+  team.save!
+  SeedTask.create!(task_name: 'assign_team_leader_to_teams')
+end
+
 #create default_house_blocks
 unless SeedTask.find_by(task_name: 'create_house_blocks_v2')
 
