@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_30_070903) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_04_123451) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -60,6 +60,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_30_070903) do
     t.index ["name", "discarded_at"], name: "index_cities_on_name_and_discarded_at", unique: true
     t.index ["state_id", "country_id", "discarded_at"], name: "index_cities_on_state_id_and_country_id_and_discarded_at", unique: true
     t.index ["state_id"], name: "index_cities_on_state_id"
+  end
+
+  create_table "comments", force: :cascade do |t|
+    t.text "content"
+    t.integer "likes_count"
+    t.bigint "post_id", null: false
+    t.bigint "user_account_id", null: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["post_id"], name: "index_comments_on_post_id"
+    t.index ["user_account_id"], name: "index_comments_on_user_account_id"
   end
 
   create_table "configurations", force: :cascade do |t|
@@ -163,6 +175,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_30_070903) do
     t.index ["water_source_type_id"], name: "index_inspections_on_water_source_type_id"
   end
 
+  create_table "likes", force: :cascade do |t|
+    t.string "likeable_type", null: false
+    t.bigint "likeable_id", null: false
+    t.bigint "user_account_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["likeable_type", "likeable_id"], name: "index_likes_on_likeable"
+    t.index ["user_account_id"], name: "index_likes_on_user_account_id"
+  end
+
   create_table "neighborhoods", force: :cascade do |t|
     t.string "name"
     t.datetime "discarded_at"
@@ -213,6 +235,24 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_30_070903) do
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "posts", force: :cascade do |t|
+    t.text "content"
+    t.integer "likes_count"
+    t.datetime "deleted_at"
+    t.bigint "user_account_id", null: false
+    t.bigint "team_id", null: false
+    t.bigint "neighborhood_id", null: false
+    t.bigint "city_id", null: false
+    t.bigint "country_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["city_id"], name: "index_posts_on_city_id"
+    t.index ["country_id"], name: "index_posts_on_country_id"
+    t.index ["neighborhood_id"], name: "index_posts_on_neighborhood_id"
+    t.index ["team_id"], name: "index_posts_on_team_id"
+    t.index ["user_account_id"], name: "index_posts_on_user_account_id"
   end
 
   create_table "questionnaires", force: :cascade do |t|
@@ -402,6 +442,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_30_070903) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "cities", "countries"
   add_foreign_key "cities", "states"
+  add_foreign_key "comments", "posts"
+  add_foreign_key "comments", "user_accounts"
   add_foreign_key "container_types", "breeding_site_types"
   add_foreign_key "house_blocks", "teams"
   add_foreign_key "house_blocks", "user_profiles"
@@ -421,11 +463,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_30_070903) do
   add_foreign_key "inspections", "user_accounts", column: "treated_by_id"
   add_foreign_key "inspections", "visits"
   add_foreign_key "inspections", "water_source_types"
+  add_foreign_key "likes", "user_accounts"
   add_foreign_key "neighborhoods", "cities"
   add_foreign_key "neighborhoods", "countries"
   add_foreign_key "neighborhoods", "states"
   add_foreign_key "neighborhoods", "wedges"
   add_foreign_key "options", "questions"
+  add_foreign_key "posts", "cities"
+  add_foreign_key "posts", "countries"
+  add_foreign_key "posts", "neighborhoods"
+  add_foreign_key "posts", "teams"
+  add_foreign_key "posts", "user_accounts"
   add_foreign_key "questions", "questionnaires"
   add_foreign_key "states", "countries"
   add_foreign_key "teams", "neighborhoods"

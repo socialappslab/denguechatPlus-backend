@@ -70,7 +70,8 @@ module Constants
       cities_list_by_country_and_state_assumption: :cities_list_by_country_and_state_assumption,
       cities_show_by_country_and_state_assumption: :cities_show_by_country_and_state_assumption,
       list_by_iquitos_location: :list_by_iquitos_location,
-      users_show_current_user: :users_show_current_user
+      users_show_current_user: :users_show_current_user,
+      comments_like: :comments_like
     }.freeze
   end
 end

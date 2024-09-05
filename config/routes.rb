@@ -48,6 +48,19 @@ Rails.application.routes.draw do
           get :current
         end
       end
+      resources :posts, only: %i[create show] do
+        member do
+          post 'like'
+        end
+        resources :comments, only: %i[index create show] do
+          member do
+            post 'like'
+          end
+        end
+      end
+      resources :comments, only: [] do
+        resources :likes, only: %i[create destroy]
+      end
       resources :teams do
         collection do
           delete :destroy

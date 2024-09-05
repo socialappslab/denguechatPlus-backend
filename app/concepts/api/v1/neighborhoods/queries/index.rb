@@ -9,7 +9,7 @@ module Api
 
           def initialize(filter, sort, params)
             @model = Neighborhood
-            @filter = filter
+            @filter = filter || {}
             @sort = sort
             @params = params
           end
@@ -38,21 +38,24 @@ module Api
           end
 
           def country_clause(relation)
-            return relation if @params['country_id'].nil? || @params['country_id'].blank?
+            country_id = @params['country_id'].presence || @filter[:country_id].presence
+            return relation if country_id.blank?
 
-            relation.where(neighborhoods: { country_id: @params['country_id'] })
+            relation.where(neighborhoods: { country_id: })
           end
 
           def state_clause(relation)
-            return relation if @params['state_id'].nil? || @params['state_id'].blank?
+            state_id = @params['state_id'].presence || @filter[:state_id].presence
+            return relation if state_id.blank?
 
-            relation.where(neighborhoods: { state_id: @params['state_id'] })
+            relation.where(neighborhoods: { state_id: })
           end
 
           def city_clause(relation)
-            return relation if @params['city_id'].nil? || @params['city_id'].blank?
+            city_id = @params['city_id'].presence || @filter[:city_id].presence
+            return relation if city_id.blank?
 
-            relation.where(neighborhoods: { state_id: @params['city_id'] })
+            relation.where(neighborhoods: { city_id: })
           end
 
           def sort_clause(relation)
