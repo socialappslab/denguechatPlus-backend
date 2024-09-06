@@ -5,8 +5,9 @@
 #  id                         :bigint           not null, primary key
 #  code_reference             :string
 #  container_test_result      :string
-#  has_lid                    :boolean
 #  has_water                  :boolean
+#  lid_type                   :string
+#  lid_type_other             :string
 #  tracking_type_required     :string
 #  was_chemically_treated     :boolean
 #  water_source_other         :string
