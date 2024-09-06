@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_04_123451) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_06_151850) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -159,7 +159,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_04_123451) do
     t.bigint "created_by_id", null: false
     t.bigint "treated_by_id", null: false
     t.string "code_reference"
-    t.boolean "in_use"
     t.boolean "has_lid"
     t.boolean "has_water"
     t.boolean "was_chemically_treated"

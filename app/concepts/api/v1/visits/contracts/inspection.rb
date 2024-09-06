@@ -10,7 +10,6 @@ module Api
             optional(:container_test_result).filled(:string) #optional
             required(:has_lid).filled(:bool)
             required(:has_water).filled(:bool)
-            optional(:in_use).filled(:bool) #optional
             optional(:tracking_type_required).filled(:string) #optional
             required(:was_chemically_treated).filled(:bool)
             optional(:created_by_id).filled(:integer)
