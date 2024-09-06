@@ -8,7 +8,6 @@ module Api
           params do
             optional(:code_reference).filled(:string)
             optional(:container_test_result).filled(:string) #optional
-            required(:has_lid).filled(:bool)
             required(:has_water).filled(:bool)
             optional(:tracking_type_required).filled(:string) #optional
             required(:was_chemically_treated).filled(:bool)
@@ -17,7 +16,9 @@ module Api
             required(:breeding_site_type_id).filled(:integer)
             required(:elimination_method_type_id).filled(:integer)
             required(:water_source_type_id).filled(:integer)
-            other(:water_source_other).filled(:string)
+            optional(:water_source_other).filled(:string)
+            required(:lid_type).filled(:string)
+            optional(:lid_type_other).filled(:string)
           end
 
           rule(:breeding_site_type_id) do
