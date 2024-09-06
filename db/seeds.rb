@@ -288,7 +288,13 @@ end
 
 #create water sources types
 unless SeedTask.find_by(task_name: 'create_water_sources_types')
-  WaterSourceType.create!([{ name: 'Naturaleza' }, { name: 'Residente' }])
+  WaterSourceType.create!(
+    [
+      { name: 'Agua de grifo' },
+      { name: 'Lluvia activamente recogida' },
+      { name: 'Lluvia pasivamente recogida' },
+      { name: 'Otro' }
+    ])
   SeedTask.create!(task_name: 'create_water_sources_types')
 end
 

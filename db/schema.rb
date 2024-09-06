@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_06_151850) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_06_152336) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -166,6 +166,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_06_151850) do
     t.string "tracking_type_required"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "water_source_other"
     t.index ["breeding_site_type_id"], name: "index_inspections_on_breeding_site_type_id"
     t.index ["created_by_id"], name: "index_inspections_on_created_by_id"
     t.index ["elimination_method_type_id"], name: "index_inspections_on_elimination_method_type_id"

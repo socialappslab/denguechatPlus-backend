@@ -17,6 +17,7 @@ module Api
             required(:breeding_site_type_id).filled(:integer)
             required(:elimination_method_type_id).filled(:integer)
             required(:water_source_type_id).filled(:integer)
+            other(:water_source_other).filled(:string)
           end
 
           rule(:breeding_site_type_id) do

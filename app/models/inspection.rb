@@ -9,6 +9,7 @@
 #  has_water                  :boolean
 #  tracking_type_required     :string
 #  was_chemically_treated     :boolean
+#  water_source_other         :string
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
 #  breeding_site_type_id      :bigint           not null
