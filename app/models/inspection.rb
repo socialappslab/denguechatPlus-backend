@@ -7,7 +7,6 @@
 #  container_test_result      :string
 #  has_lid                    :boolean
 #  has_water                  :boolean
-#  in_use                     :boolean
 #  tracking_type_required     :string
 #  was_chemically_treated     :boolean
 #  created_at                 :datetime         not null
