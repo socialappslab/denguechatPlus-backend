@@ -99,6 +99,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_06_154539) do
     t.index ["name"], name: "index_countries_on_name"
   end
 
+  create_table "create_visit_param_versions", force: :cascade do |t|
+    t.string "name"
+    t.integer "version", default: 1
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "elimination_method_types", force: :cascade do |t|
     t.string "name"
     t.datetime "discarded_at"
@@ -205,13 +212,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_06_154539) do
 
   create_table "options", force: :cascade do |t|
     t.bigint "question_id", null: false
-    t.string "name"
+    t.string "name_es"
     t.boolean "required", default: false
     t.boolean "text_area", default: false
     t.integer "next"
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "name_en"
+    t.string "name_pt"
     t.index ["question_id"], name: "index_options_on_question_id"
   end
 
@@ -268,13 +277,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_06_154539) do
 
   create_table "questions", force: :cascade do |t|
     t.bigint "questionnaire_id", null: false
-    t.string "question_text"
-    t.string "description"
+    t.string "question_text_es"
+    t.string "description_es"
     t.string "type_field"
     t.integer "next"
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "description_en"
+    t.string "description_pt"
+    t.string "question_text_en"
+    t.string "question_text_pt"
     t.index ["questionnaire_id"], name: "index_questions_on_questionnaire_id"
   end
 

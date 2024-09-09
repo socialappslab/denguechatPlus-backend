@@ -6,18 +6,19 @@ module Api
       module Contracts
         class Inspection < Dry::Validation::Contract
           params do
-            optional(:code_reference).filled(:string)
-            optional(:container_test_result).filled(:string) #optional
             required(:has_water).filled(:bool)
-            optional(:tracking_type_required).filled(:string) #optional
             required(:was_chemically_treated).filled(:bool)
-            optional(:created_by_id).filled(:integer)
-            optional(:treated_by_id).filled(:integer) #optional
             required(:breeding_site_type_id).filled(:integer)
             required(:elimination_method_type_id).filled(:integer)
             required(:water_source_type_id).filled(:integer)
-            optional(:water_source_other).filled(:string)
             required(:lid_type).filled(:string)
+            required(:quantity_founded).filled(:integer, gt?: 1, lt?: 100)
+            optional(:code_reference).filled(:string)
+            optional(:container_test_result).filled(:string)
+            optional(:tracking_type_required).filled(:string)
+            optional(:created_by_id).filled(:integer)
+            optional(:treated_by_id).filled(:integer)
+            optional(:water_source_other).filled(:string)
             optional(:lid_type_other).filled(:string)
           end
 
