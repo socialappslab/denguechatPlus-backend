@@ -20,6 +20,8 @@ module Api
                 breeding_site_type_id: inspection.breeding_site_type_id,
                 elimination_method_type_id: inspection.elimination_method_type_id,
                 water_source_type_id: inspection.water_source_type_id,
+                in_use: inspection.in_use,
+                has_lid: inspection.has_lid,
                 has_water: inspection.has_water,
                 was_chemically_treated: inspection.was_chemically_treated,
                 container_test_result: inspection.container_test_result,
