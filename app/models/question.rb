@@ -3,14 +3,10 @@
 # Table name: questions
 #
 #  id               :bigint           not null, primary key
-#  description_en   :string
-#  description_es   :string
-#  description_pt   :string
+#  description      :string
 #  discarded_at     :datetime
 #  next             :integer
-#  question_text_en :string
-#  question_text_es :string
-#  question_text_pt :string
+#  question_text    :string
 #  type_field       :string
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
