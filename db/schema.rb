@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_30_070903) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_06_154539) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -166,8 +166,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_30_070903) do
     t.bigint "created_by_id", null: false
     t.bigint "treated_by_id", null: false
     t.string "code_reference"
-    t.boolean "in_use"
-    t.boolean "has_lid"
     t.boolean "has_water"
     t.boolean "was_chemically_treated"
     t.string "container_test_result"
@@ -458,6 +456,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_30_070903) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "cities", "countries"
   add_foreign_key "cities", "states"
+  add_foreign_key "comments", "posts"
+  add_foreign_key "comments", "user_accounts"
   add_foreign_key "container_types", "breeding_site_types"
   add_foreign_key "house_blocks", "teams"
   add_foreign_key "house_blocks", "user_profiles"
@@ -477,11 +477,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_30_070903) do
   add_foreign_key "inspections", "user_accounts", column: "treated_by_id"
   add_foreign_key "inspections", "visits"
   add_foreign_key "inspections", "water_source_types"
+  add_foreign_key "likes", "user_accounts"
   add_foreign_key "neighborhoods", "cities"
   add_foreign_key "neighborhoods", "countries"
   add_foreign_key "neighborhoods", "states"
   add_foreign_key "neighborhoods", "wedges"
   add_foreign_key "options", "questions"
+  add_foreign_key "posts", "cities"
+  add_foreign_key "posts", "countries"
+  add_foreign_key "posts", "neighborhoods"
+  add_foreign_key "posts", "teams"
+  add_foreign_key "posts", "user_accounts"
   add_foreign_key "questions", "questionnaires"
   add_foreign_key "states", "countries"
   add_foreign_key "teams", "neighborhoods"

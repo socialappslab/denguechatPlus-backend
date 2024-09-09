@@ -7,6 +7,10 @@ module Api
         class Create < ApplicationOperation
           include Dry::Transaction
 
+          Container = Struct.new(:has_water, :visit_id, :was_chemically_treated, :breeding_site_type_id,
+                                 :elimination_method_type_id, :water_source_type_id, :lid_type, :code_reference, :container_test_result, :tracking_type_required, :created_by_id, :treated_by_id, :water_source_other, :lid_type_other, keyword_init: true)
+
+
           tee :params
           step :validate_schema
           tee :split_data
@@ -60,7 +64,8 @@ module Api
               @ctx[:model] = Visit.create(@params)
               Success({ ctx: @ctx, type: :created })
             rescue => error
-              errors = ErrorFormater.new_error(field: :base, msg: error, custom_predicate: :user_account_without_confirmation?)
+              errors = ErrorFormater.new_error(field: :base, msg: error,
+                                               custom_predicate: :user_account_without_confirmation?)
 
               return Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
             end
@@ -76,7 +81,16 @@ module Api
           end
 
           def create_inspections
-            Inspection.insert_all(@inspections)
+            container_attrs = Container.members
+            inspections_clean_format = []
+            visit_id = @ctx[:model].id
+            @inspections.each do |inspection|
+              inspection[:quantity_founded].times do
+                inspection[:visit_id] = visit_id
+                inspections_clean_format << Container.new(inspection.slice(*container_attrs)).to_h
+              end
+            end
+            Inspection.insert_all(inspections_clean_format) if inspections_clean_format.any?
             Success({ ctx: @ctx, type: :created })
           end
 
@@ -105,8 +119,8 @@ module Api
 
           def find_similar_or_create_house_id
             similar_house = Api::V1::Visits::Services::HouseFinderByCoordsService.find_similar_house(latitude: @house_info[:latitude],
-                                                                          longitude: @house_info[:longitude],
-                                                                          house_block_id: @house_info[:house_block_id])
+                                                                                                     longitude: @house_info[:longitude],
+                                                                                                     house_block_id: @house_info[:house_block_id])
 
             similar_house ? similar_house.id : create_and_get_house_id
           end

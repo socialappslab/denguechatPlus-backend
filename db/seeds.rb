@@ -312,7 +312,12 @@ unless SeedTask.find_by(task_name: 'create_visit_params')
 end
 
 #create questions
-unless SeedTask.find_by(task_name: 'create_questions')
+unless SeedTask.find_by(task_name: 'create_questions_v2')
+
+
+  Option.destroy_all
+  Question.destroy_all
+  Questionnaire.destroy_all
 
   images = get_images_for_questionnaire
 
@@ -333,16 +338,15 @@ unless SeedTask.find_by(task_name: 'create_questions')
   end
 
   images.each do |image|
-    resource = Question.find_by(question: image[:filename])
-    resource ||= Option.find_by(name: image[:filename])
+    resource = Question.find_by(question_text_es: image[:filename])
+    resource ||= Option.find_by(name_es: image[:filename])
     next unless resource
 
     resource.image.attach(image)
     image[:io].unlink
   end
 
-
-  SeedTask.create!(task_name: 'create_questions')
+  SeedTask.create!(task_name: 'create_questions_v2')
 
 end
 

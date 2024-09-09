@@ -18,7 +18,6 @@ module Api
 
           def set_language
             @ctx[:language] = %w[es pt en].include?(@params[:language]) ? @params[:language] : :es
-
           end
 
           def find_questionnaire
