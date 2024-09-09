@@ -4,7 +4,9 @@
 #
 #  id           :bigint           not null, primary key
 #  discarded_at :datetime
-#  name         :string
+#  name_en      :string
+#  name_es      :string
+#  name_pt      :string
 #  next         :integer
 #  required     :boolean          default(FALSE)
 #  text_area    :boolean          default(FALSE)

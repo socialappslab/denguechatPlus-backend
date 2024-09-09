@@ -191,6 +191,15 @@ unless SeedTask.find_by(task_name: 'user_account_v2')
   SeedTask.create!(task_name: 'user_account_v2')
 end
 
+# assign team_leader to teams
+unless SeedTask.find_by(task_name: 'assign_team_leader_to_teams')
+  user_account = UserAccount.find_by(username: 'team_leader')
+  team = Team.find_by(name: 'Dengue killers')
+  team.leader_id = user_account.id
+  team.save!
+  SeedTask.create!(task_name: 'assign_team_leader_to_teams')
+end
+
 #create default_house_blocks
 unless SeedTask.find_by(task_name: 'create_house_blocks_v2')
 
@@ -279,7 +288,13 @@ end
 
 #create water sources types
 unless SeedTask.find_by(task_name: 'create_water_sources_types')
-  WaterSourceType.create!([{ name: 'Naturaleza' }, { name: 'Residente' }])
+  WaterSourceType.create!(
+    [
+      { name: 'Agua de grifo' },
+      { name: 'Lluvia activamente recogida' },
+      { name: 'Lluvia pasivamente recogida' },
+      { name: 'Otro' }
+    ])
   SeedTask.create!(task_name: 'create_water_sources_types')
 end
 
@@ -297,7 +312,12 @@ unless SeedTask.find_by(task_name: 'create_visit_params')
 end
 
 #create questions
-unless SeedTask.find_by(task_name: 'create_questions')
+unless SeedTask.find_by(task_name: 'create_questions_v2')
+
+
+  Option.destroy_all
+  Question.destroy_all
+  Questionnaire.destroy_all
 
   images = get_images_for_questionnaire
 
@@ -318,16 +338,15 @@ unless SeedTask.find_by(task_name: 'create_questions')
   end
 
   images.each do |image|
-    resource = Question.find_by(question: image[:filename])
-    resource ||= Option.find_by(name: image[:filename])
+    resource = Question.find_by(question_text_es: image[:filename])
+    resource ||= Option.find_by(name_es: image[:filename])
     next unless resource
 
     resource.image.attach(image)
     image[:io].unlink
   end
 
-
-  SeedTask.create!(task_name: 'create_questions')
+  SeedTask.create!(task_name: 'create_questions_v2')
 
 end
 
