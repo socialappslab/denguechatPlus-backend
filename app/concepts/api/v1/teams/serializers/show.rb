@@ -42,7 +42,7 @@ module Api
 
             {
               id: brigade.wedge.id,
-              first_name: brigade.wedge.name
+              name: brigade.wedge.name
             }
           end
 
