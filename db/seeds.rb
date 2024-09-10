@@ -73,14 +73,15 @@ unless SeedTask.find_by(task_name: 'clean_db_v4')
                       assign_permissions_to_roles_v2 create_teams_v2 user_account_v2
                       create_house_blocks_v2 create_houses_v2 states_and_cities_v2]
   HouseBlock.destroy_all
+  Visit.destroy_all
   House.destroy_all
+  Team.destroy_all
   UserAccount.destroy_all
   UserProfile.destroy_all
   Role.destroy_all
   Permission.destroy_all
   Inspection.destroy_all
   Visit.destroy_all
-  Team.destroy_all
   Wedge.destroy_all
   Neighborhood.destroy_all
   State.destroy_all
