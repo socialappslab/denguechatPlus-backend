@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_11_132601) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_11_153521) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -97,6 +97,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_11_132601) do
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "container_type"
     t.index ["breeding_site_type_id"], name: "index_container_types_on_breeding_site_type_id"
   end
 

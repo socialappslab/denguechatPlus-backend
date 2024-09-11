@@ -244,31 +244,32 @@ unless SeedTask.find_by(task_name: 'create_breeding_site_types')
 end
 
 #create container types
-unless SeedTask.find_by(task_name: 'create_container_types')
+unless SeedTask.find_by(task_name: 'create_container_types_v2')
   breeding_site_first, breeding_site_second = BreedingSiteType.first, BreedingSiteType.second
+  ContainerType.delete_all
 
   ContainerType.create!(name: 'Tanques (cemento, polietileno, metal, otra) ',
-                       breeding_site_type: breeding_site_first)
+                       breeding_site_type: breeding_site_first, container_type: 'permanent')
 
   ContainerType.create!(name: 'Bidones/Cilindros (metal, plástico)',
-                       breeding_site_type: breeding_site_first)
+                       breeding_site_type: breeding_site_first, container_type: 'permanent')
 
   ContainerType.create!(name: 'Pozos',
-                       breeding_site_type: breeding_site_first)
+                       breeding_site_type: breeding_site_first, container_type: 'permanent')
 
   ContainerType.create!(name: 'Estructura o Partes de la Casa',
-                       breeding_site_type: breeding_site_first)
+                       breeding_site_type: breeding_site_first, container_type: 'permanent')
 
   ContainerType.create!(name: 'Llanta',
-                       breeding_site_type: breeding_site_second)
+                       breeding_site_type: breeding_site_second, container_type: 'non-permanent')
 
   ContainerType.create!(name: 'Otros',
-                       breeding_site_type: breeding_site_second)
+                       breeding_site_type: breeding_site_second, container_type: 'non-permanent')
 
   ContainerType.create!(name: 'Elementos naturales',
-                       breeding_site_type: breeding_site_second)
+                       breeding_site_type: breeding_site_second, container_type: 'non-permanent')
 
-  SeedTask.create!(task_name: 'create_container_types')
+  SeedTask.create!(task_name: 'create_container_types_v2')
 end
 
 # assign images to container types
