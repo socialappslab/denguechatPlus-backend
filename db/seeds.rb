@@ -372,3 +372,22 @@ unless SeedTask.find_by(task_name: 'permissions_for_posts_likes_and_comments')
   roles.each {|rol| rol.permissions << permissions }
   SeedTask.create(task_name: 'permissions_for_posts_likes_and_comments')
 end
+
+
+
+unless SeedTask.find_by(task_name: 'add_container_protections')
+  ContainerProtection.create!(name_es: 'Tapa hermética', name_en: 'Hermetic lid', name_pt: 'Tampa hermética', color: 'green')
+  ContainerProtection.create!(name_es: 'Tapa no hermética', name_en: 'Non-hermetic lid', name_pt: 'Tampa não hermética', color: 'yellow')
+  ContainerProtection.create!(name_es: 'Techo', name_en: 'Roof', name_pt: 'Telhado', color: 'yellow')
+  ContainerProtection.create!(name_es: 'No tiene', name_en: 'None', name_pt: 'Sem proteção', color: 'red')
+  ContainerProtection.create!(name_es: 'Otro', name_en: 'Other', name_pt: 'Outro', color: 'yellow')
+  SeedTask.create!(task_name: 'add_container_protections')
+end
+
+unless SeedTask.find_by(task_name: 'add_type_contents')
+  TypeContent.create!(name_es: 'Larvas', name_en: 'Larvae', name_pt: 'Larvas')
+  TypeContent.create!(name_es: 'Pupas', name_en: 'Pupae', name_pt: 'Pupas')
+  TypeContent.create!(name_es: 'Huevos', name_en: 'Eggs', name_pt: 'Ovos')
+  TypeContent.create!(name_es: 'Nada', name_en: 'None', name_pt: 'Nada')
+  SeedTask.create!(task_name: 'add_type_contents')
+end
