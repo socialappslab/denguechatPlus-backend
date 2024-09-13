@@ -6,6 +6,15 @@ unless SeedTask.find_by(task_name: 'create_breeding_site_types')
   SeedTask.create!(task_name: 'create_breeding_site_types')
 end
 
+unless SeedTask.find_by(task_name: 'add_container_protections_v1')
+  ContainerProtection.create!(name_es: 'Tapa hermética', name_en: 'Hermetic lid', name_pt: 'Tampa hermética', color: 'green')
+  ContainerProtection.create!(name_es: 'Tapa no hermética', name_en: 'Non-hermetic lid', name_pt: 'Tampa não hermética', color: 'yellow')
+  ContainerProtection.create!(name_es: 'Techo', name_en: 'Roof', name_pt: 'Telhado', color: 'yellow')
+  ContainerProtection.create!(name_es: 'Otro', name_en: 'Other', name_pt: 'Outro', color: 'yellow')
+  ContainerProtection.create!(name_es: 'No tiene', name_en: 'None', name_pt: 'Sem proteção', color: 'red')
+  SeedTask.create!(task_name: 'add_container_protections_v1')
+end
+
 #create elimination methods
 unless SeedTask.find_by(task_name: 'create_method_elimination')
   EliminationMethodType.destroy_all
