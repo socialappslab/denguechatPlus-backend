@@ -36,6 +36,7 @@ module Api
                   {
                     id: option.id,
                     name: option.send("name_#{questionnaire.language}"),
+                    group: option.send("group_#{questionnaire.language}"),
                     resourceId: option.resource_id,
                     required: option.required,
                     optionType: option.type_option,
