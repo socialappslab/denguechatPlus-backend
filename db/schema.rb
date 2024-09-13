@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_11_153521) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_13_161608) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -228,13 +228,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_11_153521) do
     t.bigint "question_id", null: false
     t.string "name_es"
     t.boolean "required", default: false
-    t.boolean "text_area", default: false
     t.integer "next"
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name_en"
     t.string "name_pt"
+    t.integer "resource_id"
+    t.string "group_es"
+    t.string "group_en"
+    t.string "group_pt"
+    t.string "type_option"
     t.index ["question_id"], name: "index_options_on_question_id"
   end
 
@@ -302,6 +306,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_11_153521) do
     t.string "description_pt"
     t.string "question_text_en"
     t.string "question_text_pt"
+    t.string "resource_name"
+    t.string "resource_type"
     t.index ["questionnaire_id"], name: "index_questions_on_questionnaire_id"
   end
 

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 require 'json'
 require 'open-uri'
-require_relative '../db/files/questions'
 require_relative '../db/files/permissions'
+require_relative '../db/files/questions'
 require_relative '../db/files/users'
 
 ###################################
@@ -39,10 +39,10 @@ end
 def get_images_for_questionnaire
   results = []
   types = {
-    'En la huerta': 'https://i.imghippo.com/files/lBlRv1724220223.png',
-    'En la casa': 'https://i.imghippo.com/files/hfv801724220367.png',
+    'Comencemos en la huerta': 'https://i.imghippo.com/files/lBlRv1724220223.png',
+    'Revisemos dentro de la casa': 'https://i.imghippo.com/files/hfv801724220367.png',
     'Tanques (cemento, polietileno, metal, otro material)': 'https://i.imghippo.com/files/owjeu1724220878.png',
-    'Bidones o cilindros (metal, plástico)': 'https://i.imghippo.com/files/ta0H31724220912.png',
+    'Bidones/Cilindros (metal, plástico)': 'https://i.imghippo.com/files/ta0H31724220912.png',
     'Pozos': 'https://i.imghippo.com/files/PXsOQ1724220823.png',
     'Estructura o partes de la casa': 'https://i.imghippo.com/files/z8Yex1724220962.png',
     'Llanta': 'https://i.imghippo.com/files/hYKbi1724220688.png',
@@ -237,40 +237,6 @@ unless SeedTask.find_by(task_name: 'create_houses_v2')
   SeedTask.create!(task_name: 'create_houses_v2')
 end
 
-#create breeding site types
-unless SeedTask.find_by(task_name: 'create_breeding_site_types')
-  BreedingSiteType.create!([{ name: 'permanente' }, { name: 'no permanente' }])
-  SeedTask.create!(task_name: 'create_breeding_site_types')
-end
-
-#create container types
-unless SeedTask.find_by(task_name: 'create_container_types_v2')
-  breeding_site_first, breeding_site_second = BreedingSiteType.first, BreedingSiteType.second
-  ContainerType.delete_all
-
-  ContainerType.create!(name: 'Tanques (cemento, polietileno, metal, otra) ',
-                       breeding_site_type: breeding_site_first, container_type: 'permanent')
-
-  ContainerType.create!(name: 'Bidones/Cilindros (metal, plástico)',
-                       breeding_site_type: breeding_site_first, container_type: 'permanent')
-
-  ContainerType.create!(name: 'Pozos',
-                       breeding_site_type: breeding_site_first, container_type: 'permanent')
-
-  ContainerType.create!(name: 'Estructura o Partes de la Casa',
-                       breeding_site_type: breeding_site_first, container_type: 'permanent')
-
-  ContainerType.create!(name: 'Llanta',
-                       breeding_site_type: breeding_site_second, container_type: 'non-permanent')
-
-  ContainerType.create!(name: 'Otros',
-                       breeding_site_type: breeding_site_second, container_type: 'non-permanent')
-
-  ContainerType.create!(name: 'Elementos naturales',
-                       breeding_site_type: breeding_site_second, container_type: 'non-permanent')
-
-  SeedTask.create!(task_name: 'create_container_types_v2')
-end
 
 # assign images to container types
 unless SeedTask.find_by(task_name: 'assign_images_to_container_types')
@@ -282,23 +248,7 @@ unless SeedTask.find_by(task_name: 'assign_images_to_container_types')
   SeedTask.create!(task_name: 'assign_images_to_container_types')
 end
 
-#create elimination methods
-unless SeedTask.find_by(task_name: 'create_method_elimination')
-  EliminationMethodType.create!([{ name: 'Quimico' }, { name: 'Tapa' }])
-  SeedTask.create!(task_name: 'create_method_elimination')
-end
 
-#create water sources types
-unless SeedTask.find_by(task_name: 'create_water_sources_types')
-  WaterSourceType.create!(
-    [
-      { name: 'Agua de grifo' },
-      { name: 'Lluvia activamente recogida' },
-      { name: 'Lluvia pasivamente recogida' },
-      { name: 'Otro' }
-    ])
-  SeedTask.create!(task_name: 'create_water_sources_types')
-end
 
 #create house-places
 unless SeedTask.find_by(task_name: 'create_places')
@@ -313,9 +263,18 @@ unless SeedTask.find_by(task_name: 'create_visit_params')
   SeedTask.create!(task_name: 'create_visit_params')
 end
 
-#create questions
-unless SeedTask.find_by(task_name: 'create_questions_v2')
 
+unless SeedTask.find_by(task_name: 'add_container_protections_v1')
+  ContainerProtection.create!(name_es: 'Tapa hermética', name_en: 'Hermetic lid', name_pt: 'Tampa hermética', color: 'green')
+  ContainerProtection.create!(name_es: 'Tapa no hermética', name_en: 'Non-hermetic lid', name_pt: 'Tampa não hermética', color: 'yellow')
+  ContainerProtection.create!(name_es: 'Techo', name_en: 'Roof', name_pt: 'Telhado', color: 'yellow')
+  ContainerProtection.create!(name_es: 'Otro', name_en: 'Other', name_pt: 'Outro', color: 'yellow')
+  ContainerProtection.create!(name_es: 'No tiene', name_en: 'None', name_pt: 'Sem proteção', color: 'red')
+  SeedTask.create!(task_name: 'add_container_protections_v1')
+end
+
+#create questions
+unless SeedTask.find_by(task_name: 'create_questions_v4')
 
   Option.destroy_all
   Question.destroy_all
@@ -326,16 +285,18 @@ unless SeedTask.find_by(task_name: 'create_questions_v2')
   questionnaire = Questionnaire.create!(
     name: 'Cuestionario de Zancudos',
     current_form: true,
-    initial_question: 8,
-    final_question: 7
+    initial_question: 1,
+    final_question: 20
   )
 
   QUESTIONS_DATA.each do |question_data|
     options_data = question_data.delete(:options)
     question = questionnaire.questions.create!(question_data)
 
-    options_data&.each do |option_data|
-      question.options.create!(option_data)
+    if options_data&.any?
+      options_data&.each do |option_data|
+        question.options.create!(option_data)
+      end
     end
   end
 
@@ -348,7 +309,7 @@ unless SeedTask.find_by(task_name: 'create_questions_v2')
     image[:io].unlink
   end
 
-  SeedTask.create!(task_name: 'create_questions_v2')
+  SeedTask.create!(task_name: 'create_questions_v4')
 
 end
 
@@ -376,19 +337,4 @@ end
 
 
 
-unless SeedTask.find_by(task_name: 'add_container_protections')
-  ContainerProtection.create!(name_es: 'Tapa hermética', name_en: 'Hermetic lid', name_pt: 'Tampa hermética', color: 'green')
-  ContainerProtection.create!(name_es: 'Tapa no hermética', name_en: 'Non-hermetic lid', name_pt: 'Tampa não hermética', color: 'yellow')
-  ContainerProtection.create!(name_es: 'Techo', name_en: 'Roof', name_pt: 'Telhado', color: 'yellow')
-  ContainerProtection.create!(name_es: 'No tiene', name_en: 'None', name_pt: 'Sem proteção', color: 'red')
-  ContainerProtection.create!(name_es: 'Otro', name_en: 'Other', name_pt: 'Outro', color: 'yellow')
-  SeedTask.create!(task_name: 'add_container_protections')
-end
 
-unless SeedTask.find_by(task_name: 'add_type_contents')
-  TypeContent.create!(name_es: 'Larvas', name_en: 'Larvae', name_pt: 'Larvas')
-  TypeContent.create!(name_es: 'Pupas', name_en: 'Pupae', name_pt: 'Pupas')
-  TypeContent.create!(name_es: 'Huevos', name_en: 'Eggs', name_pt: 'Ovos')
-  TypeContent.create!(name_es: 'Nada', name_en: 'None', name_pt: 'Nada')
-  SeedTask.create!(task_name: 'add_type_contents')
-end
