@@ -10,7 +10,7 @@
 #  lid_type_other             :string
 #  other_protection           :string
 #  tracking_type_required     :string
-#  was_chemically_treated     :boolean
+#  was_chemically_treated     :string
 #  water_source_other         :string
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
@@ -52,4 +52,5 @@ class Inspection < ApplicationRecord
   belongs_to :container_protection, optional: true
   has_many :inspection_type_contents, dependent: :nullify
   has_many :type_contents, through: :inspection_type_contents
+  has_one_attached :photo
 end

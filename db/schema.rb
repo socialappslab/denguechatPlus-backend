@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_13_161608) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_16_022232) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -171,7 +171,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_13_161608) do
     t.bigint "treated_by_id", null: false
     t.string "code_reference"
     t.boolean "has_water"
-    t.boolean "was_chemically_treated"
     t.string "container_test_result"
     t.string "tracking_type_required"
     t.datetime "created_at", null: false
@@ -181,6 +180,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_13_161608) do
     t.string "lid_type_other"
     t.bigint "container_protection_id"
     t.string "other_protection"
+    t.string "was_chemically_treated"
     t.index ["breeding_site_type_id"], name: "index_inspections_on_breeding_site_type_id"
     t.index ["container_protection_id"], name: "index_inspections_on_container_protection_id"
     t.index ["created_by_id"], name: "index_inspections_on_created_by_id"
