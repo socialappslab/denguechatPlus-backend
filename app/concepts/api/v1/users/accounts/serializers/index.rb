@@ -24,6 +24,15 @@ module Api
               user.created_at.strftime('%Y-%m-%d')
             end
 
+            attribute :team do |user|
+              next if user.team.nil?
+
+              {
+                id: user.team.id,
+                name: user.team_name
+              }
+            end
+
             attribute :roles do |user|
               next unless user.roles
 
