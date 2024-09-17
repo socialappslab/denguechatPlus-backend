@@ -3,10 +3,16 @@
 # Table name: questions
 #
 #  id               :bigint           not null, primary key
-#  description      :string
+#  description_en   :string
+#  description_es   :string
+#  description_pt   :string
 #  discarded_at     :datetime
 #  next             :integer
-#  question_text    :string
+#  question_text_en :string
+#  question_text_es :string
+#  question_text_pt :string
+#  resource_name    :string
+#  resource_type    :string
 #  type_field       :string
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null

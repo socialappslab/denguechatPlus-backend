@@ -7,6 +7,12 @@ module Api
         class Create < ApplicationOperation
           include Dry::Transaction
 
+          Container = Struct.new(:has_water, :visit_id, :was_chemically_treated, :breeding_site_type_id,
+                                 :elimination_method_type_id, :water_source_type_id, :lid_type, :code_reference, :container_test_result,
+                                 :tracking_type_required, :created_by_id, :treated_by_id, :water_source_other, :lid_type_other,
+                                 :container_protection_id, :other_protection, keyword_init: true)
+
+          step :check_request_attrs
           tee :params
           step :validate_schema
           tee :split_data
@@ -15,10 +21,29 @@ module Api
           step :create_visit
           tee :set_extra_info_to_inspections
           step :create_inspections
+          tee :add_photos
+
+
+          def check_request_attrs(input)
+            unless input.dig(:params, :json_params)
+              ctx = {}
+              ctx['errors'] = ErrorFormater.new_error(field: :base, msg: 'json_params not found', custom_predicate: :not_found? )
+
+              return Failure({ ctx: ctx, type: :invalid })
+            end
+
+            Success({ ctx: input, type: :success })
+          end
 
           def params(input)
             @ctx = {}
-            @params = to_snake_case(input[:params])
+            input = input[:ctx]
+            if input[:params][:photos]
+              @photos = input[:params][:photos]
+            end
+            params = input[:params][:json_params]
+            params_json = JSON.parse(params)
+            @params = to_snake_case(params_json)
             @current_user = input[:current_user]
           end
 
@@ -60,7 +85,8 @@ module Api
               @ctx[:model] = Visit.create(@params)
               Success({ ctx: @ctx, type: :created })
             rescue => error
-              errors = ErrorFormater.new_error(field: :base, msg: error, custom_predicate: :user_account_without_confirmation?)
+              errors = ErrorFormater.new_error(field: :base, msg: error,
+                                               custom_predicate: :user_account_without_confirmation?)
 
               return Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
             end
@@ -76,8 +102,32 @@ module Api
           end
 
           def create_inspections
-            Inspection.insert_all(@inspections)
+            container_attrs = Container.members
+            inspections_clean_format = []
+            @photo_ids = []
+            visit_id = @ctx[:model].id
+            @inspections.each do |inspection|
+              @photo_ids << {code_reference: inspection[:code_reference], photo_id: inspection[:photo_id]} if inspection[:photo_id].present?
+              inspection[:quantity_founded].times do
+                inspection[:visit_id] = visit_id
+                inspections_clean_format << Container.new(inspection.slice(*container_attrs)).to_h
+              end
+            end
+            Inspection.insert_all(inspections_clean_format) if inspections_clean_format.any?
             Success({ ctx: @ctx, type: :created })
+          end
+
+          def add_photos
+            return true if  @photo_ids.nil? || @photo_ids.blank? || @photos.nil? || @photos.blank?
+
+            @photo_ids.each do |obj|
+              inspection = Inspection.find_by(code_reference: obj[:code_reference])
+              next unless inspection
+              photo = @photos.select { |file| file.original_filename == "#{inspection.code_reference}.#{file.content_type.split('/').last}" }
+              next if photo.blank?
+
+              inspection.photo.attach(photo.first)
+            end
           end
 
 
@@ -105,8 +155,8 @@ module Api
 
           def find_similar_or_create_house_id
             similar_house = Api::V1::Visits::Services::HouseFinderByCoordsService.find_similar_house(latitude: @house_info[:latitude],
-                                                                          longitude: @house_info[:longitude],
-                                                                          house_block_id: @house_info[:house_block_id])
+                                                                                                     longitude: @house_info[:longitude],
+                                                                                                     house_block_id: @house_info[:house_block_id])
 
             similar_house ? similar_house.id : create_and_get_house_id
           end

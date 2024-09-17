@@ -32,7 +32,10 @@ module Api
             attribute :team do |user_profile|
               next if user_profile.team.nil?
 
-              user_profile.team&.name
+              {
+                id: user_profile.team.id,
+                name: user_profile.team.name
+              }
             end
 
             attribute :house_block do |user_profile|

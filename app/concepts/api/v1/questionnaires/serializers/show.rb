@@ -25,17 +25,21 @@ module Api
             questionnaire.questions.map do |question|
               {
                 id: question.id,
-                question: question.question,
+                question: question.send("question_text_#{questionnaire.language}"),
                 typeField: question.type_field,
-                description: question.description,
+                description: question.send("description_#{questionnaire.language}"),
                 next: question.next,
+                resourceName: question.resource_name.blank? ? nil : question.resource_name,
+                resourceType: question.resource_type,
                 image: get_image_obj.call(question),
                 options: question.options.map do |option|
                   {
                     id: option.id,
-                    name: option.name,
+                    name: option.send("name_#{questionnaire.language}"),
+                    group: option.send("group_#{questionnaire.language}"),
+                    resourceId: option.resource_id,
                     required: option.required,
-                    textArea: option.text_area,
+                    optionType: option.type_option,
                     image: get_image_obj.call(option),
                     next: option.next
                   }

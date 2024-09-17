@@ -4,13 +4,19 @@
 #
 #  id           :bigint           not null, primary key
 #  discarded_at :datetime
-#  name         :string
+#  group_en     :string
+#  group_es     :string
+#  group_pt     :string
+#  name_en      :string
+#  name_es      :string
+#  name_pt      :string
 #  next         :integer
 #  required     :boolean          default(FALSE)
-#  text_area    :boolean          default(FALSE)
+#  type_option  :string
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  question_id  :bigint           not null
+#  resource_id  :integer
 #
 # Indexes
 #

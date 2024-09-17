@@ -3,6 +3,7 @@
 # Table name: container_types
 #
 #  id                    :bigint           not null, primary key
+#  container_type        :string
 #  discarded_at          :datetime
 #  name                  :string
 #  created_at            :datetime         not null

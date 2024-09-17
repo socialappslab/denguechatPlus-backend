@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_04_123451) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_16_022232) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -81,12 +81,23 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_04_123451) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "container_protections", force: :cascade do |t|
+    t.string "name_es"
+    t.string "name_en"
+    t.string "name_pt"
+    t.string "color"
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "container_types", force: :cascade do |t|
     t.string "name"
     t.bigint "breeding_site_type_id", null: false
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "container_type"
     t.index ["breeding_site_type_id"], name: "index_container_types_on_breeding_site_type_id"
   end
 
@@ -159,20 +170,31 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_04_123451) do
     t.bigint "created_by_id", null: false
     t.bigint "treated_by_id", null: false
     t.string "code_reference"
-    t.boolean "in_use"
-    t.boolean "has_lid"
     t.boolean "has_water"
-    t.boolean "was_chemically_treated"
     t.string "container_test_result"
     t.string "tracking_type_required"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "water_source_other"
+    t.string "lid_type"
+    t.string "lid_type_other"
+    t.bigint "container_protection_id"
+    t.string "other_protection"
+    t.string "was_chemically_treated"
     t.index ["breeding_site_type_id"], name: "index_inspections_on_breeding_site_type_id"
+    t.index ["container_protection_id"], name: "index_inspections_on_container_protection_id"
     t.index ["created_by_id"], name: "index_inspections_on_created_by_id"
     t.index ["elimination_method_type_id"], name: "index_inspections_on_elimination_method_type_id"
     t.index ["treated_by_id"], name: "index_inspections_on_treated_by_id"
     t.index ["visit_id"], name: "index_inspections_on_visit_id"
     t.index ["water_source_type_id"], name: "index_inspections_on_water_source_type_id"
+  end
+
+  create_table "inspections_type_contents", id: false, force: :cascade do |t|
+    t.bigint "inspection_id"
+    t.bigint "type_content_id"
+    t.index ["inspection_id"], name: "index_inspections_type_contents_on_inspection_id"
+    t.index ["type_content_id"], name: "index_inspections_type_contents_on_type_content_id"
   end
 
   create_table "likes", force: :cascade do |t|
@@ -204,13 +226,19 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_04_123451) do
 
   create_table "options", force: :cascade do |t|
     t.bigint "question_id", null: false
-    t.string "name"
+    t.string "name_es"
     t.boolean "required", default: false
-    t.boolean "text_area", default: false
     t.integer "next"
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "name_en"
+    t.string "name_pt"
+    t.integer "resource_id"
+    t.string "group_es"
+    t.string "group_en"
+    t.string "group_pt"
+    t.string "type_option"
     t.index ["question_id"], name: "index_options_on_question_id"
   end
 
@@ -267,13 +295,19 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_04_123451) do
 
   create_table "questions", force: :cascade do |t|
     t.bigint "questionnaire_id", null: false
-    t.string "question_text"
-    t.string "description"
+    t.string "question_text_es"
+    t.string "description_es"
     t.string "type_field"
     t.integer "next"
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "description_en"
+    t.string "description_pt"
+    t.string "question_text_en"
+    t.string "question_text_pt"
+    t.string "resource_name"
+    t.string "resource_type"
     t.index ["questionnaire_id"], name: "index_questions_on_questionnaire_id"
   end
 
@@ -337,6 +371,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_04_123451) do
     t.index ["neighborhood_id"], name: "index_teams_on_neighborhood_id"
     t.index ["organization_id"], name: "index_teams_on_organization_id"
     t.index ["wedge_id"], name: "index_teams_on_wedge_id"
+  end
+
+  create_table "type_contents", force: :cascade do |t|
+    t.string "name_es"
+    t.string "name_en"
+    t.string "name_pt"
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "user_accounts", force: :cascade do |t|
@@ -458,11 +501,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_04_123451) do
   add_foreign_key "houses", "user_profiles"
   add_foreign_key "houses", "wedges"
   add_foreign_key "inspections", "breeding_site_types"
+  add_foreign_key "inspections", "container_protections"
   add_foreign_key "inspections", "elimination_method_types"
   add_foreign_key "inspections", "user_accounts", column: "created_by_id"
   add_foreign_key "inspections", "user_accounts", column: "treated_by_id"
   add_foreign_key "inspections", "visits"
   add_foreign_key "inspections", "water_source_types"
+  add_foreign_key "inspections_type_contents", "inspections"
+  add_foreign_key "inspections_type_contents", "type_contents"
   add_foreign_key "likes", "user_accounts"
   add_foreign_key "neighborhoods", "cities"
   add_foreign_key "neighborhoods", "countries"

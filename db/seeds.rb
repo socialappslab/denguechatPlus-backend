@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 require 'json'
 require 'open-uri'
-require_relative '../db/files/questions'
 require_relative '../db/files/permissions'
+require_relative '../db/files/questions'
 require_relative '../db/files/users'
 
 ###################################
@@ -39,10 +39,10 @@ end
 def get_images_for_questionnaire
   results = []
   types = {
-    'En la huerta': 'https://i.imghippo.com/files/lBlRv1724220223.png',
-    'En la casa': 'https://i.imghippo.com/files/hfv801724220367.png',
+    'Comencemos en la huerta': 'https://i.imghippo.com/files/lBlRv1724220223.png',
+    'Revisemos dentro de la casa': 'https://i.imghippo.com/files/hfv801724220367.png',
     'Tanques (cemento, polietileno, metal, otro material)': 'https://i.imghippo.com/files/owjeu1724220878.png',
-    'Bidones o cilindros (metal, plástico)': 'https://i.imghippo.com/files/ta0H31724220912.png',
+    'Bidones/Cilindros (metal, plástico)': 'https://i.imghippo.com/files/ta0H31724220912.png',
     'Pozos': 'https://i.imghippo.com/files/PXsOQ1724220823.png',
     'Estructura o partes de la casa': 'https://i.imghippo.com/files/z8Yex1724220962.png',
     'Llanta': 'https://i.imghippo.com/files/hYKbi1724220688.png',
@@ -73,14 +73,15 @@ unless SeedTask.find_by(task_name: 'clean_db_v4')
                       assign_permissions_to_roles_v2 create_teams_v2 user_account_v2
                       create_house_blocks_v2 create_houses_v2 states_and_cities_v2]
   HouseBlock.destroy_all
+  Visit.destroy_all
   House.destroy_all
+  Team.destroy_all
   UserAccount.destroy_all
   UserProfile.destroy_all
   Role.destroy_all
   Permission.destroy_all
   Inspection.destroy_all
   Visit.destroy_all
-  Team.destroy_all
   Wedge.destroy_all
   Neighborhood.destroy_all
   State.destroy_all
@@ -191,6 +192,15 @@ unless SeedTask.find_by(task_name: 'user_account_v2')
   SeedTask.create!(task_name: 'user_account_v2')
 end
 
+# assign team_leader to teams
+unless SeedTask.find_by(task_name: 'assign_team_leader_to_teams')
+  user_account = UserAccount.find_by(username: 'team_leader')
+  team = Team.find_by(name: 'Dengue killers')
+  team.leader_id = user_account.id
+  team.save!
+  SeedTask.create!(task_name: 'assign_team_leader_to_teams')
+end
+
 #create default_house_blocks
 unless SeedTask.find_by(task_name: 'create_house_blocks_v2')
 
@@ -227,61 +237,18 @@ unless SeedTask.find_by(task_name: 'create_houses_v2')
   SeedTask.create!(task_name: 'create_houses_v2')
 end
 
-#create breeding site types
-unless SeedTask.find_by(task_name: 'create_breeding_site_types')
-  BreedingSiteType.create!([{ name: 'permanente' }, { name: 'no permanente' }])
-  SeedTask.create!(task_name: 'create_breeding_site_types')
-end
-
-#create container types
-unless SeedTask.find_by(task_name: 'create_container_types')
-  breeding_site_first, breeding_site_second = BreedingSiteType.first, BreedingSiteType.second
-
-  ContainerType.create!(name: 'Tanques (cemento, polietileno, metal, otra) ',
-                       breeding_site_type: breeding_site_first)
-
-  ContainerType.create!(name: 'Bidones/Cilindros (metal, plástico)',
-                       breeding_site_type: breeding_site_first)
-
-  ContainerType.create!(name: 'Pozos',
-                       breeding_site_type: breeding_site_first)
-
-  ContainerType.create!(name: 'Estructura o Partes de la Casa',
-                       breeding_site_type: breeding_site_first)
-
-  ContainerType.create!(name: 'Llanta',
-                       breeding_site_type: breeding_site_second)
-
-  ContainerType.create!(name: 'Otros',
-                       breeding_site_type: breeding_site_second)
-
-  ContainerType.create!(name: 'Elementos naturales',
-                       breeding_site_type: breeding_site_second)
-
-  SeedTask.create!(task_name: 'create_container_types')
-end
 
 # assign images to container types
-unless SeedTask.find_by(task_name: 'assign_images_to_container_types')
-  images = get_all_images_for_containers
-  ContainerType.all.zip(images).each do |container, image_hash|
-    container.photo.attach(image_hash)
-    image_hash[:io].unlink
-  end
-  SeedTask.create!(task_name: 'assign_images_to_container_types')
-end
+# unless SeedTask.find_by(task_name: 'assign_images_to_container_types')
+#   images = get_all_images_for_containers
+#   ContainerType.all.zip(images).each do |container, image_hash|
+#     container.photo.attach(image_hash)
+#     image_hash[:io].unlink
+#   end
+#   SeedTask.create!(task_name: 'assign_images_to_container_types')
+# end
 
-#create elimination methods
-unless SeedTask.find_by(task_name: 'create_method_elimination')
-  EliminationMethodType.create!([{ name: 'Quimico' }, { name: 'Tapa' }])
-  SeedTask.create!(task_name: 'create_method_elimination')
-end
 
-#create water sources types
-unless SeedTask.find_by(task_name: 'create_water_sources_types')
-  WaterSourceType.create!([{ name: 'Naturaleza' }, { name: 'Residente' }])
-  SeedTask.create!(task_name: 'create_water_sources_types')
-end
 
 #create house-places
 unless SeedTask.find_by(task_name: 'create_places')
@@ -297,37 +264,42 @@ unless SeedTask.find_by(task_name: 'create_visit_params')
 end
 
 #create questions
-unless SeedTask.find_by(task_name: 'create_questions')
+unless SeedTask.find_by(task_name: 'create_questions_v4')
+
+  Option.destroy_all
+  Question.destroy_all
+  Questionnaire.destroy_all
 
   images = get_images_for_questionnaire
 
   questionnaire = Questionnaire.create!(
     name: 'Cuestionario de Zancudos',
     current_form: true,
-    initial_question: 8,
-    final_question: 7
+    initial_question: 1,
+    final_question: 20
   )
 
   QUESTIONS_DATA.each do |question_data|
     options_data = question_data.delete(:options)
     question = questionnaire.questions.create!(question_data)
 
-    options_data&.each do |option_data|
-      question.options.create!(option_data)
+    if options_data&.any?
+      options_data&.each do |option_data|
+        question.options.create!(option_data)
+      end
     end
   end
 
-  images.each do |image|
-    resource = Question.find_by(question: image[:filename])
-    resource ||= Option.find_by(name: image[:filename])
-    next unless resource
+  # images.each do |image|
+  #   resource = Question.find_by(question_text_es: image[:filename])
+  #   resource ||= Option.find_by(name_es: image[:filename])
+  #   next unless resource
+  #
+  #   resource.image.attach(image)
+  #   image[:io].unlink
+  # end
 
-    resource.image.attach(image)
-    image[:io].unlink
-  end
-
-
-  SeedTask.create!(task_name: 'create_questions')
+  SeedTask.create!(task_name: 'create_questions_v4')
 
 end
 
@@ -352,3 +324,7 @@ unless SeedTask.find_by(task_name: 'permissions_for_posts_likes_and_comments')
   roles.each {|rol| rol.permissions << permissions }
   SeedTask.create(task_name: 'permissions_for_posts_likes_and_comments')
 end
+
+
+
+

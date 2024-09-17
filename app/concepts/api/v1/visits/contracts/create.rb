@@ -14,6 +14,7 @@ module Api
             required(:answers).filled(:array).each(:hash)
             required(:host).filled(:string)
             required(:visit_permission).filled(:bool)
+            required(:visited_at).filled(:date_time)
             optional(:house_id).filled(:integer)
             required(:questionnaire_id).filled(:integer)
             optional(:team_id).filled(:integer)
