@@ -239,14 +239,14 @@ end
 
 
 # assign images to container types
-unless SeedTask.find_by(task_name: 'assign_images_to_container_types')
-  images = get_all_images_for_containers
-  ContainerType.all.zip(images).each do |container, image_hash|
-    container.photo.attach(image_hash)
-    image_hash[:io].unlink
-  end
-  SeedTask.create!(task_name: 'assign_images_to_container_types')
-end
+# unless SeedTask.find_by(task_name: 'assign_images_to_container_types')
+#   images = get_all_images_for_containers
+#   ContainerType.all.zip(images).each do |container, image_hash|
+#     container.photo.attach(image_hash)
+#     image_hash[:io].unlink
+#   end
+#   SeedTask.create!(task_name: 'assign_images_to_container_types')
+# end
 
 
 
@@ -262,7 +262,6 @@ unless SeedTask.find_by(task_name: 'create_visit_params')
   data.each { |value_params| VisitParamVersion.find_or_create_by(name: value_params) }
   SeedTask.create!(task_name: 'create_visit_params')
 end
-
 
 #create questions
 unless SeedTask.find_by(task_name: 'create_questions_v4')
@@ -291,14 +290,14 @@ unless SeedTask.find_by(task_name: 'create_questions_v4')
     end
   end
 
-  images.each do |image|
-    resource = Question.find_by(question_text_es: image[:filename])
-    resource ||= Option.find_by(name_es: image[:filename])
-    next unless resource
-
-    resource.image.attach(image)
-    image[:io].unlink
-  end
+  # images.each do |image|
+  #   resource = Question.find_by(question_text_es: image[:filename])
+  #   resource ||= Option.find_by(name_es: image[:filename])
+  #   next unless resource
+  #
+  #   resource.image.attach(image)
+  #   image[:io].unlink
+  # end
 
   SeedTask.create!(task_name: 'create_questions_v4')
 
