@@ -21,6 +21,7 @@ module Api
 
             def call
               @model.yield_self(&method(:active_records))
+                    .yield_self(&method(:full_name_clause))
                     .yield_self(&method(:first_name_clause))
                     .yield_self(&method(:last_name_clause))
                     .yield_self(&method(:phone_clause))
@@ -38,6 +39,12 @@ module Api
 
             def active_records(relation)
               relation.where(user_account: {discarded_at: nil})
+            end
+
+            def full_name_clause(relation)
+              return relation if @filter.nil? || @filter[:full_name].blank?
+
+              relation.where('user_profiles.first_name ilike :query OR user_profiles.last_name ilike :query', query: "%#{@filter[:full_name]}%")
             end
 
             def first_name_clause(relation)
