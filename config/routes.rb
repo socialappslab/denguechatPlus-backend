@@ -106,6 +106,8 @@ Rails.application.routes.draw do
             end
           end
         end
+        resources :organizations, only: %i[index], controller: '/api/v1/organizations'
+
       end
 
       get 'get_last_params', controller: 'get_last_params', action: 'index'
