@@ -107,7 +107,14 @@ Rails.application.routes.draw do
           end
         end
         resources :organizations, only: %i[index], controller: '/api/v1/organizations'
-
+        resources :cities, only: %i[show index] do
+          get '/', to: '/api/v1/cities#list_by_country_and_state_assumption', on: :collection
+          get '/', to: '/api/v1/cities#show_by_country_and_state_assumption', on: :member
+        end
+        resources :neighborhoods, only: %i[show index] do
+          get '/', to: '/api/v1/neighborhoods#list_by_iquitos_location', on: :collection
+          get '/', to: '/api/v1/neighborhoods#show', on: :member
+        end
       end
 
       get 'get_last_params', controller: 'get_last_params', action: 'index'
