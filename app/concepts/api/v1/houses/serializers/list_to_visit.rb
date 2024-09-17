@@ -68,7 +68,7 @@ module Api
             last_visit = Visit.where(house_id: house.id).last
             next unless last_visit
 
-            last_visit.created_at.to_time.to_i
+            last_visit.created_at.to_time.to_i * 1000
           end
         end
       end
