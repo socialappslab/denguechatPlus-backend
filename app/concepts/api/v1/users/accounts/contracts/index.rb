@@ -13,6 +13,7 @@ module Api
               optional(:filter).maybe(:hash) do
                 optional(:first_name).maybe(:string)
                 optional(:last_name).maybe(:string)
+                optional(:full_name).maybe(:string)
                 optional(:phone).maybe(:string)
                 optional(:email).maybe(:string)
                 optional(:username).maybe(:string)
