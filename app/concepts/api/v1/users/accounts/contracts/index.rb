@@ -18,6 +18,7 @@ module Api
                 optional(:username).maybe(:string)
                 optional(:status).maybe(:array)
                 optional(:role_name).maybe(:string)
+                optional(:team_id).maybe(:integer)
               end
 
               optional(:page).maybe(:hash) do

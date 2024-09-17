@@ -26,7 +26,7 @@ module Api
                     .yield_self(&method(:phone_clause))
                     .yield_self(&method(:email_clause))
                     .yield_self(&method(:username_clause))
-                    .yield_self(&method(:status_clause))
+                    .yield_self(&method(:team_id))
                     .yield_self(&method(:status_clause))
                     .yield_self(&method(:role_name_clause))
                     .yield_self(&method(:sort_clause))
@@ -74,6 +74,12 @@ module Api
               return relation if @filter.nil? || @filter[:status].blank?
 
               relation.where(user_account: { status: @filter[:status] })
+            end
+
+            def team_id(relation)
+              return relation if @filter.nil? || @filter[:team_id].blank?
+
+              relation.joins(user_account: :user_profile).where(user_profiles: { team_id: @filter[:team_id] })
             end
 
             def role_name_clause(relation)
