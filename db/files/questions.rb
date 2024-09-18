@@ -83,9 +83,8 @@ QUESTIONS_DATA = [
     type_field: 'list',
     resource_name: '',
     resource_type: 'attribute',
-    next: 1,
     options: [
-      { name_es: 'Sí, tengo permiso para esta visita', name_en: 'Yes, I have permission for this visit', name_pt: 'Sim, tenho permissão para esta visita', required: false, next: -1 },
+      { name_es: 'Sí, tengo permiso para esta visita', name_en: 'Yes, I have permission for this visit', name_pt: 'Sim, tenho permissão para esta visita', required: false, next: 2 },
       { name_es: 'No, no me dieron permiso para esta visita', name_en: 'No, I was not given permission for this visit', name_pt: 'Não, não me deram permissão para esta visita', required: false, next: -1 },
       { name_es: 'La casa está cerrada', name_en: 'The house is closed', name_pt: 'A casa está fechada', required: false, next: -1 },
       { name_es: 'La casa está deshabitada', name_en: 'The house is uninhabited', name_pt: 'A casa está desabitada', required: false, next: -1 },
