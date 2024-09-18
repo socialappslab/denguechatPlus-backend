@@ -325,6 +325,13 @@ unless SeedTask.find_by(task_name: 'permissions_for_posts_likes_and_comments')
   SeedTask.create(task_name: 'permissions_for_posts_likes_and_comments')
 end
 
+unless SeedTask.find_by(task_name: 'permission_for_find_address')
+  roles = Role.where(name: %w[admin brigadista team_leader])
+  permission = Permission.create(name: 'find_address', resource: 'get_address')
+  roles.each {|rol| rol.permissions << permission}
+  SeedTask.create(task_name: 'permission_for_find_address')
+end
+
 
 
 
