@@ -118,6 +118,7 @@ Rails.application.routes.draw do
       end
 
       get 'get_last_params', controller: 'get_last_params', action: 'index'
+      get 'get_address', controller: 'get_address', action: 'find_address'
     end
   end
 
