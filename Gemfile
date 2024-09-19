@@ -58,6 +58,8 @@ gem 'rolify', '~> 6.0'
 # Authorization
 gem 'action_policy'
 
+gem 'geocoder'
+
 # Transactions
 gem 'dry-transaction'
 
