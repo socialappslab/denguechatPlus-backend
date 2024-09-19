@@ -8,14 +8,14 @@ module Api
 
           AddressStruct = Struct.new(:address)
 
-          def self.call(*args)
-            new.call(*args)
+          def self.call(google_api_results)
+            new.call(google_api_results)
           end
 
-          def call(*args)
-            return AddressStruct.new(address: '') if   args.flatten.nil? || args.flatten.empty?
+          def call(google_api_results)
+            return AddressStruct.new(address: nil) if google_api_results.flatten.blank?
 
-            AddressStruct.new(address: args.first.address)
+            AddressStruct.new(address: google_api_results.first.address)
           end
         end
       end

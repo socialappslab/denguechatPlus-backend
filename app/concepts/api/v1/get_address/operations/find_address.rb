@@ -28,7 +28,7 @@ module Api
             lat = @ctx['contract.default']['latitude']
             lon = @ctx['contract.default']['longitude']
             result = Geocoder.search([lat, lon])
-            @ctx[:data] =  Api::V1::GetAddress::Decorators::AddressDecorator.call(result)
+            @ctx[:data] = Api::V1::GetAddress::Decorators::AddressDecorator.call(result)
             Success({ ctx: @ctx, type: :success })
           end
 
