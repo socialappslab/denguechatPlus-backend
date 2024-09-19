@@ -82,7 +82,7 @@ module Api
 
           def create_visit
             begin
-              @ctx[:model] = Visit.create(@params)
+              @ctx[:model] = Visit.create!(@params)
               Success({ ctx: @ctx, type: :created })
             rescue => error
               errors = ErrorFormater.new_error(field: :base, msg: error,
