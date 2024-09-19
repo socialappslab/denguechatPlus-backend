@@ -86,7 +86,7 @@ unless SeedTask.find_by(task_name: 'clean_db_v4')
   Neighborhood.destroy_all
   State.destroy_all
   SeedTask.where(task_name: task_to_re_run).destroy_all
-  SeedTask.create!(task_name: 'clean_db_v4') if State.count > 0 && City.count > 0
+  SeedTask.create!(task_name: 'clean_db_v4') if State.count.zero? && City.count.zero?
 
 end
 
@@ -115,7 +115,7 @@ unless SeedTask.find_by(task_name: 'states_and_cities_v2')
     end
   end
 
-  SeedTask.create!(task_name: 'states_and_cities_v2') if State.count > 0 && City.count > 0
+  SeedTask.create!(task_name: 'states_and_cities_v2') if State.count.positive? && City.count.positive?
 end
 
 #create default wedges
@@ -128,10 +128,14 @@ unless SeedTask.find_by(task_name: 'create_wedges')
 end
 
 #create default special_places
-unless SeedTask.find_by(task_name: 'create_special_places')
-  SpecialPlace.create!(name: 'Cementerio')
-  SpecialPlace.create!(name: 'Colegio')
-  SeedTask.create!(task_name: 'create_special_places')
+unless SeedTask.find_by(task_name: 'create_special_places_v1')
+  SpecialPlace.destroy_all
+  SpecialPlace.create!(name_es: 'Organizaciones', name_en: 'Organizations', name_pt: 'Organizações')
+  SpecialPlace.create!(name_es: 'Huerta', name_en: 'Garden', name_pt: 'Horta')
+  SpecialPlace.create!(name_es: 'Educación', name_en: 'Education', name_pt: 'Educação')
+  SpecialPlace.create!(name_es: 'Casa', name_en: 'House', name_pt: 'Casa')
+  SpecialPlace.create!(name_es: 'Negocio', name_en: 'Business', name_pt: 'Negócio')
+  SeedTask.create!(task_name: 'create_special_places_v1')
 end
 
 # default organization
@@ -250,11 +254,7 @@ end
 
 
 
-#create house-places
-unless SeedTask.find_by(task_name: 'create_places')
-  Place.create!([{ name: 'Cementerio' }, { name: 'Plaza' }])
-  SeedTask.create!(task_name: 'create_places')
-end
+
 
 #create default versions params
 unless SeedTask.find_by(task_name: 'create_visit_params')
@@ -332,6 +332,9 @@ unless SeedTask.find_by(task_name: 'permission_for_find_address')
   SeedTask.create(task_name: 'permission_for_find_address')
 end
 
-
+unless SeedTask.find_by(task_name: 'special_place_to_last_params')
+  VisitParamVersion.find_or_create_by(name: 'special_places')
+  SeedTask.create(task_name: 'special_place_to_last_params')
+end
 
 
