@@ -1,11 +1,5 @@
 # db/seeds/questions_data.rb
 
-#create breeding site types
-unless SeedTask.find_by(task_name: 'create_breeding_site_types')
-  BreedingSiteType.create!([{ name: 'permanente' }, { name: 'no permanente' }])
-  SeedTask.create!(task_name: 'create_breeding_site_types')
-end
-
 unless SeedTask.find_by(task_name: 'add_container_protections_v1')
   ContainerProtection.create!(name_es: 'Tapa hermética', name_en: 'Hermetic lid', name_pt: 'Tampa hermética',
                               color: 'green')
@@ -51,33 +45,24 @@ unless SeedTask.find_by(task_name: 'create_water_sources_types_v1')
 end
 
 #create container types
-unless SeedTask.find_by(task_name: 'create_container_types_v3')
-  ContainerType.destroy_all
-  breeding_site_first, breeding_site_second = BreedingSiteType.first, BreedingSiteType.second
-  ContainerType.delete_all
+unless SeedTask.find_by(task_name: 'create_breeding_site_types_v3')
+  BreedingSiteType.destroy_all
 
-  ContainerType.create!(name: 'Tanques (cemento, polietileno, metal, otro material)',
-                        breeding_site_type: breeding_site_first, container_type: 'permanent')
+  BreedingSiteType.create!(name: 'Tanques (cemento, polietileno, metal, otro material)', container_type: 'permanent')
 
-  ContainerType.create!(name: 'Bidones/Cilindros (metal, plástico)',
-                        breeding_site_type: breeding_site_first, container_type: 'permanent')
+  BreedingSiteType.create!(name: 'Bidones/Cilindros (metal, plástico)', container_type: 'permanent')
 
-  ContainerType.create!(name: 'Pozos',
-                        breeding_site_type: breeding_site_first, container_type: 'permanent')
+  BreedingSiteType.create!(name: 'Pozos', container_type: 'permanent')
 
-  ContainerType.create!(name: 'Estructura o partes de la casa',
-                        breeding_site_type: breeding_site_first, container_type: 'permanent')
+  BreedingSiteType.create!(name: 'Estructura o partes de la casa', container_type: 'permanent')
 
-  ContainerType.create!(name: 'Llanta',
-                        breeding_site_type: breeding_site_second, container_type: 'non-permanent')
+  BreedingSiteType.create!(name: 'Llanta', container_type: 'non-permanent')
 
-  ContainerType.create!(name: 'Otros',
-                        breeding_site_type: breeding_site_second, container_type: 'non-permanent')
+  BreedingSiteType.create!(name: 'Otros', container_type: 'non-permanent')
 
-  ContainerType.create!(name: 'Elementos naturales',
-                        breeding_site_type: breeding_site_second, container_type: 'non-permanent')
+  BreedingSiteType.create!(name: 'Elementos naturales', container_type: 'non-permanent')
 
-  SeedTask.create!(task_name: 'create_container_types_v3')
+  SeedTask.create!(task_name: 'create_breeding_site_types_v3')
 end
 
 unless SeedTask.find_by(task_name: 'add_type_contents_v1')
@@ -229,24 +214,24 @@ QUESTIONS_DATA = [
     question_text_en: 'What type of container did you find?',
     question_text_pt: 'Que tipo de contêiner você encontrou?',
     type_field: 'list',
-    resource_name: 'container_type_id',
+    resource_name: 'breeding_site_type_id',
     resource_type: 'relation',
     next: 11,
     options: [
       { group_es: 'Permanentes', group_en: 'Permanent', group_pt: 'Permanentes', name_es: 'Tanques (cemento, polietileno, metal, otro material)',
-        name_en: 'Tanks (cement, polyethylene, metal, other material)', name_pt: 'Tanques (cimento, polietileno, metal, outro material)', resource_id: ContainerType.find_by(name: 'Tanques (cemento, polietileno, metal, otro material)').id },
+        name_en: 'Tanks (cement, polyethylene, metal, other material)', name_pt: 'Tanques (cimento, polietileno, metal, outro material)', resource_id: BreedingSiteType.find_by(name: 'Tanques (cemento, polietileno, metal, otro material)').id },
       { group_es: 'Permanentes', group_en: 'Permanent', group_pt: 'Permanentes', name_es: 'Bidones o cilindros (metal, plástico)', name_en: 'Drums or cylinders (metal, plastic)',
-        name_pt: 'Tambores ou cilindros (metal, plástico)', resource_id: ContainerType.find_by(name: 'Bidones/Cilindros (metal, plástico)').id },
+        name_pt: 'Tambores ou cilindros (metal, plástico)', resource_id: BreedingSiteType.find_by(name: 'Bidones/Cilindros (metal, plástico)').id },
       { group_es: 'Permanentes', group_en: 'Permanent', group_pt: 'Permanentes', name_es: 'Pozos', name_en: 'Wells',
-        name_pt: 'Poços', resource_id: ContainerType.find_by(name: 'Pozos').id },
+        name_pt: 'Poços', resource_id: BreedingSiteType.find_by(name: 'Pozos').id },
       { group_es: 'Permanentes', group_en: 'Permanent', group_pt: 'Permanentes', name_es: 'Estructura o partes de la casa', name_en: 'Structure or parts of the house',
-        name_pt: 'Estrutura ou partes da casa', resource_id: ContainerType.find_by(name: 'Estructura o partes de la casa').id },
+        name_pt: 'Estrutura ou partes da casa', resource_id: BreedingSiteType.find_by(name: 'Estructura o partes de la casa').id },
       { group_es: 'No permanentes', group_en: 'Non permanent', group_pt: 'Não permanente', name_es: 'Llanta',
-        name_en: 'Tire', name_pt: 'Pneu', resource_id: ContainerType.find_by(name: 'Llanta').id },
+        name_en: 'Tire', name_pt: 'Pneu', resource_id: BreedingSiteType.find_by(name: 'Llanta').id },
       { group_es: 'No permanentes', group_en: 'Non permanent', group_pt: 'Não permanente',
-        name_es: 'Elementos naturales', name_en: 'Natural elements', name_pt: 'Elementos naturais', resource_id: ContainerType.find_by(name: 'Elementos naturales').id },
+        name_es: 'Elementos naturales', name_en: 'Natural elements', name_pt: 'Elementos naturais', resource_id: BreedingSiteType.find_by(name: 'Elementos naturales').id },
       { group_es: 'No permanentes', group_en: 'Non permanent', group_pt: 'Não permanente', name_es: 'Otros',
-        name_en: 'Others', name_pt: 'Outros', resource_id: ContainerType.find_by(name: 'Otros').id }
+        name_en: 'Others', name_pt: 'Outros', resource_id: BreedingSiteType.find_by(name: 'Otros').id }
 
     ]
   },
@@ -296,15 +281,22 @@ QUESTIONS_DATA = [
     next: 14,
     options: [
       { name_es: 'Sí, tiene una tapa hermética', name_en: 'Yes, it has a sealed lid',
-        name_pt: 'Sim, tem uma tampa hermética', next: 14, group_es: 'Tapa', group_en: 'Lid', group_pt: 'Tampa', resource_id: ContainerProtection.find_by(name_es: 'Tapa hermética').id },
+        name_pt: 'Sim, tem uma tampa hermética', next: 14, group_es: 'Tapa', group_en: 'Lid',
+        group_pt: 'Tampa', resource_id: ContainerProtection.find_by(name_es: 'Tapa hermética').id,
+        status_color: Constants::ContainerStatus::NOT_INFECTED},
       { name_es: 'Sí, tiene una tapa no hermética', name_en: 'Yes, it has a non-sealed lid',
-        name_pt: 'Sim, tem uma tampa não hermética', group_es: 'Tapa', group_en: 'Lid', group_pt: 'Tampa', next: 14, resource_id: ContainerProtection.find_by(name_es: 'Tapa no hermética').id },
+        name_pt: 'Sim, tem uma tampa não hermética', group_es: 'Tapa', group_en: 'Lid', group_pt: 'Tampa',
+        next: 14, resource_id: ContainerProtection.find_by(name_es: 'Tapa no hermética').id,
+        status_color: Constants::ContainerStatus::POTENTIALLY_INFECTED},
       { name_es: 'Sí, está bajo techo', name_en: 'Yes, it is under a roof', name_pt: 'Sim, está sob um telhado',
-        next: 14, group_es: 'Techo', group_en: 'Roof', group_pt: 'Telhado', resource_id: ContainerProtection.find_by(name_es: 'Techo').id },
+        next: 14, group_es: 'Techo', group_en: 'Roof', group_pt: 'Telhado', resource_id: ContainerProtection.find_by(name_es: 'Techo').id,
+        status_color: Constants::ContainerStatus::POTENTIALLY_INFECTED },
       { name_es: 'Otro tipo de protección', name_en: 'Another type of protection', name_pt: 'Outro tipo de proteção',
-        next: 14, group_es: 'Otros', group_en: 'Others', group_pt: 'Outros', resource_id: ContainerProtection.find_by(name_es: 'Otro').id },
+        next: 14, group_es: 'Otros', group_en: 'Others', group_pt: 'Outros', resource_id: ContainerProtection.find_by(name_es: 'Otro').id,
+        status_color: Constants::ContainerStatus::POTENTIALLY_INFECTED },
       { name_es: 'No tiene protección', name_en: 'It has no protection', name_pt: 'Não tem proteção', next: 14,
-        group_es: 'Otros', group_en: 'Others', group_pt: 'Outros', resource_id: ContainerProtection.find_by(name_es: 'No tiene').id }
+        group_es: 'Otros', group_en: 'Others', group_pt: 'Outros', resource_id: ContainerProtection.find_by(name_es: 'No tiene').id,
+        status_color: Constants::ContainerStatus::POTENTIALLY_INFECTED }
     ]
   },
   {
@@ -334,11 +326,11 @@ QUESTIONS_DATA = [
     next: 16,
     options: [
       { name_es: 'Larvas', name_en: 'Larvae', name_pt: 'Larvas', next: 16,
-        resource_id: TypeContent.find_by(name_es: 'Larvas').id },
+        resource_id: TypeContent.find_by(name_es: 'Larvas').id, status_color: Constants::ContainerStatus::INFECTED },
       { name_es: 'Pupas', name_en: 'Pupae', name_pt: 'Pupas', next: 16,
-        resource_id: TypeContent.find_by(name_es: 'Pupas').id },
+        resource_id: TypeContent.find_by(name_es: 'Pupas').id, status_color: Constants::ContainerStatus::INFECTED },
       { name_es: 'Huevos', name_en: 'Eggs', name_pt: 'Ovos', next: 16,
-        resource_id: TypeContent.find_by(name_es: 'Huevos').id },
+        resource_id: TypeContent.find_by(name_es: 'Huevos').id, status_color: Constants::ContainerStatus::INFECTED },
       { name_es: 'Nada', name_en: 'Nothing', name_pt: 'Nada', next: 16,
         resource_id: TypeContent.find_by(name_es: 'Nada').id }
     ]
