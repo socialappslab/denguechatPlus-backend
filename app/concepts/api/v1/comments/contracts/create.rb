@@ -15,7 +15,7 @@ module Api
             required(:user_account_id).filled(:integer)
             required(:post_id).filled(:integer)
             required(:content).filled(:string, min_size?: 5, max_size?: 500)
-            required(:photo)
+            optional(:photo)
           end
 
           rule(:user_account_id) do
@@ -31,7 +31,7 @@ module Api
           end
 
           rule(:photo) do
-            if values && !values[:photo].is_a?(ActionDispatch::Http::UploadedFile)
+            if values && !values[:photo].nil? && !values[:photo].is_a?(ActionDispatch::Http::UploadedFile)
               unless values[:photo].content_type.start_with?('image/')
                 key(:photo).failure(text: 'must be an image')
               end
