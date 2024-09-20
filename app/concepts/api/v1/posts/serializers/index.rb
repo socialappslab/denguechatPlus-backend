@@ -57,6 +57,7 @@ module Api
 
             post.comments.map do |comment|
               {
+                id: comment.id,
                 likesCount: comment.likes_count,
                 userAccountId: comment.user_account_id,
                 createdBy: "#{comment.user_account.first_name} #{comment.user_account.last_name}",
