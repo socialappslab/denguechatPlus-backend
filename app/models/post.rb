@@ -36,4 +36,9 @@ class Post < ApplicationRecord
   has_many_attached :photos
   has_many :likes, as: :likeable, dependent: :destroy
   has_many :comments, dependent: :destroy
+  belongs_to :city
+  belongs_to :user_account
+  belongs_to :team
+  belongs_to :neighborhood
+  belongs_to :country
 end
