@@ -413,6 +413,7 @@ GEM
     rexml (3.3.2)
       strscan
     rolify (6.0.1)
+    rollbar (3.5.2)
     rspec-core (3.13.0)
       rspec-support (~> 3.13.0)
     rspec-expectations (3.13.1)
@@ -573,6 +574,7 @@ DEPENDENCIES
   reek (~> 6.1)
   reform
   rolify (~> 6.0)
+  rollbar
   rspec-rails (~> 6.0)
   rspec-sidekiq (~> 3.1)
   rspec_junit_formatter (~> 0.5)
