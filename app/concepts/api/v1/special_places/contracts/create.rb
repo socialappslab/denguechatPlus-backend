@@ -11,7 +11,10 @@ module Api
           end
 
           params do
-            required(:name).filled(:string)
+            optional(:name).filled(:string)
+            optional(:name_es).filled(:string)
+            optional(:name_en).filled(:string)
+            optional(:name_pt).filled(:string)
           end
 
           rule(:name) do
