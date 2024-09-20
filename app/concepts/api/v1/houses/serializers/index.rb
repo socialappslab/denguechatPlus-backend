@@ -68,7 +68,9 @@ module Api
 
             {
               id: house.special_place.id,
-              name: house.special_place.name
+              name: house.special_place.name_es,
+              name_en: house.special_place.name_en,
+              name_pt: house.special_place.name_pt
             }
           end
 

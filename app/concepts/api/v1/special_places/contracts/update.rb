@@ -11,7 +11,10 @@ module Api
 
           params do
             required(:id).filled(:integer)
-            required(:name).filled(:string)
+            optional(:name).filled(:string)
+            optional(:name_es).filled(:string)
+            optional(:name_pt).filled(:string)
+            optional(:name_en).filled(:string)
           end
         end
       end
