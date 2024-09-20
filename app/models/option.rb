@@ -12,6 +12,7 @@
 #  name_pt      :string
 #  next         :integer
 #  required     :boolean          default(FALSE)
+#  status_color :string
 #  type_option  :string
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null

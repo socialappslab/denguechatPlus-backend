@@ -337,4 +337,8 @@ unless SeedTask.find_by(task_name: 'special_place_to_last_params')
   SeedTask.create(task_name: 'special_place_to_last_params')
 end
 
-
+unless SeedTask.find_by(task_name: 'remove_content_type_from_params')
+  vp = VisitParamVersion.find_by_name('container_types')
+  vp.destroy if vp
+  SeedTask.create(task_name: 'container_types')
+end
