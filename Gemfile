@@ -92,6 +92,8 @@ gem 'simple_endpoint', '~> 2.0'
 gem 'dry-container'
 gem 'ffaker'
 
+# error login and tracking
+gem 'rollbar'
 
 group :development, :test do
   gem 'annotate'
