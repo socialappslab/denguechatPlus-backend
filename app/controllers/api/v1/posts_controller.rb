@@ -9,6 +9,7 @@ module Api
                  renderer_options: { serializer: Api::V1::Posts::Serializers::Index },
                  options: { current_user: }
       end
+
       def show
         endpoint operation: Api::V1::Posts::Operations::Show,
                  renderer_options: { serializer: Api::V1::Posts::Serializers::Show },
@@ -24,6 +25,11 @@ module Api
       def like
         endpoint operation: Api::V1::Posts::Operations::Like,
                  renderer_options: { serializer: Api::V1::Posts::Serializers::Show },
+                 options: { current_user: }
+      end
+
+      def destroy
+        endpoint operation: Api::V1::Posts::Operations::Destroy,
                  options: { current_user: }
       end
 
