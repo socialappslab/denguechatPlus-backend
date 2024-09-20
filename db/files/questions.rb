@@ -289,11 +289,14 @@ QUESTIONS_DATA = [
         next: 14, resource_id: ContainerProtection.find_by(name_es: 'Tapa no hermética').id,
         status_color: Constants::ContainerStatus::POTENTIALLY_INFECTED},
       { name_es: 'Sí, está bajo techo', name_en: 'Yes, it is under a roof', name_pt: 'Sim, está sob um telhado',
-        next: 14, group_es: 'Techo', group_en: 'Roof', group_pt: 'Telhado', resource_id: ContainerProtection.find_by(name_es: 'Techo').id },
+        next: 14, group_es: 'Techo', group_en: 'Roof', group_pt: 'Telhado', resource_id: ContainerProtection.find_by(name_es: 'Techo').id,
+        status_color: Constants::ContainerStatus::POTENTIALLY_INFECTED },
       { name_es: 'Otro tipo de protección', name_en: 'Another type of protection', name_pt: 'Outro tipo de proteção',
-        next: 14, group_es: 'Otros', group_en: 'Others', group_pt: 'Outros', resource_id: ContainerProtection.find_by(name_es: 'Otro').id },
+        next: 14, group_es: 'Otros', group_en: 'Others', group_pt: 'Outros', resource_id: ContainerProtection.find_by(name_es: 'Otro').id,
+        status_color: Constants::ContainerStatus::POTENTIALLY_INFECTED },
       { name_es: 'No tiene protección', name_en: 'It has no protection', name_pt: 'Não tem proteção', next: 14,
-        group_es: 'Otros', group_en: 'Others', group_pt: 'Outros', resource_id: ContainerProtection.find_by(name_es: 'No tiene').id }
+        group_es: 'Otros', group_en: 'Others', group_pt: 'Outros', resource_id: ContainerProtection.find_by(name_es: 'No tiene').id,
+        status_color: Constants::ContainerStatus::POTENTIALLY_INFECTED }
     ]
   },
   {
@@ -327,7 +330,7 @@ QUESTIONS_DATA = [
       { name_es: 'Pupas', name_en: 'Pupae', name_pt: 'Pupas', next: 16,
         resource_id: TypeContent.find_by(name_es: 'Pupas').id, status_color: Constants::ContainerStatus::INFECTED },
       { name_es: 'Huevos', name_en: 'Eggs', name_pt: 'Ovos', next: 16,
-        resource_id: TypeContent.find_by(name_es: 'Huevos').id },
+        resource_id: TypeContent.find_by(name_es: 'Huevos').id, status_color: Constants::ContainerStatus::INFECTED },
       { name_es: 'Nada', name_en: 'Nothing', name_pt: 'Nada', next: 16,
         resource_id: TypeContent.find_by(name_es: 'Nada').id }
     ]
