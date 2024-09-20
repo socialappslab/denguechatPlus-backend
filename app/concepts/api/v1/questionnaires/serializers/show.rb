@@ -40,6 +40,7 @@ module Api
                     resourceId: option.resource_id,
                     required: option.required,
                     optionType: option.type_option,
+                    statusColor: option.status_color,
                     image: get_image_obj.call(option),
                     next: option.next
                   }
