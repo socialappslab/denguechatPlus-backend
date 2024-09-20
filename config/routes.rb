@@ -52,7 +52,7 @@ Rails.application.routes.draw do
           get :current
         end
       end
-      resources :posts, only: %i[create show index] do
+      resources :posts, only: %i[create show index destroy] do
         member do
           post 'like'
         end
