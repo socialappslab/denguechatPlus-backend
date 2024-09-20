@@ -11,6 +11,9 @@ module Api
           params do
             optional(:filter).maybe(:hash) do
               optional(:name).maybe(:string)
+              optional(:name_es).maybe(:string)
+              optional(:name_en).maybe(:string)
+              optional(:name_pt).maybe(:string)
               optional(:status).maybe(:string, included_in?: %w[active inactive all])
             end
 

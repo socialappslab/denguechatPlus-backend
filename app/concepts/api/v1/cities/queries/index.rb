@@ -52,11 +52,7 @@ module Api
           def sort_clause(relation)
             return relation if @sort.nil? || @sort.blank?
 
-            case @sort[:field]
-            when 'name', 'status' then sort_by_status_and_name(relation, :cities)
-            when 'Cities.name' then sort_by_table_columns(relation)
-            else relation
-            end
+            sort_by_table_columns(relation)
           end
         end
       end

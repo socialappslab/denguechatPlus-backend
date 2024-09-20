@@ -64,6 +64,7 @@ module Api
           def sort_clause(relation)
             return relation if @sort.nil? || @sort.blank?
 
+            @sort[:field] = 'neighborhood_id' if @sort[:field] == 'sector'
             sort_by_table_columns(relation) if @sort[:field]
           end
         end
