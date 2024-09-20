@@ -58,7 +58,8 @@ module Constants
       not_exists?: 53,
       not_found?: 54,
       user_account_locked?: 55,
-      unexpected_key: 56
+      unexpected_key: 56,
+      without_permissions: 57
     }.freeze
   end
 end

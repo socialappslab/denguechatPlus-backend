@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_19_183623) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_20_183327) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -69,9 +69,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_19_183623) do
     t.integer "likes_count"
     t.bigint "post_id", null: false
     t.bigint "user_account_id", null: false
-    t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "discarded_at"
+    t.index ["discarded_at"], name: "index_comments_on_discarded_at"
     t.index ["post_id"], name: "index_comments_on_post_id"
     t.index ["user_account_id"], name: "index_comments_on_user_account_id"
   end
@@ -263,7 +264,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_19_183623) do
   create_table "posts", force: :cascade do |t|
     t.text "content"
     t.integer "likes_count"
-    t.datetime "deleted_at"
     t.bigint "user_account_id", null: false
     t.bigint "team_id", null: false
     t.bigint "neighborhood_id", null: false
@@ -271,8 +271,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_19_183623) do
     t.bigint "country_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "discarded_at"
     t.index ["city_id"], name: "index_posts_on_city_id"
     t.index ["country_id"], name: "index_posts_on_country_id"
+    t.index ["discarded_at"], name: "index_posts_on_discarded_at"
     t.index ["neighborhood_id"], name: "index_posts_on_neighborhood_id"
     t.index ["team_id"], name: "index_posts_on_team_id"
     t.index ["user_account_id"], name: "index_posts_on_user_account_id"

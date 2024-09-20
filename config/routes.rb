@@ -56,7 +56,7 @@ Rails.application.routes.draw do
         member do
           post 'like'
         end
-        resources :comments, only: %i[index create show] do
+        resources :comments, only: %i[index create show destroy] do
           member do
             post 'like'
           end

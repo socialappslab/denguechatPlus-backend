@@ -6,7 +6,7 @@
 #
 #  id              :bigint           not null, primary key
 #  content         :text
-#  deleted_at      :datetime
+#  discarded_at    :datetime
 #  likes_count     :integer
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
@@ -15,6 +15,7 @@
 #
 # Indexes
 #
+#  index_comments_on_discarded_at     (discarded_at)
 #  index_comments_on_post_id          (post_id)
 #  index_comments_on_user_account_id  (user_account_id)
 #
@@ -24,10 +25,18 @@
 #  fk_rails_...  (user_account_id => user_accounts.id)
 #
 class Comment < ApplicationRecord
+  include Discard::Model
+  default_scope -> { kept }
+
   belongs_to :post
   has_one_attached :photo
   has_many :likes, as: :likeable, dependent: :destroy
   belongs_to :user_account
 
-  validates :content, presence: true
+  scope :kept, -> { undiscarded.joins(:post).merge(Post.kept) }
+
+  def kept?
+    undiscarded? && post.kept?
+  end
+
 end
