@@ -27,6 +27,7 @@ class Comment < ApplicationRecord
   belongs_to :post
   has_one_attached :photo
   has_many :likes, as: :likeable, dependent: :destroy
+  belongs_to :user_account
 
   validates :content, presence: true
 end

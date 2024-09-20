@@ -4,6 +4,11 @@ module Api
   module V1
     class PostsController < AuthorizedApiController
 
+      def index
+        endpoint operation: Api::V1::Posts::Operations::Index,
+                 renderer_options: { serializer: Api::V1::Posts::Serializers::Index },
+                 options: { current_user: }
+      end
       def show
         endpoint operation: Api::V1::Posts::Operations::Show,
                  renderer_options: { serializer: Api::V1::Posts::Serializers::Show },
