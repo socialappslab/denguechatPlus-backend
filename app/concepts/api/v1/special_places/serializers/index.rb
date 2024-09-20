@@ -7,11 +7,12 @@ module Api
         class Index < ApplicationSerializer
           set_type :special_place
 
-          attributes :name, :created_at
+          attributes :name, :name_en, :name_pt, :created_at
 
           attribute :status do |special_place|
             special_place.discarded_at.nil?
           end
+
         end
       end
     end

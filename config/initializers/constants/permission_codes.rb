@@ -58,6 +58,7 @@ module Constants
       visits_edit: :visits_edit,
       visits_update: :visits_update,
       cities_create: :cities_create,
+      cities_update: :cities_update,
       cities_index: :cities_index,
       cities_show: :cities_show,
       cities_destroy: :cities_destroy,
@@ -72,7 +73,22 @@ module Constants
       list_by_iquitos_location: :list_by_iquitos_location,
       users_show_current_user: :users_show_current_user,
       comments_like: :comments_like,
-      get_address_find_address: :get_address_find_address
+      get_address_find_address: :get_address_find_address,
+      special_places_update: :special_places_update,
+      countries_show: :countries_show,
+      countries_create: :countries_create,
+      countries_destroy: :countries_destroy,
+      countries_index: :countries_index,
+      countries_update: :countries_update,
+      states_index: :states_index,
+      states_show: :states_show,
+      states_create: :states_create,
+      states_update: :states_update,
+      states_destroy: :states_destroy,
+      neighborhoods_show: :neighborhoods_show,
+      neighborhoods_create: :neighborhoods_create,
+      neighborhoods_update: :neighborhoods_update,
+      neighborhoods_destroy: :neighborhoods_destroy
     }.freeze
   end
 end

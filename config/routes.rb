@@ -35,7 +35,11 @@ Rails.application.routes.draw do
         end
       end
       resources :locations, only: %i[index]
-      resources :special_places
+      resources :special_places do
+        collection do
+          delete :destroy
+        end
+      end
       resources :houses, only: %i[index] do
         collection do
           get :list_to_visit
@@ -106,7 +110,7 @@ Rails.application.routes.draw do
             end
           end
         end
-        resources :organizations, only: %i[index], controller: '/api/v1/organizations'
+        resources :organizations, only: %i[index show], controller: '/api/v1/organizations'
         resources :cities, only: %i[show index] do
           get '/', to: '/api/v1/cities#list_by_country_and_state_assumption', on: :collection
           get '/', to: '/api/v1/cities#show_by_country_and_state_assumption', on: :member

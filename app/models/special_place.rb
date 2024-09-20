@@ -12,5 +12,7 @@
 #
 class SpecialPlace < ApplicationRecord
   include Discard::Model
+  alias_attribute :name, :name_es
+
 
 end
