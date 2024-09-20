@@ -24,6 +24,11 @@ module Api
                  renderer_options: { serializer: Api::V1::Comments::Serializers::Show },
                  options: { current_user: }
       end
+
+      def destroy
+        endpoint operation: Api::V1::Comments::Operations::Destroy,
+                 options: { current_user: }
+      end
     end
   end
 end

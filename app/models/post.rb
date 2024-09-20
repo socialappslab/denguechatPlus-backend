@@ -6,7 +6,7 @@
 #
 #  id              :bigint           not null, primary key
 #  content         :text
-#  deleted_at      :datetime
+#  discarded_at    :datetime
 #  likes_count     :integer
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
@@ -20,6 +20,7 @@
 #
 #  index_posts_on_city_id          (city_id)
 #  index_posts_on_country_id       (country_id)
+#  index_posts_on_discarded_at     (discarded_at)
 #  index_posts_on_neighborhood_id  (neighborhood_id)
 #  index_posts_on_team_id          (team_id)
 #  index_posts_on_user_account_id  (user_account_id)
@@ -33,6 +34,9 @@
 #  fk_rails_...  (user_account_id => user_accounts.id)
 #
 class Post < ApplicationRecord
+  include Discard::Model
+  default_scope -> { kept }
+
   has_many_attached :photos
   has_many :likes, as: :likeable, dependent: :destroy
   has_many :comments, dependent: :destroy
