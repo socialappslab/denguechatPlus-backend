@@ -264,7 +264,7 @@ unless SeedTask.find_by(task_name: 'create_visit_params')
 end
 
 #create questions
-unless SeedTask.find_by(task_name: 'create_questions_v4')
+unless SeedTask.find_by(task_name: 'create_questions_v5')
 
   Option.destroy_all
   Question.destroy_all
@@ -299,7 +299,7 @@ unless SeedTask.find_by(task_name: 'create_questions_v4')
   #   image[:io].unlink
   # end
 
-  SeedTask.create!(task_name: 'create_questions_v4')
+  SeedTask.create!(task_name: 'create_questions_v5')
 
 end
 

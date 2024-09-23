@@ -70,7 +70,7 @@ unless SeedTask.find_by(task_name: 'add_type_contents_v1')
   TypeContent.create!(name_es: 'Larvas', name_en: 'Larvae', name_pt: 'Larvas')
   TypeContent.create!(name_es: 'Pupas', name_en: 'Pupae', name_pt: 'Pupas')
   TypeContent.create!(name_es: 'Huevos', name_en: 'Eggs', name_pt: 'Ovos')
-  TypeContent.create!(name_es: 'Nada', name_en: 'None', name_pt: 'Nada')
+  TypeContent.create!(name_es: 'Nada', name_en: 'None', name_pt: 'Nada', disable_other_options: true)
   SeedTask.create!(task_name: 'add_type_contents_v1')
 end
 
@@ -245,9 +245,9 @@ QUESTIONS_DATA = [
     resource_type: 'attribute',
     options: [
       { name_es: 'Sí, contiene agua', name_en: 'Yes, it holds water', name_pt: 'Sim, contém água', next: 12,
-        type_option: 'boolean'},
+        type_option: 'boolean', value: 1},
       { name_es: 'No, no contiene agua', name_en: 'No, it does not hold water', name_pt: 'Não, não contém água',
-        next: 20, type_option: 'boolean' }
+        next: 20, type_option: 'boolean', value: 0 }
     ]
   },
   {
@@ -332,7 +332,7 @@ QUESTIONS_DATA = [
       { name_es: 'Huevos', name_en: 'Eggs', name_pt: 'Ovos', next: 16,
         resource_id: TypeContent.find_by(name_es: 'Huevos').id, status_color: Constants::ContainerStatus::INFECTED },
       { name_es: 'Nada', name_en: 'Nothing', name_pt: 'Nada', next: 16,
-        resource_id: TypeContent.find_by(name_es: 'Nada').id }
+        resource_id: TypeContent.find_by(name_es: 'Nada').id, disable_other_options: true }
     ]
   },
   {
