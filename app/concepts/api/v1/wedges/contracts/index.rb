@@ -12,6 +12,7 @@ module Api
             optional(:filter).maybe(:hash) do
               optional(:name).maybe(:string)
               optional(:neighborhood_id).maybe(:integer)
+              optional(:sector_id).maybe(:integer)
             end
 
             optional(:page).maybe(:hash) do

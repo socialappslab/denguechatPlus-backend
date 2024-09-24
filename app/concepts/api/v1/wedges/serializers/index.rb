@@ -8,6 +8,15 @@ module Api
           set_type :wedge
 
           attributes :name
+
+          attribute :sector do |wedge|
+            next if wedge.sector.nil?
+
+            {
+              id: wedge.sector.id,
+              name: wedge.sector.name
+            }
+          end
         end
       end
     end
