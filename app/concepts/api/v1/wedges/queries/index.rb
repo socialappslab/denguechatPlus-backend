@@ -32,8 +32,9 @@ module Api
 
           def name_clause(relation)
             return relation if @filter.nil? || @filter[:name].blank?
+            word_searched = CGI.unescape(@filter[:name])
 
-            relation.where('wedges.name ilike :query', query: "%#{@filter[:name]}%")
+            relation.where('wedges.name ilike :query', query: "%#{word_searched}%")
           end
 
           def country_clause(relation)
