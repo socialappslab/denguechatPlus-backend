@@ -99,6 +99,7 @@ Rails.application.routes.draw do
         get '/', to: 'cities#list_by_country_and_state_assumption', on: :collection
         get '/', to: 'cities#show_by_country_and_state_assumption', on: :member
       end
+      resources :wedges
 
       namespace :public do
         resources :countries, only: %i[show index] do
