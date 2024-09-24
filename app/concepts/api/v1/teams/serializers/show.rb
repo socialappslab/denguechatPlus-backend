@@ -19,7 +19,13 @@ module Api
           end
 
           attribute :members do |brigade|
-            brigade.members.map { |user| { id: user.id, fullName: "#{user.first_name} #{user.last_name}" } }
+            brigade.members.map do |user|
+              {
+                id: user.id,
+                fullName: "#{user.first_name} #{user.last_name}",
+                rol: user.roles&.first&.name
+              }
+            end
           end
 
           attribute :organizations do |brigade|
