@@ -88,7 +88,8 @@ module Constants
       neighborhoods_show: :neighborhoods_show,
       neighborhoods_create: :neighborhoods_create,
       neighborhoods_update: :neighborhoods_update,
-      neighborhoods_destroy: :neighborhoods_destroy
+      neighborhoods_destroy: :neighborhoods_destroy,
+      users_change_team: :users_change_team
     }.freeze
   end
 end
