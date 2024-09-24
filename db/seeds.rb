@@ -350,3 +350,12 @@ unless SeedTask.find_by(task_name: 'permissions_for_change_brigade_v2')
   roles.each {|rol| rol.permissions << permission}
   SeedTask.create(task_name: 'permissions_for_change_brigade_v2')
 end
+
+unless SeedTask.find_by(task_name: 'permissions_for_list_wedges')
+  roles = Role.where(name: %w[team_leader admin])
+  permission = Permission.find_or_create_by(name: 'index', resource: 'wedges')
+  roles.each do |role|
+    role.permissions << permission unless role.permissions.exists?(permission.id)
+  end
+  SeedTask.create(task_name: 'permissions_for_list_wedges')
+end
