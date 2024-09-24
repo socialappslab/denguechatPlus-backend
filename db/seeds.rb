@@ -342,3 +342,11 @@ unless SeedTask.find_by(task_name: 'remove_content_type_from_params')
   vp.destroy if vp
   SeedTask.create(task_name: 'container_types')
 end
+
+
+unless SeedTask.find_by(task_name: 'permissions_for_change_brigade_v2')
+  roles = Role.where(name: %w[team_leader])
+  permission = Permission.find_or_create_by(name: 'change_team', resource: 'users')
+  roles.each {|rol| rol.permissions << permission}
+  SeedTask.create(task_name: 'permissions_for_change_brigade_v2')
+end
