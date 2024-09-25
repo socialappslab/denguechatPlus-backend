@@ -14,7 +14,7 @@ module Api
           end
 
           attribute :photos do |post|
-            next unless post.photos.attached?
+            next if post.photos.count < 1
 
             res = []
 

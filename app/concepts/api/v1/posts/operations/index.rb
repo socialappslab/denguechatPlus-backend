@@ -18,6 +18,7 @@ module Api
           def params(input)
             @ctx = {}
             @params = to_snake_case(input[:params])
+            @source = input[:request].headers['source'] || 'mobile'
             @current_user = input[:current_user]
           end
 
@@ -36,7 +37,7 @@ module Api
           end
 
           def list
-            @ctx[:data] = Api::V1::Posts::Queries::Index.call(@ctx['contract.default']['filter'], @ctx[:sort], @current_user)
+            @ctx[:data] = Api::V1::Posts::Queries::Index.call(@ctx['contract.default']['filter'], @ctx[:sort], @current_user, @source)
             Success({ ctx: @ctx, type: :success })
           end
 

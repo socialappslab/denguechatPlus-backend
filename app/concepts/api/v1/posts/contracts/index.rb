@@ -14,6 +14,7 @@ module Api
           params do
             optional(:filter).maybe(:hash) do
               optional(:team_id).filled(:integer)
+              optional(:sector_id).filled(:integer)
             end
             optional(:sort).maybe(:string)
             optional(:order).maybe(:string, included_in?: %w[asc desc])
@@ -22,6 +23,10 @@ module Api
           rule(:filter) do
             if value && value[:team_id] && !value[:team_id].blank? && !Team.exists?(id: value[:team_id])
               key(:team_id).failure(text: 'Team not found', predicate: :not_found?)
+            end
+
+            if value && value[:sector_id] && !value[:sector_id].blank? && !Neighborhood.exists?(id: value[:sector_id])
+              key(:sector_id).failure(text: 'Sector not found', predicate: :not_found?)
             end
           end
         end
