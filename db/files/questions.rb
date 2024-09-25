@@ -77,9 +77,9 @@ end
 QUESTIONS_DATA = [
   {
     id: 1,
-    question_text_es: 'Me dieron permiso para visitar la casa ?',
-    question_text_en: '',
-    question_text_pt: '',
+    question_text_es: '¿Me dieron permiso para visitar la casa?',
+    question_text_en: 'Did they give me permission to visit the house?',
+    question_text_pt: 'Eles me deram permissão para visitar a casa?',
     type_field: 'list',
     resource_name: '',
     resource_type: 'attribute',
@@ -317,9 +317,9 @@ QUESTIONS_DATA = [
   },
   {
     id: 15,
-    question_text_es: 'En este contenedor hay........',
-    question_text_en: 'In this container there are........',
-    question_text_pt: 'Neste recipiente há........',
+    question_text_es: 'En este contenedor hay...',
+    question_text_en: 'In this container there are...',
+    question_text_pt: 'Neste recipiente há...',
     type_field: 'multiple',
     resource_name: 'type_content_id',
     resource_type: 'relation',
@@ -359,8 +359,8 @@ QUESTIONS_DATA = [
     resource_type: 'attribute',
     next: 18,
     options: [
-      { name_es: 'Si, si puedo', name_en: 'Yes, I can', name_pt: 'Sim', next: 18 },
-      { name_es: 'No, no no puedo', name_en: 'No, I cant', name_pt: 'No', next: 18 }
+      { name_es: 'Si, si puedo', name_en: 'Yes, I can', name_pt: 'Sim', next: 18, value: 0 },
+      { name_es: 'No, no no puedo', name_en: 'No, I cant', name_pt: 'No', next: 18, value: 1 }
     ]
   },
   {
