@@ -13,11 +13,18 @@ module Api
             params do
               required(:team_id).filled(:integer)
               required(:house_block_id).filled(:integer)
+              optional(:user_id).filled(:integer)
             end
 
             rule(:team_id) do
               if values[:team_id] && !Team.kept.exists?(id: values[:team_id])
                 key(:team_id).failure(text: "The brigade with id #{values[:team_id]} not exists", predicate: :not_exists?)
+              end
+            end
+
+            rule(:user_id) do
+              if values[:user_id] && !UserAccount.exists?(id: values[:user_id])
+                key(:user_id).failure(text: "The User with id #{values[:user_id]} not exists", predicate: :not_exists?)
               end
             end
 
