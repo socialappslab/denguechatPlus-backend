@@ -13,11 +13,11 @@ module Api
             comment.likes.count
           end
 
-          attribute :photos do |post|
-            next unless post.photo.attached?
+          attribute :photos do |comment|
+            next unless comment.photo.attached?
 
             {
-              photo_url: Rails.application.routes.url_helpers.url_for(post.photo)
+              photo_url: Rails.application.routes.url_helpers.url_for(comment.photo)
             }
           end
         end

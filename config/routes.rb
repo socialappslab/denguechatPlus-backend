@@ -52,11 +52,11 @@ Rails.application.routes.draw do
           get :current
         end
       end
-      resources :posts, only: %i[create show index destroy] do
+      resources :posts do
         member do
           post 'like'
         end
-        resources :comments, only: %i[index create show destroy] do
+        resources :comments do
           member do
             post 'like'
           end

@@ -22,6 +22,12 @@ module Api
                  options: { current_user: }
       end
 
+      def update
+        endpoint operation: Api::V1::Posts::Operations::Update,
+                 renderer_options: { serializer: Api::V1::Posts::Serializers::Show },
+                 options: { current_user: }
+      end
+
       def like
         endpoint operation: Api::V1::Posts::Operations::Like,
                  renderer_options: { serializer: Api::V1::Posts::Serializers::Show },
