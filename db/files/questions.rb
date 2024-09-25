@@ -77,9 +77,9 @@ end
 QUESTIONS_DATA = [
   {
     id: 1,
-    question_text_es: 'Me dieron permiso para visitar la casa ?',
-    question_text_en: '',
-    question_text_pt: '',
+    question_text_es: '¿Me dieron permiso para visitar la casa?',
+    question_text_en: 'Did they give me permission to visit the house?',
+    question_text_pt: 'Eles me deram permissão para visitar a casa?',
     type_field: 'list',
     resource_name: '',
     resource_type: 'attribute',
@@ -245,9 +245,9 @@ QUESTIONS_DATA = [
     resource_type: 'attribute',
     options: [
       { name_es: 'Sí, contiene agua', name_en: 'Yes, it holds water', name_pt: 'Sim, contém água', next: 12,
-        type_option: 'boolean'},
+        type_option: 'boolean', value: 1},
       { name_es: 'No, no contiene agua', name_en: 'No, it does not hold water', name_pt: 'Não, não contém água',
-        next: 20, type_option: 'boolean' }
+        next: 20, type_option: 'boolean', value: 0 }
     ]
   },
   {
@@ -317,22 +317,22 @@ QUESTIONS_DATA = [
   },
   {
     id: 15,
-    question_text_es: 'En este contenedor hay........',
-    question_text_en: 'In this container there are........',
-    question_text_pt: 'Neste recipiente há........',
+    question_text_es: 'En este contenedor hay...',
+    question_text_en: 'In this container there are...',
+    question_text_pt: 'Neste recipiente há...',
     type_field: 'multiple',
     resource_name: 'type_content_id',
     resource_type: 'relation',
     next: 16,
     options: [
-      { name_es: 'Larvas', name_en: 'Larvae', name_pt: 'Larvas', next: 16,
+      { name_es: 'Larvas', name_en: 'Larvae', name_pt: 'Larvas', next: 16, group_es: 'Estadios', group_en: 'Stages', group_pt: 'Estágios',
         resource_id: TypeContent.find_by(name_es: 'Larvas').id, status_color: Constants::ContainerStatus::INFECTED },
-      { name_es: 'Pupas', name_en: 'Pupae', name_pt: 'Pupas', next: 16,
+      { name_es: 'Pupas', name_en: 'Pupae', name_pt: 'Pupas', next: 16, group_es: 'Estadios', group_en: 'Stages', group_pt: 'Estágios',
         resource_id: TypeContent.find_by(name_es: 'Pupas').id, status_color: Constants::ContainerStatus::INFECTED },
-      { name_es: 'Huevos', name_en: 'Eggs', name_pt: 'Ovos', next: 16,
+      { name_es: 'Huevos', name_en: 'Eggs', name_pt: 'Ovos', next: 16, group_es: 'Estadios', group_en: 'Stages', group_pt: 'Estágios',
         resource_id: TypeContent.find_by(name_es: 'Huevos').id, status_color: Constants::ContainerStatus::INFECTED },
-      { name_es: 'Nada', name_en: 'Nothing', name_pt: 'Nada', next: 16,
-        resource_id: TypeContent.find_by(name_es: 'Nada').id }
+      { name_es: 'Nada', name_en: 'Nothing', name_pt: 'Nada', next: 16, group_es: 'Nada', group_en: 'Nothing', group_pt: 'Nada',
+        resource_id: TypeContent.find_by(name_es: 'Nada').id, disable_other_options: true }
     ]
   },
   {
@@ -359,8 +359,8 @@ QUESTIONS_DATA = [
     resource_type: 'attribute',
     next: 18,
     options: [
-      { name_es: 'Si, si puedo', name_en: 'Yes, I can', name_pt: 'Sim', next: 18 },
-      { name_es: 'No, no no puedo', name_en: 'No, I cant', name_pt: 'No', next: 18 }
+      { name_es: 'Si, si puedo', name_en: 'Yes, I can', name_pt: 'Sim', next: 18, value: 0 },
+      { name_es: 'No, no no puedo', name_en: 'No, I cant', name_pt: 'No', next: 18, value: 1 }
     ]
   },
   {

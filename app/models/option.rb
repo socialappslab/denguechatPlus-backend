@@ -2,22 +2,24 @@
 #
 # Table name: options
 #
-#  id           :bigint           not null, primary key
-#  discarded_at :datetime
-#  group_en     :string
-#  group_es     :string
-#  group_pt     :string
-#  name_en      :string
-#  name_es      :string
-#  name_pt      :string
-#  next         :integer
-#  required     :boolean          default(FALSE)
-#  status_color :string
-#  type_option  :string
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
-#  question_id  :bigint           not null
-#  resource_id  :integer
+#  id                    :bigint           not null, primary key
+#  disable_other_options :boolean          default(FALSE)
+#  discarded_at          :datetime
+#  group_en              :string
+#  group_es              :string
+#  group_pt              :string
+#  name_en               :string
+#  name_es               :string
+#  name_pt               :string
+#  next                  :integer
+#  required              :boolean          default(FALSE)
+#  status_color          :string
+#  type_option           :string
+#  value                 :string
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  question_id           :bigint           not null
+#  resource_id           :integer
 #
 # Indexes
 #
