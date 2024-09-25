@@ -70,7 +70,7 @@ unless SeedTask.find_by(task_name: 'add_type_contents_v1')
   TypeContent.create!(name_es: 'Larvas', name_en: 'Larvae', name_pt: 'Larvas')
   TypeContent.create!(name_es: 'Pupas', name_en: 'Pupae', name_pt: 'Pupas')
   TypeContent.create!(name_es: 'Huevos', name_en: 'Eggs', name_pt: 'Ovos')
-  TypeContent.create!(name_es: 'Nada', name_en: 'None', name_pt: 'Nada', disable_other_options: true)
+  TypeContent.create!(name_es: 'Nada', name_en: 'None', name_pt: 'Nada')
   SeedTask.create!(task_name: 'add_type_contents_v1')
 end
 
