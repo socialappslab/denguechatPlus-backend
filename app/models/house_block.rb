@@ -28,4 +28,7 @@ class HouseBlock < ApplicationRecord
   belongs_to :team, optional: true
   belongs_to :brigadist, class_name: 'UserProfile', foreign_key: 'user_profile_id', optional: true
   belongs_to :wedge, class_name: 'Wedge', foreign_key: 'wedge_id'
+
+  has_many :user_profile_house_blocks
+  has_many :brigadists, class_name: 'UserProfile', through: :user_profile_house_blocks, source: :user_profile
 end
