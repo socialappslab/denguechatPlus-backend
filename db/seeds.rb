@@ -359,3 +359,10 @@ unless SeedTask.find_by(task_name: 'permissions_for_list_wedges')
   end
   SeedTask.create(task_name: 'permissions_for_list_wedges')
 end
+
+unless SeedTask.find_by(task_name: 'move_brigadists_to_mtm_house_blocks')
+  HouseBlock.where.not(user_profile_id: nil).find_each do |house_block|
+    UserProfileHouseBlock.create!(house_block: house_block, user_profile: house_block.brigadist)
+  end
+  SeedTask.create(task_name: 'move_brigadists_to_mtm_house_blocks')
+end

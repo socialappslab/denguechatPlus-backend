@@ -122,8 +122,15 @@ Rails.application.routes.draw do
         end
       end
 
+      namespace :admin do
+        resources :users do
+          put :change_status, controller: '/api/v1/users', method: 'change_status', on: :member
+        end
+      end
+
       get 'get_last_params', controller: 'get_last_params', action: 'index'
       get 'get_address', controller: 'get_address', action: 'find_address'
+
     end
   end
 
