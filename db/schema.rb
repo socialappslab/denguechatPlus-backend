@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_23_175211) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_25_091841) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -235,8 +235,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_23_175211) do
     t.string "group_pt"
     t.string "type_option"
     t.string "status_color"
-    t.string "value"
-    t.boolean "disable_other_options", default: false
     t.index ["question_id"], name: "index_options_on_question_id"
   end
 
@@ -407,6 +405,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_23_175211) do
     t.index ["user_account_id"], name: "index_user_accounts_roles_on_user_account_id"
   end
 
+  create_table "user_profile_house_blocks", force: :cascade do |t|
+    t.bigint "user_profile_id", null: false
+    t.bigint "house_block_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["house_block_id"], name: "index_user_profile_house_blocks_on_house_block_id"
+    t.index ["user_profile_id"], name: "index_user_profile_house_blocks_on_user_profile_id"
+  end
+
   create_table "user_profiles", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
@@ -527,6 +534,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_23_175211) do
   add_foreign_key "teams", "user_profiles", column: "leader_id"
   add_foreign_key "teams", "wedges"
   add_foreign_key "user_accounts", "user_profiles"
+  add_foreign_key "user_profile_house_blocks", "house_blocks"
+  add_foreign_key "user_profile_house_blocks", "user_profiles"
   add_foreign_key "user_profiles", "cities"
   add_foreign_key "user_profiles", "neighborhoods"
   add_foreign_key "user_profiles", "organizations"

@@ -342,3 +342,27 @@ unless SeedTask.find_by(task_name: 'remove_content_type_from_params')
   vp.destroy if vp
   SeedTask.create(task_name: 'container_types')
 end
+
+
+unless SeedTask.find_by(task_name: 'permissions_for_change_brigade_v2')
+  roles = Role.where(name: %w[team_leader])
+  permission = Permission.find_or_create_by(name: 'change_team', resource: 'users')
+  roles.each {|rol| rol.permissions << permission}
+  SeedTask.create(task_name: 'permissions_for_change_brigade_v2')
+end
+
+unless SeedTask.find_by(task_name: 'permissions_for_list_wedges')
+  roles = Role.where(name: %w[team_leader admin])
+  permission = Permission.find_or_create_by(name: 'index', resource: 'wedges')
+  roles.each do |role|
+    role.permissions << permission unless role.permissions.exists?(permission.id)
+  end
+  SeedTask.create(task_name: 'permissions_for_list_wedges')
+end
+
+unless SeedTask.find_by(task_name: 'move_brigadists_to_mtm_house_blocks')
+  HouseBlock.where.not(user_profile_id: nil).find_each do |house_block|
+    UserProfileHouseBlock.create!(house_block: house_block, user_profile: house_block.brigadist)
+  end
+  SeedTask.create(task_name: 'move_brigadists_to_mtm_house_blocks')
+end
