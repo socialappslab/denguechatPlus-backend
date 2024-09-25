@@ -27,12 +27,21 @@ module Api
               Failure({ ctx: @ctx, type: :invalid }) unless is_valid
             end
 
+            def retrieve_user(user_id)
+              @user_account = UserAccount.find_by(id: user_id)
+              if @user_account
+                @user_account.user_profile
+              else
+                @current_user.user_profile
+              end
+            end
+
             def update_user
               attrs = @ctx['contract.default'].values.data
               attrs[:house_block_ids] = attrs.delete(:house_block_id)
-              user_profile = @current_user.user_profile
+              user_profile = retrieve_user(attrs.delete(:user_id))
               user_profile.update!(attrs)
-              @ctx[:model] = @current_user
+              @ctx[:model] = @user_account
               Success({ ctx: @ctx, type: :success })
             end
 
