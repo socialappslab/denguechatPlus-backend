@@ -13,6 +13,7 @@
 #
 class Questionnaire < ApplicationRecord
   include Discard::Model
+  default_scope -> { kept }
 
   has_many :questions
 end

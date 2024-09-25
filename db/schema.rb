@@ -235,6 +235,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_25_091841) do
     t.string "group_pt"
     t.string "type_option"
     t.string "status_color"
+    t.string "value"
+    t.boolean "disable_other_options", default: false
     t.index ["question_id"], name: "index_options_on_question_id"
   end
 
