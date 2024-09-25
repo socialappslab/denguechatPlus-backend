@@ -7,7 +7,7 @@ module Api
       def index
         endpoint operation: Api::V1::Posts::Operations::Index,
                  renderer_options: { serializer: Api::V1::Posts::Serializers::Index },
-                 options: { current_user: }
+                 options: {request:, current_user: }
       end
 
       def show
