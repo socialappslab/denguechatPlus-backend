@@ -32,9 +32,14 @@ module Api
             attribute :team do |user_profile|
               next if user_profile.team.nil?
 
+              team = user_profile.team
               {
-                id: user_profile.team.id,
-                name: user_profile.team.name
+                id: team.id,
+                name: team.name,
+                sector_id: team.sector.id,
+                sector_name: team.sector.name,
+                wedge_id: team.wedge.id,
+                wedge_name: team.wedge.name
               }
             end
 
