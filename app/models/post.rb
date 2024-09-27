@@ -5,9 +5,11 @@
 # Table name: posts
 #
 #  id              :bigint           not null, primary key
+#  comments_count  :integer          default(0)
 #  content         :text
 #  discarded_at    :datetime
 #  likes_count     :integer
+#  location        :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  city_id         :bigint           not null
@@ -39,10 +41,15 @@ class Post < ApplicationRecord
 
   has_many_attached :photos
   has_many :likes, as: :likeable, dependent: :destroy
-  has_many :comments, dependent: :destroy
+  has_many :comments, dependent: :destroy, counter_cache: :comments_count
   belongs_to :city
   belongs_to :user_account
   belongs_to :team
   belongs_to :neighborhood
   belongs_to :country
+  attr_accessor :like_by_user
+
+  def liked_by_user?(user)
+    likes.where(user_account_id: user.id).exists?
+  end
 end

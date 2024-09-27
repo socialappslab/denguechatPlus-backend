@@ -28,12 +28,14 @@ class Comment < ApplicationRecord
   include Discard::Model
   default_scope -> { kept }
 
-  belongs_to :post
+  belongs_to :post, counter_cache: :comments_count
   has_one_attached :photo
   has_many :likes, as: :likeable, dependent: :destroy
   belongs_to :user_account
 
   scope :kept, -> { undiscarded.joins(:post).merge(Post.kept) }
+
+  attr_accessor :like_by_user
 
   def kept?
     undiscarded? && post.kept?

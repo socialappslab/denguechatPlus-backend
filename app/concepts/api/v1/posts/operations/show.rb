@@ -13,10 +13,11 @@ module Api
           def params(input)
             @ctx = {}
             @params = to_snake_case(input[:params])
+            @current_user = input[:current_user]
           end
 
           def find_post
-            @ctx[:data] = Post.find_by(id: @params[:id])
+            @ctx[:data] = Post.with_attached_photos.includes(:likes, user_account: :user_profile, comments: %i[user_account likes]).find_by(id: @params[:id])
             if @ctx[:data].nil?
               Failure({ ctx: @ctx, type: :not_found })
             else

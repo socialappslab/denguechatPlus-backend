@@ -8,7 +8,7 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort, current_user, source)
-            @model = Post
+            @model = @posts = Post.with_attached_photos.includes(user_account: :user_profile, comments: :user_account)
             @filter = filter
             @sort = sort
             @current_user = current_user
@@ -21,6 +21,7 @@ module Api
 
           def call
             @model.yield_self(&method(:team_clause))
+                  .yield_self(&method(:like_by_me))
                   .yield_self(&method(:sector_id_clause))
                   .yield_self(&method(:sort_clause))
           end
@@ -34,6 +35,12 @@ module Api
             return relation.where(city_id: @current_user.city_id) if @filter.nil? || @filter[:team_id].blank?
 
             relation.where(team_id: @filter[:team_id])
+          end
+
+          def like_by_me(relation)
+            return relation if @current_user.nil?
+
+            relation.left_joins(:likes).select("posts.*, CASE WHEN likes.user_account_id = #{@current_user.id} THEN true ELSE false END AS like_by_me")
           end
 
           def sector_id_clause(relation)

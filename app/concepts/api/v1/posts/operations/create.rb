@@ -28,11 +28,14 @@ module Api
           end
 
           def transform_params
+            team = @current_user.teams.first
+            team_sector = team&.sector&.name || ''
             @data = @ctx['contract.default'].values.data
-            @data[:team_id] = @current_user.teams.first.id
+            @data[:team_id] = team.id
             @data[:city_id] = @current_user.city_id
             @data[:neighborhood_id] = @current_user.neighborhood_id
             @data[:country_id] = Neighborhood.find_by(id: @data[:neighborhood_id]).country.id
+            @data[:location] = "#{team_sector}, #{team.city.name}"
           end
 
           def create_post

@@ -24,7 +24,13 @@ module Api
           attribute :createdBy do |post|
             next unless post.user_account_id
 
-            "#{post.user_account.first_name} #{post.user_account.last_name}"
+            "#{post.user_account.first_name}, #{post.user_account.last_name}"
+          end
+
+          attribute :location do |post|
+            next unless post.location
+
+            post.location
           end
 
           attribute :postText do |post|
@@ -45,28 +51,13 @@ module Api
           attribute :commentsCount do |post|
             next unless post.comments.any?
 
-            post.comments.count
+            post.comments_count
           end
 
-          attribute :likesCount do |post|
-            post.likes.count
-          end
+          attribute :likesCount, &:likes_count
 
-          attribute :comments do |post|
-            next unless post.comments.any?
+          attribute :liked_by_user, &:like_by_me
 
-            post.comments.map do |comment|
-              {
-                id: comment.id,
-                likesCount: comment.likes_count,
-                userAccountId: comment.user_account_id,
-                createdBy: "#{comment.user_account.first_name} #{comment.user_account.last_name}",
-                createdAt: comment.created_at.to_i * 1000,
-                commentText: comment.content,
-                photo: comment.photo.attached? ? Rails.application.routes.url_helpers.url_for(comment.photo) : nil
-              }
-            end
-          end
         end
       end
     end
