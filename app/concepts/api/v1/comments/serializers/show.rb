@@ -13,6 +13,9 @@ module Api
             comment.likes.count
           end
 
+          attribute :liked_by_me do |comment|
+            comment.likes.exists?(user_account_id: comment.user_account_id)
+          end
           attribute :photos do |comment|
             next unless comment.photo.attached?
 

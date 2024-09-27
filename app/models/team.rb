@@ -42,5 +42,6 @@ class Team < ApplicationRecord
   belongs_to :sector, class_name: 'Neighborhood', foreign_key: 'neighborhood_id'
   belongs_to :wedge, class_name: 'Wedge'
   has_many :visits, dependent: :nullify
+  has_one :city, through: :sector
 
 end

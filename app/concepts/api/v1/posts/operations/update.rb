@@ -32,10 +32,12 @@ module Api
 
           def transform_params
             @data = @ctx['contract.default'].values.data
-            @data[:team_id] = @current_user.teams.first.id
+            @current_user.teams.first
+            @data[:team_id] = team.id
             @data[:city_id] = @current_user.city_id
             @data[:neighborhood_id] = @current_user.neighborhood_id
             @data[:country_id] = Neighborhood.find_by(id: @data[:neighborhood_id]).country.id
+            @data[:location] = "#{team.neighborhood.name}, #{team.city.name}"
           end
 
           def check_if_has_photo
