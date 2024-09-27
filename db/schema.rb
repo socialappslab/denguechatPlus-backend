@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_25_091841) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_27_182914) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -274,6 +274,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_25_091841) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "discarded_at"
+    t.string "location"
+    t.integer "comments_count", default: 0
     t.index ["city_id"], name: "index_posts_on_city_id"
     t.index ["country_id"], name: "index_posts_on_country_id"
     t.index ["discarded_at"], name: "index_posts_on_discarded_at"

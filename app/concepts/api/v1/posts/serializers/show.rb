@@ -7,30 +7,26 @@ module Api
         class Show < ApplicationSerializer
           set_type :post
 
-          attributes :id, :content, :created_at, :team_id, :country_id, :city_id, :neighborhood_id
+          attributes :id, :content, :created_at, :team_id, :country_id, :city_id, :neighborhood_id, :location, :comments_count
 
           attribute :likesCount do |post|
-            post.likes.count
+            post.likes.size  # use `size` instead of `count` after preloading `likes`
+          end
+
+          attribute :like_by_me do |post|
+            post.likes.any? { |like| like.user_account_id == post.user_account_id }  # use `any?` instead of `exists?` after preloading `likes`
           end
 
           attribute :photos do |post|
-            next if post.photos.count < 1
-
-            res = []
-
-            post.photos.each do |photo|
-                res << { photo_url: Rails.application.routes.url_helpers.url_for(photo) }
-              end
-            res
+            post.photos.map do |photo|
+              { photo_url: Rails.application.routes.url_helpers.url_for(photo) }
+            end
           end
 
           attribute :comments do |post|
-            next unless post.comments.any?
-
-            like_counts = post.comments.map do |comment|
+            post.comments.map do |comment|
               Api::V1::Comments::Serializers::Show.new(comment).serializable_hash
             end
-            like_counts
           end
         end
       end
