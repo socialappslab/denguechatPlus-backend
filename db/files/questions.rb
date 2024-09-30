@@ -223,7 +223,7 @@ QUESTIONS_DATA = [
       { group_es: 'No permanentes', group_en: 'Non permanent', group_pt: 'Não permanente',
         name_es: 'Elementos naturales', name_en: 'Natural elements', name_pt: 'Elementos naturais', resource_id: BreedingSiteType.find_by(name: 'Elementos naturales').id },
       { group_es: 'No permanentes', group_en: 'Non permanent', group_pt: 'Não permanente', name_es: 'Otros',
-        name_en: 'Others', name_pt: 'Outros', resource_id: BreedingSiteType.find_by(name: 'Otros').id }
+        name_en: 'Others', name_pt: 'Outros', resource_id: BreedingSiteType.find_by(name: 'Otros').id },
       { group_es: 'Permanentes', group_en: 'Permanent', group_pt: 'Permanentes', name_es: 'Tanques (cemento, polietileno, metal, otro material)',
         name_en: 'Tanks (cement, polyethylene, metal, other material)', name_pt: 'Tanques (cimento, polietileno, metal, outro material)', resource_id: BreedingSiteType.find_by(name: 'Tanques (cemento, polietileno, metal, otro material)').id },
       { group_es: 'Permanentes', group_en: 'Permanent', group_pt: 'Permanentes', name_es: 'Bidones o cilindros (metal, plástico)', name_en: 'Drums or cylinders (metal, plastic)',
