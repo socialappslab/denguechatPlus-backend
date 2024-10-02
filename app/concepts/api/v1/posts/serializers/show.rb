@@ -13,8 +13,19 @@ module Api
             post.likes.size  # use `size` instead of `count` after preloading `likes`
           end
 
+
           attribute :like_by_me do |post|
             post.likes.any? { |like| like.user_account_id == post.user_account_id }  # use `any?` instead of `exists?` after preloading `likes`
+          end
+
+          attribute :created_by do |post|
+            next if post.user_account_id.blank?
+
+            {
+              accountId: post.user_account_id,
+              userName: post.user_account.first_name,
+              lastName: post.user_account.last_name,
+            }
           end
 
           attribute :photos do |post|
