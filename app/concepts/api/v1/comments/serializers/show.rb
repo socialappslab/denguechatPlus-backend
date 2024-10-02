@@ -16,6 +16,17 @@ module Api
           attribute :liked_by_me do |comment|
             comment.likes.exists?(user_account_id: comment.user_account_id)
           end
+
+          attribute :created_by do |comment|
+            next if comment.user_account_id.blank?
+
+            {
+              accountId: comment.user_account_id,
+              userName: comment.user_account.first_name,
+              lastName: comment.user_account.last_name,
+            }
+          end
+
           attribute :photos do |comment|
             next unless comment.photo.attached?
 
