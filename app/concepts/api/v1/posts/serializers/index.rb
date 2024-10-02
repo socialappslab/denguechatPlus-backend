@@ -21,6 +21,16 @@ module Api
             post.user_account_id
           end
 
+          attribute :create_by_user do |post|
+            next if post.user_account_id.blank?
+
+            {
+              accountId: post.user_account_id,
+              userName: post.user_account.first_name,
+              lastName: post.user_account.last_name,
+            }
+          end
+
           attribute :createdBy do |post|
             next unless post.user_account_id
 
