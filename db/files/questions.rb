@@ -48,19 +48,27 @@ end
 unless SeedTask.find_by(task_name: 'create_breeding_site_types_v3')
   BreedingSiteType.destroy_all
 
+  SeedTask.create(task_name: 'add_new_container_types')
+
   BreedingSiteType.create!(name: 'Tanques (cemento, polietileno, metal, otro material)', container_type: 'permanent')
 
-  BreedingSiteType.create!(name: 'Bidones/Cilindros (metal, plástico)', container_type: 'permanent')
+  BreedingSiteType.create!(name: 'Bidones y Cilindros', container_type: 'permanent')
 
   BreedingSiteType.create!(name: 'Pozos', container_type: 'permanent')
 
-  BreedingSiteType.create!(name: 'Estructura o partes de la casa', container_type: 'permanent')
+  BreedingSiteType.create!(name: 'Estructura de la casa', container_type: 'permanent')
 
-  BreedingSiteType.create!(name: 'Llanta', container_type: 'non-permanent')
+  BreedingSiteType.create!(name: 'Sumidero', container_type: 'permanent')
 
-  BreedingSiteType.create!(name: 'Otros', container_type: 'non-permanent')
+  BreedingSiteType.create!(name: 'Llantas', container_type: 'non-permanent')
 
-  BreedingSiteType.create!(name: 'Elementos naturales', container_type: 'non-permanent')
+  BreedingSiteType.create!(name: 'Plantas frutas y verduras', container_type: 'non-permanent')
+
+  BreedingSiteType.create!(name: 'Criaderos, bebederos y acuarios', container_type: 'non-permanent')
+
+  BreedingSiteType.create!(name: 'Maceteros y floreros', container_type: 'non-permanent')
+
+  BreedingSiteType.create!(name: 'Otras', container_type: 'non-permanent')
 
   SeedTask.create!(task_name: 'create_breeding_site_types_v3')
 end
@@ -218,20 +226,35 @@ QUESTIONS_DATA = [
     resource_type: 'relation',
     next: 11,
     options: [
-      { group_es: 'No permanentes', group_en: 'Non permanent', group_pt: 'Não permanente', name_es: 'Llanta',
-        name_en: 'Tire', name_pt: 'Pneu', resource_id: BreedingSiteType.find_by(name: 'Llanta').id },
+      { group_es: 'No permanentes', group_en: 'Non permanent', group_pt: 'Não permanente', name_es: 'Llantas',
+        name_en: 'Tire', name_pt: 'Pneu', resource_id: BreedingSiteType.find_by(name: 'Llantas').id },
+
       { group_es: 'No permanentes', group_en: 'Non permanent', group_pt: 'Não permanente',
-        name_es: 'Elementos naturales', name_en: 'Natural elements', name_pt: 'Elementos naturais', resource_id: BreedingSiteType.find_by(name: 'Elementos naturales').id },
+        name_es: 'Plantas, frutas y verduras', name_en: 'Plants, fruits and vegetables', name_pt: 'Plantas, frutos e legumes', resource_id: BreedingSiteType.find_by(name: 'Plantas, frutas y verduras').id },
+
+      { group_es: 'No permanentes', group_en: 'Non permanent', group_pt: 'Não permanente', name_es: 'Criaderos, bebederos y acuarios',
+        name_en: 'Hatcheries, drinking troughs and aquariums', name_pt: 'Incubadoras, bebedouros e aquários', resource_id: BreedingSiteType.find_by(name: 'Criaderos, bebederos y acuarios').id },
+
+      { group_es: 'No permanentes', group_en: 'Non permanent', group_pt: 'Não permanente', name_es: 'Maceteros y floreros',
+        name_en: 'Flower pots and vases', name_pt: 'Vasos de flores e vasos', resource_id: BreedingSiteType.find_by(name: 'Maceteros y floreros').id },
+
       { group_es: 'No permanentes', group_en: 'Non permanent', group_pt: 'Não permanente', name_es: 'Otros',
         name_en: 'Others', name_pt: 'Outros', resource_id: BreedingSiteType.find_by(name: 'Otros').id },
-      { group_es: 'Permanentes', group_en: 'Permanent', group_pt: 'Permanentes', name_es: 'Tanques (cemento, polietileno, metal, otro material)',
-        name_en: 'Tanks (cement, polyethylene, metal, other material)', name_pt: 'Tanques (cimento, polietileno, metal, outro material)', resource_id: BreedingSiteType.find_by(name: 'Tanques (cemento, polietileno, metal, otro material)').id },
-      { group_es: 'Permanentes', group_en: 'Permanent', group_pt: 'Permanentes', name_es: 'Bidones o cilindros (metal, plástico)', name_en: 'Drums or cylinders (metal, plastic)',
-        name_pt: 'Tambores ou cilindros (metal, plástico)', resource_id: BreedingSiteType.find_by(name: 'Bidones/Cilindros (metal, plástico)').id },
+
+      { group_es: 'Permanentes', group_en: 'Permanent', group_pt: 'Permanentes', name_es: 'Tanques',
+        name_en: 'Tanks', name_pt: 'Tanques', resource_id: BreedingSiteType.find_by(name: 'Tanques').id },
+
+      { group_es: 'Permanentes', group_en: 'Permanent', group_pt: 'Permanentes', name_es: 'Bidones o Cilindros', name_en: 'Drums or cylinders',
+        name_pt: 'Tambores ou cilindros', resource_id: BreedingSiteType.find_by(name: 'Bidones o Cilindros').id },
+
       { group_es: 'Permanentes', group_en: 'Permanent', group_pt: 'Permanentes', name_es: 'Pozos', name_en: 'Wells',
         name_pt: 'Poços', resource_id: BreedingSiteType.find_by(name: 'Pozos').id },
-      { group_es: 'Permanentes', group_en: 'Permanent', group_pt: 'Permanentes', name_es: 'Estructura o partes de la casa', name_en: 'Structure or parts of the house',
-        name_pt: 'Estrutura ou partes da casa', resource_id: BreedingSiteType.find_by(name: 'Estructura o partes de la casa').id },
+
+      { group_es: 'Permanentes', group_en: 'Permanent', group_pt: 'Permanentes', name_es: 'Estructura de la casa', name_en: 'Structure of the house',
+        name_pt: 'Estrutura da casa', resource_id: BreedingSiteType.find_by(name: 'Estructura de la casa').id },
+
+      { group_es: 'Permanentes', group_en: 'Permanent', group_pt: 'Permanentes', name_es: 'Sumidero', name_en: 'Sump',
+        name_pt: 'Drenagem', resource_id: BreedingSiteType.find_by(name: 'Sumidero').id },
     ]
   },
   {
