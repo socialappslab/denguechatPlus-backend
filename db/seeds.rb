@@ -366,3 +366,12 @@ unless SeedTask.find_by(task_name: 'move_brigadists_to_mtm_house_blocks')
   end
   SeedTask.create(task_name: 'move_brigadists_to_mtm_house_blocks')
 end
+
+unless SeedTask.find_by(task_name: 'create_reports_house_status_ability')
+  roles = Role.where(name: %w[brigadista team_leader admin])
+  permission = Permission.find_or_create_by(name: 'house_status', resource: 'reports')
+  roles.each do |role|
+    role.permissions << permission unless role.permissions.exists?(permission.id)
+  end
+  SeedTask.create(task_name: 'create_reports_house_status_ability')
+end

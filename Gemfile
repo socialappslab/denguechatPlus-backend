@@ -68,6 +68,8 @@ gem 'discard', '~> 1.2'
 
 gem 'sidekiq', '~> 7.1.3'
 
+gem 'sidekiq-scheduler'
+
 # External API's
 gem 'httparty'
 

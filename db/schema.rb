@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_27_201607) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_27_220808) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -125,6 +125,29 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_27_201607) do
     t.index ["wedge_id"], name: "index_house_blocks_on_wedge_id"
   end
 
+  create_table "house_statuses", force: :cascade do |t|
+    t.bigint "house_id"
+    t.bigint "house_block_id"
+    t.bigint "wedge_id"
+    t.bigint "neighborhood_id"
+    t.bigint "city_id"
+    t.bigint "country_id"
+    t.bigint "team_id"
+    t.integer "infected_containers", default: 0
+    t.integer "non_infected_containers", default: 0
+    t.integer "potential_containers", default: 0
+    t.date "date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["city_id"], name: "index_house_statuses_on_city_id"
+    t.index ["country_id"], name: "index_house_statuses_on_country_id"
+    t.index ["house_block_id"], name: "index_house_statuses_on_house_block_id"
+    t.index ["house_id"], name: "index_house_statuses_on_house_id"
+    t.index ["neighborhood_id"], name: "index_house_statuses_on_neighborhood_id"
+    t.index ["team_id"], name: "index_house_statuses_on_team_id"
+    t.index ["wedge_id"], name: "index_house_statuses_on_wedge_id"
+  end
+
   create_table "houses", force: :cascade do |t|
     t.bigint "country_id", null: false
     t.bigint "state_id", null: false
@@ -146,6 +169,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_27_201607) do
     t.integer "container_count"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "last_visit"
+    t.integer "infected_containers"
+    t.integer "non_infected_containers"
+    t.integer "potential_containers"
     t.index ["city_id"], name: "index_houses_on_city_id"
     t.index ["country_id"], name: "index_houses_on_country_id"
     t.index ["house_block_id"], name: "index_houses_on_house_block_id"
@@ -502,6 +529,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_27_201607) do
   add_foreign_key "house_blocks", "teams"
   add_foreign_key "house_blocks", "user_profiles"
   add_foreign_key "house_blocks", "wedges"
+  add_foreign_key "house_statuses", "cities"
+  add_foreign_key "house_statuses", "countries"
+  add_foreign_key "house_statuses", "house_blocks"
+  add_foreign_key "house_statuses", "houses"
+  add_foreign_key "house_statuses", "neighborhoods"
+  add_foreign_key "house_statuses", "teams"
+  add_foreign_key "house_statuses", "wedges"
   add_foreign_key "houses", "cities"
   add_foreign_key "houses", "countries"
   add_foreign_key "houses", "house_blocks"
