@@ -10,6 +10,7 @@
 #  infected_containers     :integer
 #  last_visit              :datetime
 #  latitude                :float
+#  location_status         :string
 #  longitude               :float
 #  non_infected_containers :integer
 #  notes                   :string
