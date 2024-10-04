@@ -20,15 +20,27 @@ module Api
           end
 
           def call
-            @model.yield_self(&method(:team_clause))
+            @model.yield_self(&method(:visibility_clause))
+                  .yield_self(&method(:team_clause))
                   .yield_self(&method(:like_by_me))
+                  .yield_self(&method(:can_delete_by_me))
                   .yield_self(&method(:sector_id_clause))
+                  .yield_self(&method(:current_user_id))
                   .yield_self(&method(:sort_clause))
           end
 
           private
 
           attr_reader :posts, :filter, :sort
+
+          def visibility_clause(relation)
+            return relation if @current_user.has_role?(:admin)
+
+            relation.where(
+              'visibility = ? OR (visibility = ? AND team_id = ?)',
+              'public', 'team', (@current_user.teams&.first&.id || 0)
+            )
+          end
 
           def team_clause(relation)
             return relation if @source == 'web'
@@ -43,11 +55,29 @@ module Api
             relation.left_joins(:likes).select("posts.*, CASE WHEN likes.user_account_id = #{@current_user.id} THEN true ELSE false END AS like_by_me")
           end
 
+          def can_delete_by_me(relation)
+            return relation if @current_user.nil?
+
+            relation.select("posts.*,
+                CASE
+                  WHEN posts.user_account_id = #{@current_user.id} THEN true
+                  WHEN #{@current_user.has_role?(:admin)} THEN true
+                  ELSE false
+                END AS can_delete_by_me")
+          end
+
+
           def sector_id_clause(relation)
             return relation if @source == 'mobile'
             return relation if @filter.nil? || @filter[:sector_id].blank?
 
             relation.where(neighborhood_id: @filter[:sector_id])
+          end
+
+          def current_user_id(relation)
+            return relation if @current_user.nil?
+
+            relation.select("posts.*, #{@current_user.id} AS current_user_id")
           end
 
           def sort_clause(relation)

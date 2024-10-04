@@ -22,6 +22,7 @@ module Api
           tee :set_extra_info_to_inspections
           step :create_inspections
           tee :add_photos
+          tee :update_house_status
 
 
           def check_request_attrs(input)
@@ -123,6 +124,7 @@ module Api
             @photo_ids.each do |obj|
               inspection = Inspection.find_by(code_reference: obj[:code_reference])
               next unless inspection
+
               photo = @photos.select { |file| file.original_filename == "#{inspection.code_reference}.#{file.content_type.split('/').last}" }
               next if photo.blank?
 
@@ -184,6 +186,19 @@ module Api
 
 
             @house = House.create(@house_info).id
+          end
+
+          def update_house_status
+            inspections_ids = @ctx[:model].inspections.pluck(:id)
+            res = Inspection.inspection_summary_for(inspections_ids)
+            @house.update!(res)
+          end
+
+          def container_status_analyzer(inspection)
+            return Constants::ContainerStatus::NOT_INFECTED unless inspection.has_water
+            return Constants::ContainerStatus::INFECTED if inspection.infected?
+
+            Constants::ContainerStatus::POTENTIALLY_INFECTED if inspection.potential?
           end
         end
       end

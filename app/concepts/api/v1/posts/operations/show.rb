@@ -17,10 +17,11 @@ module Api
           end
 
           def find_post
-            @ctx[:data] = Post.with_attached_photos.includes(:likes, user_account: :user_profile, comments: %i[user_account likes]).find_by(id: @params[:id])
+            @ctx[:data] = Api::V1::Posts::Queries::Show.call(@current_user, @source, @params)
             if @ctx[:data].nil?
               Failure({ ctx: @ctx, type: :not_found })
             else
+              @ctx[:data].instance_variable_set(:@current_user_idx, @current_user.id)
               Success({ ctx: @ctx, type: :success })
             end
           end

@@ -2,27 +2,31 @@
 #
 # Table name: houses
 #
-#  id               :bigint           not null, primary key
-#  address          :string
-#  container_count  :integer
-#  discarded_at     :datetime
-#  house_type       :string
-#  latitude         :float
-#  longitude        :float
-#  notes            :string
-#  reference_code   :string
-#  status           :string
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  city_id          :bigint           not null
-#  country_id       :bigint           not null
-#  house_block_id   :bigint
-#  neighborhood_id  :bigint           not null
-#  special_place_id :bigint
-#  state_id         :bigint           not null
-#  team_id          :bigint
-#  user_profile_id  :bigint           not null
-#  wedge_id         :bigint           not null
+#  id                      :bigint           not null, primary key
+#  address                 :string
+#  container_count         :integer
+#  discarded_at            :datetime
+#  house_type              :string
+#  infected_containers     :integer
+#  last_visit              :datetime
+#  latitude                :float
+#  longitude               :float
+#  non_infected_containers :integer
+#  notes                   :string
+#  potential_containers    :integer
+#  reference_code          :string
+#  status                  :string
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#  city_id                 :bigint           not null
+#  country_id              :bigint           not null
+#  house_block_id          :bigint
+#  neighborhood_id         :bigint           not null
+#  special_place_id        :bigint
+#  state_id                :bigint           not null
+#  team_id                 :bigint
+#  user_profile_id         :bigint           not null
+#  wedge_id                :bigint           not null
 #
 # Indexes
 #

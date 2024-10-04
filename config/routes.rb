@@ -100,6 +100,9 @@ Rails.application.routes.draw do
         get '/', to: 'cities#show_by_country_and_state_assumption', on: :member
       end
       resources :wedges
+      resources :reports do
+        get :house_status, on: :collection, action: :house_status
+      end
 
       namespace :public do
         resources :countries, only: %i[show index] do
