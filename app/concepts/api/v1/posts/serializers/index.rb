@@ -7,7 +7,7 @@ module Api
         class Index < ApplicationSerializer
           set_type :post
 
-          attributes :id
+          attributes :id, :visibility
 
           attribute :createdAt do |post|
             next unless post.created_at

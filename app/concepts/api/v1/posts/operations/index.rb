@@ -37,7 +37,7 @@ module Api
           end
 
           def list
-            @ctx[:data] = Api::V1::Posts::Queries::Index.call(@ctx['contract.default']['filter'], @ctx[:sort], @current_user, @source)
+            @ctx[:data] = Api::V1::Posts::Queries::Index.call(@ctx['contract.default']['filter'], @ctx[:sort], @current_user, @source)&.first
             Success({ ctx: @ctx, type: :success })
           end
 
