@@ -20,7 +20,8 @@ module Api
           end
 
           def call
-            @model.yield_self(&method(:team_clause))
+            @model.yield_self(&method(:visibility_clause))
+                  .yield_self(&method(:team_clause))
                   .yield_self(&method(:like_by_me))
                   .yield_self(&method(:sector_id_clause))
                   .yield_self(&method(:sort_clause))
@@ -29,6 +30,15 @@ module Api
           private
 
           attr_reader :posts, :filter, :sort
+
+          def visibility_clause(relation)
+            return relation if @current_user.has_role?(:admin)
+
+            relation.where(
+              'visibility = ? OR (visibility = ? AND team_id = ?)',
+              'public', 'team', (@current_user.teams&.first&.id || 0)
+            )
+          end
 
           def team_clause(relation)
             return relation if @source == 'web'

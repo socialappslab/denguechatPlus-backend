@@ -9,8 +9,6 @@ module Api
 
           def initialize(current_user, source, params)
             @model = @posts = Post.with_attached_photos.includes(:likes, user_account: :user_profile, comments: %i[user_account likes])
-            @filter = filter
-            @sort = sort
             @current_user = current_user
             @source = source
             @params = params || {}
@@ -22,27 +20,34 @@ module Api
 
           def call
             @model.yield_self(&method(:by_id))
+                  .yield_self(&method(:visibility_clause))
                   .yield_self(&method(:like_by_me))
           end
 
           private
 
-          attr_reader :posts, :filter, :sort
+          attr_reader :posts
 
           def by_id(relation)
             return relation if @params.nil? || @params[:id].nil?
 
-            relation.find(id: @params[:id])
+            relation.where(id: @params[:id])
           end
 
+          def visibility_clause(relation)
+            return relation if @current_user.has_role?(:admin)
 
+            relation.where(
+              'visibility = ? OR (visibility = ? AND team_id = ?)',
+              'public', 'team', (@current_user.teams&.first&.id || 0)
+            )
+          end
 
           def like_by_me(relation)
             return relation if @current_user.nil?
 
-            relation.likes.exists?(user_account_id: current_user_id, likeable: true)
+            relation.left_joins(:likes).select("posts.*, CASE WHEN likes.user_account_id = #{@current_user.id} THEN true ELSE false END AS like_by_me")
           end
-
         end
       end
     end

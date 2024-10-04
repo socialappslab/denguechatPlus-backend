@@ -7,7 +7,7 @@ module Api
         class Show < ApplicationSerializer
           set_type :post
 
-          attributes :id, :content, :created_at, :team_id, :country_id, :city_id, :neighborhood_id, :location, :comments_count
+          attributes :id, :visibility, :content, :created_at, :team_id, :country_id, :city_id, :neighborhood_id, :location, :comments_count
 
           attribute :likesCount do |post|
             post.likes.size  # use `size` instead of `count` after preloading `likes`
