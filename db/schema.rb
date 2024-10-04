@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_04_015238) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_04_021912) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -173,6 +173,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_04_015238) do
     t.integer "infected_containers"
     t.integer "non_infected_containers"
     t.integer "potential_containers"
+    t.string "location_status"
     t.index ["city_id"], name: "index_houses_on_city_id"
     t.index ["country_id"], name: "index_houses_on_country_id"
     t.index ["house_block_id"], name: "index_houses_on_house_block_id"

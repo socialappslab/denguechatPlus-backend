@@ -74,7 +74,7 @@ module Api
           end
 
           def add_team
-            return  Success({ ctx: @ctx, type: :success }) if @params[:team_id]&.present?
+            return Success({ ctx: @ctx, type: :success }) if @params[:team_id]&.present?
             return nil unless @current_user.teams.any?
 
             @params[:team_id] = @current_user.teams.first.id
@@ -173,6 +173,9 @@ module Api
             team =  @current_user.teams&.first
             user_profile = @current_user.user_profile
             reference_code = generate_code(country, state, city, wedge, house_block)
+            location_status = @house_info[:latitude] && @house_info[:longitude] ? 'with_coordinates' : 'without_coordinates'
+            @house_info[:latitude] = @house_info[:latitude] || -3.775520
+            @house_info[:longitude] = @house_info[:longitude] || -73.450878
 
             @house_info[:country_id] = country.id
             @house_info[:state_id] = state.id
@@ -183,9 +186,11 @@ module Api
             @house_info[:team_id] = team.id
             @house_info[:user_profile_id] = user_profile.id
             @house_info[:reference_code] = reference_code
+            @house_info[:location_status] = location_status
 
 
-            @house = House.create(@house_info).id
+            @house = House.create!(@house_info)
+            @house.id
           end
 
           def update_house_status

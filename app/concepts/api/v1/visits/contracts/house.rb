@@ -7,8 +7,8 @@ module Api
         class House < Dry::Validation::Contract
           params do
             required(:address).filled(:string)
-            required(:latitude).filled(:float)
-            required(:longitude).filled(:float)
+            optional(:latitude).filled(:float)
+            optional(:longitude).filled(:float)
             optional(:notes).filled(:string)
             optional(:reference_code).filled(:string)
             required(:house_block_id).filled(:integer)
