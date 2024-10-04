@@ -14,15 +14,19 @@ module Api
           end
 
           attribute :liked_by_me do |comment|
-            next unless comment.instance_variable_get(:@current_user_id)
+            next unless comment.respond_to?(:current_user_id) || comment.instance_variable_get(:@current_user_id)
 
-            comment.likes.exists?(user_account_id: comment.instance_variable_get(:@current_user_id))
+            current_user_id = comment.respond_to?(:current_user_id) ? comment.current_user_id : comment.instance_variable_get(:@current_user_id)
+
+            comment.likes.exists?(user_account_id: current_user_id)
           end
 
           attribute :canDeleteByUser do |comment|
-            next unless comment.instance_variable_get(:@current_user_id)
+            next unless comment.respond_to?(:current_user_id) || comment.instance_variable_get(:@current_user_id)
 
-            comment.user_account_id == comment.instance_variable_get(:@current_user_id)
+            current_user_id = comment.respond_to?(:current_user_id) ? comment.current_user_id : comment.instance_variable_get(:@current_user_id)
+
+            comment.user_account_id == current_user_id
           end
 
           attribute :created_by do |comment|

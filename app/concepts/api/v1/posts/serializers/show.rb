@@ -46,6 +46,7 @@ module Api
 
           attribute :comments do |post|
             post.comments.map do |comment|
+              comment.instance_variable_set(:@current_user_id, post.current_user_id)
               Api::V1::Comments::Serializers::Show.new(comment).serializable_hash
             end
           end
