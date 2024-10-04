@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_04_021912) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_04_032023) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -204,6 +204,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_04_021912) do
     t.bigint "container_protection_id"
     t.string "other_protection"
     t.string "was_chemically_treated"
+    t.string "other_elimination_method"
     t.index ["breeding_site_type_id"], name: "index_inspections_on_breeding_site_type_id"
     t.index ["container_protection_id"], name: "index_inspections_on_container_protection_id"
     t.index ["created_by_id"], name: "index_inspections_on_created_by_id"
