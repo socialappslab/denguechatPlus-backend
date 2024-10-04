@@ -68,6 +68,8 @@ module Api
 
           attribute :liked_by_user, &:like_by_me
 
+          attribute :canDeleteByUser, &:can_delete_by_me
+
         end
       end
     end

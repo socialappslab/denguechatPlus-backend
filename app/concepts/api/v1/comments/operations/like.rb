@@ -33,8 +33,8 @@ module Api
             else
               @ctx[:data].likes.create(user_account: @current_user)
             end
-
-            Success({ ctx: @ctx, type: :success })
+            @ctx[:data].instance_variable_set(:@current_user_id, @current_user.id)
+            Success({ ctx: @ctx, type: :success, otjer: 'aksd' })
           end
         end
       end

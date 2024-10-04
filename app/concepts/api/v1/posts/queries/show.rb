@@ -22,6 +22,8 @@ module Api
             @model.yield_self(&method(:by_id))
                   .yield_self(&method(:visibility_clause))
                   .yield_self(&method(:like_by_me))
+                  .yield_self(&method(:can_delete_by_me))
+                  .yield_self(&method(:current_user_id))
           end
 
           private
@@ -48,6 +50,24 @@ module Api
 
             relation.left_joins(:likes).select("posts.*, CASE WHEN likes.user_account_id = #{@current_user.id} THEN true ELSE false END AS like_by_me")
           end
+
+          def can_delete_by_me(relation)
+            return relation if @current_user.nil?
+
+            relation.select("posts.*,
+                CASE
+                  WHEN posts.user_account_id = #{@current_user.id} THEN true
+                  WHEN #{@current_user.has_role?(:admin)} THEN true
+                  ELSE false
+                END AS can_delete_by_me")
+          end
+
+          def current_user_id(relation)
+            return nil if @current_user.nil?
+
+            relation.select("posts.*, #{@current_user.id} AS current_user_id")
+          end
+
         end
       end
     end
