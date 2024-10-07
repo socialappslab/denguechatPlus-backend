@@ -15,7 +15,9 @@ module Api
           def call(google_api_results)
             return AddressStruct.new(address: nil) if google_api_results.flatten.blank?
 
-            AddressStruct.new(address: google_api_results.first.address)
+            res_address = google_api_results.find { |result| result.data['address_components'].any? { |component| component['types'].include?('route') } }
+            res_address = google_api_results.first.address if res_address.nil?
+            AddressStruct.new(address: res_address.address.split(',').first) if res_address.present?
           end
         end
       end
