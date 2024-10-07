@@ -13,7 +13,6 @@ module Api
             post.likes.size  # use `size` instead of `count` after preloading `likes`
           end
 
-
           attribute :like_by_me do |post|
             post.likes.any? { |like| like.user_account_id == post.user_account_id }  # use `any?` instead of `exists?` after preloading `likes`
           end
@@ -28,10 +27,13 @@ module Api
             }
           end
 
-          attribute :photos do |post|
-            post.photos.map do |photo|
-              { photo_url: Rails.application.routes.url_helpers.url_for(photo) }
-            end
+          attribute :photoUrl do |post|
+            next unless post.photos.attached?
+
+            photo = post.photos.first
+            {
+              photo_url: Rails.application.routes.url_helpers.url_for(photo)
+            }
           end
 
           attribute :comments do |post|
