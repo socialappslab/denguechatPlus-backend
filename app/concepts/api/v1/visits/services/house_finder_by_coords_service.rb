@@ -9,9 +9,8 @@ module Api
           DISTANCE = 30
 
           def self.find_similar_house(latitude:, longitude:, house_block_id:)
-            raise ArgumentError, 'latitude cannot be nil' if latitude.nil?
-            raise ArgumentError, 'longitude cannot be nil' if longitude.nil?
             raise ArgumentError, 'house_block_id cannot be nil' if house_block_id.nil?
+            return nil if latitude.nil? || longitude.nil?
 
             House.where(house_block_id:).find_each do |house|
               distance = get_distance(latitude, longitude, house.latitude, house.longitude)
