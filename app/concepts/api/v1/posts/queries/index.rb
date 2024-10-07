@@ -44,6 +44,8 @@ module Api
 
           def team_clause(relation)
             return relation if @source == 'web'
+            return relation if @current_user.has_role?(:admin) && @filter.blank?
+
             return relation.where(city_id: @current_user.city_id) if @filter.nil? || @filter[:team_id].blank?
 
             relation.where(team_id: @filter[:team_id])

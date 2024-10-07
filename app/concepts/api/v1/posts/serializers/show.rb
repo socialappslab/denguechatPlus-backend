@@ -13,7 +13,6 @@ module Api
             post.likes.size
           end
 
-
           attribute :like_by_me do |post|
             next unless post.respond_to?(:current_user_id) || post.instance_variable_get(:@current_user_id)
 
@@ -38,10 +37,13 @@ module Api
             }
           end
 
-          attribute :photos do |post|
-            post.photos.map do |photo|
-              { photo_url: Rails.application.routes.url_helpers.url_for(photo) }
-            end
+          attribute :photoUrl do |post|
+            next unless post.photos.attached?
+
+            photo = post.photos.first
+            {
+              photo_url: Rails.application.routes.url_helpers.url_for(photo)
+            }
           end
 
           attribute :comments do |post|
