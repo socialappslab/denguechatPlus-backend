@@ -10,7 +10,7 @@ module Api
 
 
           attributes :house_quantity, :visit_quantity, :green_quantity, :orange_quantity,
-                     :red_quantity, :visit_percent, :site_percent
+                     :red_quantity, :visit_percent
         end
       end
     end

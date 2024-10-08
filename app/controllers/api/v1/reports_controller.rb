@@ -6,7 +6,8 @@ module Api
 
       def house_status
         endpoint operation: Api::V1::Reports::Operations::HouseStatus,
-                 renderer_options: { serializer: Api::V1::Reports::Serializers::HouseStatus }
+                 renderer_options: { serializer: Api::V1::Reports::Serializers::HouseStatus },
+                 options: { current_user: }
       end
 
     end
