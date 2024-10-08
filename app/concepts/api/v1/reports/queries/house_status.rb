@@ -10,9 +10,10 @@ module Api
           StatusResults = Struct.new(:house_quantity, :visit_quantity, :green_quantity, :orange_quantity,
                                      :red_quantity, :visit_percent, :site_percent)
 
-          def initialize(filter)
+          def initialize(filter, current_user)
             @model = ::HouseStatus
             @filter = filter
+            @current_user = current_user
           end
 
           def self.call(...)
@@ -29,8 +30,14 @@ module Api
             orange_quantity = house_statuses.where("infected_containers > 0 AND infected_containers <= 5").count
             red_quantity = house_statuses.where("infected_containers > 5").count
 
+            visit_percent = house_quantity.zero? ? 0 : visit_quantity.to_f / house_quantity * 100
+            site_percent = house_quantity.zero? ? 0 : (green_quantity + orange_quantity + red_quantity).to_f / house_quantity * 100
+
             visit_percent = visit_quantity.to_f / house_quantity * 100
             site_percent = (green_quantity + orange_quantity + red_quantity).to_f / house_quantity * 100
+
+            visit_percent = visit_percent.nan? ? 0 : visit_quantity
+            site_percent = site_percent.nan? ? 0 : site_percent
 
             StatusResults.new(
               house_quantity,
@@ -46,9 +53,10 @@ module Api
           private
 
           def apply_filters
-            statuses = @model.all
-
-            statuses
+            @filter ||= {}
+            team_id = @filter[:team_id]
+            team_id = team_id.nil? ? @current_user&.teams&.first&.id : team_id
+            @model.where(team_id:) || @model.all
           end
         end
       end
