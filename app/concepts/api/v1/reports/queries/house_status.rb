@@ -26,9 +26,9 @@ module Api
             house_quantity = house_statuses.count
             visit_quantity = house_statuses.where.not(date: nil).count
 
-            green_quantity = house_statuses.where(infected_containers: 0).count
-            orange_quantity = house_statuses.where("infected_containers > 0 AND infected_containers <= 5").count
-            red_quantity = house_statuses.where("infected_containers > 5").count
+            green_quantity = house_statuses.where(infected_containers: [0, nil]).count
+            orange_quantity = house_statuses.where("potential_containers > 0").sum(:potential_containers)
+            red_quantity = house_statuses.where("infected_containers > 0").sum(:infected_containers)
 
             visit_percent = house_quantity.zero? ? 0 : visit_quantity.to_f / house_quantity * 100
             site_percent = house_quantity.zero? ? 0 : (green_quantity + orange_quantity + red_quantity).to_f / house_quantity * 100
