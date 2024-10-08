@@ -45,8 +45,14 @@ module Api
 
           rule(:photos) do
             if values[:photos]
+              unless values[:photos].all?{ |photo| photo.is_a?(ActionDispatch::Http::UploadedFile) }
+                key(:photos).failure(text: 'must be an image', predicate: :format?)
+                next
+              end
+
               unless values[:photos].all? { |photo| photo.content_type.start_with?('image/') }
-                key(:photos).failure(text: 'must be an image')
+                key(:photos).failure(text: 'must be an image', predicate: :format?)
+                next
               end
 
               if values[:photos].size > 5

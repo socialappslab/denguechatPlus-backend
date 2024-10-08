@@ -50,9 +50,9 @@ unless SeedTask.find_by(task_name: 'create_breeding_site_types_v3')
 
   SeedTask.create(task_name: 'add_new_container_types')
 
-  BreedingSiteType.create!(name: 'Tanques (cemento, polietileno, metal, otro material)', container_type: 'permanent')
+  BreedingSiteType.create!(name: 'Tanques', container_type: 'permanent')
 
-  BreedingSiteType.create!(name: 'Bidones y Cilindros', container_type: 'permanent')
+  BreedingSiteType.create!(name: 'Bidones o Cilindros', container_type: 'permanent')
 
   BreedingSiteType.create!(name: 'Pozos', container_type: 'permanent')
 
@@ -62,13 +62,13 @@ unless SeedTask.find_by(task_name: 'create_breeding_site_types_v3')
 
   BreedingSiteType.create!(name: 'Llantas', container_type: 'non-permanent')
 
-  BreedingSiteType.create!(name: 'Plantas frutas y verduras', container_type: 'non-permanent')
+  BreedingSiteType.create!(name: 'Plantas, frutas y verduras', container_type: 'non-permanent')
 
   BreedingSiteType.create!(name: 'Criaderos, bebederos y acuarios', container_type: 'non-permanent')
 
   BreedingSiteType.create!(name: 'Maceteros y floreros', container_type: 'non-permanent')
 
-  BreedingSiteType.create!(name: 'Otras', container_type: 'non-permanent')
+  BreedingSiteType.create!(name: 'Otros', container_type: 'non-permanent')
 
   SeedTask.create!(task_name: 'create_breeding_site_types_v3')
 end
