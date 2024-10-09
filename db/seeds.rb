@@ -276,7 +276,7 @@ unless SeedTask.find_by(task_name: 'create_questions_v6')
     name: 'Cuestionario de Zancudos',
     current_form: true,
     initial_question: 1,
-    final_question: 20
+    final_question: 19
   )
 
   QUESTIONS_DATA.each do |question_data|

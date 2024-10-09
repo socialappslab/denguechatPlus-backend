@@ -368,7 +368,7 @@ QUESTIONS_DATA = [
     next: 17,
     options: [
       { name_es: 'Si', name_en: 'Yes', name_pt: 'Sim', next: 17, type_option: 'inputNumber' },
-      { name_es: 'No', name_en: 'No', name_pt: 'No', next: 17 }
+      { name_es: 'No', name_en: 'No', name_pt: 'No', next: 17, type_option: 'boolean', value: 0 }
     ]
   },
   {
@@ -381,8 +381,8 @@ QUESTIONS_DATA = [
     resource_type: 'attribute',
     next: 18,
     options: [
-      { name_es: 'Si, si puedo', name_en: 'Yes, I can', name_pt: 'Sim', next: 18, value: 0 },
-      { name_es: 'No, no no puedo', name_en: 'No, I cant', name_pt: 'No', next: 18, value: 1 }
+      { name_es: 'Si, si puedo', name_en: 'Yes, I can', name_pt: 'Sim', next: 18, type_option: 'boolean', value: 0 },
+      { name_es: 'No, no no puedo', name_en: 'No, I cant', name_pt: 'No', next: 18, type_option: 'boolean', value: 1 }
     ]
   },
   {
@@ -428,17 +428,4 @@ QUESTIONS_DATA = [
         resource_id: EliminationMethodType.find_by(name_es: 'Otro'), type_option: 'textArea' },
     ]
   },
-  {
-    id: 20,
-    question_text_es: '¿Registrar otro contenedor?',
-    question_text_en: '¿Register another container?',
-    question_text_pt: '¿Registrar outro contêiner?',
-    type_field: 'list',
-    resource_name: '',
-    resource_type: 'attribute',
-    options: [
-      { name_es: 'Sí, registrar', name_en: 'Yes, register', name_pt: 'Sim, registrar', next: 10 },
-      { name_es: 'No, no es necesario', name_pt: 'Não, não é necessário', name_en: "No, it's not necessary", next: -1 }
-    ]
-  }
 ].freeze
