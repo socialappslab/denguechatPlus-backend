@@ -428,17 +428,4 @@ QUESTIONS_DATA = [
         resource_id: EliminationMethodType.find_by(name_es: 'Otro'), type_option: 'textArea' },
     ]
   },
-  {
-    id: 20,
-    question_text_es: '¿Registrar otro contenedor?',
-    question_text_en: '¿Register another container?',
-    question_text_pt: '¿Registrar outro contêiner?',
-    type_field: 'list',
-    resource_name: '',
-    resource_type: 'attribute',
-    options: [
-      { name_es: 'Sí, registrar', name_en: 'Yes, register', name_pt: 'Sim, registrar', next: 10 },
-      { name_es: 'No, no es necesario', name_pt: 'Não, não é necessário', name_en: "No, it's not necessary", next: -1 }
-    ]
-  }
 ].freeze
