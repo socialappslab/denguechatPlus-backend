@@ -14,7 +14,7 @@ module Api
           params do
             required(:user_account_id).filled(:integer)
             required(:post_id).filled(:integer)
-            required(:content).filled(:string, min_size?: 5, max_size?: 500)
+            required(:content).filled(:string, min_size?: 1, max_size?: 280)
             optional(:photo)
           end
 
