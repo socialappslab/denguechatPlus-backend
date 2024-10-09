@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_20_183327) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_09_183008) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -125,6 +125,29 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_20_183327) do
     t.index ["wedge_id"], name: "index_house_blocks_on_wedge_id"
   end
 
+  create_table "house_statuses", force: :cascade do |t|
+    t.bigint "house_id"
+    t.bigint "house_block_id"
+    t.bigint "wedge_id"
+    t.bigint "neighborhood_id"
+    t.bigint "city_id"
+    t.bigint "country_id"
+    t.bigint "team_id"
+    t.integer "infected_containers", default: 0
+    t.integer "non_infected_containers", default: 0
+    t.integer "potential_containers", default: 0
+    t.date "date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["city_id"], name: "index_house_statuses_on_city_id"
+    t.index ["country_id"], name: "index_house_statuses_on_country_id"
+    t.index ["house_block_id"], name: "index_house_statuses_on_house_block_id"
+    t.index ["house_id"], name: "index_house_statuses_on_house_id"
+    t.index ["neighborhood_id"], name: "index_house_statuses_on_neighborhood_id"
+    t.index ["team_id"], name: "index_house_statuses_on_team_id"
+    t.index ["wedge_id"], name: "index_house_statuses_on_wedge_id"
+  end
+
   create_table "houses", force: :cascade do |t|
     t.bigint "country_id", null: false
     t.bigint "state_id", null: false
@@ -146,6 +169,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_20_183327) do
     t.integer "container_count"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "last_visit"
+    t.integer "infected_containers"
+    t.integer "non_infected_containers"
+    t.integer "potential_containers"
+    t.string "location_status"
     t.index ["city_id"], name: "index_houses_on_city_id"
     t.index ["country_id"], name: "index_houses_on_country_id"
     t.index ["house_block_id"], name: "index_houses_on_house_block_id"
@@ -176,6 +204,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_20_183327) do
     t.bigint "container_protection_id"
     t.string "other_protection"
     t.string "was_chemically_treated"
+    t.string "other_elimination_method"
     t.index ["breeding_site_type_id"], name: "index_inspections_on_breeding_site_type_id"
     t.index ["container_protection_id"], name: "index_inspections_on_container_protection_id"
     t.index ["created_by_id"], name: "index_inspections_on_created_by_id"
@@ -235,6 +264,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_20_183327) do
     t.string "group_pt"
     t.string "type_option"
     t.string "status_color"
+    t.string "value"
+    t.boolean "disable_other_options", default: false
     t.index ["question_id"], name: "index_options_on_question_id"
   end
 
@@ -272,6 +303,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_20_183327) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "discarded_at"
+    t.string "location"
+    t.integer "comments_count", default: 0
+    t.string "visibility", default: "public"
     t.index ["city_id"], name: "index_posts_on_city_id"
     t.index ["country_id"], name: "index_posts_on_country_id"
     t.index ["discarded_at"], name: "index_posts_on_discarded_at"
@@ -405,6 +439,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_20_183327) do
     t.index ["user_account_id"], name: "index_user_accounts_roles_on_user_account_id"
   end
 
+  create_table "user_profile_house_blocks", force: :cascade do |t|
+    t.bigint "user_profile_id", null: false
+    t.bigint "house_block_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["house_block_id"], name: "index_user_profile_house_blocks_on_house_block_id"
+    t.index ["user_profile_id"], name: "index_user_profile_house_blocks_on_user_profile_id"
+  end
+
   create_table "user_profiles", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
@@ -489,6 +532,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_20_183327) do
   add_foreign_key "house_blocks", "teams"
   add_foreign_key "house_blocks", "user_profiles"
   add_foreign_key "house_blocks", "wedges"
+  add_foreign_key "house_statuses", "cities"
+  add_foreign_key "house_statuses", "countries"
+  add_foreign_key "house_statuses", "house_blocks"
+  add_foreign_key "house_statuses", "houses"
+  add_foreign_key "house_statuses", "neighborhoods"
+  add_foreign_key "house_statuses", "teams"
+  add_foreign_key "house_statuses", "wedges"
   add_foreign_key "houses", "cities"
   add_foreign_key "houses", "countries"
   add_foreign_key "houses", "house_blocks"
@@ -525,6 +575,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_20_183327) do
   add_foreign_key "teams", "user_profiles", column: "leader_id"
   add_foreign_key "teams", "wedges"
   add_foreign_key "user_accounts", "user_profiles"
+  add_foreign_key "user_profile_house_blocks", "house_blocks"
+  add_foreign_key "user_profile_house_blocks", "user_profiles"
   add_foreign_key "user_profiles", "cities"
   add_foreign_key "user_profiles", "neighborhoods"
   add_foreign_key "user_profiles", "organizations"
