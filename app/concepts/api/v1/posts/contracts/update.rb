@@ -14,7 +14,7 @@ module Api
           params do
             required(:id).filled(:integer)
             optional(:user_account_id).filled(:integer)
-            optional(:content).filled(:string, min_size?: 5, max_size?: 500)
+            optional(:content).filled(:string, min_size?: 1, max_size?: 280)
             optional(:photos).filled(:array)
             optional(:delete_photo).maybe(:bool)
           end
