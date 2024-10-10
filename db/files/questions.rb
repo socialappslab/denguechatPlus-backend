@@ -404,28 +404,28 @@ QUESTIONS_DATA = [
     type_field: 'list',
     resource_name: 'elimination_method_type_id',
     resource_type: 'relation',
-    next: 19,
+    next: -1,
     options: [
       { name_es: 'El contenedor fue protegido', name_en: 'The container was protected',
-        name_pt: 'O recipiente foi protegido', next: 19, resource_id: EliminationMethodType.find_by(name_es: 'El contenedor fue protegido').id },
+        name_pt: 'O recipiente foi protegido', resource_id: EliminationMethodType.find_by(name_es: 'El contenedor fue protegido').id },
 
       { name_es: 'El contenedor fue descartado', name_en: 'The container was discarded',
-        name_pt: 'O recipiente foi descartado', next: 19, resource_id: EliminationMethodType.find_by(name_es: 'El contenedor fue descartado').id },
+        name_pt: 'O recipiente foi descartado', resource_id: EliminationMethodType.find_by(name_es: 'El contenedor fue descartado').id },
 
       { name_es: 'El agua del contenedor fue tirada', name_en: 'The water from the container was discarded',
-        name_pt: 'A água do recipiente foi descartada', next: 19, resource_id: EliminationMethodType.find_by(name_es: 'El agua del contenedor fue tirado').id },
+        name_pt: 'A água do recipiente foi descartada', resource_id: EliminationMethodType.find_by(name_es: 'El agua del contenedor fue tirado').id },
 
       { name_es: 'El contenedor fue trasladado a un lugar seguro',
-        name_en: 'The container was moved to a safe location', name_pt: 'O recipiente foi transferido para um local seguro', next: 19, resource_id: EliminationMethodType.find_by(name_es: 'El contenedor fue trasladado a un lugar seguro').id },
+        name_en: 'The container was moved to a safe location', name_pt: 'O recipiente foi transferido para um local seguro', resource_id: EliminationMethodType.find_by(name_es: 'El contenedor fue trasladado a un lugar seguro').id },
 
       { name_es: 'El contenedor fue limpiado', name_en: 'The container was cleaned', name_pt: 'O recipiente foi limpo',
-        next: 19, resource_id: EliminationMethodType.find_by(name_es: 'El contenedor fue limpiado').id },
+        resource_id: EliminationMethodType.find_by(name_es: 'El contenedor fue limpiado') },
 
-      { name_es: 'Ninguna acción', name_en: 'No action', name_pt: 'Nenhuma ação', next: 19,
-        resource_id: EliminationMethodType.find_by(name_es: 'Ninguna acción').id },
+      { name_es: 'Ninguna acción', name_en: 'No action', name_pt: 'Nenhuma ação',
+        resource_id: EliminationMethodType.find_by(name_es: 'Ninguna acción') },
 
-      { name_es: 'Otro', name_en: 'Other', name_pt: 'Outro', next: 19,
-        resource_id: EliminationMethodType.find_by(name_es: 'Otro').id, type_option: 'textArea' },
+      { name_es: 'Otro', name_en: 'Other', name_pt: 'Outro', 
+        resource_id: EliminationMethodType.find_by(name_es: 'Otro'), type_option: 'textArea' },
     ]
   },
 ].freeze
