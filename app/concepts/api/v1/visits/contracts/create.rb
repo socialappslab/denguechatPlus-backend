@@ -19,7 +19,7 @@ module Api
             required(:questionnaire_id).filled(:integer)
             optional(:team_id).filled(:integer)
             optional(:user_account_id).filled(:integer)
-            optional(:notes).filled(:string)
+            optional(:notes)
 
             optional(:inspections).array(Api::V1::Visits::Contracts::Inspection.schema)
 
