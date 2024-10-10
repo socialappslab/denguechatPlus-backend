@@ -92,12 +92,12 @@ QUESTIONS_DATA = [
     resource_name: '',
     resource_type: 'attribute',
     options: [
-      { name_es: 'Sí, tengo permiso para esta visita', name_en: 'Yes, I have permission for this visit', name_pt: 'Sim, tenho permissão para esta visita', required: false, next: 2 },
-      { name_es: 'No, no me dieron permiso para esta visita', name_en: 'No, I was not given permission for this visit', name_pt: 'Não, não me deram permissão para esta visita', required: false, next: -1 },
-      { name_es: 'La casa está cerrada', name_en: 'The house is closed', name_pt: 'A casa está fechada', required: false, next: -1 },
-      { name_es: 'La casa está deshabitada', name_en: 'The house is uninhabited', name_pt: 'A casa está desabitada', required: false, next: -1 },
-      { name_es: 'Me pidieron regresar en otra ocasión', name_en: 'I was asked to return another time', name_pt: 'Pediram-me para voltar em outra ocasião', required: false, next: -1 },
-      { name_es: 'Otra explicación', name_en: 'Another explanation', name_pt: 'Outra explicação', required: false, next: -1 }
+      { name_es: 'Sí, tengo permiso para esta visita', name_en: 'Yes, I have permission for this visit', name_pt: 'Sim, tenho permissão para esta visita', required: false, next: 2, type_option: 'boolean', value: 1 },
+      { name_es: 'No, no me dieron permiso para esta visita', name_en: 'No, I was not given permission for this visit', name_pt: 'Não, não me deram permissão para esta visita', required: false, next: -1, type_option: 'boolean', value: 0 },
+      { name_es: 'La casa está cerrada', name_en: 'The house is closed', name_pt: 'A casa está fechada', required: false, next: -1, type_option: 'boolean', value: 0 },
+      { name_es: 'La casa está deshabitada', name_en: 'The house is uninhabited', name_pt: 'A casa está desabitada', required: false, next: -1, type_option: 'boolean', value: 0 },
+      { name_es: 'Me pidieron regresar en otra ocasión', name_en: 'I was asked to return another time', name_pt: 'Pediram-me para voltar em outra ocasião', required: false, next: -1, type_option: 'boolean', value: 0 },
+      { name_es: 'Otra explicación', name_en: 'Another explanation', name_pt: 'Outra explicação', type_option: 'textArea', required: false, next: -1 }
     ]
   },
   {
@@ -269,7 +269,7 @@ QUESTIONS_DATA = [
       { name_es: 'Sí, contiene agua', name_en: 'Yes, it holds water', name_pt: 'Sim, contém água', next: 12,
         type_option: 'boolean', value: 1},
       { name_es: 'No, no contiene agua', name_en: 'No, it does not hold water', name_pt: 'Não, não contém água',
-        next: 20, type_option: 'boolean', value: 0 }
+        next: 19, type_option: 'boolean', value: 0 }
     ]
   },
   {
@@ -404,28 +404,28 @@ QUESTIONS_DATA = [
     type_field: 'list',
     resource_name: 'elimination_method_type_id',
     resource_type: 'relation',
-    next: 20,
+    next: 19,
     options: [
       { name_es: 'El contenedor fue protegido', name_en: 'The container was protected',
-        name_pt: 'O recipiente foi protegido', next: 20, resource_id: EliminationMethodType.find_by(name_es: 'El contenedor fue protegido').id },
+        name_pt: 'O recipiente foi protegido', next: 19, resource_id: EliminationMethodType.find_by(name_es: 'El contenedor fue protegido').id },
 
       { name_es: 'El contenedor fue descartado', name_en: 'The container was discarded',
-        name_pt: 'O recipiente foi descartado', next: 20, resource_id: EliminationMethodType.find_by(name_es: 'El contenedor fue descartado').id },
+        name_pt: 'O recipiente foi descartado', next: 19, resource_id: EliminationMethodType.find_by(name_es: 'El contenedor fue descartado').id },
 
       { name_es: 'El agua del contenedor fue tirada', name_en: 'The water from the container was discarded',
-        name_pt: 'A água do recipiente foi descartada', next: 20, resource_id: EliminationMethodType.find_by(name_es: 'El agua del contenedor fue tirado').id },
+        name_pt: 'A água do recipiente foi descartada', next: 19, resource_id: EliminationMethodType.find_by(name_es: 'El agua del contenedor fue tirado').id },
 
       { name_es: 'El contenedor fue trasladado a un lugar seguro',
-        name_en: 'The container was moved to a safe location', name_pt: 'O recipiente foi transferido para um local seguro', next: 20, resource_id: EliminationMethodType.find_by(name_es: 'El contenedor fue trasladado a un lugar seguro').id },
+        name_en: 'The container was moved to a safe location', name_pt: 'O recipiente foi transferido para um local seguro', next: 19, resource_id: EliminationMethodType.find_by(name_es: 'El contenedor fue trasladado a un lugar seguro').id },
 
       { name_es: 'El contenedor fue limpiado', name_en: 'The container was cleaned', name_pt: 'O recipiente foi limpo',
-        next: 20, resource_id: EliminationMethodType.find_by(name_es: 'El contenedor fue limpiado') },
+        next: 19, resource_id: EliminationMethodType.find_by(name_es: 'El contenedor fue limpiado').id },
 
-      { name_es: 'Ninguna acción', name_en: 'No action', name_pt: 'Nenhuma ação', next: 20,
-        resource_id: EliminationMethodType.find_by(name_es: 'Ninguna acción') },
+      { name_es: 'Ninguna acción', name_en: 'No action', name_pt: 'Nenhuma ação', next: 19,
+        resource_id: EliminationMethodType.find_by(name_es: 'Ninguna acción').id },
 
-      { name_es: 'Otro', name_en: 'Other', name_pt: 'Outro', next: 20,
-        resource_id: EliminationMethodType.find_by(name_es: 'Otro'), type_option: 'textArea' },
+      { name_es: 'Otro', name_en: 'Other', name_pt: 'Outro', next: 19,
+        resource_id: EliminationMethodType.find_by(name_es: 'Otro').id, type_option: 'textArea' },
     ]
   },
 ].freeze
