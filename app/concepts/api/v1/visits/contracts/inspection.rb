@@ -18,7 +18,7 @@ module Api
             required(:container_protection_id).filled(:integer)
             optional(:other_protection).filled(:string)
             required(:type_content_id).filled(:array)
-            required(:quantity_founded).filled(:integer, gt?: 1, lt?: 100)
+            required(:quantity_founded).filled(:integer, gteq?: 1, lteq?: 100)
           end
 
           rule(:breeding_site_type_id) do
