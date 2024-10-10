@@ -381,8 +381,8 @@ QUESTIONS_DATA = [
     resource_type: 'attribute',
     next: 18,
     options: [
-      { name_es: 'Si, si puedo', name_en: 'Yes, I can', name_pt: 'Sim', next: 18, type_option: 'boolean', value: 0 },
-      { name_es: 'No, no no puedo', name_en: 'No, I cant', name_pt: 'No', next: 18, type_option: 'boolean', value: 1 }
+      { name_es: 'Si, si puedo', name_en: 'Yes, I can', name_pt: 'Sim', next: 18, type_option: 'boolean', value: 1 },
+      { name_es: 'No, no no puedo', name_en: 'No, I cant', name_pt: 'No', next: 18, type_option: 'boolean', value: 0 }
     ]
   },
   {
@@ -404,7 +404,7 @@ QUESTIONS_DATA = [
     type_field: 'list',
     resource_name: 'elimination_method_type_id',
     resource_type: 'relation',
-    next: 20,
+    next: 19,
     options: [
       { name_es: 'El contenedor fue protegido', name_en: 'The container was protected',
         name_pt: 'O recipiente foi protegido', next: 20, resource_id: EliminationMethodType.find_by(name_es: 'El contenedor fue protegido').id },
