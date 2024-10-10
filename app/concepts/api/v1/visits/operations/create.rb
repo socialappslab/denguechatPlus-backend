@@ -160,7 +160,8 @@ module Api
                                                                                                      longitude: @house_info[:longitude],
                                                                                                      house_block_id: @house_info[:house_block_id])
 
-            similar_house ? similar_house.id : create_and_get_house_id
+            @house = similar_house ? similar_house : create_and_get_house_id
+            @house.id
           end
 
           def create_and_get_house_id
@@ -190,7 +191,6 @@ module Api
 
 
             @house = House.create!(@house_info)
-            @house.id
           end
 
           def update_house_status
