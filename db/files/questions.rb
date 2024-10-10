@@ -381,8 +381,8 @@ QUESTIONS_DATA = [
     resource_type: 'attribute',
     next: 18,
     options: [
-      { name_es: 'Si, si puedo', name_en: 'Yes, I can', name_pt: 'Sim', next: 18, type_option: 'boolean', value: 0 },
-      { name_es: 'No, no no puedo', name_en: 'No, I cant', name_pt: 'No', next: 18, type_option: 'boolean', value: 1 }
+      { name_es: 'Si, si puedo', name_en: 'Yes, I can', name_pt: 'Sim', next: 18, type_option: 'boolean', value: 1 },
+      { name_es: 'No, no no puedo', name_en: 'No, I cant', name_pt: 'No', next: 18, type_option: 'boolean', value: 0 }
     ]
   },
   {
