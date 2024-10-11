@@ -5,6 +5,7 @@
 #  id                      :bigint           not null, primary key
 #  date                    :date
 #  infected_containers     :integer          default(0)
+#  last_visit              :datetime
 #  non_infected_containers :integer          default(0)
 #  potential_containers    :integer          default(0)
 #  created_at              :datetime         not null
