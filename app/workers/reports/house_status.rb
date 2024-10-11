@@ -6,8 +6,7 @@ module Reports
 
     def perform
       statuses_to_insert = []
-      houses_visited_today = House.where(id: Visit.where(visited_at: Date.today).pluck(:house_id))
-      houses_visited_today.find_each do |house|
+      House.all.find_each do |house|
         statuses_to_insert << {
           date: Time.zone.today,
           infected_containers: house.infected_containers,
@@ -20,6 +19,7 @@ module Reports
           neighborhood_id: house.neighborhood_id,
           team_id: house.team_id,
           wedge_id: house.wedge_id,
+          last_visit: house.last_visit
         }
 
         if statuses_to_insert.size >= 1000

@@ -10,10 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_10_163228) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_11_071718) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "unaccent"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -139,6 +138,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_10_163228) do
     t.date "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "last_visit"
     t.index ["city_id"], name: "index_house_statuses_on_city_id"
     t.index ["country_id"], name: "index_house_statuses_on_country_id"
     t.index ["house_block_id"], name: "index_house_statuses_on_house_block_id"

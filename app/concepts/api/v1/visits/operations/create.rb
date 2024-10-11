@@ -196,6 +196,7 @@ module Api
           def update_house_status
             inspections_ids = @ctx[:model].inspections.pluck(:id)
             res = Inspection.inspection_summary_for(inspections_ids)
+            res[:last_visit] = @params[:visited_at] || Time.now.utc
             @house.update!(res)
           end
 

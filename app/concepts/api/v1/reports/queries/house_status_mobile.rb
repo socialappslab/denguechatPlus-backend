@@ -4,7 +4,7 @@ module Api
   module V1
     module Reports
       module Queries
-        class HouseStatus
+        class HouseStatusMobile
           include Api::V1::Lib::Queries::QueryHelper
 
           StatusResults = Struct.new(:house_quantity, :visit_quantity, :green_quantity, :orange_quantity,
@@ -46,13 +46,13 @@ module Api
 
           def house_statuses_with_aggregates
             sql = <<~SQL
-                            WITH current_week AS (
+                                          WITH current_week AS (
                   SELECT
                       DISTINCT COUNT(house_statuses.house_id) AS house_quantity,
                       COUNT(
                           CASE
-                              WHEN (infected_containers = 0 OR infected_containers IS NULL)
-                                  AND (potential_containers = 0 OR potential_containers IS NULL)
+                              WHEN (COALESCE(infected_containers, 0) = 0)
+                                  AND (COALESCE(potential_containers, 0) = 0)
                               THEN 1
                           END
                       ) AS green_quantity_current,
@@ -77,7 +77,7 @@ module Api
                       (SELECT COUNT(*)
                        FROM visits
                        WHERE visits.team_id = ?
-                         AND visits.visited_at >= CURRENT_DATE - INTERVAL '7 days') AS visit_quantity_current,
+                         AND visits.visited_at >= date_trunc('week', CURRENT_DATE)) AS visit_quantity_current,
                       (SELECT COUNT(
                           CASE
                               WHEN (infected_containers = 0 OR infected_containers IS NULL)
@@ -87,41 +87,40 @@ module Api
                       )
                       FROM house_statuses
                       WHERE house_statuses.team_id = ?
-                        AND house_statuses.date >= CURRENT_DATE - INTERVAL '7 days') AS green_quantity_cw
+                        AND house_statuses.date >= date_trunc('week', CURRENT_DATE)) AS green_quantity_cw
                   FROM
                       house_statuses
                   WHERE
                       house_statuses.team_id = ?
-                    AND house_statuses.created_at >= CURRENT_DATE - INTERVAL '7 days'
               ),
               previous_week AS (
                   SELECT
                       DISTINCT COUNT(house_statuses.house_id) AS house_quantity_previous,
                       COUNT(
                           CASE
-                              WHEN (infected_containers = 0 OR infected_containers IS NULL)
-                                  AND (potential_containers = 0 OR potential_containers IS NULL)
+                              WHEN (COALESCE(infected_containers, 0) = 0)
+                                  AND (COALESCE(potential_containers, 0) = 0)
                               THEN 1
                           END
                       ) AS green_quantity_previous,
                       (SELECT COUNT(*)
                        FROM visits
                        WHERE visits.team_id = ?
-                         AND visits.visited_at >= CURRENT_DATE - INTERVAL '14 days'
-                         AND visits.visited_at < CURRENT_DATE - INTERVAL '7 days') AS visit_quantity_previous
+                         AND visits.visited_at >= date_trunc('week', CURRENT_DATE) - INTERVAL '7 days'
+                         AND visits.visited_at < date_trunc('week', CURRENT_DATE)) AS visit_quantity_previous
                   FROM
                       house_statuses
                   WHERE
                       house_statuses.team_id = ?
-                    AND house_statuses.created_at >= CURRENT_DATE - INTERVAL '14 days'
-                    AND house_statuses.created_at < CURRENT_DATE - INTERVAL '7 days'
+                    AND house_statuses.date >= date_trunc('week', CURRENT_DATE) - INTERVAL '7 days'
+                    AND house_statuses.date < date_trunc('week', CURRENT_DATE)
               )
               SELECT
                   cw.visit_quantity_total AS visit_quantity,
                   CASE
                       WHEN pw.visit_quantity_previous = 0 THEN NULL
                       ELSE ROUND(
-                          (cw.visit_quantity_current - pw.visit_quantity_previous) * 100.0 / pw.visit_quantity_previous, 2
+                          (cw.visit_quantity_current - pw.visit_quantity_previous) * 100.0 / pw.visit_quantity_previous, 0
                       )
                   END AS visit_variation_percentage,
                   cw.house_quantity AS house_quantity,
@@ -133,7 +132,7 @@ module Api
                           AND (cw.green_quantity_cw IS NOT NULL AND cw.green_quantity_cw = 0)
                       THEN 0
                       ELSE ROUND(
-                          (cw.green_quantity_cw - pw.green_quantity_previous) * 100.0 / pw.green_quantity_previous, 2
+                          (cw.green_quantity_cw - pw.green_quantity_previous) * 100.0 / pw.green_quantity_previous, 0
                       )
                   END AS site_variation_percentage,
                   cw.green_quantity_current AS green_quantity,
