@@ -9,8 +9,18 @@ module Api
           transform_keys :lower_camel
 
 
-          attributes :house_quantity, :visit_quantity, :green_quantity, :orange_quantity,
-                     :red_quantity, :site_variation_percentage, :visit_variation_percentage
+          attributes :visit_quantity
+
+          attribute :visit_variation_percentage do |resource|
+            resource.visit_variation_percentage.to_i
+          end
+          attributes :house_quantity
+
+          attribute :site_variation_percentage do |resource|
+            resource.site_variation_percentage.to_i
+          end
+
+          attributes :green_quantity, :orange_quantity, :red_quantity
         end
       end
     end
