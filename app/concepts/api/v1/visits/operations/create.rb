@@ -142,8 +142,8 @@ module Api
             wedge_name = wedge.name.last(4).delete(' ')
             block_name = block.name.last(4).delete(' ')
             rand_number = Time.now.to_i.to_s
-
-            "#{country_name}-#{state_name}-#{city_name}-#{wedge_name}-#{block_name}-#{rand_number}"
+            last_id = House.last&.id  || 1
+            last_id + 1
           end
 
           def params_include_house?
