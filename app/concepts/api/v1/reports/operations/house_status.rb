@@ -14,6 +14,7 @@ module Api
           def params(input)
             @ctx = {}
             @params = to_snake_case(input[:params])
+            @source = input[:request].headers['source'] || 'brigade'
             @current_user = input[:current_user]
           end
 
@@ -27,7 +28,12 @@ module Api
 
 
           def gather_information
-            @ctx[:data] = Api::V1::Reports::Queries::HouseStatus.call(@ctx['contract.default']['filter'],@current_user)
+            @ctx[:data] = if @source == 'visits'
+                            Api::V1::Reports::Queries::HouseStatusWeb.call(@ctx['contract.default']['filter'], @current_user)
+            else
+              Api::V1::Reports::Queries::HouseStatusMobile.call(@ctx['contract.default']['filter'], @current_user)
+
+                          end
 
             Success({ ctx: @ctx, type: :success })
           end
