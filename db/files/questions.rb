@@ -367,7 +367,7 @@ QUESTIONS_DATA = [
     resource_type: 'attribute',
     next: 17,
     options: [
-      { name_es: 'Si', name_en: 'Yes', name_pt: 'Sim', next: 17, type_option: 'inputNumber' },
+      { name_es: 'Si', name_en: 'Yes', name_pt: 'Sim', next: 17, type_option: 'inputNumber', value: 1 },
       { name_es: 'No', name_en: 'No', name_pt: 'No', next: 17, type_option: 'boolean', value: 0 }
     ]
   },
