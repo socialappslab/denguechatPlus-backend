@@ -28,8 +28,8 @@ module Api
             green_quantity = result['green_quantity'] || 0
             orange_quantity = result['orange_quantity'] || 0
             red_quantity = result['red_quantity'] || 0
-            site_variation_percentage = result['green_quantity_change_percentage'] || 0
-            visit_variation_percentage = result['visit_quantity_change_percentage'] || 0
+            site_variation_percentage = result['site_variation_percentage'] || 0
+            visit_variation_percentage = result['visit_variation_percentage'] || 0
 
             StatusResults.new(
               house_quantity,
@@ -45,99 +45,109 @@ module Api
           private
 
           def house_statuses_with_aggregates
-            sql = <<-SQL
-              WITH current_week AS (
-                SELECT 
-                    COUNT(*) AS house_quantity,
-                    COUNT(
-                        CASE 
-                            WHEN (infected_containers = 0 OR infected_containers IS NULL) 
-                                 AND (potential_containers = 0 OR potential_containers IS NULL) 
-                            THEN 1 
-                        END
-                    ) AS green_quantity_current,
-                    SUM(
-                        CASE 
-                            WHEN potential_containers > 0 
-                                 AND (infected_containers = 0 OR infected_containers IS NULL) 
-                            THEN 1 
-                            ELSE 0 
-                        END
-                    ) AS orange_quantity,
-                    SUM(
-                        CASE 
-                            WHEN infected_containers > 0 
-                            THEN 1 
-                            ELSE 0 
-                        END
-                    ) AS red_quantity,
-                    (SELECT COUNT(*) 
-                     FROM "visits" 
-                     WHERE "visits"."team_id" = ?) AS visit_quantity_total,
-                    (SELECT COUNT(*) 
-                     FROM "visits" 
-                     WHERE "visits"."team_id" = ?
-                       AND "visits"."visited_at" >= CURRENT_DATE - INTERVAL '7 days') AS visit_quantity_current
-                FROM 
-                    "house_statuses"
-                WHERE 
-                    "house_statuses"."team_id" = ?
-                AND "house_statuses"."created_at" >= CURRENT_DATE - INTERVAL '7 days'
-            ),
-            previous_week AS (
-                SELECT 
-                    COUNT(*) AS house_quantity_previous,
-                    COUNT(
-                        CASE 
-                            WHEN (infected_containers = 0 OR infected_containers IS NULL) 
-                                 AND (potential_containers = 0 OR potential_containers IS NULL) 
-                            THEN 1 
-                        END
-                    ) AS green_quantity_previous,
-                    (SELECT COUNT(*) 
-                     FROM "visits" 
-                     WHERE "visits"."team_id" = ?
-                       AND "visits"."visited_at" >= CURRENT_DATE - INTERVAL '14 days'
-                       AND "visits"."visited_at" < CURRENT_DATE - INTERVAL '7 days') AS visit_quantity_previous
-                FROM 
-                    "house_statuses"
-                WHERE 
-                    "house_statuses"."team_id" = ?
-               AND "house_statuses"."created_at" >= CURRENT_DATE - INTERVAL '14 days'
-               AND "house_statuses"."created_at" < CURRENT_DATE - INTERVAL '7 days'
-            )
-            SELECT 
-                cw.house_quantity AS house_quantity,
-                cw.green_quantity_current AS green_quantity,
-                cw.orange_quantity AS orange_quantity,
-                cw.red_quantity AS red_quantity,
-                cw.visit_quantity_total AS visit_quantity,
-                CASE 
-                    WHEN pw.green_quantity_previous IS NULL OR pw.green_quantity_previous = 0
-                    AND (cw.green_quantity_current IS NOT NULL AND cw.green_quantity_current > 0)
-                    THEN 
-                        100.00
-                    ELSE ROUND(
-                        (cw.green_quantity_current - pw.green_quantity_previous) 
-                        * 100.0 / pw.green_quantity_previous, 2
-                    ) 
-                END AS green_quantity_change_percentage,
-                CASE 
-                    WHEN pw.visit_quantity_previous = 0 THEN NULL 
-                    ELSE ROUND(
-                        (cw.visit_quantity_current - pw.visit_quantity_previous) 
-                        * 100.0 / pw.visit_quantity_previous, 2
-                    )
-                END AS visit_quantity_change_percentage
-            FROM 
-                current_week cw, 
-                previous_week pw;
+            sql = <<~SQL
+                            WITH current_week AS (
+                  SELECT
+                      DISTINCT COUNT(house_statuses.house_id) AS house_quantity,
+                      COUNT(
+                          CASE
+                              WHEN (infected_containers = 0 OR infected_containers IS NULL)
+                                  AND (potential_containers = 0 OR potential_containers IS NULL)
+                              THEN 1
+                          END
+                      ) AS green_quantity_current,
+                      SUM(
+                          CASE
+                              WHEN potential_containers > 0
+                                  AND (infected_containers = 0 OR infected_containers IS NULL)
+                              THEN 1
+                              ELSE 0
+                          END
+                      ) AS orange_quantity,
+                      SUM(
+                          CASE
+                              WHEN infected_containers > 0
+                              THEN 1
+                              ELSE 0
+                          END
+                      ) AS red_quantity,
+                      (SELECT COUNT(*)
+                       FROM visits
+                       WHERE visits.team_id = ?) AS visit_quantity_total,
+                      (SELECT COUNT(*)
+                       FROM visits
+                       WHERE visits.team_id = ?
+                         AND visits.visited_at >= CURRENT_DATE - INTERVAL '7 days') AS visit_quantity_current,
+                      (SELECT COUNT(
+                          CASE
+                              WHEN (infected_containers = 0 OR infected_containers IS NULL)
+                                  AND (potential_containers = 0 OR potential_containers IS NULL)
+                              THEN 1
+                          END
+                      )
+                      FROM house_statuses
+                      WHERE house_statuses.team_id = ?
+                        AND house_statuses.date >= CURRENT_DATE - INTERVAL '7 days') AS green_quantity_cw
+                  FROM
+                      house_statuses
+                  WHERE
+                      house_statuses.team_id = ?
+                    AND house_statuses.created_at >= CURRENT_DATE - INTERVAL '7 days'
+              ),
+              previous_week AS (
+                  SELECT
+                      DISTINCT COUNT(house_statuses.house_id) AS house_quantity_previous,
+                      COUNT(
+                          CASE
+                              WHEN (infected_containers = 0 OR infected_containers IS NULL)
+                                  AND (potential_containers = 0 OR potential_containers IS NULL)
+                              THEN 1
+                          END
+                      ) AS green_quantity_previous,
+                      (SELECT COUNT(*)
+                       FROM visits
+                       WHERE visits.team_id = ?
+                         AND visits.visited_at >= CURRENT_DATE - INTERVAL '14 days'
+                         AND visits.visited_at < CURRENT_DATE - INTERVAL '7 days') AS visit_quantity_previous
+                  FROM
+                      house_statuses
+                  WHERE
+                      house_statuses.team_id = ?
+                    AND house_statuses.created_at >= CURRENT_DATE - INTERVAL '14 days'
+                    AND house_statuses.created_at < CURRENT_DATE - INTERVAL '7 days'
+              )
+              SELECT
+                  cw.visit_quantity_total AS visit_quantity,
+                  CASE
+                      WHEN pw.visit_quantity_previous = 0 THEN NULL
+                      ELSE ROUND(
+                          (cw.visit_quantity_current - pw.visit_quantity_previous) * 100.0 / pw.visit_quantity_previous, 2
+                      )
+                  END AS visit_variation_percentage,
+                  cw.house_quantity AS house_quantity,
+                  CASE
+                      WHEN (pw.green_quantity_previous IS NULL OR pw.green_quantity_previous = 0)
+                          AND (cw.green_quantity_cw IS NOT NULL AND cw.green_quantity_cw > 0)
+                      THEN 100.00
+                      WHEN (pw.green_quantity_previous IS NULL OR pw.green_quantity_previous = 0)
+                          AND (cw.green_quantity_cw IS NOT NULL AND cw.green_quantity_cw = 0)
+                      THEN 0
+                      ELSE ROUND(
+                          (cw.green_quantity_cw - pw.green_quantity_previous) * 100.0 / pw.green_quantity_previous, 2
+                      )
+                  END AS site_variation_percentage,
+                  cw.green_quantity_current AS green_quantity,
+                  cw.orange_quantity AS orange_quantity,
+                  cw.red_quantity AS red_quantity
+              FROM
+                  current_week cw,
+                  previous_week pw;
             SQL
             team_id = get_team_id
-            res = @model.connection.select_all(
-              @model.sanitize_sql_array([sql, team_id, team_id, team_id, team_id, team_id])
+            @model.connection.select_all(
+              @model.sanitize_sql_array([sql, team_id, team_id, team_id, team_id, team_id, team_id])
             )
-            res
+
           end
 
           def get_team_id
