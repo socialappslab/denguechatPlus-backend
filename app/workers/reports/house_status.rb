@@ -6,8 +6,8 @@ module Reports
 
     def perform
       statuses_to_insert = []
-
-      House.find_each do |house|
+      houses_visited_today = House.where(id: Visit.where(visited_at: Date.today).pluck(:house_id))
+      houses_visited_today.find_each do |house|
         statuses_to_insert << {
           date: Time.zone.today,
           infected_containers: house.infected_containers,
