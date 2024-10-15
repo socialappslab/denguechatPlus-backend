@@ -43,7 +43,7 @@ module Api
                     statusColor: option.status_color,
                     image: get_image_obj.call(option),
                     next: option.next
-                  }.merge(option.type_option == 'boolean' ? {value: option.value} : {})
+                  }.merge(option.type_option == 'boolean' || option.type_option == 'inputNumber' ? {value: option.value} : {})
                    .merge(question.type_field == 'multiple' ? {disableOtherOptions: option.disable_other_options} : {})
                 end
               }

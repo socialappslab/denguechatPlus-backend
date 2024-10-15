@@ -54,7 +54,9 @@ module Api
           def like_by_me(relation)
             return relation if @current_user.nil?
 
-            relation.left_joins(:likes).select("posts.*, CASE WHEN likes.user_account_id = #{@current_user.id} THEN true ELSE false END AS like_by_me")
+            relation.joins(
+              "LEFT OUTER JOIN likes ON likes.likeable_type = \'Post\' AND likes.likeable_id = posts.id AND likes.user_account_id = #{@current_user.id}"
+            ).select("posts.*, CASE WHEN likes.user_account_id = #{@current_user.id} THEN true ELSE false END AS like_by_me")
           end
 
           def can_delete_by_me(relation)
