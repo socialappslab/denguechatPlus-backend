@@ -41,4 +41,7 @@ class Comment < ApplicationRecord
     undiscarded? && post.kept?
   end
 
+  after_discard do
+    Post.decrement_counter(:comments_count, post.id)
+  end
 end
