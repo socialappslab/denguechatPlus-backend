@@ -32,12 +32,12 @@ module Api
 
           def transform_params
             @data = @ctx['contract.default'].values.data
-            @current_user.teams.first
+            team = @current_user.teams.first
             @data[:team_id] = team.id
             @data[:city_id] = @current_user.city_id
             @data[:neighborhood_id] = @current_user.neighborhood_id
             @data[:country_id] = Neighborhood.find_by(id: @data[:neighborhood_id]).country.id
-            @data[:location] = "#{team.neighborhood.name}, #{team.city.name}"
+            @data[:location] = "#{team.sector.name}, #{team.city.name}"
           end
 
           def check_if_has_photo
@@ -53,6 +53,7 @@ module Api
               post = manage_photos(post)
               post.update(@data)
               @ctx[:model] = post
+              @ctx[:model].instance_variable_set(:@current_user_id, @current_user.id)
               return Success({ ctx: @ctx, type: :created })
             rescue => error
               errors = ErrorFormater.new_error(field: :base, msg: error, custom_predicate: :user_account_without_confirmation? )

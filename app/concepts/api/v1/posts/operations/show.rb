@@ -21,6 +21,7 @@ module Api
             if @ctx[:data].nil?
               Failure({ ctx: @ctx, type: :not_found })
             else
+              @ctx[:data].instance_variable_set(:@current_user_id, @current_user.id)
               Success({ ctx: @ctx, type: :success })
             end
           end

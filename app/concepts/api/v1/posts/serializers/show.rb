@@ -10,11 +10,21 @@ module Api
           attributes :id, :visibility, :content, :created_at, :team_id, :country_id, :city_id, :neighborhood_id, :location, :comments_count
 
           attribute :likesCount do |post|
-            post.likes.size  # use `size` instead of `count` after preloading `likes`
+            post.likes.size
           end
 
           attribute :like_by_me do |post|
-            post.likes.any? { |like| like.user_account_id == post.user_account_id }  # use `any?` instead of `exists?` after preloading `likes`
+            next unless post.respond_to?(:current_user_id) || post.instance_variable_get(:@current_user_id)
+
+            current_user_id = post.respond_to?(:current_user_id) ? post.current_user_id : post.instance_variable_get(:@current_user_id)
+            post.likes.any? { |like| like.user_account_id == current_user_id}
+          end
+
+          attribute :canDeleteByUser do |post|
+            next unless post.respond_to?(:current_user_id) || post.instance_variable_get(:@current_user_id)
+
+            current_user_id = post.respond_to?(:current_user_id) ? post.current_user_id : post.instance_variable_get(:@current_user_id)
+            post.user_account_id == current_user_id
           end
 
           attribute :created_by do |post|
@@ -37,7 +47,9 @@ module Api
           end
 
           attribute :comments do |post|
+            current_user_id = post.respond_to?(:current_user_id) ? post.current_user_id : post.instance_variable_get(:@current_user_id)
             post.comments.map do |comment|
+              comment.instance_variable_set(:@current_user_id, current_user_id)
               Api::V1::Comments::Serializers::Show.new(comment).serializable_hash
             end
           end

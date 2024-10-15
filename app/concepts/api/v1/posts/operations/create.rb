@@ -41,6 +41,7 @@ module Api
           def create_post
             begin
               @ctx[:model] = Post.create(@data)
+              @ctx[:model].instance_variable_set(:@current_user_id, @current_user.id)
               return Success({ ctx: @ctx, type: :created })
             rescue => error
               errors = ErrorFormater.new_error(field: :base, msg: error, custom_predicate: :user_account_without_confirmation? )

@@ -33,7 +33,7 @@ module Api
             else
               @ctx[:data].likes.create(user_account: @current_user)
             end
-
+            @ctx[:data].instance_variable_set(:@current_user_id, @current_user.id)
             Success({ ctx: @ctx, type: :success })
           end
         end
