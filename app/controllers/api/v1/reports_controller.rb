@@ -10,6 +10,12 @@ module Api
                  options: {request:, current_user: }
       end
 
+      def brigadists_performance
+        endpoint operation: Api::V1::Reports::Operations::BrigadistPerformance,
+                 renderer_options: { serializer: Api::V1::Reports::Serializers::BrigadistPerformance },
+                 options: {request:, current_user: }
+      end
+
     end
   end
 end

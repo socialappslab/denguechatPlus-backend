@@ -102,6 +102,7 @@ Rails.application.routes.draw do
       resources :wedges
       resources :reports do
         get :house_status, on: :collection, action: :house_status
+        get :brigadists_performance, on: :collection, action: :brigadists_performance
       end
 
       namespace :public do
