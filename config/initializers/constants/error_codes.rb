@@ -60,7 +60,8 @@ module Constants
       user_account_locked?: 55,
       unexpected_key: 56,
       without_permissions: 57,
-      users_change_team: 58
+      users_change_team: 58,
+      reports_brigadists_performance: 59
     }.freeze
   end
 end

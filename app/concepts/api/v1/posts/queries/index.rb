@@ -61,12 +61,17 @@ module Api
 
           def can_delete_by_me(relation)
             return relation if @current_user.nil?
+            team_ids = @current_user.teams_under_leadership
+            team_ids = team_ids.any? ? team_ids.join(', ') : '0'
+
+
 
             relation.select("posts.*,
                 CASE
                   WHEN posts.user_account_id = #{@current_user.id} THEN true
                   WHEN #{@current_user.has_role?(:admin)} THEN true
-                  ELSE false
+                  WHEN #{@current_user.has_role?(:team_leader)} AND posts.team_id IN (#{team_ids}) THEN true
+                ELSE false
                 END AS can_delete_by_me")
           end
 

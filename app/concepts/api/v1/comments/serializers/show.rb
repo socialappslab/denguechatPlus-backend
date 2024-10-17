@@ -21,6 +21,16 @@ module Api
 
           attribute :canDeleteByUser do |comment|
             next unless comment.instance_variable_get(:@current_user_id)
+            next true if comment.instance_variable_get(:@current_user_is_admin)
+            next true if comment.instance_variable_get(:@is_team_leader)
+
+            comment.user_account_id == comment.instance_variable_get(:@current_user_id)
+          end
+
+          attribute :canEditByUser do |comment|
+            next unless comment.instance_variable_get(:@current_user_id)
+            next true if comment.instance_variable_get(:@current_user_is_admin)
+            next true if comment.instance_variable_get(:@is_team_leader)
 
             comment.user_account_id == comment.instance_variable_get(:@current_user_id)
           end
