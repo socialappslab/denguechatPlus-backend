@@ -58,4 +58,10 @@ class UserAccount < ApplicationRecord
   def can?(name, resource)
     roles.joins(:permissions).exists?(permissions: { name:, resource: })
   end
+
+  def teams_under_leadership
+    return [] unless has_role?(:team_leader)
+
+    teams.pluck(:id)
+  end
 end

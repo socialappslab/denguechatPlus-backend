@@ -7,7 +7,7 @@ module Api
         class Index < ApplicationSerializer
           set_type :post
 
-          attributes :id, :visibility
+          attributes :id, :visibility, :team_id
 
           attribute :createdAt do |post|
             next unless post.created_at
@@ -69,6 +69,9 @@ module Api
           attribute :liked_by_user, &:like_by_me
 
           attribute :canDeleteByUser, &:can_delete_by_me
+
+          attribute :canEditByUser, &:can_delete_by_me
+
 
         end
       end
