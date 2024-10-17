@@ -33,8 +33,7 @@ module Api
           end
 
           def authorized_user?
-            return Success({ ctx: @ctx, type: :success }) if @current_user.has_role?(:admin)
-            return Success({ ctx: @ctx, type: :success }) if is_team_leader
+            return Success({ ctx: @ctx, type: :success }) if @current_user.has_role?(:admin) || @current_user.has_role?(:team_leader)
             return Success({ ctx: @ctx, type: :success }) if @ctx[:model].user_account_id == @current_user.id
             Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'Only an admin/team leader or the owner can delete this comment', custom_predicate: :without_permissions )})
           end
