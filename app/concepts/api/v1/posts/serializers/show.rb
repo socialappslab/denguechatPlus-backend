@@ -24,6 +24,10 @@ module Api
             next unless post.respond_to?(:current_user_id) || post.instance_variable_get(:@current_user_id)
 
             current_user_id = post.respond_to?(:current_user_id) ? post.current_user_id : post.instance_variable_get(:@current_user_id)
+            current_user = UserAccount.find_by(id: current_user_id)
+
+            next true if current_user.has_role?(:admin) || current_user.has_role?(:team_leader)
+
             post.user_account_id == current_user_id
           end
 
@@ -57,10 +61,8 @@ module Api
             current_user_id = post.respond_to?(:current_user_id) ? post.current_user_id : post.instance_variable_get(:@current_user_id)
             current_user = UserAccount.find_by(id: current_user_id)
             is_admin = current_user.has_role?(:admin)
-            teams_managed = current_user.has_role?(:team_leader) ? current_user.teams_under_leadership : []
+            is_team_leader = current_user.has_role?(:team_leader)
             post.comments.map do |comment|
-              comment_owner = UserAccount.find_by(id: comment.user_account_id)
-              is_team_leader = teams_managed.include?(comment_owner.teams.first&.id)
               comment.instance_variable_set(:@current_user_id, current_user_id)
               comment.instance_variable_set(:@current_user_is_admin, is_admin)
               comment.instance_variable_set(:@is_team_leader, is_team_leader)

@@ -62,7 +62,7 @@ module Api
                 CASE
                   WHEN posts.user_account_id = #{@current_user.id} THEN true
                   WHEN #{@current_user.has_role?(:admin)} THEN true
-                  WHEN #{@current_user.has_role?(:team_leader)} AND posts.team_id IN (#{team_ids}) THEN true
+                  WHEN #{@current_user.has_role?(:team_leader)} THEN true
                 ELSE false
                 END AS can_delete_by_me")
 
