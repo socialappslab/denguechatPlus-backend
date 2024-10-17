@@ -22,6 +22,12 @@ module Api
               Failure({ ctx: @ctx, type: :not_found })
             else
               @ctx[:data].instance_variable_set(:@current_user_id, @current_user.id)
+              is_admin = @current_user.has_role?(:admin)
+              teams_managed = @current_user.has_role?(:team_leader) ? @current_user.teams_under_leadership : []
+              comment_owner = UserAccount.find_by(id: @ctx[:data].user_account_id)
+              is_team_leader = teams_managed.include?(comment_owner.teams.first&.id)
+              @ctx[:data].instance_variable_set(:@current_user_is_admin, is_admin)
+              @ctx[:data].instance_variable_set(:@is_team_leader, is_team_leader)
               Success({ ctx: @ctx, type: :success })
             end
 

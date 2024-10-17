@@ -10,6 +10,7 @@ module Api
           tee :params
           step :validate_schema
           tee :transform_params
+          step :check_if_can_be_updated
           tee :check_if_has_photo
           step :update_comment
 
@@ -32,6 +33,14 @@ module Api
 
           def transform_params
             @data = @ctx['contract.default'].values.data
+            @data.delete(:user_account_id)
+          end
+
+          def check_if_can_be_updated
+            return Success({ ctx: @ctx, type: :success }) if @current_user.has_role?(:admin)
+            return Success({ ctx: @ctx, type: :success }) if is_team_leader
+            return Success({ ctx: @ctx, type: :success }) if Comment.find_by(id: @data[:id]).user_account_id == @current_user.id
+            Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'Only an admin/team leader or the owner can update this comment', custom_predicate: :without_permissions )})
           end
 
           def check_if_has_photo
@@ -64,6 +73,15 @@ module Api
               comment.photo.purge
             end
             comment
+          end
+
+          private
+          def is_team_leader
+            return false unless @current_user.has_role?(:team_leader)
+            comment = Comment.find_by(id: @data[:id])
+            owner = UserAccount.find_by(id: comment.user_account_id)
+            owner_team_id = owner.teams&.first&.id
+            owner_team_id.in? @current_user.teams_under_leadership
           end
 
         end

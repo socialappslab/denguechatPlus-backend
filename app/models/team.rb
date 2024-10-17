@@ -44,4 +44,9 @@ class Team < ApplicationRecord
   has_many :visits, dependent: :nullify
   has_one :city, through: :sector
 
+
+  def leaders
+    members.joins(:user_account).merge(UserAccount.joins(:roles).where(roles: { name: 'team_leader' })).pluck(:id)
+  end
+
 end

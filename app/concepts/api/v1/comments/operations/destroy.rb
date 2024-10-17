@@ -33,13 +33,12 @@ module Api
           end
 
           def authorized_user?
-            author = @ctx[:model].user_account
-            is_valid = author == @current_user || @current_user.has_role?(:admin)
-            return Success({ ctx: @ctx, type: :success }) if is_valid
-
-            Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'Only an admin or the owner can delete this comment', custom_predicate: :without_permissions )})
-
+            return Success({ ctx: @ctx, type: :success }) if @current_user.has_role?(:admin)
+            return Success({ ctx: @ctx, type: :success }) if is_team_leader
+            return Success({ ctx: @ctx, type: :success }) if @ctx[:model].user_account_id == @current_user.id
+            Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'Only an admin/team leader or the owner can delete this comment', custom_predicate: :without_permissions )})
           end
+
 
           def delete_comment
             begin
@@ -48,6 +47,14 @@ module Api
             rescue => error
               Failure({ ctx: @ctx, type: :invalid })
             end
+          end
+
+          private
+          def is_team_leader
+            return false unless @current_user.has_role?(:team_leader)
+            owner = UserAccount.find_by(id: @ctx[:model].user_account_id)
+            owner_team_id = owner.teams&.first&.id
+            owner_team_id.in? @current_user.teams_under_leadership
           end
         end
       end
