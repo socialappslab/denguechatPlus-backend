@@ -45,6 +45,7 @@ module Api
                     next: option.next
                   }.merge(option.type_option == 'boolean' || option.type_option == 'inputNumber' ? {value: option.value} : {})
                    .merge(question.type_field == 'multiple' ? {disableOtherOptions: option.disable_other_options} : {})
+                   .merge(question.resource_name == 'breeding_site_type_id' ? {additionalInformation: BreedingSiteType.find_by(id: option.resource_id).serialized_additional_info} : {})
                 end
               }
             end
