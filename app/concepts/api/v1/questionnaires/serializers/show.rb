@@ -28,6 +28,7 @@ module Api
                 question: question.send("question_text_#{questionnaire.language}"),
                 typeField: question.type_field,
                 description: question.send("description_#{questionnaire.language}"),
+                notes: question.send("notes_#{questionnaire.language}"),
                 next: question.next,
                 resourceName: question.resource_name.blank? ? nil : question.resource_name,
                 resourceType: question.resource_type,

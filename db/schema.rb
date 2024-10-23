@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_23_121231) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_23_133155) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -352,6 +352,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_23_121231) do
     t.string "question_text_pt"
     t.string "resource_name"
     t.string "resource_type"
+    t.string "notes_es"
+    t.string "notes_en"
+    t.string "notes_pt"
     t.index ["questionnaire_id"], name: "index_questions_on_questionnaire_id"
   end
 

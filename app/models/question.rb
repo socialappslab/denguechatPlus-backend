@@ -8,6 +8,9 @@
 #  description_pt   :string
 #  discarded_at     :datetime
 #  next             :integer
+#  notes_en         :string
+#  notes_es         :string
+#  notes_pt         :string
 #  question_text_en :string
 #  question_text_es :string
 #  question_text_pt :string
