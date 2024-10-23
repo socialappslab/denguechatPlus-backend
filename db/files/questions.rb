@@ -347,11 +347,11 @@ QUESTIONS_DATA = [
     resource_type: 'relation',
     next: 16,
     options: [
-      { name_es: 'Larvas', name_en: 'Larvae', name_pt: 'Larvas', next: 16, group_es: 'Estadios', group_en: 'Stages', group_pt: 'Estágios',
+      { name_es: 'Larvas', name_en: 'Larvae', name_pt: 'Larvas', next: 17, group_es: 'Estadios', group_en: 'Stages', group_pt: 'Estágios',
         resource_id: TypeContent.find_by(name_es: 'Larvas').id, status_color: Constants::ContainerStatus::INFECTED },
-      { name_es: 'Pupas', name_en: 'Pupae', name_pt: 'Pupas', next: 16, group_es: 'Estadios', group_en: 'Stages', group_pt: 'Estágios',
+      { name_es: 'Pupas', name_en: 'Pupae', name_pt: 'Pupas', next: 17, group_es: 'Estadios', group_en: 'Stages', group_pt: 'Estágios',
         resource_id: TypeContent.find_by(name_es: 'Pupas').id, status_color: Constants::ContainerStatus::INFECTED },
-      { name_es: 'Huevos', name_en: 'Eggs', name_pt: 'Ovos', next: 16, group_es: 'Estadios', group_en: 'Stages', group_pt: 'Estágios',
+      { name_es: 'Huevos', name_en: 'Eggs', name_pt: 'Ovos', next: 17, group_es: 'Estadios', group_en: 'Stages', group_pt: 'Estágios',
         resource_id: TypeContent.find_by(name_es: 'Huevos').id, status_color: Constants::ContainerStatus::INFECTED },
       { name_es: 'Nada', name_en: 'Nothing', name_pt: 'Nada', next: 16, group_es: 'Nada', group_en: 'Nothing', group_pt: 'Nada',
         resource_id: TypeContent.find_by(name_es: 'Nada').id, disable_other_options: true }
@@ -359,10 +359,11 @@ QUESTIONS_DATA = [
   },
   {
     id: 16,
-    question_text_es: '¿Hay otros contenedores como este?',
-    question_text_en: 'Are there other containers like this one?',
-    question_text_pt: 'Existem outros recipientes como este?',
+    question_text_es: '¿Hay otros contenedores exactamente del mismo tipo con agua que no tienen larvas, pupas o huevos?',
+    question_text_en: 'Are there other containers of exactly the same type with water that have no larvae, pupae or eggs?',
+    question_text_pt: 'Há outros recipientes exatamente do mesmo tipo com água que não têm larvas, pupas ou ovos?',
     type_field: 'list',
+    notes: 'Nota: Si el mismo tipo de contenedor tiene agua, larvas, pupas o huevos, debe registrarse individualmente.',
     resource_name: 'quantity_founded',
     resource_type: 'attribute',
     next: 17,
@@ -424,7 +425,7 @@ QUESTIONS_DATA = [
       { name_es: 'Ninguna acción', name_en: 'No action', name_pt: 'Nenhuma ação',
         resource_id: EliminationMethodType.find_by(name_es: 'Ninguna acción') },
 
-      { name_es: 'Otro', name_en: 'Other', name_pt: 'Outro', 
+      { name_es: 'Otro', name_en: 'Other', name_pt: 'Outro',
         resource_id: EliminationMethodType.find_by(name_es: 'Otro'), type_option: 'textArea' },
     ]
   },
