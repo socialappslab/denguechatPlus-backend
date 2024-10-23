@@ -32,7 +32,9 @@ module Api
                 resourceName: question.resource_name.blank? ? nil : question.resource_name,
                 resourceType: question.resource_type,
                 image: get_image_obj.call(question),
-                options: question.options.map do |option|
+                options: question.options
+                                 .sort_by(&:position)
+                                 .map do |option|
                   {
                     id: option.id,
                     name: option.send("name_#{questionnaire.language}"),
@@ -42,6 +44,7 @@ module Api
                     optionType: option.type_option,
                     statusColor: option.status_color,
                     image: get_image_obj.call(option),
+                    position: option.position,
                     next: option.next
                   }.merge(option.type_option == 'boolean' || option.type_option == 'inputNumber' ? {value: option.value} : {})
                    .merge(question.type_field == 'multiple' ? {disableOtherOptions: option.disable_other_options} : {})
