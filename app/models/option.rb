@@ -12,6 +12,7 @@
 #  name_es               :string
 #  name_pt               :string
 #  next                  :integer
+#  position              :integer
 #  required              :boolean          default(FALSE)
 #  status_color          :string
 #  type_option           :string
