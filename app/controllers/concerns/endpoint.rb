@@ -13,6 +13,9 @@ module Endpoint
       destroyed: ->(result) {
         result.success? &&  result.success[:type] == :destroyed
       },
+      destroy_account: ->(result) {
+        result.success? && result.success[:type] == :destroyed
+      },
       unauthorized: ->(result) {
         result.failure? && %i[unauthorized unauthenticated].include?(result.failure[:type])
       },
@@ -50,6 +53,7 @@ module Endpoint
     {
       created: ->(result, **opts) { render_head_or_response(result, opts, :created) },
       destroyed: ->(_result, **) { head(:no_content) },
+      destroy_account: ->(_result, **) { head(:no_content) },
       unauthorized: ->(result, **) { render_head_or_errors(result, :unauthorized) },
       not_found: ->(_result, **) { head(:not_found) },
       forbidden: ->(_result, **) { head(:forbidden) },

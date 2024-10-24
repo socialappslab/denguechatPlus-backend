@@ -385,3 +385,12 @@ unless SeedTask.find_by(task_name: 'create_reports_brigadist_performance_ability
   end
   SeedTask.create(task_name: 'create_reports_brigadist_performance_ability')
 end
+
+unless SeedTask.find_by(task_name: 'create_user_delete_ability')
+  roles = Role.where(name: %w[brigadista team_leader admin])
+  permission = Permission.find_or_create_by(name: 'delete_account', resource: 'users')
+  roles.each do |role|
+    role.permissions << permission unless role.permissions.exists?(permission.id)
+  end
+  SeedTask.create(task_name: 'create_user_delete_ability')
+end

@@ -38,6 +38,8 @@ class UserAccount < ApplicationRecord
   has_many :permissions, through: :roles
   accepts_nested_attributes_for :user_profile,  update_only: true
 
+  default_scope -> { kept }
+
 
   delegate :first_name,
            :last_name,
