@@ -28,6 +28,11 @@ module Api
                  options: { current_user: }
       end
 
+      def delete_account
+        endpoint operation: Api::V1::Users::Accounts::Operations::Destroy,
+                 options: { current_user: }
+      end
+
       def show_current_user
         endpoint operation: Api::V1::Users::Accounts::Operations::ShowCurrentUser,
                  renderer_options: {
@@ -39,7 +44,7 @@ module Api
       def change_status
         endpoint operation: Api::V1::Users::Accounts::Operations::ChangeStatus,
                  renderer_options: { serializer: Api::V1::Users::Accounts::Serializers::UserAccount },
-                 options: { current_user: }
+                 options: {  found_token:, current_user: }
       end
 
       def change_team

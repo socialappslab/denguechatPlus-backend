@@ -134,6 +134,8 @@ Rails.application.routes.draw do
 
       get 'get_last_params', controller: 'get_last_params', action: 'index'
       get 'get_address', controller: 'get_address', action: 'find_address'
+      delete 'users/delete_account', to: 'users#delete_account'
+
 
     end
   end
