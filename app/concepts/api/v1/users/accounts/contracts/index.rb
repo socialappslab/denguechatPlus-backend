@@ -20,6 +20,7 @@ module Api
                 optional(:status).maybe(:array)
                 optional(:role_name).maybe(:string)
                 optional(:team_id).maybe(:integer)
+                optional(:without_team)
               end
 
               optional(:page).maybe(:hash) do
