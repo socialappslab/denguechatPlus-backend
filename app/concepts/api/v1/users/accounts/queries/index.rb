@@ -30,6 +30,7 @@ module Api
                     .yield_self(&method(:team_id))
                     .yield_self(&method(:status_clause))
                     .yield_self(&method(:role_name_clause))
+                    .yield_self(&method(:without_team))
                     .yield_self(&method(:sort_clause))
             end
 
@@ -100,6 +101,14 @@ module Api
 
               text_searched = @filter[:role_name].downcase
               relation.joins(user_account: :roles).where('LOWER(roles.name) ILIKE unaccent(?)', "%#{text_searched}%")
+            end
+
+            def without_team(relation)
+              return relation if @filter.nil? || !@filter[:without_team]
+
+              relation
+                .left_joins(:team)
+                .where(team: { id: nil })
             end
 
             def sort_clause(relation)
