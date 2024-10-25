@@ -61,9 +61,8 @@ module Api
           end
 
           def split_data
-            @house_info = @params.delete(:house) unless @params.key?(:house_id)
-
-            @inspections = @params.delete(:inspections) if @params.key?(:inspections)
+            @house_info = @params.delete(:house)&.deep_symbolize_keys unless @params.key?(:house_id)
+            @inspections = @params.delete(:inspections)&.map(&:deep_symbolize_keys) if @params.key?(:inspections)
           end
 
           def create_house_if_necessary

@@ -49,10 +49,10 @@ class AddNewImagesToQuestions < ActiveRecord::Migration[7.1]
   end
 
   def set_image(question, image_name)
-    image_path = Rails.root.join('db', 'files', 'images', "ilustration_#{image_name}.svg")
+    image_path = Rails.root.join('db', 'files', 'images', "ilustration_#{image_name}.png")
 
     if File.exist?(image_path)
-      question.image.attach(io: File.open(image_path), filename: "#{image_name}.svg")
+      question.image.attach(io: File.open(image_path), filename: "#{image_name}.png")
       question.save!
       puts "Image saved!"
     else
