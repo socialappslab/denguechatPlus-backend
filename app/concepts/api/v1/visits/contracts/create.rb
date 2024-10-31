@@ -71,7 +71,7 @@ module Api
                 end
 
                 if inspection.has_key?('quantity_founded') && !inspection['quantity_founded'].nil?
-                  if inspection['quantity_founded'] <= 0
+                  if inspection['quantity_founded'].to_i <= 0
                     key(:quantity_founded).failure(text: "quantity_founded should be major than 0",
                                                          predicate: :gteq?)
                   end
