@@ -111,7 +111,7 @@ module Api
               inspection[:quantity_founded].times do
                 inspection[:visit_id] = visit_id
                 inspections_clean_format << Container.new(inspection.slice(*container_attrs)).to_h
-              end
+              end if inspection[:quantity_founded]
             end
             Inspection.insert_all(inspections_clean_format) if inspections_clean_format.any?
             Success({ ctx: @ctx, type: :created })
