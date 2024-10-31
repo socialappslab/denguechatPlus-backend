@@ -108,10 +108,13 @@ module Api
             visit_id = @ctx[:model].id
             @inspections.each do |inspection|
               @photo_ids << {code_reference: inspection[:code_reference], photo_id: inspection[:photo_id]} if inspection[:photo_id].present?
-              inspection[:quantity_founded].times do
-                inspection[:visit_id] = visit_id
-                inspections_clean_format << Container.new(inspection.slice(*container_attrs)).to_h
-              end if inspection[:quantity_founded]
+              if inspection[:quantity_founded]
+                inspection[:quantity_founded] = inspection[:quantity_founded].to_i
+                inspection[:quantity_founded].times do
+                  inspection[:visit_id] = visit_id
+                  inspections_clean_format << Container.new(inspection.slice(*container_attrs)).to_h
+                end
+              end
             end
             Inspection.insert_all(inspections_clean_format) if inspections_clean_format.any?
             Success({ ctx: @ctx, type: :created })
