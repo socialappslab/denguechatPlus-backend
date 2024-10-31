@@ -50,7 +50,12 @@ module Api
                                                      predicate: :not_exists?)
                 end
 
-                unless inspection['type_content_id'].all? {|id| TypeContent.exists?(id: id)}
+                unless inspection['type_content_id']
+                  key(:container_protection_id).failure(text: "The TypeContent does not exist",
+                                                        predicate: :not_exists?)
+                end
+
+                if inspection['type_content_id'] && !inspection['type_content_id'].all? {|id| TypeContent.exists?(id: id)}
                   key(:container_protection_id).failure(text: "The TypeContent does not exist",
                                                         predicate: :not_exists?)
                 end
