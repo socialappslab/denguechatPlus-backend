@@ -39,7 +39,7 @@ module Api
             attr_reader :user_accounts, :filter, :sort
 
             def active_records(relation)
-              relation.where(user_account: {discarded_at: nil})
+              relation.where(user_account: UserAccount.where(discarded_at: nil))
             end
 
             def full_name_clause(relation)
@@ -67,7 +67,7 @@ module Api
             def phone_clause(relation)
               return relation if @filter.nil? || @filter[:phone].blank?
 
-              relation.where('user_account.phone ilike :query', query: "%#{@filter[:phone]}%")
+              relation.where('user_accounts.phone ilike :query', query: "%#{@filter[:phone]}%")
             end
 
             def email_clause(relation)
@@ -81,13 +81,13 @@ module Api
               return relation if @filter.nil? || @filter[:username].blank?
 
               text_searched = @filter[:username].downcase
-              relation.where('LOWER(user_account.username) ilike unaccent(:query)', query: "%#{text_searched}%")
+              relation.where('LOWER(user_accounts.username) ilike unaccent(:query)', query: "%#{text_searched}%")
             end
 
             def status_clause(relation)
               return relation if @filter.nil? || @filter[:status].blank?
 
-              relation.where(user_account: { status: @filter[:status] })
+              relation.where(user_accounts: { status: @filter[:status] })
             end
 
             def team_id(relation)
@@ -117,7 +117,7 @@ module Api
               lower_case = %w[user_profiles.first_name
                     user_profiles.last_name
                     user_profiles.email
-                     user_account.username].include? @sort[:field]
+                     user_accounts.username].include? @sort[:field]
               sort_by_table_columns(relation, lower_case:)
             end
           end
