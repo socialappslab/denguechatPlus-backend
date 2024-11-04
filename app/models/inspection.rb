@@ -18,7 +18,7 @@
 #  breeding_site_type_id      :bigint           not null
 #  container_protection_id    :bigint
 #  created_by_id              :bigint           not null
-#  elimination_method_type_id :bigint           not null
+#  elimination_method_type_id :bigint
 #  treated_by_id              :bigint           not null
 #  visit_id                   :bigint           not null
 #  water_source_type_id       :bigint
@@ -45,9 +45,9 @@
 #
 class Inspection < ApplicationRecord
   belongs_to :visit
-  belongs_to :breeding_site_type
-  belongs_to :elimination_method_type
-  belongs_to :water_source_type
+  belongs_to :breeding_site_type, optional: true
+  belongs_to :elimination_method_type, optional: true
+  belongs_to :water_source_type, optional: true
   belongs_to :created_by, class_name: 'UserAccount'
   belongs_to :treated_by, class_name: 'UserAccount'
   belongs_to :container_protection, optional: true

@@ -112,7 +112,9 @@ module Api
                 inspection[:quantity_founded] = inspection[:quantity_founded].to_i
                 inspection[:quantity_founded].times do
                   inspection[:visit_id] = visit_id
-                  inspections_clean_format << Container.new(inspection.slice(*container_attrs)).to_h
+                  inspections_clean_format_object = Container.new(inspection.slice(*container_attrs)).to_h
+                  inspections_clean_format_object.delete(:container_protection_id) if inspections_clean_format_object[:container_protection_id].nil?
+                  inspections_clean_format << inspections_clean_format_object
                 end
               end
             end
