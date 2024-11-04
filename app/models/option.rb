@@ -14,6 +14,8 @@
 #  next                  :integer
 #  position              :integer
 #  required              :boolean          default(FALSE)
+#  selected_case         :string
+#  show_in_case          :string
 #  status_color          :string
 #  type_option           :string
 #  value                 :string
