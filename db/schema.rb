@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_31_114743) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_04_122037) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -279,6 +279,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_31_114743) do
     t.string "value"
     t.boolean "disable_other_options", default: false
     t.integer "position"
+    t.string "show_in_case"
+    t.string "selected_case"
     t.index ["question_id"], name: "index_options_on_question_id"
   end
 
@@ -415,6 +417,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_31_114743) do
     t.datetime "updated_at", null: false
     t.bigint "leader_id"
     t.bigint "wedge_id"
+    t.bigint "city_id"
+    t.index ["city_id"], name: "index_teams_on_city_id"
     t.index ["leader_id"], name: "index_teams_on_leader_id"
     t.index ["name", "deleted_at"], name: "index_teams_on_name_and_deleted_at", unique: true
     t.index ["neighborhood_id"], name: "index_teams_on_neighborhood_id"
@@ -587,6 +591,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_31_114743) do
   add_foreign_key "posts", "user_accounts"
   add_foreign_key "questions", "questionnaires"
   add_foreign_key "states", "countries"
+  add_foreign_key "teams", "cities"
   add_foreign_key "teams", "neighborhoods"
   add_foreign_key "teams", "organizations"
   add_foreign_key "teams", "user_profiles", column: "leader_id"
