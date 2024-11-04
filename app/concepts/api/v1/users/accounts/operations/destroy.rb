@@ -11,6 +11,8 @@ module Api
             tee :params
             tee :retrieve_user
             step :delete_user
+            tee :delete_comments
+            tee :delete_posts
 
             def params(input)
               @ctx = {}
@@ -28,6 +30,7 @@ module Api
             def delete_user
               begin
                 @current_user.update_columns(phone: "deleted_#{@ctx[:model].id}", username: "deleted_#{@ctx[:model].id}")
+                @current_user_id = @current_user.id
                 user_profile = @current_user.user_profile
                 user_profile.update_columns(first_name: "user_deleted_#{@ctx[:model].id}}",
                                             last_name: "user_deleted_#{@ctx[:model].id}",
@@ -39,6 +42,14 @@ module Api
               rescue => error
                 Success({ ctx: @ctx, type: :destroyed, model: @ctx[:model], success: true })
               end
+            end
+
+
+            def delete_comments
+              Comment.where(user_account_id: @current_user_id).destroy_all
+            end
+            def delete_posts
+              Posts.where(user_account_id: @current_user_id).destroy_all
             end
 
           end
