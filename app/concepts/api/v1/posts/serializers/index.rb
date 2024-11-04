@@ -23,18 +23,20 @@ module Api
 
           attribute :create_by_user do |post|
             next if post.user_account_id.blank?
+            user = UserAccount.with_discarded.find(post.user_account_id)
 
             {
               accountId: post.user_account_id,
-              userName: post.user_account.first_name,
-              lastName: post.user_account.last_name,
+              userName: user.first_name,
+              lastName: user.last_name,
             }
           end
 
           attribute :createdBy do |post|
             next unless post.user_account_id
+            user_account = UserAccount.with_discarded.find(post.user_account_id)
 
-            "#{post.user_account.first_name}, #{post.user_account.last_name}"
+            "#{user_account.first_name}, #{user_account.last_name}"
           end
 
           attribute :location do |post|
