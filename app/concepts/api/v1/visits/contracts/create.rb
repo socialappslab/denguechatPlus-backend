@@ -35,40 +35,57 @@ module Api
                                                       predicate: :not_exists?)
                 end
 
-                unless EliminationMethodType.exists?(id: inspection['elimination_method_type_id'])
-                  key(:elimination_method_type_id).failure(text: "The EliminationMethodType does not exist",
-                                                           predicate: :not_exists?)
+
+                if inspection.has_key?('elimination_method_type_id')
+                  unless EliminationMethodType.exists?(id: inspection['elimination_method_type_id'])
+                    key(:elimination_method_type_id).failure(text: "The EliminationMethodType does not exist",
+                                                             predicate: :not_exists?)
+                  end
                 end
 
-                unless WaterSourceType.exists?(id: inspection['water_source_type_id'])
-                  key(:water_source_type_id).failure(text: "The WaterSourceType does not exist",
-                                                     predicate: :not_exists?)
+                if inspection.has_key?('water_source_type_id')
+                  unless WaterSourceType.exists?(id: inspection['water_source_type_id'])
+                    key(:water_source_type_id).failure(text: "The WaterSourceType does not exist",
+                                                       predicate: :not_exists?)
+                  end
                 end
 
-                unless ContainerProtection.exists?(id: inspection['container_protection_id'])
-                  key(:container_protection_id).failure(text: "The ContainerProtection does not exist",
-                                                     predicate: :not_exists?)
+                if inspection.has_key?('container_protection_id')
+                  unless ContainerProtection.exists?(id: inspection['container_protection_id'])
+                    key(:container_protection_id).failure(text: "The ContainerProtection does not exist",
+                                                          predicate: :not_exists?)
+                  end
                 end
 
-                unless inspection['type_content_id']
-                  key(:container_protection_id).failure(text: "The TypeContent does not exist",
-                                                        predicate: :not_exists?)
+
+
+                if inspection.has_key?('type_content_id')
+                  unless inspection['type_content_id']
+                    key(:container_protection_id).failure(text: "The TypeContent does not exist",
+                                                          predicate: :not_exists?)
+                  end
+
+                  if inspection['type_content_id'] && !inspection['type_content_id'].all? {|id| TypeContent.exists?(id: id)}
+                    key(:container_protection_id).failure(text: "The TypeContent does not exist",
+                                                          predicate: :not_exists?)
+                  end
                 end
 
-                if inspection['type_content_id'] && !inspection['type_content_id'].all? {|id| TypeContent.exists?(id: id)}
-                  key(:container_protection_id).failure(text: "The TypeContent does not exist",
-                                                        predicate: :not_exists?)
-                end
 
                 unless inspection.has_key?('has_water')
                   key(:has_water).failure(text: "has_water is required",
                                                         predicate: :filled?)
                 end
 
-                unless inspection.has_key?('was_chemically_treated')
-                  key(:was_chemically_treated).failure(text: "was_chemically_treated is required",
-                                          predicate: :filled?)
+
+                if inspection.has_key?('was_chemically_treated')
+                  unless inspection.has_key?('was_chemically_treated')
+                    key(:was_chemically_treated).failure(text: "was_chemically_treated is required",
+                                                         predicate: :filled?)
+                  end
                 end
+
+
 
                 if inspection.has_key?('quantity_founded') && !inspection['quantity_founded'].nil?
                   if inspection['quantity_founded'].to_i <= 0

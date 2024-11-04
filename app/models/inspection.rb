@@ -21,7 +21,7 @@
 #  elimination_method_type_id :bigint           not null
 #  treated_by_id              :bigint           not null
 #  visit_id                   :bigint           not null
-#  water_source_type_id       :bigint           not null
+#  water_source_type_id       :bigint
 #
 # Indexes
 #
