@@ -15,6 +15,7 @@ module Api
             required(:member_ids).filled(:array).each(:integer)
             required(:sector_id).filled(:integer)
             required(:wedge_id).filled(:integer)
+            required(:city_id).filled(:integer)
           end
 
           rule(:member_ids).each do
@@ -49,6 +50,12 @@ module Api
           rule(:sector_id) do
             if values[:sector_id] && !Neighborhood.exists?(id: values[:sector_id])
               key(:sector_id).failure(text: 'sector not exist', predicate: :not_found?)
+            end
+          end
+
+          rule(:city_id) do
+            if values[:city_id] && !City.exists?(id: values[:city_id])
+              key(:city_id).failure(text: 'city not exist', predicate: :not_found?)
             end
           end
 

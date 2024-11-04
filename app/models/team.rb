@@ -10,6 +10,7 @@
 #  points          :integer          default(0)
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  city_id         :bigint
 #  leader_id       :bigint
 #  neighborhood_id :bigint
 #  organization_id :bigint           not null
@@ -17,6 +18,7 @@
 #
 # Indexes
 #
+#  index_teams_on_city_id              (city_id)
 #  index_teams_on_leader_id            (leader_id)
 #  index_teams_on_name_and_deleted_at  (name,deleted_at) UNIQUE
 #  index_teams_on_neighborhood_id      (neighborhood_id)
@@ -25,6 +27,7 @@
 #
 # Foreign Keys
 #
+#  fk_rails_...  (city_id => cities.id)
 #  fk_rails_...  (leader_id => user_profiles.id)
 #  fk_rails_...  (neighborhood_id => neighborhoods.id)
 #  fk_rails_...  (organization_id => organizations.id)
