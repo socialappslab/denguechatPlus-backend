@@ -40,11 +40,12 @@ module Api
 
           attribute :created_by do |post|
             next if post.user_account_id.blank?
+            user_account = UserAccount.with_discarded.find(post.user_account_id)
 
             {
               accountId: post.user_account_id,
-              userName: post.user_account.first_name,
-              lastName: post.user_account.last_name,
+              userName: user_account.first_name,
+              lastName: user_account.last_name,
             }
           end
 
@@ -59,7 +60,7 @@ module Api
 
           attribute :comments do |post|
             current_user_id = post.respond_to?(:current_user_id) ? post.current_user_id : post.instance_variable_get(:@current_user_id)
-            current_user = UserAccount.find_by(id: current_user_id)
+            current_user = UserAccount.with_discarded.find_by(id: current_user_id)
             is_admin = current_user.has_role?(:admin)
             is_team_leader = current_user.has_role?(:team_leader)
             post.comments.map do |comment|
