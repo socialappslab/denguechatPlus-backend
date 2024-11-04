@@ -2,7 +2,12 @@ class AddAQuestionForReturnToOrchardOrTheHouse < ActiveRecord::Migration[7.1]
   def up
     questionnaire = Questionnaire.last
     if questionnaire
-      question = Question.find_by(questionnaire_id: questionnaire.id, question_text_es: '¿Registrar otro contenedor?')
+      question = Question.create!(questionnaire_id: questionnaire.id,
+                                  question_text_es: '¿Registrar otro contenedor?',
+                                  question_text_en: 'Register another container?',
+                                  question_text_pt: 'Registrar outro contêiner?',
+                                  type_field: 'list'
+                                  )
       question ||= Question.create(questionnaire_id: questionnaire.id,
                                                question_text_es: '¿Registrar otro contenedor?',
                                                question_text_en: 'Register another container?',
