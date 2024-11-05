@@ -14,6 +14,7 @@ module Api
 
           step :check_request_attrs
           tee :params
+          tee :depurate_inspection_list
           step :validate_schema
           tee :split_data
           step :create_house_if_necessary
@@ -65,6 +66,17 @@ module Api
             @inspections = @params.delete(:inspections)&.map(&:deep_symbolize_keys) if @params.key?(:inspections)
           end
 
+          def depurate_inspection_list
+            if @params.key?('inspections')
+              inspections = @params["inspections"]
+              inspections.reject! do |inspection|
+                inspection.keys.sort == %w[quantity_founded status_color].sort
+              end
+              @params["inspections"] = inspections
+            end
+            @params.delete('inspections') if @params['inspections'].nil? && @params.key?('inspections')
+          end
+
           def create_house_if_necessary
             return existing_house_result if params_include_house?
 
@@ -93,20 +105,21 @@ module Api
           end
 
           def set_extra_info_to_inspections
-            @inspections.map do |inspection|
-              inspection[:created_by_id] = @current_user.id
-              inspection[:treated_by_id] = @current_user.id
-              inspection[:visit_id] = @ctx[:model].id
-
-            end
+            @inspections&.map do |inspection|
+                inspection[:created_by_id] = @current_user.id
+                inspection[:treated_by_id] = @current_user.id
+                inspection[:visit_id] = @ctx[:model].id
+              end
           end
 
           def create_inspections
+            return Success({ ctx: @ctx, type: :created }) if @inspections.blank?
+
             container_attrs = Container.members
             inspections_clean_format = []
             @photo_ids = []
             visit_id = @ctx[:model].id
-            @inspections.each do |inspection|
+            @inspections&.each do |inspection|
               @photo_ids << {code_reference: inspection[:code_reference], photo_id: inspection[:photo_id]} if inspection[:photo_id].present?
               if inspection[:quantity_founded]
                 inspection[:quantity_founded] = inspection[:quantity_founded].to_i
@@ -199,9 +212,11 @@ module Api
 
           def update_house_status
             inspections_ids = @ctx[:model].inspections.pluck(:id)
-            res = Inspection.inspection_summary_for(inspections_ids)
-            res[:last_visit] = @params[:visited_at] || Time.now.utc
-            @house.update!(res)
+            unless inspections_ids.empty?
+              res = Inspection.inspection_summary_for(inspections_ids)
+              res[:last_visit] = @params[:visited_at] || Time.now.utc
+              @house.update!(res)
+            end
           end
 
           def container_status_analyzer(inspection)
