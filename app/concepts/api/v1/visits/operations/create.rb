@@ -74,7 +74,7 @@ module Api
               end
               @params["inspections"] = inspections
             end
-            @params.delete('inspections') if @params['inspections'].nil? && @params.key?('inspections')
+            @params.delete('inspections') if @params.key?('inspections') && @params['inspections']&.empty?
           end
 
           def create_house_if_necessary
