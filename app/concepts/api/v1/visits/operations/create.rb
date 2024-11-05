@@ -113,7 +113,7 @@ module Api
           end
 
           def create_inspections
-            return Success({ ctx: @ctx, type: :created }) if @inspections.blank?
+            return Success({ ctx: @ctx, type: :created }) if @inspections.nil? || @inspections&.empty?
 
             container_attrs = Container.members
             inspections_clean_format = []
@@ -131,7 +131,11 @@ module Api
                 end
               end
             end
-            Inspection.insert_all(inspections_clean_format) if inspections_clean_format.any?
+            if inspections_clean_format.any?
+              inspections_clean_format.each do |inspection|
+                Inspection.create!(inspection)
+              end
+            end
             Success({ ctx: @ctx, type: :created })
           end
 
