@@ -13,6 +13,7 @@ module Api
             step :delete_user
             tee :delete_comments
             tee :delete_posts
+            tee :remove_from_teams
 
             def params(input)
               @ctx = {}
@@ -49,7 +50,14 @@ module Api
               Comment.where(user_account_id: @current_user_id).destroy_all
             end
             def delete_posts
-              Posts.where(user_account_id: @current_user_id).destroy_all
+              Post.where(user_account_id: @current_user_id).destroy_all
+            end
+
+            def remove_from_teams
+              @current_user.user_profile.update(team_id: nil)
+              team = Team.find_by(leader_id: @current_user_id)
+              team.leader = nil
+              team.save
             end
 
           end
