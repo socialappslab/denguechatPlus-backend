@@ -13,7 +13,6 @@ module Api
             required(:id).filled(:integer)
             optional(:name).filled(:string)
             optional(:organization_id).filled(:integer)
-            optional(:leader_id).maybe(:integer)
             optional(:member_ids).maybe(:array).each(:integer)
             optional(:sector_id).filled(:integer)
             optional(:wedge_id).filled(:integer)
@@ -24,17 +23,6 @@ module Api
               key(:member_ids).failure(text: 'user_profile does not exist', predicate: :not_found?)
             end
 
-
-          end
-
-          rule(:leader_id) do
-            if values[:leader_id] && !UserProfile.exists?(id: values[:leader_id])
-              key(:leader_id).failure(text: 'leader does not exist', predicate: :not_found?)
-            end
-
-            if values[:leader_id] && Team.exists?(leader_id: values[:leader_id])
-              key(:leader_id).failure(text: 'leader profile is already assigned to a brigade', predicate: :unique?)
-            end
 
           end
 
