@@ -2,20 +2,25 @@
 #
 # Table name: visits
 #
-#  id               :bigint           not null, primary key
-#  answers          :jsonb
-#  host             :string
-#  notes            :string
-#  questions        :jsonb
-#  visit_permission :boolean          default(FALSE)
-#  visit_status     :integer
-#  visited_at       :datetime
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  house_id         :bigint           not null
-#  questionnaire_id :bigint           not null
-#  team_id          :bigint           not null
-#  user_account_id  :bigint           not null
+#  id                     :bigint           not null, primary key
+#  answers                :jsonb
+#  host                   :string
+#  inspection_quantity    :integer
+#  inspection_with_eggs   :integer
+#  inspection_with_larvae :integer
+#  inspection_with_pupae  :integer
+#  notes                  :string
+#  questions              :jsonb
+#  status                 :string
+#  visit_permission       :boolean          default(FALSE)
+#  visit_status           :integer
+#  visited_at             :datetime
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  house_id               :bigint           not null
+#  questionnaire_id       :bigint           not null
+#  team_id                :bigint           not null
+#  user_account_id        :bigint           not null
 #
 # Indexes
 #

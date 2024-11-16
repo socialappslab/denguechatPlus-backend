@@ -4,6 +4,7 @@
 #
 #  id                         :bigint           not null, primary key
 #  code_reference             :string
+#  color                      :string
 #  container_test_result      :string
 #  has_water                  :boolean
 #  lid_type                   :string

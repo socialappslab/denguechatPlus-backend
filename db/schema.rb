@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_04_210049) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_15_235615) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -217,6 +217,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_04_210049) do
     t.string "other_protection"
     t.string "was_chemically_treated"
     t.string "other_elimination_method"
+    t.string "color"
     t.index ["breeding_site_type_id"], name: "index_inspections_on_breeding_site_type_id"
     t.index ["container_protection_id"], name: "index_inspections_on_container_protection_id"
     t.index ["created_by_id"], name: "index_inspections_on_created_by_id"
@@ -520,6 +521,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_04_210049) do
     t.integer "visit_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "status"
+    t.integer "inspection_quantity"
+    t.integer "inspection_with_pupae"
+    t.integer "inspection_with_eggs"
+    t.integer "inspection_with_larvae"
     t.index ["house_id"], name: "index_visits_on_house_id"
     t.index ["questionnaire_id"], name: "index_visits_on_questionnaire_id"
     t.index ["team_id"], name: "index_visits_on_team_id"
