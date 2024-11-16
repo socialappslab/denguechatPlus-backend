@@ -226,9 +226,14 @@ module Api
           def update_house_status
             inspections_ids = @ctx[:model].inspections.pluck(:id)
             unless inspections_ids.empty?
-              res = Inspection.inspection_summary_for(inspections_ids)
-              res[:last_visit] = @params[:visited_at] || Time.now.utc
-              @house.update!(res)
+              counts = @ctx[:model].inspections.group(:color).count
+              result = {
+                infected_containers: counts["red"] || 0,
+                potential_containers: counts["yellow"] || 0,
+                non_infected_containers: counts["green"] || 0,
+                last_visit: @params[:visited_at] || Time.now.utc
+              }
+              @house.update!(result)
             end
           end
 
@@ -236,9 +241,9 @@ module Api
             container_protection_ids = ContainerProtection.where(name_es: ['Tapa no hermética', 'Techo', 'Otro', 'No tiene']).pluck(:id)
             ids_red_cases = TypeContent.where(name_es: %w[Larvas Pupas Huevos]).pluck(:id)
 
-            return 'red' if (ids_red_cases & type_content_id).any? if type_content_id
-            return 'yellow' if (ids_red_cases & type_content_id).none? && inspection[:container_protection_id].in?(container_protection_ids) if inspection.key?(:container_protection_id)
-            return 'yellow' if inspection.key?(:has_water) && inspection[:has_water] && !inspection.key?(:container_protection_id)
+            return 'red' if (ids_red_cases & type_content_id).any? if type_content_id.any?
+            return 'yellow' if (ids_red_cases & type_content_id).none? && inspection.container_protection_id.in?(container_protection_ids)
+            return 'yellow' if  inspection.has_water && !inspection.container_protection_id.in?(container_protection_ids)
 
             'green'
 
