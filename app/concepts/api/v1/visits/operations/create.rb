@@ -114,7 +114,6 @@ module Api
 
           def create_inspections
             return Success({ ctx: @ctx, type: :created }) if @inspections.nil? || @inspections&.empty?
-            ids_red_cases = TypeContent.where(name_es: ['Larvas', 'Pupas', 'Huevos']).pluck(:id)
 
             container_attrs = Container.members
             inspections_clean_format = []
@@ -135,14 +134,13 @@ module Api
             if inspections_clean_format.any?
               inspections_clean_format.each do |inspection_data|
                 type_content_id = inspection_data.delete(:type_content_id) if inspection_data.key?(:type_content_id)
-                inspection_data[:color] = inspection_data[:has_water] ? "yellow" : "green"
+                inspection_data[:color] = analyze_inspection_status(inspection_data, type_content_id)
 
                 inspection = Inspection.create!(inspection_data)
 
                 if type_content_id
                   type_content = TypeContent.find_by(id: type_content_id)
                   inspection.type_contents << type_content
-                  inspection.update_column(:color, "red") if inspection.color == "yellow" && (ids_red_cases & type_content_id).any?
                 end
               end
 
@@ -232,6 +230,18 @@ module Api
               res[:last_visit] = @params[:visited_at] || Time.now.utc
               @house.update!(res)
             end
+          end
+
+          def analyze_inspection_status(inspection, type_content_id)
+            container_protection_ids = ContainerProtection.where(name_es: ['Tapa no hermética', 'Techo', 'Otro', 'No tiene']).pluck(:id)
+            ids_red_cases = TypeContent.where(name_es: %w[Larvas Pupas Huevos]).pluck(:id)
+
+            return 'red' if (ids_red_cases & type_content_id).any? if type_content_id
+            return 'yellow' if (ids_red_cases & type_content_id).none? && inspection[:container_protection_id].in?(container_protection_ids) if inspection.key?(:container_protection_id)
+            return 'yellow' if inspection.key?(:has_water) && inspection[:has_water] && !inspection.key?(:container_protection_id)
+
+            'green'
+
           end
 
           def container_status_analyzer(inspection)
