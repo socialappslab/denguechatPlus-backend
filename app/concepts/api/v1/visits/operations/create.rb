@@ -10,7 +10,7 @@ module Api
           Container = Struct.new(:has_water, :visit_id, :was_chemically_treated, :breeding_site_type_id,
                                  :elimination_method_type_id, :water_source_type_id, :lid_type, :code_reference, :container_test_result,
                                  :tracking_type_required, :created_by_id, :treated_by_id, :water_source_other, :lid_type_other,
-                                 :container_protection_id, :other_protection, keyword_init: true)
+                                 :container_protection_id, :other_protection, :type_content_id, keyword_init: true)
 
           step :check_request_attrs
           tee :params
@@ -114,6 +114,7 @@ module Api
 
           def create_inspections
             return Success({ ctx: @ctx, type: :created }) if @inspections.nil? || @inspections&.empty?
+            ids_red_cases = TypeContent.where(name_es: ['Larvas', 'Pupas', 'Huevos']).pluck(:id)
 
             container_attrs = Container.members
             inspections_clean_format = []
@@ -132,9 +133,19 @@ module Api
               end
             end
             if inspections_clean_format.any?
-              inspections_clean_format.each do |inspection|
-                Inspection.create!(inspection)
+              inspections_clean_format.each do |inspection_data|
+                type_content_id = inspection_data.delete(:type_content_id) if inspection_data.key?(:type_content_id)
+                inspection_data[:color] = inspection_data[:has_water] ? "yellow" : "green"
+
+                inspection = Inspection.create!(inspection_data)
+
+                if type_content_id
+                  type_content = TypeContent.find_by(id: type_content_id)
+                  inspection.type_contents << type_content
+                  inspection.update_column(:color, "red") if inspection.color == "yellow" && (ids_red_cases & type_content_id).any?
+                end
               end
+
             end
             Success({ ctx: @ctx, type: :created })
           end
