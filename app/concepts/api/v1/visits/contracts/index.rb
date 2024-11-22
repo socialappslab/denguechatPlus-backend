@@ -23,6 +23,7 @@ module Api
             optional(:team_name).filled(:string)
             optional(:house_id).filled(:integer)
             optional(:house_status).filled(:string)
+            optional(:visit_status).filled(:string)
           end
         end
       end
