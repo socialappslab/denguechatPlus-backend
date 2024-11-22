@@ -36,7 +36,7 @@ module Api
 
             def check_last_code_recovery_sent
               return Success({ ctx: @user_account, type: :success }) if @user_account.last_recovery_code_sent_at.nil?
-              return Success({ ctx: @user_account, type: :success }) if (DateTime.now - 15.minutes) > @user_account.last_recovery_code_sent_at
+              return Success({ ctx: @user_account, type: :success }) if (DateTime.now - 1.minute) > @user_account.last_recovery_code_sent_at
 
               Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'You can only request a password recovery code once per minute. Please try again later.', custom_predicate: :code_recovery_in_a_short_time )})
 
