@@ -29,6 +29,13 @@ Rails.application.routes.draw do
           end
         end
       end
+      resources :recovery_password, only: [] do
+        collection do
+          post 'validate_phone', to: 'recovery_password#validate_phone'
+          post 'validate_code', to: 'recovery_password#validate_code'
+          post 'new_password', to: 'recovery_password#new_password'
+        end
+      end
       resources :organizations do
         collection do
           delete :destroy
@@ -99,7 +106,9 @@ Rails.application.routes.draw do
         get '/', to: 'cities#list_by_country_and_state_assumption', on: :collection
         get '/', to: 'cities#show_by_country_and_state_assumption', on: :member
       end
-      resources :wedges
+      resources :wedges, except: :index do
+        get '/', to: 'public/wedges#index', on: :collection
+      end
       resources :reports do
         get :house_status, on: :collection, action: :house_status
         get :brigadists_performance, on: :collection, action: :brigadists_performance
@@ -115,6 +124,7 @@ Rails.application.routes.draw do
             end
           end
         end
+        resources :wedges, only: %i[show index]
         resources :organizations, only: %i[index show], controller: '/api/v1/organizations'
         resources :cities, only: %i[show index] do
           get '/', to: '/api/v1/cities#list_by_country_and_state_assumption', on: :collection
