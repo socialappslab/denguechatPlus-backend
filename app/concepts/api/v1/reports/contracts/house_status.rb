@@ -11,7 +11,7 @@ module Api
           params do
             optional(:filter).maybe(:hash) do
               optional(:name).maybe(:string)
-              required(:team_id).maybe(:integer)
+              optional(:team_id).maybe(:integer)
               optional(:wedge_id).maybe(:integer)
               optional(:neighborhood_id).maybe(:integer)
             end

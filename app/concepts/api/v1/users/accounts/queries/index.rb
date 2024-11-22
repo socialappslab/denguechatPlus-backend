@@ -100,7 +100,7 @@ module Api
               return relation if @filter.nil? || @filter[:role_name].blank?
 
               text_searched = @filter[:role_name].downcase
-              relation.joins(user_account: :roles).where('LOWER(roles.name) ILIKE unaccent(?)', "%#{text_searched}%")
+              relation.joins(user_account: :roles).where('LOWER(roles.name) ILIKE unaccent(?) OR LOWER(roles.name) ILIKE unaccent(?)', "%#{text_searched}%", "%team_leader%")
             end
 
             def without_team(relation)

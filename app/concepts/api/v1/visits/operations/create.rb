@@ -106,10 +106,10 @@ module Api
 
           def set_extra_info_to_inspections
             @inspections&.map do |inspection|
-                inspection[:created_by_id] = @current_user.id
-                inspection[:treated_by_id] = @current_user.id
-                inspection[:visit_id] = @ctx[:model].id
-              end
+              inspection[:created_by_id] = @current_user.id
+              inspection[:treated_by_id] = @current_user.id
+              inspection[:visit_id] = @ctx[:model].id
+            end
           end
 
           def create_inspections
@@ -224,6 +224,11 @@ module Api
           end
 
           def update_house_status
+            colors = {
+              'red'=> "Rojo",
+              'yellow'=> "Amarillo",
+              'green' => "Verde"
+            }
             inspections_ids = @ctx[:model].inspections.pluck(:id)
             unless inspections_ids.empty?
               counts = @ctx[:model].inspections.group(:color).count
@@ -231,19 +236,35 @@ module Api
                 infected_containers: counts["red"] || 0,
                 potential_containers: counts["yellow"] || 0,
                 non_infected_containers: counts["green"] || 0,
-                last_visit: @params[:visited_at] || Time.now.utc
+                last_visit: @params[:visited_at] || Time.now.utc,
+                status: if (counts["red"] || 0) > 0
+                          "red"
+                        elsif (counts["yellow"] || 0) > 0
+                          "yellow"
+                        elsif (counts["green"] || 0) > 0
+                          "green"
+                        else
+                          "green"
+                        end
               }
               @house.update!(result)
+              @ctx[:model].update!(status: colors[result[:status]])
+            else
+              @house.update!(infected_containers: 0, potential_containers: 0,
+                             non_infected_containers: 0, last_visit:  @params[:visited_at] || Time.now.utc,
+                             status: 'green')
+              @ctx[:model].update!(status: 'Verde')
             end
           end
 
-          def analyze_inspection_status(inspection, type_content_id)
+          def analyze_inspection_status(inspection, type_content_id = [])
+            type_content_id ||= []
             container_protection_ids = ContainerProtection.where(name_es: ['Tapa no hermética', 'Techo', 'Otro', 'No tiene']).pluck(:id)
             ids_red_cases = TypeContent.where(name_es: %w[Larvas Pupas Huevos]).pluck(:id)
 
             return 'red' if (ids_red_cases & type_content_id).any? if type_content_id.any?
             return 'yellow' if (ids_red_cases & type_content_id).none? && inspection[:container_protection_id].in?(container_protection_ids)
-            return 'yellow' if  inspection.has_water && !inspection[:container_protection_id].in?(container_protection_ids)
+            return 'yellow' if  inspection[:has_water] && !inspection[:container_protection_id].in?(container_protection_ids)
 
             'green'
 
