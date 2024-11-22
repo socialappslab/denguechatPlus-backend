@@ -8,6 +8,9 @@ module Api
                  renderer_options: { serializer: Api::V1::Visits::Serializers::Show },
                  options: { current_user: }
 
+      end
+
+      def index
         endpoint operation: Api::V1::Visits::Operations::Index,
                  renderer_options: { serializer: Api::V1::Visits::Serializers::Index },
                  options: { current_user: }
