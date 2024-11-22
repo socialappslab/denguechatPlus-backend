@@ -262,7 +262,7 @@ module Api
             container_protection_ids = ContainerProtection.where(name_es: ['Tapa no hermética', 'Techo', 'Otro', 'No tiene']).pluck(:id)
             ids_red_cases = TypeContent.where(name_es: %w[Larvas Pupas Huevos]).pluck(:id)
 
-            return 'red' if (ids_red_cases & type_content_id).any? if type_content_id.any?
+            return 'red' if (ids_red_cases & type_content_id).any? if type_content_id&.any?
             return 'yellow' if (ids_red_cases & type_content_id).none? && inspection[:container_protection_id].in?(container_protection_ids)
             return 'yellow' if  inspection[:has_water] && !inspection[:container_protection_id].in?(container_protection_ids)
 
