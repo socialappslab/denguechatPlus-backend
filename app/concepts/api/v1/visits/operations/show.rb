@@ -9,6 +9,7 @@ module Api
 
           tee :params
           step :find_post
+          step :set_language
 
           def params(input)
             @ctx = {}
@@ -21,11 +22,19 @@ module Api
             if @ctx[:data].nil?
               Failure({ ctx: @ctx, type: :not_found })
             else
-              @ctx[:data].define_singleton_method(:language) { @language }
-              @ctx[:data].define_singleton_method(:language=) { |value| @language = value }
-              @ctx[:data].language = "en"
               Success({ ctx: @ctx, type: :success })
             end
+          end
+
+          def set_language
+            @ctx[:data].define_singleton_method(:language) { @language }
+            @ctx[:data].define_singleton_method(:language=) { |value| @language = value }
+            @ctx[:data].language = if @params.key?(:language) && @params[:language].in?(%w[en es pt])
+                                     @params[:language]
+                                   else
+                                     'es'
+                                   end
+            Success({ ctx: @ctx, type: :success })
           end
         end
       end
