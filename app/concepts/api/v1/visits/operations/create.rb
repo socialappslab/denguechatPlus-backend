@@ -46,8 +46,22 @@ module Api
             params = input[:params][:json_params]
             params_json = JSON.parse(params)
             @params = to_snake_case(params_json)
+            @params[:questionnaire_id] ||= Questionnaire.last.id || 1
             @current_user = input[:current_user]
           end
+
+          def depurate_inspection_list
+            if @params.key?('inspections')
+              inspections = @params["inspections"]
+              inspections.reject! do |inspection|
+                (inspection.keys - %w[quantity_founded status_color]).empty?
+              end
+              @params["inspections"] = inspections
+            end
+            @params.delete('inspections') if @params.key?('inspections') && @params['inspections']&.empty?
+          end
+
+
 
           def validate_schema
             @ctx['contract.default'] = Api::V1::Visits::Contracts::Create.kall(@params)
@@ -65,18 +79,6 @@ module Api
             @house_info = @params.delete(:house)&.deep_symbolize_keys unless @params.key?(:house_id)
             @inspections = @params.delete(:inspections)&.map(&:deep_symbolize_keys) if @params.key?(:inspections)
           end
-
-          def depurate_inspection_list
-            if @params.key?('inspections')
-              inspections = @params["inspections"]
-              inspections.reject! do |inspection|
-                inspection.keys.sort == %w[quantity_founded status_color].sort
-              end
-              @params["inspections"] = inspections
-            end
-            @params.delete('inspections') if @params.key?('inspections') && @params['inspections']&.empty?
-          end
-
           def create_house_if_necessary
             return existing_house_result if params_include_house?
 
@@ -241,6 +243,7 @@ module Api
             container_protection_ids = ContainerProtection.where(name_es: ['Tapa no hermética', 'Techo', 'Otro', 'No tiene']).pluck(:id)
             ids_red_cases = TypeContent.where(name_es: %w[Larvas Pupas Huevos]).pluck(:id)
 
+            return 'green' if type_content_id.nil?
             return 'red' if (ids_red_cases & type_content_id).any? if type_content_id.any?
             return 'yellow' if (ids_red_cases & type_content_id).none? && inspection[:container_protection_id].in?(container_protection_ids)
             return 'yellow' if  inspection.has_water && !inspection[:container_protection_id].in?(container_protection_ids)
