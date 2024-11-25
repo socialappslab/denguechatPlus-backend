@@ -61,6 +61,10 @@ class UserAccount < ApplicationRecord
     roles.joins(:permissions).exists?(permissions: { name:, resource: })
   end
 
+  def full_name
+    "#{first_name} #{last_name}"
+  end
+
   def teams_under_leadership
     return [] unless has_role?(:team_leader)
 
