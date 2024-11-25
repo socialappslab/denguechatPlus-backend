@@ -46,7 +46,7 @@ Rails.application.routes.draw do
         end
       end
       resources :house_blocks, only: %i[index]
-      resources :visits, only: %i[create index]
+      resources :visits, only: %i[create index show]
       resources :questionnaires, only: %i[current] do
         collection do
           get :current
