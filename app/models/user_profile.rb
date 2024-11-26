@@ -50,4 +50,9 @@ class UserProfile < ApplicationRecord
   delegate :name, to: :city, prefix: true, allow_nil: true
   delegate :name, to: :neighborhood, prefix: true, allow_nil: true
   delegate :roles, to: :user_account, allow_nil: true
+
+
+  def full_name
+    "#{first_name} #{last_name}"
+  end
 end
