@@ -29,6 +29,8 @@ module Api
             visit.house.id if visit.house
           end
 
+          attribute :visit_status, &:status
+
           attribute :brigadist do |visit|
             visit.user_account.user_profile.full_name
           end

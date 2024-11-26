@@ -150,6 +150,17 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :web do
+    resources :change_images, only: [] do
+      collection do
+        get :question_images
+      end
+      member do
+        post :update_image
+      end
+    end
+  end
+
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
     username_match = ActiveSupport::SecurityUtils.secure_compare(
       ::Digest::SHA256.hexdigest(username),

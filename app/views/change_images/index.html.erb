@@ -1,0 +1,25 @@
+<% if @questions.any? %>
+  <ul>
+    <% @questions.each do |question| %>
+      <% if question.image.attached? %>
+        <li>
+          <strong><%= question.description_es %></strong>
+
+          <p>Imagen actual:</p>
+          <%= image_tag question.image, size: "200x200" %>
+
+          <%= form_with model: question, url: update_image_web_change_image_path(question), method: :put, local: true, html: { multipart: true } do |f| %>
+            <div>
+              <%= f.label :image, "Subir nueva imagen" %>
+              <%= f.file_field :image, accept: "image/*" %>
+            </div>
+            <%= f.submit "Actualizar Imagen" %>
+          <% end %>
+        </li>
+      <% end %>
+
+    <% end %>
+  </ul>
+<% else %>
+  <p>No hay preguntas en este cuestionario.</p>
+<% end %>
