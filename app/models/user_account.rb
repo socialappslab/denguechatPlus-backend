@@ -4,16 +4,17 @@
 #
 # Table name: user_accounts
 #
-#  id              :bigint           not null, primary key
-#  discarded_at    :datetime
-#  failed_attempts :integer          default(0)
-#  password_digest :string
-#  phone           :string
-#  status          :integer          default("pending")
-#  username        :string
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  user_profile_id :bigint
+#  id                    :bigint           not null, primary key
+#  code_recovery_sent_at :datetime
+#  discarded_at          :datetime
+#  failed_attempts       :integer          default(0)
+#  password_digest       :string
+#  phone                 :string
+#  status                :integer          default("pending")
+#  username              :string
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  user_profile_id       :bigint
 #
 # Indexes
 #
@@ -36,6 +37,7 @@ class UserAccount < ApplicationRecord
   has_many :teams, through: :user_profile
   has_and_belongs_to_many :roles,  join_table: :user_accounts_roles
   has_many :permissions, through: :roles
+  has_many :user_code_recoveries
   accepts_nested_attributes_for :user_profile,  update_only: true
 
   default_scope { where(discarded_at: nil) }
@@ -69,5 +71,9 @@ class UserAccount < ApplicationRecord
     return [] unless has_role?(:team_leader)
 
     teams.pluck(:id)
+  end
+
+  def last_recovery_code_sent_at
+    user_code_recoveries.last&.created_at
   end
 end

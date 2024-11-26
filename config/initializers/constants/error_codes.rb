@@ -61,7 +61,9 @@ module Constants
       unexpected_key: 56,
       without_permissions: 57,
       users_change_team: 58,
-      reports_brigadists_performance: 59
+      reports_brigadists_performance: 59,
+      code_recovery_in_a_short_time: 60
+
     }.freeze
   end
 end

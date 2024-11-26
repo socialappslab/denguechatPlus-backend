@@ -97,6 +97,9 @@ gem 'ffaker'
 # error login and tracking
 gem 'rollbar'
 
+# sms gem with twilio
+gem 'twilio-ruby', '~> 7.3.6'
+
 group :development, :test do
   gem 'annotate'
   gem 'brakeman', '~> 5.3', require: false

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_15_235615) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_22_023527) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -446,6 +446,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_15_235615) do
     t.string "username"
     t.integer "status", default: 0
     t.integer "failed_attempts", default: 0
+    t.datetime "code_recovery_sent_at"
     t.index ["discarded_at"], name: "index_user_accounts_on_discarded_at"
     t.index ["phone"], name: "index_user_accounts_on_phone", unique: true
     t.index ["user_profile_id"], name: "index_user_accounts_on_user_profile_id"
@@ -458,6 +459,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_15_235615) do
     t.index ["role_id"], name: "index_user_accounts_roles_on_role_id"
     t.index ["user_account_id", "role_id"], name: "index_user_accounts_roles_on_user_account_id_and_role_id"
     t.index ["user_account_id"], name: "index_user_accounts_roles_on_user_account_id"
+  end
+
+  create_table "user_code_recoveries", force: :cascade do |t|
+    t.integer "user_account_id"
+    t.string "code"
+    t.datetime "expired_at"
+    t.datetime "used_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "user_profile_house_blocks", force: :cascade do |t|
@@ -487,6 +497,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_15_235615) do
     t.index ["neighborhood_id"], name: "index_user_profiles_on_neighborhood_id"
     t.index ["organization_id"], name: "index_user_profiles_on_organization_id"
     t.index ["team_id"], name: "index_user_profiles_on_team_id"
+  end
+
+  create_table "user_tokens", force: :cascade do |t|
+    t.string "token"
+    t.datetime "used_at"
+    t.integer "user_account_id"
+    t.string "data_type"
+    t.string "event"
+    t.string "user_code_recovery_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "versions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

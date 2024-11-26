@@ -225,6 +225,12 @@ GEM
     factory_bot_rails (6.4.3)
       factory_bot (~> 6.4)
       railties (>= 5.0.0)
+    faraday (2.12.1)
+      faraday-net_http (>= 2.0, < 3.5)
+      json
+      logger
+    faraday-net_http (3.4.0)
+      net-http (>= 0.5.0)
     fasterer (0.11.0)
       ruby_parser (>= 3.19.1)
     ffaker (2.23.0)
@@ -275,6 +281,7 @@ GEM
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
+    logger (1.6.1)
     loofah (2.22.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -293,6 +300,8 @@ GEM
     multi_xml (0.7.1)
       bigdecimal (~> 3.1)
     mutex_m (0.2.0)
+    net-http (0.5.0)
+      uri
     net-imap (0.4.14)
       date
       net-protocol
@@ -510,6 +519,10 @@ GEM
     tilt (2.4.0)
     timeout (0.4.1)
     trailblazer-option (0.1.2)
+    twilio-ruby (7.3.6)
+      faraday (>= 0.9, < 3.0)
+      jwt (>= 1.5, < 3.0)
+      nokogiri (>= 1.6, < 2.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     uber (0.1.0)
@@ -520,6 +533,7 @@ GEM
       rugged (>= 0.27, < 1.8)
     unicode-display_width (2.5.0)
     uniform_notifier (1.16.0)
+    uri (1.0.2)
     webmock (3.23.1)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
@@ -605,6 +619,7 @@ DEPENDENCIES
   spring-watcher-listen (~> 2.1)
   super_diff
   test-prof (~> 1.0)
+  twilio-ruby (~> 7.3.6)
   tzinfo-data
   undercover (~> 0.4)
   webmock (~> 3.18)
