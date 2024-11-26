@@ -24,6 +24,7 @@ module Api
           step :create_inspections
           tee :add_photos
           tee :update_house_status
+          tee :set_language
 
 
           def check_request_attrs(input)
@@ -257,6 +258,17 @@ module Api
             return Constants::ContainerStatus::INFECTED if inspection.infected?
 
             Constants::ContainerStatus::POTENTIALLY_INFECTED if inspection.potential?
+          end
+
+          def set_language
+            @ctx[:model].define_singleton_method(:language) { @language }
+            @ctx[:model].define_singleton_method(:language=) { |value| @language = value }
+            @ctx[:model].language = if @params.key?(:language) && @params[:language].in?(%w[en es pt])
+                                     @params[:language]
+                                   else
+                                     'es'
+                                   end
+            Success({ ctx: @ctx, type: :success })
           end
         end
       end
