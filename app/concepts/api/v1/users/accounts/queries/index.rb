@@ -46,8 +46,11 @@ module Api
               return relation if @filter.nil? || @filter[:full_name].blank?
 
               text_searched = @filter[:full_name].downcase
+              transformed_text = text_searched.split.join('%%')
+              transformed_text = "%#{transformed_text}%"
+
               relation.where(
-                'unaccent(LOWER(user_profiles.first_name)) ilike unaccent(:query) OR unaccent(LOWER(user_profiles.last_name)) ilike unaccent(:query)', query: "%#{text_searched}%")
+                "unaccent(LOWER(user_profiles.first_name || ' ' || user_profiles.last_name)) ILIKE unaccent(:query)", query: "%#{transformed_text}%")
             end
 
             def first_name_clause(relation)
