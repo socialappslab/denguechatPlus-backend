@@ -10,7 +10,7 @@ module Api
           attributes :id, :visited_at, :city, :sector, :wedge, :house, :visit_status, :brigadist, :team
 
           attribute :visited_at do |visit|
-            visit.visited_at.strftime('%d-%m-%Y') if visit.visited_at.present?
+            visit.visited_at if visit.visited_at.present?
           end
 
           attribute :city do |visit|
