@@ -32,6 +32,8 @@ module Api
           attribute :visit_status, &:status
 
           attribute :brigadist do |visit|
+            'usuario eliminado'
+            next if visit.user_account.nil?
             visit.user_account.user_profile.full_name
           end
 

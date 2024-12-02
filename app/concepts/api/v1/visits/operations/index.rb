@@ -31,7 +31,7 @@ module Api
           def cursor_and_paginate
             @ctx[:sort] = { field: 'visits.visited_at', direction: 'desc' } if @params['sort'].nil?
             direction = @params['order'].nil? ? 'asc' : @params['order']
-            @ctx[:sort] = {field: @params['sort'], direction: } if @params['sort']
+            @ctx[:sort] = {field: @params['sort'].underscore, direction: } if @params['sort']
           end
 
           def list
