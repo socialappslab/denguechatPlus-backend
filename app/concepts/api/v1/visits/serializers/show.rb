@@ -16,7 +16,7 @@ module Api
             @city = @house.city
             @sector = @house.neighborhood
             @wedge = @house.wedge
-            object.visited_at.strftime('%Y-%m-%d')
+            object.visited_at
           end
 
           attribute :team do |object|
@@ -27,12 +27,18 @@ module Api
           end
 
           attribute :brigadist do |object|
-            next unless object.user_account
 
-            {
-              id: object.user_account.id,
-              fullName: object.user_account.full_name,
-            }
+            if object.user_account
+              {
+                id: object.user_account.id,
+                fullName: object.user_account.full_name,
+              }
+            else
+              {
+                id: nil,
+                fullName: 'Usuario eliminado',
+              }
+            end
           end
 
           attribute :city do |object|
@@ -59,7 +65,7 @@ module Api
           attribute :host do |object|
             next unless object.host
 
-            object.host.split(", ")
+            object.host.split(', ')
           end
 
           attribute :inspections do |visit|
