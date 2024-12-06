@@ -26,7 +26,7 @@ module Api
           end
 
           attribute :house do |visit|
-            visit.house.id if visit.house
+            visit.house.reference_code if visit.house
           end
 
           attribute :visit_status, &:status
