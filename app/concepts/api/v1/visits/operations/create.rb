@@ -266,6 +266,7 @@ module Api
             ids_red_cases = TypeContent.where(name_es: %w[Larvas Pupas Huevos]).pluck(:id)
 
             return 'green' if type_content_id.nil? || type_content_id.blank?
+            return 'green' if TypeContent.find_by(id: type_content_id).name_es == 'Nada' && !inspection[:container_protection_id].in?(container_protection_ids)
 
             return 'red' if (ids_red_cases & type_content_id).any? if type_content_id.any?
             return 'yellow' if (ids_red_cases & type_content_id).none? && inspection[:container_protection_id].in?(container_protection_ids)
