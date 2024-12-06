@@ -22,6 +22,7 @@ module Api
           step :create_visit
           tee :set_extra_info_to_inspections
           step :create_inspections
+          tee :create_house_status
           tee :add_photos
           tee :update_house_status
           tee :set_language
@@ -151,6 +152,25 @@ module Api
             Success({ ctx: @ctx, type: :created })
           end
 
+          def create_house_status
+            team_id = @current_user.teams&.first&.id || Team.first.id
+            house = @ctx[:model].house
+            house_status = HouseStatus.find_or_initialize_by(house_id: house.id, date: @ctx[:model].visited_at)
+            house_status.date = @ctx[:model].visited_at
+            house_status.infected_containers = house.infected_containers
+            house_status.non_infected_containers = house.non_infected_containers
+            house_status.potential_containers = house.potential_containers
+            house_status.city_id = house.city_id
+            house_status.country_id = house.country_id
+            house_status.house_block_id = house.house_block_id
+            house_status.neighborhood_id = house.neighborhood_id
+            house_status.team_id = team_id
+            house_status.wedge_id = house.wedge_id
+            house_status.last_visit = house.last_visit
+            house_status.house_id = house.id
+            house_status.save
+          end
+
           def add_photos
             return true if  @photo_ids.nil? || @photo_ids.blank? || @photos.nil? || @photos.blank?
 
@@ -175,7 +195,7 @@ module Api
             wedge_name = wedge.name.last(4).delete(' ')
             block_name = block.name.last(4).delete(' ')
             rand_number = Time.now.to_i.to_s
-            last_id = House.last&.id  || 1
+            last_id = House.last&.id || 1
             last_id + 1
           end
 
@@ -228,8 +248,8 @@ module Api
 
           def update_house_status
             colors = {
-              'red'=> "Rojo",
-              'yellow'=> "Amarillo",
+              'red' => "Rojo",
+              'yellow' => "Amarillo",
               'green' => "Verde"
             }
             inspections_ids = @ctx[:model].inspections.pluck(:id)
