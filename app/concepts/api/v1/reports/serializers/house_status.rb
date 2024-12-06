@@ -12,12 +12,16 @@ module Api
           attributes :visit_quantity
 
           attribute :visit_variation_percentage do |resource|
-            resource.visit_variation_percentage.to_i
+            res = resource.visit_variation_percentage.to_i
+            res = 100 if res.zero? || res.nil?
+            res
           end
           attributes :house_quantity
 
           attribute :site_variation_percentage do |resource|
-            resource.site_variation_percentage.to_i
+            res = resource.site_variation_percentage.to_i
+            res = 100 if res.zero? || res.nil?
+            res
           end
 
           attributes :green_quantity, :orange_quantity, :red_quantity
