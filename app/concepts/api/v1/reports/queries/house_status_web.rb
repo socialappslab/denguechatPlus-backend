@@ -8,8 +8,8 @@ module Api
         class HouseStatusWeb
           include Api::V1::Lib::Queries::QueryHelper
 
-          StatusResults = Struct.new(:house_quantity, :visit_quantity, :green_quantity, :orange_quantity,
-                                     :red_quantity, :site_variation_percentage, :visit_variation_percentage)
+          StatusResults = Struct.new(:house_quantity, :visit_quantity, :site_variation_percentage, :visit_variation_percentage,
+                                     :green_quantity, :orange_quantity, :red_quantity)
 
 
           def initialize(filter, current_user)
@@ -35,111 +35,32 @@ module Api
           attr_reader :team_id, :wedge_id, :neighborhood_id
 
           def fetch_data
-            current_week_query = <<-SQL.squish
-    SELECT
-      DISTINCT COUNT(house_statuses.house_id) AS house_quantity,
-      COUNT(CASE WHEN (COALESCE(infected_containers, 0) = 0) AND (COALESCE(potential_containers, 0) = 0) THEN 1 END) AS green_quantity_current,
-      SUM(CASE WHEN potential_containers > 0 AND (infected_containers = 0 OR infected_containers IS NULL) THEN 1 ELSE 0 END) AS orange_quantity,
-      SUM(CASE WHEN infected_containers > 0 THEN 1 ELSE 0 END) AS red_quantity,
-      (SELECT COUNT(*) 
-       FROM visits 
-       LEFT JOIN houses ON visits.house_id = houses.id 
-       WHERE visits.team_id = ? 
-         AND (houses.neighborhood_id = ? OR ? IS NULL) 
-         AND (houses.wedge_id = ? OR ? IS NULL)
-         AND visits.visited_at >= date_trunc('week', CURRENT_DATE)) AS visit_quantity_current,
-      (SELECT COUNT(*) 
-       FROM visits 
-       LEFT JOIN houses ON visits.house_id = houses.id 
-       WHERE visits.team_id = ?) AS visit_quantity_total,
-      (SELECT COUNT(CASE WHEN (infected_containers = 0 OR infected_containers IS NULL) AND (potential_containers = 0 OR potential_containers IS NULL) THEN 1 END)
-       FROM house_statuses 
-       WHERE house_statuses.team_id = ? 
-         AND house_statuses.date >= date_trunc('week', CURRENT_DATE)) AS green_quantity_cw
-    FROM
-      house_statuses
-    WHERE
-      house_statuses.team_id = ? 
-      AND (house_statuses.neighborhood_id = ? OR ? IS NULL) 
-      AND (house_statuses.wedge_id IN (?) OR ? IS NULL)
-      AND house_statuses.date >= date_trunc('week', CURRENT_DATE)
-SQL
+            query = <<~SQL.squish
+              SELECT 
+                CASE 
+                  WHEN status = '0' THEN 'greenQuantity'
+                  WHEN status = '1' THEN 'yellowQuantity'
+                  WHEN status = '2' THEN 'redQuantity'
+                END AS category,
+                COUNT(*) AS cantidad
+              FROM houses
+              where status is not null
+              GROUP BY status;
+            SQL
 
-            previous_week_query = <<-SQL.squish
-    SELECT
-      DISTINCT COUNT(house_statuses.house_id) AS house_quantity_previous,
-      COUNT(CASE WHEN (COALESCE(infected_containers, 0) = 0) AND (COALESCE(potential_containers, 0) = 0) THEN 1 END) AS green_quantity_previous,
-      (SELECT COUNT(*) 
-       FROM visits 
-       LEFT JOIN houses ON visits.house_id = houses.id 
-       WHERE visits.team_id = ? 
-         AND (houses.neighborhood_id = ? OR ? IS NULL) 
-         AND (houses.wedge_id = ? OR ? IS NULL)
-         AND visits.visited_at >= date_trunc('week', CURRENT_DATE) - INTERVAL '7 days' 
-         AND visits.visited_at < date_trunc('week', CURRENT_DATE)) AS visit_quantity_previous
-    FROM
-      house_statuses
-    WHERE
-      house_statuses.team_id = ? 
-      AND house_statuses.date >= date_trunc('week', CURRENT_DATE) - INTERVAL '7 days' 
-      AND house_statuses.date < date_trunc('week', CURRENT_DATE)
-      AND (house_statuses.neighborhood_id = ? OR ? IS NULL) 
-      AND (house_statuses.wedge_id = ? OR ? IS NULL)
-SQL
-
-
-            cw = ActiveRecord::Base.connection.execute(
-              ActiveRecord::Base.send(:sanitize_sql_array, [
-                current_week_query,
-                @team_id,
-                @neighborhood_id,
-                @neighborhood_id,
-                @wedge_id,
-                @wedge_id,
-                @team_id,
-                @team_id,
-                @team_id,
-                @neighborhood_id,
-                @neighborhood_id,
-                @wedge_id,
-                @wedge_id
-              ])
-            ).to_a&.first
-
-            pw = ActiveRecord::Base.connection.execute(
-              ActiveRecord::Base.send(:sanitize_sql_array, [
-                previous_week_query,
-                @team_id,
-                @neighborhood_id,
-                @neighborhood_id,
-                @wedge_id,
-                @wedge_id,
-                @team_id,
-                @neighborhood_id,
-                @neighborhood_id,
-                @wedge_id,
-                @wedge_id
-              ])
-            ).to_a&.first
-            #:house_quantity, :visit_quantity, :green_quantity, :orange_quantity,
-            #                                      :red_quantity, :site_variation_percentage, :visit_variation_percentage
-
-            visit_variation_percentage = pw['visit_quantity_previous'].to_i.zero? ? nil : ((cw['visit_quantity_current'] - pw['visit_quantity_previous']) * 100.0 / pw['visit_quantity_previous']).round(0)
-
-            site_variation_percentage = if pw['green_quantity_previous'].nil? || (pw['green_quantity_previous']).zero?
-                                          cw['green_quantity_cw'].to_i.positive? ? 100 : 0
-                                        else
-                                          ((cw['green_quantity_cw'] - pw['green_quantity_previous']) * 100 / pw['green_quantity_previous']).round(0)
-                                        end
+            result = ActiveRecord::Base.connection.execute(query)
+            result_hash = result.each_with_object({}) do |row, hash|
+              hash[row['category'].to_sym] = row['cantidad']
+            end || {}
 
             StatusResults.new(
-              cw['house_quantity'] || nil,
-              cw['visit_quantity_total'] || nil,
-              cw['green_quantity_current'] || nil,
-              cw['orange_quantity'] || nil,
-              cw['red_quantity'] || nil,
-              site_variation_percentage,
-              visit_variation_percentage
+              0,
+              0,
+              0,
+              0,
+              result_hash[:greenQuantity] || nil,
+              result_hash[:yellowQuantity] || nil,
+              result_hash[:redQuantity] || nil
             )
           end
 
