@@ -46,29 +46,27 @@ module Api
 
           def house_statuses_with_aggregates
             sql = <<~SQL
-                                          WITH current_week AS (
+                                                        WITH current_week AS (
                   SELECT
-                      DISTINCT COUNT(house_statuses.house_id) AS house_quantity,
+                      COUNT(DISTINCT house_statuses.house_id) AS house_quantity,
                       COUNT(
-                          CASE
+                          DISTINCT CASE
                               WHEN (COALESCE(infected_containers, 0) = 0)
                                   AND (COALESCE(potential_containers, 0) = 0)
-                              THEN 1
+                              THEN house_statuses.house_id
                           END
                       ) AS green_quantity_current,
-                      SUM(
-                          CASE
+                      COUNT(
+                          DISTINCT CASE
                               WHEN potential_containers > 0
                                   AND (infected_containers = 0 OR infected_containers IS NULL)
-                              THEN 1
-                              ELSE 0
+                              THEN house_statuses.house_id
                           END
                       ) AS orange_quantity,
-                      SUM(
-                          CASE
+                      COUNT(
+                          DISTINCT CASE
                               WHEN infected_containers > 0
-                              THEN 1
-                              ELSE 0
+                              THEN house_statuses.house_id
                           END
                       ) AS red_quantity,
                       (SELECT COUNT(*)
@@ -87,7 +85,16 @@ module Api
                       )
                       FROM house_statuses
                       WHERE house_statuses.team_id = ?
-                        AND house_statuses.date >= date_trunc('week', CURRENT_DATE)) AS green_quantity_cw
+                        AND house_statuses.date >= date_trunc('week', CURRENT_DATE)
+                        AND house_statuses.house_id IN (
+                            SELECT house_id
+                            FROM house_statuses
+                            WHERE team_id = ?
+                              AND date >= date_trunc('week', CURRENT_DATE)
+                            ORDER BY date DESC
+                            LIMIT 1
+                        )
+                      ) AS green_quantity_cw
                   FROM
                       house_statuses
                   WHERE
@@ -95,12 +102,12 @@ module Api
               ),
               previous_week AS (
                   SELECT
-                      DISTINCT COUNT(house_statuses.house_id) AS house_quantity_previous,
+                      COUNT(DISTINCT house_statuses.house_id) AS house_quantity_previous,
                       COUNT(
-                          CASE
+                          DISTINCT CASE
                               WHEN (COALESCE(infected_containers, 0) = 0)
                                   AND (COALESCE(potential_containers, 0) = 0)
-                              THEN 1
+                              THEN house_statuses.house_id
                           END
                       ) AS green_quantity_previous,
                       (SELECT COUNT(*)
@@ -114,6 +121,15 @@ module Api
                       house_statuses.team_id = ?
                     AND house_statuses.date >= date_trunc('week', CURRENT_DATE) - INTERVAL '7 days'
                     AND house_statuses.date < date_trunc('week', CURRENT_DATE)
+                    AND house_statuses.house_id IN (
+                        SELECT house_id
+                        FROM house_statuses
+                        WHERE team_id = ?
+                          AND date >= date_trunc('week', CURRENT_DATE) - INTERVAL '7 days'
+                          AND date < date_trunc('week', CURRENT_DATE)
+                        ORDER BY date DESC
+                        LIMIT 1
+                    )
               )
               SELECT
                   cw.visit_quantity_total AS visit_quantity,
@@ -144,7 +160,7 @@ module Api
             SQL
             team_id = get_team_id
             @model.connection.select_all(
-              @model.sanitize_sql_array([sql, team_id, team_id, team_id, team_id, team_id, team_id])
+              @model.sanitize_sql_array([sql, team_id, team_id, team_id, team_id, team_id, team_id, team_id, team_id])
             )
 
           end
