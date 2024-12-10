@@ -70,7 +70,8 @@ module Api
               user_profile.roles&.map do |role|
                 {
                   id: role.id,
-                  name: role.name
+                  name: role.name,
+                  label: role.name == 'team_leader' ? 'facilitator' : role.name
                 }
               end
             end

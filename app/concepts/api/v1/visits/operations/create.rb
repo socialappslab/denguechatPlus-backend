@@ -265,7 +265,7 @@ module Api
 
           def create_house_status_daily
             team_id = @current_user.teams&.first&.id || Team.first.id
-            house = @ctx[:model].house
+            house = @house
             house_status = HouseStatus.find_or_initialize_by(house_id: house.id, date: @ctx[:model].visited_at)
             house_status.date = @ctx[:model].visited_at
             house_status.infected_containers = house.infected_containers

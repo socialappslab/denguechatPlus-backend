@@ -14,6 +14,7 @@ module Api
               optional(:team_id).maybe(:integer)
               optional(:wedge_id).maybe(:integer)
               optional(:neighborhood_id).maybe(:integer)
+              optional(:sector_id).maybe(:integer)
             end
 
             optional(:page).maybe(:hash) do

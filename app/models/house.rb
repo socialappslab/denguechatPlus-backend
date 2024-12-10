@@ -63,6 +63,7 @@ class House < ApplicationRecord
   belongs_to :created_by, class_name: 'UserProfile', optional: true, foreign_key: 'user_profile_id'
   belongs_to :special_place, optional: true
   belongs_to :team, optional: true
+  has_many :house_statuses
 
   enum status: { green: 0, yellow: 1, red: 2 }
 

@@ -8,6 +8,7 @@
 #  last_visit              :datetime
 #  non_infected_containers :integer          default(0)
 #  potential_containers    :integer          default(0)
+#  status                  :string
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #  city_id                 :bigint
@@ -45,5 +46,6 @@ class HouseStatus < ApplicationRecord
   belongs_to :neighborhood
   belongs_to :city
   belongs_to :country
+  belongs_to :house
 
 end
