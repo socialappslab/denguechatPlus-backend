@@ -3,7 +3,8 @@
     <% @questions.each do |question| %>
       <% if question.image.attached? %>
         <li>
-          <strong><%= question.description_es %></strong>
+          <strong>Question id:</strong> <%=question.id %> <br>
+          <strong>Description</strong><%= question.description_es %>
 
           <p>Imagen actual:</p>
           <%= image_tag question.image, size: "200x200" %>
@@ -16,6 +17,7 @@
             <%= f.submit "Actualizar Imagen" %>
           <% end %>
         </li>
+        <hr  style="margin-bottom: 45px">
       <% end %>
 
     <% end %>
