@@ -76,7 +76,7 @@ module Api
 
             house_current_status = HouseStatus
                                      .joins(:house)
-                                     .select("houses.status, COUNT(houses.id) AS house_count")
+                                     .select("houses.status, COUNT(distinct houses.id) AS house_count")
                                      .where(houses: base_filter)
                                      .group("houses.status")
 
