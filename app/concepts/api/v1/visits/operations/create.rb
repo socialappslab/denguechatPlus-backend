@@ -258,8 +258,8 @@ module Api
             else
               @house.update!(infected_containers: 0, potential_containers: 0,
                              non_infected_containers: 0, last_visit:  @params[:visited_at] || Time.now.utc,
-                             status: 'green')
-              @ctx[:model].update!(status: 'Verde')
+                             status: 'red')
+              @ctx[:model].update!(status: 'Rojo')
             end
           end
 
@@ -279,6 +279,7 @@ module Api
             house_status.wedge_id = house.wedge_id
             house_status.last_visit = house.last_visit
             house_status.house_id = house.id
+            house_status.status = house.status
             house_status.save
           end
 
