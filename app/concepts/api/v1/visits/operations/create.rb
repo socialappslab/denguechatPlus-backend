@@ -258,14 +258,14 @@ module Api
             else
               @house.update!(infected_containers: 0, potential_containers: 0,
                              non_infected_containers: 0, last_visit:  @params[:visited_at] || Time.now.utc,
-                             status: 'green')
-              @ctx[:model].update!(status: 'Verde')
+                             status: 'red')
+              @ctx[:model].update!(status: 'Rojo')
             end
           end
 
           def create_house_status_daily
             team_id = @current_user.teams&.first&.id || Team.first.id
-            house = @ctx[:model].house
+            house = @house
             house_status = HouseStatus.find_or_initialize_by(house_id: house.id, date: @ctx[:model].visited_at)
             house_status.date = @ctx[:model].visited_at
             house_status.infected_containers = house.infected_containers
@@ -279,6 +279,7 @@ module Api
             house_status.wedge_id = house.wedge_id
             house_status.last_visit = house.last_visit
             house_status.house_id = house.id
+            house_status.status = house.status
             house_status.save
           end
 

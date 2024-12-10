@@ -64,6 +64,6 @@ class House < ApplicationRecord
   belongs_to :special_place, optional: true
   belongs_to :team, optional: true
 
-  enum status: { green: 0, yellow: 1, red: 2 }
+  enum status: { green: "0", yellow: "1", red: "2" }
 
 end
