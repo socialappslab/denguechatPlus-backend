@@ -24,7 +24,7 @@ module Api
                 required(:organization_id).filled(:integer)
                 optional(:timezone).filled(:string)
                 optional(:language).filled(:string)
-                optional(:email).filled(:string)
+                optional(:email)
               end
             end
 
