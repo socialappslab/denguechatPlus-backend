@@ -38,7 +38,13 @@ module Api
           def team_clause(relation)
             return relation if @filter.nil? || @filter[:team_id].blank?
 
-            relation.where(team_id: @filter[:team_id])
+            team = Team.find_by(id: @filter[:team_id])
+            return relation unless team
+
+            wedge_id = team.wedge_id
+            return relation unless wedge_id
+
+            relation.where(wedge_id: wedge_id)
           end
 
           def name_clause(relation)
