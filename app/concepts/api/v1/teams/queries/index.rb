@@ -24,6 +24,7 @@ module Api
                   .yield_self(&method(:sector_name_clause))
                   .yield_self(&method(:wedge_id_clause))
                   .yield_self(&method(:wedge_name_clause))
+                  .yield_self(&method(:leaders))
                   .yield_self(&method(:sort_clause))
           end
 
@@ -59,6 +60,15 @@ module Api
             return relation if @filter.nil? || @filter[:wedge].blank?
 
             relation.joins(:wedge).where('wedges.name ILIKE ?', "%#{@filter[:wedge]}%")
+          end
+
+          def leaders(relation)
+            return relation unless relation.reflect_on_association(:members)
+
+            relation
+              .includes(members: { user_account: :roles })
+              .where(roles: { name: 'team_leader' })
+              .distinct
           end
 
           def sort_clause(relation)
