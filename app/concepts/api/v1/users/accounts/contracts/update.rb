@@ -30,7 +30,7 @@ module Api
                 optional(:house_block_id).filled(:integer)
                 optional(:timezone).filled(:string)
                 optional(:language).filled(:string)
-                optional(:email).filled(:string)
+                optional(:email)
               end
             end
 
@@ -47,7 +47,7 @@ module Api
             end
 
             rule(:user_profile_attributes) do
-              if value && value[:email] && UserProfile.where.not(id: values[:id]).exists?(['LOWER(email) = ?', value[:email].downcase])
+              if value && value[:email].present? && UserProfile.where.not(id: values[:id]).exists?(['LOWER(email) = ?', value[:email].downcase])
                 key(:email).failure(text: :user_email_unique?, predicate: :user_email_unique?)
               end
 
