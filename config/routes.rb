@@ -156,9 +156,11 @@ Rails.application.routes.draw do
     resources :change_images, only: [] do
       collection do
         get :question_images
+        get :option_images
       end
       member do
         post :update_image
+        post :update_image_question
       end
     end
   end
