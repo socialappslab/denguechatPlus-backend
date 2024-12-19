@@ -58,6 +58,11 @@ class UserAccount < ApplicationRecord
   enum status: { pending: 0, active: 1, inactive: 2, locked: 3 }
 
 
+  def normalized_phone
+    return "" unless phone
+    return  phone.prepend('+') unless phone.start_with?('+')
+    return phone
+  end
 
   def can?(name, resource)
     roles.joins(:permissions).exists?(permissions: { name:, resource: })
