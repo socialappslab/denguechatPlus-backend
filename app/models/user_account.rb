@@ -59,6 +59,7 @@ class UserAccount < ApplicationRecord
 
 
   def normalized_phone
+    return "" unless phone
     return  phone.prepend('+') unless phone.start_with?('+')
     return phone
   end
