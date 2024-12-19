@@ -71,7 +71,7 @@ module Api
                 {
                   id: role.id,
                   name: role.name,
-                  label: role.name == 'team_leader' ? 'facilitator' : role.name
+                  label: role.name == 'team_leader' ? 'facilitador' : role.name
                 }
               end
             end

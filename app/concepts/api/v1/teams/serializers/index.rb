@@ -14,9 +14,13 @@ module Api
           end
 
           attribute :leader do |brigade|
-            next if brigade.leader.nil?
+            next if brigade.nil?
 
-            "#{brigade.leader.first_name}, #{brigade.leader.last_name}"
+            brigade.members
+                   .joins(user_account: :roles)
+                   .where(roles: { name: %w[team_leader facilitador] })
+                   .map(&:full_name)
+                   .join(', ')
           end
 
           attribute :members do |brigade|
