@@ -13,7 +13,7 @@ module Api
             params do
               config.validate_keys = true
               required(:id).filled(:integer)
-              optional(:phone).filled(:integer)
+              optional(:phone).filled(:string)
               optional(:password).filled(:string, min_size?: Constants::User::PASSWORD_MIN_LENGTH)
               optional(:username).filled(:string)
               optional(:role_ids).filled(:array)
