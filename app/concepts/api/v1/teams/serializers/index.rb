@@ -17,10 +17,10 @@ module Api
             next if brigade.nil?
 
             brigade.members
-                      .joins(user_account: :roles)
-                      .where(roles: { name: 'team_leader' })
-                      .map(&:full_name)
-                      .join(', ')
+                   .joins(user_account: :roles)
+                   .where(roles: { name: %w[team_leader facilitador] })
+                   .map(&:full_name)
+                   .join(', ')
           end
 
           attribute :members do |brigade|
