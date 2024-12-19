@@ -48,7 +48,7 @@ module Api
 
             def send_sms
               begin
-                ::Twillio::UserMessage.send_recovery_code(@user_account.phone, @recovery_code.code)
+                ::Twillio::UserMessage.send_recovery_code(@user_account.normalized_phone, @recovery_code.code)
                  return Success({ ctx: @user_account, type: :success })
               rescue => error
                 return Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: "There was a problem sending the message to the number #{@user_account.phone}", custom_predicate: :format? )})
