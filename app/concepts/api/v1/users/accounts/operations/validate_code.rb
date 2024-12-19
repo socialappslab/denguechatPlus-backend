@@ -20,7 +20,12 @@ module Api
             tee :create_token
             step :generate_url
 
-            ROOT_URL = 'https://develop.denguechatplus.org/new_password'
+            ROOT_URL = if Rails.env.production?
+                         'https://denguechatplus.org/new_password'
+                       else
+                         'https://develop.denguechatplus.org/new_password'
+                       end
+
 
             def params(input)
               @ctx = {}

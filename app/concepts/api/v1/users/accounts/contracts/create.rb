@@ -24,12 +24,12 @@ module Api
                 required(:organization_id).filled(:integer)
                 optional(:timezone).filled(:string)
                 optional(:language).filled(:string)
-                optional(:email).filled(:string)
+                optional(:email)
               end
             end
 
             rule(:user_profile) do
-              if value[:email]
+              if value[:email].present?
                 if UserProfile.exists?(['LOWER(email) = ?', value[:email].downcase])
                   key(:email).failure(text: :user_email_unique?,  predicate: :user_email_unique?)
                 end

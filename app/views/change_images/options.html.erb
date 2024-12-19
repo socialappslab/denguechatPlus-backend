@@ -1,0 +1,27 @@
+<% if @options.any? %>
+  <ul>
+    <% @options.each do |option| %>
+      <% if option.image.attached? %>
+        <li>
+          <strong>Option id:</strong> <%=option.id %> <br>
+          <strong>Description</strong><%= option.name_es %>
+
+          <p>Imagen actual:</p>
+          <%= image_tag option.image, size: "200x200" %>
+
+          <%= form_with model: option, url: update_image_question_web_change_image_path(option), method: :put, local: true, html: { multipart: true } do |f| %>
+            <div>
+              <%= f.label :image, "Subir nueva imagen" %>
+              <%= f.file_field :image, accept: "image/*" %>
+            </div>
+            <%= f.submit "Actualizar Imagen" %>
+          <% end %>
+        </li>
+        <hr  style="margin-bottom: 45px">
+      <% end %>
+
+    <% end %>
+  </ul>
+<% else %>
+  <p>No hay preguntas en este cuestionario.</p>
+<% end %>
