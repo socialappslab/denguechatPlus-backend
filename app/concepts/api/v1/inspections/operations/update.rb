@@ -76,7 +76,8 @@ module Api
 
           private
           def is_team_leader
-            return false unless @current_user.has_role?(:team_leader)
+            return false unless @current_user.has_role?(:team_leader) || @current_user.has_role?(:facilitador)
+
             comment = Comment.find_by(id: @data[:id])
             owner = UserAccount.find_by(id: comment.user_account_id)
             owner_team_id = owner.teams&.first&.id
