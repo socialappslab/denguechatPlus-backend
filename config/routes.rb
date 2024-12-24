@@ -114,6 +114,7 @@ Rails.application.routes.draw do
       resources :reports do
         get :house_status, on: :collection, action: :house_status
         get :brigadists_performance, on: :collection, action: :brigadists_performance
+        get :tariki_houses, on: :collection, action: :tariki_houses
       end
 
       namespace :public do
