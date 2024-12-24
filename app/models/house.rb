@@ -17,6 +17,7 @@
 #  potential_containers    :integer
 #  reference_code          :string
 #  status                  :string
+#  tariki_status           :boolean          default(FALSE)
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #  city_id                 :bigint           not null
