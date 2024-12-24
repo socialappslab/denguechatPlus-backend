@@ -16,6 +16,12 @@ module Api
                  options: {request:, current_user: }
       end
 
+      def tariki_houses
+        endpoint operation: Api::V1::Reports::Operations::TarikiHouse,
+                 renderer_options: { serializer: Api::V1::Reports::Serializers::TarikiHouse },
+                 options: {request:, current_user: }
+      end
+
     end
   end
 end

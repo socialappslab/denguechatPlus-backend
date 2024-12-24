@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_10_110101) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_23_143202) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -187,6 +187,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_10_110101) do
     t.integer "non_infected_containers"
     t.integer "potential_containers"
     t.string "location_status"
+    t.boolean "tariki_status", default: false
     t.index ["city_id"], name: "index_houses_on_city_id"
     t.index ["country_id"], name: "index_houses_on_country_id"
     t.index ["house_block_id"], name: "index_houses_on_house_block_id"
