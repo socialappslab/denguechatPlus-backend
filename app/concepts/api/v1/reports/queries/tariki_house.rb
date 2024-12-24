@@ -8,7 +8,7 @@ module Api
         class TarikiHouse
           include Api::V1::Lib::Queries::QueryHelper
 
-          ReportResult = Struct.new(:total_houses_qty, :tariki_houses_qty)
+          ReportResult = Struct.new(:total_houses_qty, :tariki_houses_qty, :total_container_qty, :green_container_qty)
 
 
           def initialize(filter, current_user)
@@ -55,11 +55,26 @@ module Api
                 AND neighborhood_id = #{sector_id};
             SQL
 
-            result = ActiveRecord::Base.connection.execute(query)
+            query_green_containers = <<~SQL.squish
+              SELECT
+                  COUNT(*) FILTER (WHERE inspections.color = 'green') AS green_container_qty,
+                  COUNT(*) AS total_container_qty
+              FROM inspections
+              LEFT JOIN visits ON inspections.visit_id = visits.id
+              LEFT JOIN houses ON visits.house_id = houses.id
+              WHERE houses.neighborhood_id = #{sector_id}
+              AND inspections.created_at >= DATE_TRUNC('month', NOW())
+              AND inspections.created_at < DATE_TRUNC('month', NOW()) + INTERVAL '1 month';
+            SQL
+
+            tariki_houses_qty = ActiveRecord::Base.connection.execute(query)
+            green_containers = ActiveRecord::Base.connection.execute(query_green_containers)
 
             ReportResult.new(
               House.where(neighborhood_id: sector_id).count,
-              result.first&.[]('tariki_count')
+              tariki_houses_qty.first&.[]('tariki_count'),
+              green_containers.first&.[]('total_container_qty'),
+              green_containers.first&.[]('green_container_qty')
             )
           end
 
