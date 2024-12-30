@@ -8,7 +8,7 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort, params)
-            @model = Wedge.joins(:sector)
+            @model = Wedge.includes(:neighborhoods)
             @filter = filter
             @sort = sort
             @params = params
