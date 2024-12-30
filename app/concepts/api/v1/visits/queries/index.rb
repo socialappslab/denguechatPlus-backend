@@ -10,9 +10,9 @@ module Api
           def initialize(filter, sort)
             includes = %i[house team user_account]
             if filter
-              includes << { house: :city } if filter[:city_name] || filter[:city_id]
+              includes << { house: :city } if filter[:city] || filter[:city_id]
               includes << { house: :neighborhood } if filter[:sector_name] || filter[:sector_id]
-              includes << { house: :wedge } if filter[:wedge_name] || filter[:wedge_id]
+              includes << { house: :wedge } if filter[:wedge] || filter[:wedge_id]
             else
               filter = {}
             end
@@ -38,7 +38,7 @@ module Api
               .yield_self(&method(:brigadist_id_clause))
               .yield_self(&method(:team_id_clause))
               .yield_self(&method(:team_name_clause))
-              .yield_self(&method(:house_id_clause))
+              .yield_self(&method(:house_code_clause))
               .yield_self(&method(:house_status_clause))
               .yield_self(&method(:visit_status_clause))
               .yield_self(&method(:sort_clause))
@@ -61,9 +61,9 @@ module Api
           end
 
           def city_name_clause(relation)
-            return relation if @filter[:city_name].blank?
+            return relation if @filter[:city].blank?
 
-            relation.joins(house: :city).where('LOWER(cities.name) ILIKE ?', "%#{@filter[:city_name].downcase}%")
+            relation.joins(house: :city).where('LOWER(cities.name) ILIKE ?', "%#{@filter[:city].downcase}%")
           end
 
           def sector_id_clause(relation)
@@ -85,17 +85,17 @@ module Api
           end
 
           def wedge_name_clause(relation)
-            return relation if @filter[:wedge_name].blank?
+            return relation if @filter[:wedge].blank?
 
-            relation.joins(house: :wedge).where('LOWER(wedges.name) ILIKE ?', "%#{@filter[:wedge_name].downcase}%")
+            relation.joins(house: :wedge).where('LOWER(wedges.name) ILIKE ?', "%#{@filter[:wedge].downcase}%")
           end
 
           def brigadist_name_clause(relation)
-            return relation if @filter[:brigadist_name].blank?
+            return relation if @filter[:brigadist].blank?
 
             relation.joins(user_account: :user_profile)
                     .where('LOWER(user_profiles.first_name) ILIKE ? OR LOWER(user_profiles.last_name) ILIKE ?',
-                           "%#{@filter[:brigadist_name].downcase}%", "%#{@filter[:brigadist_name].downcase}%")
+                           "%#{@filter[:brigadist].downcase}%", "%#{@filter[:brigadist].downcase}%")
           end
 
 
@@ -112,15 +112,15 @@ module Api
           end
 
           def team_name_clause(relation)
-            return relation if @filter[:team_name].blank?
+            return relation if @filter[:team].blank?
 
-            relation.joins(:team).where('LOWER(teams.name) ILIKE ?', "%#{@filter[:team_name].downcase}%")
+            relation.joins(:team).where('LOWER(teams.name) ILIKE ?', "%#{@filter[:team].downcase}%")
           end
 
-          def house_id_clause(relation)
-            return relation if @filter[:house_id].blank?
+          def house_code_clause(relation)
+            return relation if @filter[:house].blank?
 
-            relation.where(house_id: @filter[:house_id])
+            relation.joins(:house).where('houses.reference_code ILIKE ?', "%#{@filter[:house]}%")
           end
 
           def house_status_clause(relation)
@@ -132,7 +132,7 @@ module Api
           def visit_status_clause(relation)
             return relation if @filter[:visit_status].blank?
 
-            relation.where(visit_status: @filter[:visit_status])
+            relation.where('visits.status ILIKE ?', "%#{@filter[:visit_status]}%")
           end
 
           def sort_clause(relation)
