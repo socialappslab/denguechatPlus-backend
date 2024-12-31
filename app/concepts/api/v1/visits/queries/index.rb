@@ -139,11 +139,11 @@ module Api
             return relation if sort.blank? || sort[:field].blank?
 
             direction = sort[:direction].presence_in(%w[asc desc]) || 'asc'
-            sort[:field] = 'teams.wedge_id' if sort[:field].include?('wedge')
             sort[:field] = 'teams.name' if sort[:field].include?('team')
             sort[:field] = 'user_profiles.first_name' if sort[:field].include?('brigadist')
             sort[:field] = 'houses.id' if sort[:field].include?('house')
             sort[:field] = 'visits.status' if sort[:field].include?('visit_status')
+            sort[:field] = 'houses.wedge_id' if sort[:field].include?('wedge')
             relation.order("#{sort[:field]} #{direction}")
           end
         end
