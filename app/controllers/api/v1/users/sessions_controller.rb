@@ -7,6 +7,7 @@ module Api
         before_action :authorize_refresh_request!, only: :refresh_token
         def create
           endpoint operation: Api::V1::Users::Sessions::Operations::Create,
+                   options: { agent: request.user_agent.to_s, source: request.headers['X-Device-Type']},
                    renderer_options: {
                      serializer: Api::V1::Users::Sessions::Serializers::Create
                    }

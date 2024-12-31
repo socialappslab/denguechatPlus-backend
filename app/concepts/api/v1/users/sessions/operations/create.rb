@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "browser"
 
 module Api
   module V1
@@ -20,6 +21,9 @@ module Api
               @ctx = {}
               @ctx['errors'] = []
               @params = input.fetch(:params)
+              @agent = input.fetch(:agent)
+              @source = input.fetch(:source)
+              is_mobile?
             end
 
             def validate_schema
@@ -66,12 +70,14 @@ module Api
             end
 
             def access_expiration
-              @ctx[:access_exp] = Constants::User::ACCESS_TOKEN_EXPIRATION
-              @ctx[:refresh_exp] = Constants::User::REFRESH_TOKEN_EXPIRATION
+              @ctx[:access_exp] = is_mobile? ? Constants::User::ACCESS_TOKEN_EXPIRATION_MOBILE : Constants::User::ACCESS_TOKEN_EXPIRATION_WEB
+              @ctx[:refresh_exp] = is_mobile? ? Constants::User::REFRESH_TOKEN_EXPIRATION_MOBILE : Constants::User::REFRESH_TOKEN_EXPIRATION_WEB
             end
 
             def create_tokens
-              result = Api::V1::Users::Lib::CreateTokens.call(@ctx, account: @ctx[:model])
+              result = Api::V1::Users::Lib::CreateTokens.call(@ctx, account: @ctx[:model],
+                                                                    refresh_exp: @ctx[:refresh_exp],
+                                                                    access_exp: @ctx[:access_exp])
 
               if result
                 @ctx[:meta] = { jwt: Api::V1::Lib::Serializers::NamingConvention.new(result, :to_camel_case) }
@@ -80,6 +86,15 @@ module Api
                 Failure({ ctx: @ctx, type: :unauthenticated, errors: ErrorFormater.new_error(field: :base, msg: I18n.t('errors.session.deactivated'), custom_predicate: :credentials_wrong? ) })
               end
             end
+
+
+            private
+
+            def is_mobile?
+              @browser ||= Browser.new(@agent)
+              @browser.device.mobile? || @source == 'mobile'
+            end
+
           end
         end
       end
