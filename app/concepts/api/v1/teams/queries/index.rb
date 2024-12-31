@@ -8,7 +8,7 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort)
-            @model = Team
+            @model = Team.joins(:city, :wedge, :organization)
             @filter = filter
             @sort = sort
           end
@@ -66,6 +66,9 @@ module Api
             return relation if @sort.nil? || @sort.blank?
 
             @sort[:field] = 'neighborhood_id' if @sort[:field] == 'sector'
+            @sort[:field] = 'cities.name' if @sort[:field] == 'city'
+            @sort[:field] = 'wedges.id' if @sort[:field] == 'wedge'
+            @sort[:field] = 'organizations.name' if @sort[:field] == 'organization'
             sort_by_table_columns(relation) if @sort[:field]
           end
         end
