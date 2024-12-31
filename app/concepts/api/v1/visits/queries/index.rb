@@ -143,6 +143,7 @@ module Api
             sort[:field] = 'teams.name' if sort[:field].include?('team')
             sort[:field] = 'user_profiles.first_name' if sort[:field].include?('brigadist')
             sort[:field] = 'houses.id' if sort[:field].include?('house')
+            sort[:field] = 'visits.status' if sort[:field].include?('visit_status')
             relation.order("#{sort[:field]} #{direction}")
           end
         end
