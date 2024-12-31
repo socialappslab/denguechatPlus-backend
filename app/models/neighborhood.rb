@@ -35,6 +35,7 @@ class Neighborhood < ApplicationRecord
   belongs_to :state
   belongs_to :country
   has_many :user_profiles
-  has_many :wedges
+  has_many :neighborhood_wedges, dependent: :destroy
+  has_many :wedges, through: :neighborhood_wedges
 
 end

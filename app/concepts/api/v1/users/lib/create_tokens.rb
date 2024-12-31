@@ -7,8 +7,8 @@ module Api
         class CreateTokens
           def self.call(ctx,
                         account:,
-                        refresh_exp: Constants::User::REFRESH_TOKEN_EXPIRATION,
-                        access_exp: Constants::User::ACCESS_TOKEN_EXPIRATION,
+                        refresh_exp:,
+                        access_exp:,
                         **)
             payload = { account_id: account.id, app: 'dengue_chat_plus', verify_aud: true }
             session = JWTSessions::Session.new(

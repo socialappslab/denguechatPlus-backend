@@ -8,7 +8,7 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort, params)
-            @model = Wedge.joins(:sector)
+            @model = Wedge.includes(:neighborhoods)
             @filter = filter
             @sort = sort
             @params = params
@@ -57,14 +57,13 @@ module Api
 
           def neighborhood_clause(relation)
             return relation if @params['neighborhood_id'].nil? || @params['neighborhood_id'].blank?
-
-            relation.where(neighborhood_id: @params['neighborhood_id'])
+            relation.joins(:neighborhoods).where(neighborhoods: { id: @params['neighborhood_id'] })
           end
 
           def sector_id_clause(relation)
             return relation if @filter.nil? || @filter[:sector_id].nil? || @filter[:sector_id].blank?
 
-            relation.where(neighborhood_id: @filter[:sector_id])
+            relation.joins(:neighborhoods).where(neighborhoods: { id: @filter[:sector_id] })
           end
 
           def sort_clause(relation)

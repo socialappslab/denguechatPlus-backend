@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_23_143202) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_30_193810) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -125,14 +125,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_23_143202) do
 
   create_table "house_blocks", force: :cascade do |t|
     t.datetime "discarded_at"
-    t.bigint "team_id"
-    t.bigint "user_profile_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name"
     t.bigint "wedge_id"
-    t.index ["team_id"], name: "index_house_blocks_on_team_id"
-    t.index ["user_profile_id"], name: "index_house_blocks_on_user_profile_id"
     t.index ["wedge_id"], name: "index_house_blocks_on_wedge_id"
   end
 
@@ -170,7 +166,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_23_143202) do
     t.bigint "house_block_id"
     t.bigint "special_place_id"
     t.bigint "team_id"
-    t.bigint "user_profile_id", null: false
+    t.bigint "user_profile_id"
     t.datetime "discarded_at"
     t.string "reference_code"
     t.string "house_type"
@@ -244,6 +240,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_23_143202) do
     t.datetime "updated_at", null: false
     t.index ["likeable_type", "likeable_id"], name: "index_likes_on_likeable"
     t.index ["user_account_id"], name: "index_likes_on_user_account_id"
+  end
+
+  create_table "neighborhood_wedges", force: :cascade do |t|
+    t.bigint "neighborhood_id", null: false
+    t.bigint "wedge_id", null: false
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["neighborhood_id", "wedge_id", "discarded_at"], name: "idx_on_neighborhood_id_wedge_id_discarded_at_29b7affea4", unique: true
+    t.index ["neighborhood_id"], name: "index_neighborhood_wedges_on_neighborhood_id"
+    t.index ["wedge_id"], name: "index_neighborhood_wedges_on_wedge_id"
   end
 
   create_table "neighborhoods", force: :cascade do |t|
@@ -418,11 +425,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_23_143202) do
     t.bigint "neighborhood_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "leader_id"
     t.bigint "wedge_id"
     t.bigint "city_id"
     t.index ["city_id"], name: "index_teams_on_city_id"
-    t.index ["leader_id"], name: "index_teams_on_leader_id"
     t.index ["name", "deleted_at"], name: "index_teams_on_name_and_deleted_at", unique: true
     t.index ["neighborhood_id"], name: "index_teams_on_neighborhood_id"
     t.index ["organization_id"], name: "index_teams_on_organization_id"
@@ -565,11 +570,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_23_143202) do
   create_table "wedges", force: :cascade do |t|
     t.string "name"
     t.datetime "discarded_at"
-    t.bigint "neighborhood_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["neighborhood_id", "discarded_at"], name: "index_wedges_on_neighborhood_id_and_discarded_at", unique: true
-    t.index ["neighborhood_id"], name: "index_wedges_on_neighborhood_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -579,8 +581,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_23_143202) do
   add_foreign_key "cities", "states"
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "user_accounts"
-  add_foreign_key "house_blocks", "teams"
-  add_foreign_key "house_blocks", "user_profiles"
   add_foreign_key "house_blocks", "wedges"
   add_foreign_key "house_statuses", "cities"
   add_foreign_key "house_statuses", "countries"
@@ -608,6 +608,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_23_143202) do
   add_foreign_key "inspections_type_contents", "inspections"
   add_foreign_key "inspections_type_contents", "type_contents"
   add_foreign_key "likes", "user_accounts"
+  add_foreign_key "neighborhood_wedges", "neighborhoods"
+  add_foreign_key "neighborhood_wedges", "wedges"
   add_foreign_key "neighborhoods", "cities"
   add_foreign_key "neighborhoods", "countries"
   add_foreign_key "neighborhoods", "states"
@@ -623,7 +625,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_23_143202) do
   add_foreign_key "teams", "cities"
   add_foreign_key "teams", "neighborhoods"
   add_foreign_key "teams", "organizations"
-  add_foreign_key "teams", "user_profiles", column: "leader_id"
   add_foreign_key "teams", "wedges"
   add_foreign_key "user_accounts", "user_profiles"
   add_foreign_key "user_profile_house_blocks", "house_blocks"
@@ -636,5 +637,4 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_23_143202) do
   add_foreign_key "visits", "questionnaires"
   add_foreign_key "visits", "teams"
   add_foreign_key "visits", "user_accounts"
-  add_foreign_key "wedges", "neighborhoods"
 end

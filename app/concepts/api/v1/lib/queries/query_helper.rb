@@ -34,6 +34,13 @@ module Api
             position = sort[:direction] == 'desc' ? 'LAST' : 'FIRST'
             "NULLS #{position}"
           end
+
+          def sort_to_snake_case(filter)
+            return if filter.blank?
+
+            filter[:field] = filter[:field].underscore if filter[:field]
+            filter
+          end
         end
       end
     end

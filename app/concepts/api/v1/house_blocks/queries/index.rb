@@ -44,7 +44,10 @@ module Api
             wedge_id = team.wedge_id
             return relation unless wedge_id
 
-            relation.where(wedge_id: wedge_id)
+            neighborhood_id = team.neighborhood_id
+            return relation unless neighborhood_id
+
+            relation.joins(:houses).where(houses: { neighborhood_id: neighborhood_id, wedge_id: wedge_id }).distinct
           end
 
           def name_clause(relation)

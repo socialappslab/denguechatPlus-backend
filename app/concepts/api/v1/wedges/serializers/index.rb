@@ -9,13 +9,15 @@ module Api
 
           attributes :name
 
-          attribute :sector do |wedge|
-            next if wedge.sector.nil?
+          attribute :sectors do |wedge|
+            next if wedge.neighborhoods.blank?
 
-            {
-              id: wedge.sector.id,
-              name: wedge.sector.name
-            }
+            wedge.neighborhoods.map do |sector|
+              {
+                id: sector.id,
+                name: sector.name
+              }
+            end
           end
         end
       end

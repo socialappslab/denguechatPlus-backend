@@ -236,7 +236,7 @@ module Api
               'green' => "Verde"
             }
             inspections_ids = @ctx[:model].inspections.pluck(:id)
-            unless inspections_ids.empty?
+            if !inspections_ids.empty?
               counts = @ctx[:model].inspections.group(:color).count
               result = {
                 infected_containers: counts["red"] || 0,
@@ -255,6 +255,11 @@ module Api
               }
               @house.update!(result)
               @ctx[:model].update!(status: colors[result[:status]])
+              elsif inspections_ids.empty? && @params[:visit_permission]
+                @house.update!(infected_containers: 0, potential_containers: 0,
+                               non_infected_containers: 0, last_visit:  @params[:visited_at] || Time.now.utc,
+                               status: 'green')
+                @ctx[:model].update!(status: 'Verde')
             else
               @house.update!(infected_containers: 0, potential_containers: 0,
                              non_infected_containers: 0, last_visit:  @params[:visited_at] || Time.now.utc,
