@@ -30,19 +30,19 @@ module Api
             base_filter = {}
 
             if @filter[:team_id]
-              base_filter[:team_id] = @filter[:team_id]
+              base_filter[:visits] = { team_id: @filter[:team_id] }
             end
 
             if @filter[:wedge_id]
-              base_filter[:wedge_id] = @filter[:wedge_id]
+              base_filter[:houses] = { wedge_id: @filter[:wedge_id] }
             end
 
             if @filter[:sector_id]
-              base_filter[:neighborhood_id] = @filter[:sector_id]
+              base_filter[:houses] = { neighborhood_id: @filter[:sector_id] }
             end
 
             if @filter[:neighborhood_id]
-              base_filter[:neighborhood_id] = @filter[:neighborhood_id]
+              base_filter[:houses] = { neighborhood_id: @filter[:neighborhood_id] }
             end
 
             start_date = Date.today.beginning_of_week.to_date
@@ -59,7 +59,7 @@ module Api
                                "COUNT(visits.id) AS visits_total",
                                "COUNT(DISTINCT houses.id) AS houses_total"
                              )
-                             .where(houses: base_filter)
+                             .where( base_filter)
                              .take
 
 
@@ -70,14 +70,14 @@ module Api
                                 "COUNT(DISTINCT CASE WHEN visits.visited_at BETWEEN '#{previous_start_date}' AND '#{previous_end_date}' THEN houses.id END) AS sites_previous_week",
                                 "COUNT(CASE WHEN visits.visited_at BETWEEN '#{previous_start_date}' AND '#{previous_end_date}' THEN visits.id END) AS visits_previous_week",
                                 )
-                              .where(houses: base_filter)
+                              .where( base_filter)
                               .take
 
 
             house_current_status = HouseStatus
                                      .joins(:house)
                                      .select("houses.status, COUNT(distinct houses.id) AS house_count")
-                                     .where(houses: base_filter)
+                                     .where(base_filter[:visits])
                                      .group("houses.status")
 
 
