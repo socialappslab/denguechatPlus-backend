@@ -27,7 +27,7 @@
 #  special_place_id        :bigint
 #  state_id                :bigint           not null
 #  team_id                 :bigint
-#  user_profile_id         :bigint           not null
+#  user_profile_id         :bigint
 #  wedge_id                :bigint           not null
 #
 # Indexes

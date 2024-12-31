@@ -27,9 +27,15 @@ module Api
           attr_reader :houses, :filter
 
           def houses_by_user(relation)
-            return relation (relation) if @user_account.nil?
+            return relation if @user_account.nil?
 
-            relation.where(house_block_id: @user_account.house_blocks.pluck(:id))
+            house_block_ids =  @user_account.house_blocks.pluck(:id)
+            return relation if house_block_ids.nil?
+
+            neighborhood_id = @user_account.teams&.first&.neighborhood_id
+            return relation if neighborhood_id.nil?
+
+            relation.where(house_block_id: house_block_ids, neighborhood_id: neighborhood_id)
           end
 
           def reference_code_clause(relation)

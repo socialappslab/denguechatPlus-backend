@@ -12,7 +12,7 @@ module Api
               @model = UserProfile.includes(:city, :neighborhood, :organization, :team,
                                             user_account: { roles: [:permissions] })
               @filter = filter
-              @sort = sort
+              @sort = sort_to_snake_case(sort)
             end
 
             def self.call(...)
@@ -117,11 +117,12 @@ module Api
             def sort_clause(relation)
               return relation if @sort.nil? || @sort.blank?
 
-              lower_case = %w[user_profiles.first_name
-                    user_profiles.last_name
-                    user_profiles.email
-                     user_accounts.username].include? @sort[:field]
-              sort_by_table_columns(relation, lower_case:)
+              search_array = @sort[:field].split(".")
+              table = search_array.first.pluralize.downcase
+              attribute = search_array.last
+              @sort[:field] = "#{table}.#{attribute}"
+
+              sort_by_table_columns(relation)
             end
           end
         end
