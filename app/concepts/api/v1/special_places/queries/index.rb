@@ -10,7 +10,7 @@ module Api
           def initialize(filter, sort)
             @model = SpecialPlace
             @filter = filter
-            @sort = sort
+            @sort = sort_to_snake_case(sort)
           end
 
           def self.call(...)
