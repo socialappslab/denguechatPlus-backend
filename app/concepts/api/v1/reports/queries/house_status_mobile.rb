@@ -73,11 +73,11 @@ module Api
                               .where( base_filter)
                               .take
 
-
+            base_filter[:house_statuses] = base_filter.delete(:visits) if base_filter.has_key?(:visits)
             house_current_status = HouseStatus
                                      .joins(:house)
                                      .select("houses.status, COUNT(distinct houses.id) AS house_count")
-                                     .where(base_filter[:visits])
+                                     .where(base_filter)
                                      .group("houses.status")
 
 
