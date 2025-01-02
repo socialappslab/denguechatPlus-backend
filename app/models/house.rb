@@ -61,6 +61,7 @@ class House < ApplicationRecord
   belongs_to :neighborhood
   belongs_to :wedge
   belongs_to :house_block
+  has_many :house_statuses
   belongs_to :created_by, class_name: 'UserProfile', optional: true, foreign_key: 'user_profile_id'
   belongs_to :special_place, optional: true
   belongs_to :team, optional: true
