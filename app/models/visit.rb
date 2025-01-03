@@ -43,4 +43,6 @@ class Visit < ApplicationRecord
   belongs_to :questionnaire
   has_many :inspections, dependent: :destroy
   accepts_nested_attributes_for :inspections
+
+  has_paper_trail on: [:update]
 end
