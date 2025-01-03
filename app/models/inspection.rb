@@ -56,6 +56,7 @@ class Inspection < ApplicationRecord
   has_many :type_contents, through: :inspection_type_contents
   has_one_attached :photo
 
+  has_paper_trail on: [:update]
 
   def potential?
     container_protection.present? && ['Tapa no hermética', 'Techo', 'Otro', 'No tiene'].include?(container_protection.name_es)
