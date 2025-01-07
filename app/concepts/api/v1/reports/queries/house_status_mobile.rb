@@ -56,7 +56,6 @@ module Api
 
             current_data = Visit
                              .joins(:house)
-                             .left_joins(:house)
                              .select(
                                "COUNT(DISTINCT CASE WHEN visits.visited_at BETWEEN '#{start_date}' AND '#{end_date}' THEN houses.id END) AS sites_this_week",
                                "COUNT(DISTINCT houses.id) AS current_sites_count_total",
