@@ -2,12 +2,15 @@
 #
 # Table name: house_blocks
 #
-#  id           :bigint           not null, primary key
-#  discarded_at :datetime
-#  name         :string
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
-#  wedge_id     :bigint
+#  id             :bigint           not null, primary key
+#  discarded_at   :datetime
+#  last_sync_time :datetime
+#  name           :string
+#  source         :string
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  external_id    :integer
+#  wedge_id       :bigint
 #
 # Indexes
 #

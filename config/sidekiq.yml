@@ -1,9 +1,17 @@
----
 :concurrency: 5
 :pidfile: tmp/pids/sidekiq.pid
 :max_retries: 3
 :queues:
     - default
     - mailers
+:scheduler:
+    :listened_queues_only: true
+    :schedule:
+        sync_houses_job:
+            cron: '0 1 * * 0'
+            class: Houses::SyncHouses
+            queue: default
+            enabled: true
+            description: "Sync houses every Sunday at 01:00 AM"
 production:
     :concurrency: 20
