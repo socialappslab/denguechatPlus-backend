@@ -4,10 +4,12 @@
 #
 #  id                      :bigint           not null, primary key
 #  address                 :string
+#  assignment_status       :integer
 #  container_count         :integer
 #  discarded_at            :datetime
 #  house_type              :string
 #  infected_containers     :integer
+#  last_sync_time          :datetime
 #  last_visit              :datetime
 #  latitude                :float
 #  location_status         :string
@@ -16,12 +18,14 @@
 #  notes                   :string
 #  potential_containers    :integer
 #  reference_code          :string
+#  source                  :string
 #  status                  :string
 #  tariki_status           :boolean          default(FALSE)
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #  city_id                 :bigint           not null
 #  country_id              :bigint           not null
+#  external_id             :string
 #  house_block_id          :bigint
 #  neighborhood_id         :bigint           not null
 #  special_place_id        :bigint
@@ -36,6 +40,7 @@
 #  index_houses_on_country_id        (country_id)
 #  index_houses_on_house_block_id    (house_block_id)
 #  index_houses_on_neighborhood_id   (neighborhood_id)
+#  index_houses_on_reference_code    (reference_code) UNIQUE
 #  index_houses_on_special_place_id  (special_place_id)
 #  index_houses_on_state_id          (state_id)
 #  index_houses_on_team_id           (team_id)
@@ -67,5 +72,6 @@ class House < ApplicationRecord
   belongs_to :team, optional: true
 
   enum status: { green: "0", yellow: "1", red: "2" }
+  enum assignment_status: { assigned: 1, orphaned: 0}
 
 end

@@ -2,11 +2,14 @@
 #
 # Table name: wedges
 #
-#  id           :bigint           not null, primary key
-#  discarded_at :datetime
-#  name         :string
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
+#  id             :bigint           not null, primary key
+#  discarded_at   :datetime
+#  last_sync_time :datetime
+#  name           :string
+#  source         :string
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  external_id    :integer
 #
 class Wedge < ApplicationRecord
   include Discard::Model
