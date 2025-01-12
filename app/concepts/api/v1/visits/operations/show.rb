@@ -8,8 +8,8 @@ module Api
           include Dry::Transaction
 
           tee :params
-          tee :set_language
           step :find_visit
+          tee :set_language
 
           def params(input)
             @ctx = {}
@@ -27,7 +27,8 @@ module Api
           end
 
           def set_language
-            return Success({ ctx: @ctx, type: :success }) if @ctx[:data]. nil?
+            return Success({ ctx: @ctx, type: :success }) if @ctx[:data].nil?
+
             @ctx[:data].define_singleton_method(:language) { @language }
             @ctx[:data].define_singleton_method(:language=) { |value| @language = value }
             @ctx[:data].language = if @params.key?(:language) && @params[:language].in?(%w[en es pt])
