@@ -21,7 +21,7 @@ module Api
           end
 
           def validate_schema
-            @ctx['contract.default'] = Api::V1::Comments::Contracts::Index.kall(@params)
+            @ctx['contract.default'] = Api::V1::Inspections::Contracts::Index.kall(@params)
             is_valid = @ctx['contract.default'].success?
             return Success({ ctx: @ctx, type: :success }) if is_valid
 
@@ -29,13 +29,13 @@ module Api
           end
 
           def cursor_and_paginate
-            @ctx[:sort] = { field: 'comments.created_at', direction: 'desc' } if @params['sort'].nil?
+            @ctx[:sort] = { field: 'inspections.created_at', direction: 'desc' } if @params['sort'].nil?
             direction = @params['order'].nil? ? 'asc' : @params['order']
-            @ctx[:sort] = {field: @params['sort'], direction: } if @params['sort']
+            @ctx[:sort] = {field: @params['sort'].underscore, direction: } if @params['sort']
           end
 
           def list
-            @ctx[:data] = Api::V1::Comments::Queries::Index.call(@params[:post_id], @ctx[:sort])
+            @ctx[:data] = Api::V1::Inspections::Queries::Index.call(@ctx['contract.default'], @ctx[:sort])
             Success({ ctx: @ctx, type: :success })
           end
 

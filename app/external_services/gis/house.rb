@@ -20,7 +20,7 @@ module Gis
             )
             total_processed += houses_attributes.size
           rescue => e
-            log.puts "Error with houses: #{houses_attributes.to_s}"
+            puts "Error with houses: #{houses_attributes.to_s}"
           end
 
           offset += batch_size

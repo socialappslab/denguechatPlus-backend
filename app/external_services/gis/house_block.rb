@@ -15,7 +15,7 @@ module Gis
               end
             end
           rescue => e
-            log.puts "Error with new_house_blocks: #{e}"
+           puts "Error with new_house_blocks: #{e}"
           end
         end
       end

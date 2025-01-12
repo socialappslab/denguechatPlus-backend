@@ -4,7 +4,7 @@ module Api
   module V1
     module Inspections
       module Serializers
-        class Index < ApplicationSerializer
+        class ShowWithoutQuestionnaire < ApplicationSerializer
           set_type :inspection
 
           attributes :id
@@ -64,7 +64,6 @@ module Api
           attribute :photo_url do |container|
             get_image_obj.call(container)
           end
-
         end
       end
     end

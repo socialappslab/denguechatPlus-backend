@@ -7,9 +7,10 @@ module Api
         class Index
           include Api::V1::Lib::Queries::QueryHelper
 
-          def initialize(post_id, sort)
-            @model = Comment
-            @post_id = post_id
+          def initialize(params, sort)
+            includes = %i[breeding_site_type elimination_method_type water_source_type container_protection inspection_type_contents]
+            @model = Inspection.includes(*includes)
+            @params = params || {}
             @sort = sort
           end
 
@@ -18,23 +19,26 @@ module Api
           end
 
           def call
-            @model.yield_self(&method(:post_clause))
+            @model
+              .yield_self(&method(:by_visit))
+              .yield_self(&method(:sort_clause))
           end
 
           private
 
-          attr_reader :comments, :post_id, :sort
+          attr_reader :sort
 
-          def post_clause(relation)
-            return relation if @post_id.nil?
+          def by_visit(relation)
+            return relation if @params[:visit_id].blank?
 
-            relation.where(post_id: @post_id)
+            relation.where(visit_id: @params[:visit_id])
           end
 
           def sort_clause(relation)
-            return relation if @sort.nil? || @sort.blank?
+            return relation if sort.blank? || sort[:field].blank?
 
-            sort_by_table_columns(relation) if @sort[:field]
+            direction = sort[:direction].presence_in(%w[asc desc]) || 'asc'
+            relation.order("#{sort[:field]} #{direction}")
           end
         end
       end
