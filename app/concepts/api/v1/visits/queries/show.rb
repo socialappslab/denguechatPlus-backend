@@ -8,8 +8,13 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(params)
-            includes = %i[house team user_account]
-            @model = Visit.includes(*includes, user_account: :user_profile)
+            @model = Visit.includes(
+              :house,
+              :user_account,
+              :team,
+              :questionnaire,
+              questionnaire: { questions: :options }
+            )
             @visit_id = params[:id]
           end
 
