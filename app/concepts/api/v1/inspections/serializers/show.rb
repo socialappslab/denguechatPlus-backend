@@ -5,53 +5,144 @@ module Api
     module Inspections
       module Serializers
         class Show < ApplicationSerializer
-          set_type :comment
+          set_type :inspection
 
-          attributes :id, :content, :created_at, :updated_at
 
-          attribute :likesCount do |comment|
-            comment.likes.count
-          end
+          build_breading_site_type = lambda { |container|
+            BreedingSiteType.all.map do |bst|
+              {
+                id: bst.id,
+                name: bst.name,
+                value: bst.id,
+                selected: bst.id == container.breeding_site_type_id
+              }
+            end
+          }
 
-          attribute :liked_by_me do |comment|
-            next unless comment.instance_variable_get(:@current_user_id)
+          build_elimination_method_type = lambda { |container|
+            EliminationMethodType.all.map do |bst|
+              res = {
+                id: bst.id,
+                name: bst.name_es,
+                value: bst.id,
+                selected: bst.id == container.elimination_method_type_id
+              }
 
-            comment.likes.exists?(user_account_id: comment.instance_variable_get(:@current_user_id))
-          end
+              if bst.name_es.downcase.in?(['otro', 'other', 'outro'])
+                res[:is_text_area] = true
+                res[:other_resource_name]= 'eliminationMethodTypeOther'
+              end
+              res
+            end
+          }
 
-          attribute :canDeleteByUser do |comment|
-            next unless comment.instance_variable_get(:@current_user_id)
-            next true if comment.instance_variable_get(:@current_user_is_admin)
-            next true if comment.instance_variable_get(:@is_team_leader)
+          build_type_contents = lambda { |container|
+            TypeContent.all.map do |bst|
+              {
+                id: bst.id,
+                name: bst.name_es,
+                value: bst.id,
+                selected: bst.id.in?(container.type_contents.pluck(:id)),
+                is_text_area: bst.name_es.downcase.in?(['otro', 'other', 'outro'])
+              }
+            end
+          }
 
-            comment.user_account_id == comment.instance_variable_get(:@current_user_id)
-          end
+          build_water_source_type = lambda { |container|
+            WaterSourceType.all.map do |bst|
+              res = {
+                id: bst.id,
+                name: bst.name,
+                value: bst.id,
+                selected: bst.id == container.water_source_type_id
+              }
+              if bst.name.downcase.in?(['otro', 'other', 'outro'])
+                res[:is_text_area] = true
+                res[:other_resource_name]= 'waterSourceOther'
+              end
+              res
+            end
+          }
 
-          attribute :canEditByUser do |comment|
-            next unless comment.instance_variable_get(:@current_user_id)
-            next true if comment.instance_variable_get(:@current_user_is_admin)
-            next true if comment.instance_variable_get(:@is_team_leader)
+          build_container_protection = lambda { |container|
+            ContainerProtection.all.map do |bst|
+              res = {
+                id: bst.id,
+                name: bst.name_es,
+                value: bst.id,
+                selected: bst.id == container.container_protection_id
+              }
+              if bst.name_es.downcase.in?(['otro', 'other', 'outro'])
+                res[:is_text_area] = true
+                res[:other_resource_name]= 'containerProtectionOther'
+              end
+              res
+            end
+          }
 
-            comment.user_account_id == comment.instance_variable_get(:@current_user_id)
-          end
+          build_was_chemically_treated = lambda { |container|
+            [
+              {
+                name: "Sí, fue tratado (revise el registro detrás de la puerta)",
+                value: "Sí, fue tratado (revise el registro detrás de la puerta)",
+                selected: container.was_chemically_treated == "Sí, fue tratado (revise el registro detrás de la puerta)"
+              },
+              {
+                name: "No, no fue tratado",
+                value: "No, no fue tratado",
+                selected: container.was_chemically_treated == "No, no fue tratado"
+              }
+            ]
+          }
 
-          attribute :created_by do |comment|
-            next if comment.user_account_id.blank?
-            user_account = UserAccount.with_discarded.find(comment.user_account_id)
+          get_image_obj = lambda do |record|
+            return '' unless record&.photo&.attached?
 
             {
-              accountId: comment.user_account_id,
-              userName: user_account.first_name,
-              lastName: user_account.last_name,
+              id: record.photo.id,
+              url: Rails.application.routes.url_helpers.url_for(record.photo)
             }
           end
 
-          attribute :photos do |comment|
-            next unless comment.photo.attached?
+          attribute :breading_site_type do |container|
+            build_breading_site_type.call(container)
+          end
 
-            {
-              photo_url: Rails.application.routes.url_helpers.url_for(comment.photo)
-            }
+          attribute :elimination_method_type do |container|
+            build_elimination_method_type.call(container)
+          end
+
+          attribute :elimination_method_type_other, &:other_elimination_method
+
+          attribute :type_contents do |container|
+            build_type_contents.call(container)
+          end
+
+          attribute :status do |container|
+            container.status_i18n(container.color)
+          end
+
+          attribute :water_source_type do |container|
+            build_water_source_type.call(container)
+
+          end
+
+          attribute :water_source_other, &:water_source_other
+
+          attribute :has_water, &:has_water
+
+          attribute :container_protection do |container|
+            build_container_protection.call(container)
+          end
+
+          attribute :container_protection_other, &:other_protection
+
+          attribute :was_chemically_treated do |container|
+            build_was_chemically_treated.call(container)
+          end
+
+          attribute :photo_url do |container|
+            get_image_obj.call(container)
           end
         end
       end

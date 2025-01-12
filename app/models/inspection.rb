@@ -66,27 +66,81 @@ class Inspection < ApplicationRecord
     type_contents.exists?(name_es: %w[Larva Pupas Huevos])
   end
 
-  def self.inspection_summary_for(inspection_ids)
-    res = select(
-      "SUM(CASE WHEN type_contents.name_es IN ('Larva', 'Pupas', 'Huevos') THEN 1 ELSE 0 END) AS infected_containers",
-      "SUM(CASE WHEN container_protections.name_es IN ('Tapa no hermética', 'Techo', 'Otro', 'No tiene') THEN 1 ELSE 0 END) AS potential_containers",
-      "SUM(CASE WHEN (type_contents.name_es NOT IN ('Larva', 'Pupas', 'Huevos') OR type_contents.name_es IS NULL) AND (container_protections.name_es NOT IN ('Tapa no hermética', 'Techo', 'Otro', 'No tiene') OR container_protections.name_es IS NULL) THEN 1 ELSE 0 END) AS non_infected_containers"
-    )
-      .joins("LEFT JOIN container_protections ON inspections.container_protection_id = container_protections.id")
-      .joins("LEFT JOIN inspections_type_contents ON inspections.id = inspections_type_contents.inspection_id")
-      .joins("LEFT JOIN type_contents ON inspections_type_contents.type_content_id = type_contents.id")
-      .where(id: inspection_ids)
-      .group(
-        "CASE WHEN type_contents.name_es IN ('Larva', 'Pupas', 'Huevos') THEN 'Infected' ELSE 'Non-Infected' END",
-        "CASE WHEN container_protections.name_es IN ('Tapa no hermética', 'Techo', 'Otro', 'No tiene') THEN 'Potential' ELSE 'Non-Potential' END"
-      )
-      .order("infected_containers DESC, potential_containers DESC")
-
-
-    return {infected_containers: 0, potential_containers: 0, non_infected_containers: 0} if res.nil?
-
-    res.first.attributes.symbolize_keys.except(:id)
-
+  def status_i18n( selected_value= 'verde', lang= 'es')
+    case lang
+    when 'es'
+      [
+        {
+          name: 'verde',
+          value: 'green',
+          selected: selected_value == 'green'
+        },
+        {
+          name: 'amarillo',
+          value: 'yellow',
+          selected: selected_value == 'yellow'
+        },
+        {
+          name: 'rojo',
+          value: 'red',
+          selected: selected_value == 'red'
+        },
+      ]
+    when 'en'
+      [
+        {
+          name: 'green',
+          value: 'green',
+          selected: selected_value == 'green'
+        },
+        {
+          name: 'yellow',
+          value: 'yellow',
+          selected: selected_value == 'yellow'
+        },
+        {
+          name: 'red',
+          value: 'red',
+          selected: selected_value == 'red'
+        },
+      ]
+    when 'pt'
+      [
+        {
+          name: 'verde',
+          value: 'green',
+          selected: selected_value == 'green'
+        },
+        {
+          name: 'amarelo',
+          value: 'yellow',
+          selected: selected_value == 'yellow'
+        },
+        {
+          name: 'vermelho',
+          value: 'red',
+          selected: selected_value == 'red'
+        },
+      ]
+    else
+      [
+        {
+          name: 'verde',
+          value: 'green',
+          selected: selected_value == 'green'
+        },
+        {
+          name: 'amarillo',
+          value: 'yellow',
+          selected: selected_value == 'yellow'
+        },
+        {
+          name: 'rojo',
+          value: 'red',
+          selected: selected_value == 'red'
+        },
+      ]
+    end
   end
 
 

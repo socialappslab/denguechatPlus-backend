@@ -14,7 +14,7 @@ module Gis
               end
             end
           rescue => e
-            log.puts "Error with new_wedges: #{e}"
+           puts "Error with new_wedges: #{e}"
           end
         end
       end
