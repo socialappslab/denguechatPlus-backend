@@ -26,7 +26,7 @@ module Api
 
       def update
         endpoint operation: Api::V1::Visits::Operations::Update,
-                 renderer_options: { serializer: Api::V1::Visits::Serializers::Show },
+                 renderer_options: { serializer: Api::V1::Visits::Serializers::ShowAttrsByUpdate },
                  options: { current_user: }
 
       end
