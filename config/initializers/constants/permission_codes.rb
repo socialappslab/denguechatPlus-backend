@@ -92,7 +92,11 @@ module Constants
       users_change_team: :users_change_team,
       reports_house_status: :reports_house_status,
       reports_brigadists_performance: :reports_brigadists_performance,
-      users_delete_account: :users_delete_account
+      users_delete_account: :users_delete_account,
+      inspections_show: :inspections_show,
+      inspections_update: :inspections_update,
+      inspections_create: :inspections_create,
+      inspections_destroy: :inspections_destroy,
     }.freeze
   end
 end
