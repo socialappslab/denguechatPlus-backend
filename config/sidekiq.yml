@@ -8,7 +8,7 @@
     :listened_queues_only: true
     :schedule:
         sync_houses_job:
-            cron: '0 1 * * 0'
+            cron: '30 14 * * 1'
             class: Houses::SyncHouses
             queue: default
             enabled: true
