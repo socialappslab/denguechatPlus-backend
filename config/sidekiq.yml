@@ -4,14 +4,5 @@
 :queues:
     - default
     - mailers
-:scheduler:
-    :listened_queues_only: true
-    :schedule:
-        sync_houses_job:
-            cron: '40 14 * * 1'
-            class: Houses::SyncHouses
-            queue: default
-            enabled: true
-            description: "Sync houses every Sunday at 01:00 AM"
 production:
     :concurrency: 20
