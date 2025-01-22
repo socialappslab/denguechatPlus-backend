@@ -135,7 +135,7 @@ module Api
           def analyze_inspection_status(inspection, type_content_id = [])
             type_content_id ||= []
             type_content_id.map!(&:to_i)
-            container_protection_ids = ContainerProtection.where(name_es: ['Tapa no hermética', 'Techo', 'Otro', 'No tiene']).pluck(:id)
+            container_protection_ids = ContainerProtection.where(name_es: ['Tapa no hermética', 'Si, tiene tapa pero no está bien cerrado', 'Techo', 'Otro', 'No tiene']).pluck(:id)
             ids_red_cases = TypeContent.where(name_es: %w[Larvas Pupas Huevos]).pluck(:id)
 
             return 'green' if type_content_id.nil? || type_content_id.blank?
