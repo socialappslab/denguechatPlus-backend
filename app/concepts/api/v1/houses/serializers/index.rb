@@ -7,7 +7,9 @@ module Api
         class Index < ApplicationSerializer
           set_type :house
 
-          attributes :id, :discarded_at, :reference_code, :house_type, :address, :latitude, :longitude, :notes, :status, :container_count, :created_at, :updated_at
+          attributes :id, :discarded_at, :reference_code, :house_type, :address,
+                                   :latitude, :longitude, :notes, :status, :container_count,
+                                   :assignment_status, :created_at, :updated_at
 
           attribute :country do |house|
             next unless house.country
