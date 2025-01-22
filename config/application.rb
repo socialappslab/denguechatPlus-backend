@@ -45,5 +45,6 @@ module DenguechatPlus
     config.api_only = true
     config.active_job.queue_adapter = :sidekiq
     config.middleware.use ActionDispatch::Session::CookieStore
+    config.middleware.use Rack::Attack
   end
 end
