@@ -97,6 +97,7 @@ module Constants
       inspections_update: :inspections_update,
       inspections_create: :inspections_create,
       inspections_destroy: :inspections_destroy,
+      houses_orphan_houses: :houses_orphan_houses
     }.freeze
   end
 end

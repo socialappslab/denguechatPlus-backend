@@ -50,9 +50,10 @@ Rails.application.routes.draw do
       resources :houses, only: %i[index] do
         collection do
           get :list_to_visit
+          get :orphan_houses
         end
       end
-      resources :house_blocks, only: %i[index]
+      resources :house_blocks, only: %i[index update create]
       resources :visits, only: %i[create index show update] do
         resources :inspections, only: %i[index show update]
       end

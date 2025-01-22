@@ -20,6 +20,14 @@ module Api
                  options: { current_user: }
       end
 
+      def orphan_houses
+        endpoint operation: Api::V1::Houses::Operations::OrphanHouse,
+                 renderer_options: {
+                   serializer: Api::V1::Houses::Serializers::Index
+                 },
+                 options: { current_user: }
+      end
+
     end
   end
 end
