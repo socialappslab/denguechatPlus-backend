@@ -182,4 +182,5 @@ Rails.application.routes.draw do
 
   mount Sidekiq::Web => '/sidekiq'
 
+  match '*unmatched', to: 'application#route_not_found', via: :all
 end
