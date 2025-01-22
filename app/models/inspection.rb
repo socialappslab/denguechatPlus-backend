@@ -59,7 +59,7 @@ class Inspection < ApplicationRecord
   has_paper_trail on: [:update]
 
   def potential?
-    container_protection.present? && ['Tapa no hermética', 'Techo', 'Otro', 'No tiene'].include?(container_protection.name_es)
+    container_protection.present? && ['Tapa no hermética', 'Si, tiene tapa pero no está bien cerrado', 'Techo', 'Otro', 'No tiene'].include?(container_protection.name_es)
   end
 
   def infected?
