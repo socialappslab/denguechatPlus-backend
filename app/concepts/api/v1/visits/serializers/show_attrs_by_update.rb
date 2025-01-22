@@ -36,7 +36,7 @@ module Api
 
             questions.where(id: answers.keys, resource_type: 'attribute')
                      .where.not(type_field: 'splash')
-                     .where.not(question_text_es: '¿Encontraste un contenedor?')
+                     .where.not(question_text_es: '¿Encontraste un recipiente/envase?')
                      .map do |question|
               {
                 id: question.id,
