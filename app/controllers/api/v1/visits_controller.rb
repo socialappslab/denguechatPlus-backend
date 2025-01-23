@@ -3,6 +3,8 @@
 module Api
   module V1
     class VisitsController < AuthorizedApiController
+      before_action :set_paper_trail_whodunnit, only: %i[update]
+
       def index
         endpoint operation: Api::V1::Visits::Operations::Index,
                  renderer_options: { serializer: Api::V1::Visits::Serializers::Index },
@@ -24,7 +26,7 @@ module Api
 
       def update
         endpoint operation: Api::V1::Visits::Operations::Update,
-                 renderer_options: { serializer: Api::V1::Visits::Serializers::Show },
+                 renderer_options: { serializer: Api::V1::Visits::Serializers::ShowAttrsByUpdate },
                  options: { current_user: }
 
       end
@@ -33,6 +35,12 @@ module Api
         endpoint operation: Api::V1::Visits::Operations::ShowInspection,
                  renderer_options: { serializer: Api::V1::Visits::Serializers::ShowInspection },
                  options: { current_user: }
+      end
+
+      private
+
+      def set_paper_trail_whodunnit
+        current_user.try(:id)
       end
     end
   end

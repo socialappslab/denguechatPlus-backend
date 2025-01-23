@@ -8,7 +8,8 @@ module Api
           include Dry::Transaction
 
           tee :params
-          step :find_comment
+          step :find_inspection
+          step :set_language
 
           def params(input)
             @ctx = {}
@@ -16,19 +17,24 @@ module Api
             @current_user = input[:current_user]
           end
 
-          def find_comment
-            @ctx[:data] = Comment.find_by(id: @params[:id])
+          def find_inspection
+            @ctx[:data] = Api::V1::Inspections::Queries::Show.call(@params)
             if @ctx[:data].nil?
               Failure({ ctx: @ctx, type: :not_found })
             else
-              @ctx[:data].instance_variable_set(:@current_user_id, @current_user.id)
-              is_admin = @current_user.has_role?(:admin)
-              is_team_leader = @current_user.has_role?(:admin)
-              @ctx[:data].instance_variable_set(:@current_user_is_admin, is_admin)
-              @ctx[:data].instance_variable_set(:@is_team_leader, is_team_leader)
               Success({ ctx: @ctx, type: :success })
             end
+          end
 
+          def set_language
+            @ctx[:data].define_singleton_method(:language) { @language }
+            @ctx[:data].define_singleton_method(:language=) { |value| @language = value }
+            @ctx[:data].language = if @params.key?(:language) && @params[:language].in?(%w[en es pt])
+                                     @params[:language]
+                                   else
+                                     'es'
+                                   end
+            Success({ ctx: @ctx, type: :success })
           end
         end
       end

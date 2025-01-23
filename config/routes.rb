@@ -50,11 +50,12 @@ Rails.application.routes.draw do
       resources :houses, only: %i[index] do
         collection do
           get :list_to_visit
+          get :orphan_houses
         end
       end
-      resources :house_blocks, only: %i[index]
-      resources :visits, only: %i[create index show] do
-        resources :inspections, only: [:show]
+      resources :house_blocks, only: %i[index update create]
+      resources :visits, only: %i[create index show update] do
+        resources :inspections, only: %i[index show update]
       end
       resources :questionnaires, only: %i[current] do
         collection do
@@ -164,6 +165,7 @@ Rails.application.routes.draw do
         post :update_image_question
       end
     end
+    resources :sync_logs, only: [:show, :index]
   end
 
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
@@ -182,4 +184,5 @@ Rails.application.routes.draw do
 
   mount Sidekiq::Web => '/sidekiq'
 
+  # match '*unmatched', to: 'application#route_not_found', via: :all
 end

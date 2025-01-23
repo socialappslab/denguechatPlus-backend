@@ -34,16 +34,20 @@ module Api
             end
 
             if @filter[:wedge_id]
-              base_filter[:houses] = { wedge_id: @filter[:wedge_id] }
+              base_filter[:houses] ||= {}
+              base_filter[:houses].merge!(wedge_id: @filter[:wedge_id])
             end
 
             if @filter[:sector_id]
-              base_filter[:houses] = { neighborhood_id: @filter[:sector_id] }
+              base_filter[:houses] ||= {}
+              base_filter[:houses].merge!(neighborhood_id: @filter[:sector_id])
             end
 
             if @filter[:neighborhood_id]
-              base_filter[:houses] = { neighborhood_id: @filter[:neighborhood_id] }
+              base_filter[:houses] ||= {}
+              base_filter[:houses].merge!(neighborhood_id: @filter[:neighborhood_id])
             end
+
 
             start_date = Date.today.beginning_of_week.to_date
             end_date = Date.today.end_of_week.to_date

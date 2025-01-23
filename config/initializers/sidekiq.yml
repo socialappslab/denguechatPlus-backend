@@ -1,0 +1,4 @@
+Houses::SyncHouses:
+  description: "Sync houses every Sunday at 01:00 AM"
+  cron: "0 1 * * 0"
+  queue: default

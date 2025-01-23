@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_30_193810) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_23_031846) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -129,6 +129,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_30_193810) do
     t.datetime "updated_at", null: false
     t.string "name"
     t.bigint "wedge_id"
+    t.integer "external_id"
+    t.string "source"
+    t.datetime "last_sync_time"
     t.index ["wedge_id"], name: "index_house_blocks_on_wedge_id"
   end
 
@@ -184,10 +187,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_30_193810) do
     t.integer "potential_containers"
     t.string "location_status"
     t.boolean "tariki_status", default: false
+    t.string "external_id"
+    t.integer "assignment_status"
+    t.string "source"
+    t.datetime "last_sync_time"
     t.index ["city_id"], name: "index_houses_on_city_id"
     t.index ["country_id"], name: "index_houses_on_country_id"
     t.index ["house_block_id"], name: "index_houses_on_house_block_id"
     t.index ["neighborhood_id"], name: "index_houses_on_neighborhood_id"
+    t.index ["reference_code"], name: "index_houses_on_reference_code", unique: true
     t.index ["special_place_id"], name: "index_houses_on_special_place_id"
     t.index ["state_id"], name: "index_houses_on_state_id"
     t.index ["team_id"], name: "index_houses_on_team_id"
@@ -262,6 +270,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_30_193810) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "wedge_id"
+    t.integer "external_id"
+    t.string "source"
+    t.datetime "last_sync_time"
     t.index ["city_id"], name: "index_neighborhoods_on_city_id"
     t.index ["country_id", "state_id", "city_id", "discarded_at"], name: "idx_on_country_id_state_id_city_id_discarded_at_d4d773c91a", unique: true
     t.index ["country_id"], name: "index_neighborhoods_on_country_id"
@@ -413,6 +424,24 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_30_193810) do
     t.index ["country_id", "discarded_at"], name: "index_states_on_country_id_and_discarded_at", unique: true
     t.index ["country_id"], name: "index_states_on_country_id"
     t.index ["name", "discarded_at"], name: "index_states_on_name_and_discarded_at", unique: true
+  end
+
+  create_table "sync_log_errors", force: :cascade do |t|
+    t.string "item_id"
+    t.string "message"
+    t.bigint "sync_log_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sync_log_id"], name: "index_sync_log_errors_on_sync_log_id"
+  end
+
+  create_table "sync_logs", force: :cascade do |t|
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.integer "processed"
+    t.integer "errors_quantity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "teams", force: :cascade do |t|
@@ -572,6 +601,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_30_193810) do
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "external_id"
+    t.string "source"
+    t.datetime "last_sync_time"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -622,6 +654,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_30_193810) do
   add_foreign_key "posts", "user_accounts"
   add_foreign_key "questions", "questionnaires"
   add_foreign_key "states", "countries"
+  add_foreign_key "sync_log_errors", "sync_logs"
   add_foreign_key "teams", "cities"
   add_foreign_key "teams", "neighborhoods"
   add_foreign_key "teams", "organizations"

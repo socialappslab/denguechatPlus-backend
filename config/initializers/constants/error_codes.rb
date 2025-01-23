@@ -62,7 +62,10 @@ module Constants
       without_permissions: 57,
       users_change_team: 58,
       reports_brigadists_performance: 59,
-      code_recovery_in_a_short_time: 60
+      code_recovery_in_a_short_time: 60,
+      houses_orphan_houses: 61,
+      house_already_assigned: 62,
+      inspections_index: 63
 
     }.freeze
   end
