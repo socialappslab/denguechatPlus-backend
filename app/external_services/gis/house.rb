@@ -1,10 +1,12 @@
 module Gis
   class House
     class << self
-
       def sync(batch_size, mappings)
         offset = 0
         total_processed = 0
+        failed_records = []
+        sync_log = SyncLog.create(start_date: Time.current)
+
         loop do
           external_houses_batch = Gis::Connection.query(query_builder(offset, batch_size))
           break if external_houses_batch.empty?
@@ -12,22 +14,52 @@ module Gis
           existing_house_teams = retrieve_existing_teams(external_houses_batch)
           houses_attributes = build_house_attributes(external_houses_batch, mappings, existing_house_teams)
 
-          begin
-            ::House.upsert_all(
-              houses_attributes,
-              unique_by: :reference_code,
-              returning: false
-            )
-            total_processed += houses_attributes.size
-          rescue => e
-            puts "Error with houses: #{houses_attributes.to_s}"
+          houses_attributes.each_slice(50) do |mini_batch|
+            begin
+              ActiveRecord::Base.transaction do
+                ::House.upsert_all(
+                  mini_batch,
+                  unique_by: :reference_code,
+                  returning: false
+                )
+              end
+              total_processed += mini_batch.size
+            rescue => e
+              total_processed, failed_records = process_house_one_by_one!(mini_batch, total_processed, failed_records, sync_log)
+            end
           end
 
           offset += batch_size
         end
+        sync_log.update!(end_date: Time.current,
+                         processed: total_processed, errors_quantity: failed_records.size)
       end
 
       private
+
+      def process_house_one_by_one!(mini_batch, total_processed, failed_records, sync_log)
+        sync_log_id = sync_log.id
+        mini_batch.each do |attrs|
+          begin
+            ActiveRecord::Base.transaction do
+              ::House.upsert(
+                attrs,
+                unique_by: :reference_code,
+                returning: false
+              )
+            end
+            total_processed += 1
+          rescue => individual_error
+            failed_records << {
+              sync_log_id:,
+              item_id: attrs[:reference_code],
+              message: individual_error.message
+            }
+          end
+        end
+        SyncLogError.create!(failed_records)
+        [total_processed, failed_records]
+      end
 
       def query_builder(offset, limit)
         <<~SQL
@@ -59,9 +91,9 @@ module Gis
 
       def retrieve_existing_teams(external_houses_batch)
         ::House.includes(:team)
-             .where(reference_code: external_houses_batch.pluck(:reference_code))
-             .pluck(:reference_code, 'teams.id')
-             .to_h
+               .where(reference_code: external_houses_batch.pluck(:reference_code))
+               .pluck(:reference_code, 'teams.id')
+               .to_h
       end
 
       def build_house_attributes(external_houses_batch, mappings, existing_house_teams)
@@ -69,10 +101,10 @@ module Gis
           reference_code = ext_house[:reference_code]
 
           has_team = existing_house_teams.key?(reference_code) && existing_house_teams[reference_code].present?
-          status = has_team ? 1 : 0
+          status = ext_house[:house_block_id] ? 1 : 0
 
           {
-            reference_code: reference_code,
+            reference_code:,
             latitude: ext_house[:latitude],
             longitude: ext_house[:longitude],
             house_block_id: mappings[:house_blocks][ext_house[:house_block_id].to_i],

@@ -1,0 +1,74 @@
+<div class="max-w-7xl mx-auto mb-4 mt-10">
+  <a href="<%= web_sync_logs_path %>"
+     class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+    </svg>
+    Back to Sync History
+  </a>
+</div>
+
+<div class="max-w-7xl mx-auto bg-white rounded-lg shadow">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <h2 class="text-xl font-bold">Sync History</h2>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+      <tr>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">House</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Error</th>
+      </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+      <% @errors.each do |error| %>
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap text-sm"><%= error.item_id %></td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm"><%= error.message %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <% if @pagy.pages > 1 %>
+      <div class="px-6 py-4 bg-white border-t border-gray-200">
+        <nav class="flex items-center justify-between">
+          <div class="flex-1 flex justify-between items-center">
+            <div>
+              <% if @pagy.prev %>
+                <a href="<%= web_sync_log_path(page: @pagy.prev) %>"
+                   class="relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-50">
+                  Previous
+                </a>
+              <% end %>
+            </div>
+
+            <div class="hidden md:flex">
+              <% @pagy.series.each do |item| %>
+                <% if item.is_a?(Integer) %>
+                  <a href="<%= web_sync_log_path(page: item) %>"
+                     class="relative inline-flex items-center px-4 py-2 text-sm font-medium border border-gray-300 hover:bg-gray-50
+                            <%= item == @pagy.page ? 'z-10 bg-blue-50 border-blue-500 text-blue-600' : 'text-gray-700 bg-white' %>">
+                    <%= item %>
+                  </a>
+                <% else %>
+                  <span class="relative inline-flex items-center px-4 py-2 text-sm font-medium border border-gray-300 bg-white text-gray-700">
+                    <%= item %>
+                  </span>
+                <% end %>
+              <% end %>
+            </div>
+
+            <div>
+              <% if @pagy.next %>
+                <a href="<%= web_sync_log_path(page: @pagy.next) %>"
+                   class="relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-50">
+                  Next
+                </a>
+              <% end %>
+            </div>
+          </div>
+        </nav>
+      </div>
+    <% end %>
+  </div>
+</div>

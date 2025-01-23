@@ -1,0 +1,82 @@
+<div class="max-w-7xl mx-auto bg-white rounded-lg shadow mt-15">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <h2 class="text-xl font-bold">Sync History</h2>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+      <tr>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Start Time</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">End Time</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Processed</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Errors</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Details</th>
+      </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+      <% @logs.each do |log| %>
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap text-sm"><%= log.start_date %></td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm"><%= log.end_date %></td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm"><%= log.processed %></td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm <%= 'text-red-600' if log.errors_quantity > 0 %>">
+            <%= log.errors_quantity %>
+          </td>
+          <% if log.errors_quantity <= 0 %>
+            <td class="px-6 py-4 whitespace-nowrap text-sm">
+              <span class="text-green-600">No errors</span>
+            </td>
+          <% else %>
+            <td class="px-6 py-4 whitespace-nowrap text-sm">
+              <a href="<%= web_sync_log_path(log) %>" class="text-red-600 hover:text-red-800">View errors</a>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <% if @pagy.pages > 1 %>
+      <div class="px-6 py-4 bg-white border-t border-gray-200">
+        <nav class="flex items-center justify-between">
+          <div class="flex-1 flex justify-between items-center">
+            <div>
+              <% if @pagy.prev %>
+                <a href="<%= web_sync_logs_path(page: @pagy.prev) %>"
+                   class="relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-50">
+                  Previous
+                </a>
+              <% end %>
+            </div>
+
+            <div class="hidden md:flex">
+              <% @pagy.series.each do |item| %>
+                <% if item.is_a?(Integer) %>
+                  <a href="<%= web_sync_logs_path(page: item) %>"
+                     class="relative inline-flex items-center px-4 py-2 text-sm font-medium border border-gray-300 hover:bg-gray-50
+                            <%= item == @pagy.page ? 'z-10 bg-blue-50 border-blue-500 text-blue-600' : 'text-gray-700 bg-white' %>">
+                    <%= item %>
+                  </a>
+                <% else %>
+                  <span class="relative inline-flex items-center px-4 py-2 text-sm font-medium border border-gray-300 bg-white text-gray-700">
+                    <%= item %>
+                  </span>
+                <% end %>
+              <% end %>
+            </div>
+
+            <div>
+              <% if @pagy.next %>
+                <a href="<%= web_sync_logs_path(page: @pagy.next) %>"
+                   class="relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-300 hover:bg-gray-50">
+                  Next
+                </a>
+              <% end %>
+            </div>
+          </div>
+        </nav>
+      </div>
+    <% end %>
+  </div>
+</div>
