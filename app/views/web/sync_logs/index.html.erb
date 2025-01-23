@@ -4,6 +4,7 @@
   </div>
 
   <div class="overflow-x-auto">
+    <%= render 'date_filter' %>
     <table class="min-w-full divide-y divide-gray-200">
       <thead class="bg-gray-50">
       <tr>
@@ -23,15 +24,25 @@
           <td class="px-6 py-4 whitespace-nowrap text-sm <%= 'text-red-600' if log.errors_quantity > 0 %>">
             <%= log.errors_quantity %>
           </td>
-          <% if log.errors_quantity <= 0 %>
-            <td class="px-6 py-4 whitespace-nowrap text-sm">
-              <span class="text-green-600">No errors</span>
-            </td>
-          <% else %>
-            <td class="px-6 py-4 whitespace-nowrap text-sm">
-              <a href="<%= web_sync_log_path(log) %>" class="text-red-600 hover:text-red-800">View errors</a>
-            </td>
-          <% end %>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <% if log.errors_quantity <= 0 %>
+   <span class="inline-flex items-center px-3 py-1.5 text-green-600">
+     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+       <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+     </svg>
+     No errors
+   </span>
+            <% else %>
+              <%= link_to web_sync_log_path(log),
+                          class: "inline-flex items-center px-3 py-1.5 rounded-md text-red-600 hover:text-red-800 hover:bg-red-50 transition-colors duration-150" do %>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                  <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                </svg>
+                View errors
+              <% end %>
+            <% end %>
+          </td>
         </tr>
       <% end %>
       </tbody>
