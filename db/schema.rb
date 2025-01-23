@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_10_075302) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_23_031846) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -426,6 +426,24 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_10_075302) do
     t.index ["name", "discarded_at"], name: "index_states_on_name_and_discarded_at", unique: true
   end
 
+  create_table "sync_log_errors", force: :cascade do |t|
+    t.string "item_id"
+    t.string "message"
+    t.bigint "sync_log_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sync_log_id"], name: "index_sync_log_errors_on_sync_log_id"
+  end
+
+  create_table "sync_logs", force: :cascade do |t|
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.integer "processed"
+    t.integer "errors_quantity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "teams", force: :cascade do |t|
     t.string "name"
     t.datetime "discarded_at"
@@ -636,6 +654,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_10_075302) do
   add_foreign_key "posts", "user_accounts"
   add_foreign_key "questions", "questionnaires"
   add_foreign_key "states", "countries"
+  add_foreign_key "sync_log_errors", "sync_logs"
   add_foreign_key "teams", "cities"
   add_foreign_key "teams", "neighborhoods"
   add_foreign_key "teams", "organizations"

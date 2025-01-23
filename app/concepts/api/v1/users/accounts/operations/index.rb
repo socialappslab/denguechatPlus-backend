@@ -31,7 +31,7 @@ module Api
             end
 
             def cursor_and_paginate
-              sort = @params['sort'] || 'user_accounts.status'
+              sort = @params['sort'] || 'user_accounts.id'
               order = @params['order'] || 'desc'
               @ctx[:sort] = { field: sort, direction: order }
             end

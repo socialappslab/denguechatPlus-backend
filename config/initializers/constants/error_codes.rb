@@ -64,7 +64,8 @@ module Constants
       reports_brigadists_performance: 59,
       code_recovery_in_a_short_time: 60,
       houses_orphan_houses: 61,
-      house_already_assigned: 62
+      house_already_assigned: 62,
+      inspections_index: 63
 
     }.freeze
   end

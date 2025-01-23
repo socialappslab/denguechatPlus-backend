@@ -165,6 +165,7 @@ Rails.application.routes.draw do
         post :update_image_question
       end
     end
+    resources :sync_logs, only: [:show, :index]
   end
 
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
@@ -183,5 +184,5 @@ Rails.application.routes.draw do
 
   mount Sidekiq::Web => '/sidekiq'
 
-  match '*unmatched', to: 'application#route_not_found', via: :all
+  # match '*unmatched', to: 'application#route_not_found', via: :all
 end
