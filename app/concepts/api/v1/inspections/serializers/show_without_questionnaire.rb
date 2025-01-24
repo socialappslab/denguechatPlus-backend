@@ -33,7 +33,7 @@ module Api
           attribute :elimination_method_type_other, &:other_elimination_method
 
           attribute :type_contents do |container|
-            next if container.type_contents.present?
+            next if container.type_contents.blank?
 
             container.type_contents.map(&:name_es).join(', ')
           end
