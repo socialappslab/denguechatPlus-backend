@@ -18,6 +18,7 @@ module Api
             optional(:container_test_result).maybe(:string)
             optional(:has_water).maybe(:bool)
             optional(:lid_type).maybe(:string)
+            optional(:location).maybe(:string)
             optional(:lid_type_other).maybe(:string)
             optional(:other_elimination_method).maybe(:string)
             optional(:other_protection).maybe(:string)

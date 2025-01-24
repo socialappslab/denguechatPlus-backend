@@ -131,6 +131,8 @@ module Api
 
           attribute :has_water, &:has_water
 
+          attribute :location, &:location
+
           attribute :container_protection do |container|
             build_container_protection.call(container)
           end
