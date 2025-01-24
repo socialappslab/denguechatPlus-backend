@@ -10,6 +10,7 @@ module Api
             optional(:elimination_method_type_id).filled(:integer)
             optional(:water_source_type_id).filled(:integer)
             optional(:code_reference).filled(:string)
+            optional(:location).filled(:string)
             optional(:photo_id).filled(:string)
             required(:has_water).filled(:bool)
             optional(:was_chemically_treated).filled(:string)

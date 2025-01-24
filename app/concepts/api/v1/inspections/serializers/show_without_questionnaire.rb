@@ -51,6 +51,8 @@ module Api
 
           attribute :has_water, &:has_water
 
+          attribute :location, &:location
+
           attribute :container_protection do |container|
             next unless container.container_protection
 
