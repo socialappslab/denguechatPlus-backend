@@ -13,6 +13,7 @@ module Api
             step :validate_schema
             step :retrieve_user
             step :change_user_status
+            tee :send_sms_notification
 
             def params(input)
               @ctx = {}
@@ -41,6 +42,12 @@ module Api
               return Success({ ctx: @ctx, type: :success }) if @ctx[:model].update(@ctx['contract.default'].values.data)
 
               Failure({ ctx: @ctx, type: :invalid })
+            end
+
+            def send_sms_notification
+              if @ctx[:model].previous_changes[:status]  == ['pending', 'active']
+                ::Users::ApprovalAccountWorker.perform_async(@ctx[:model].id)
+              end
             end
 
           end
