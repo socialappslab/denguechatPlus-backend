@@ -65,7 +65,8 @@ module Constants
       code_recovery_in_a_short_time: 60,
       houses_orphan_houses: 61,
       house_already_assigned: 62,
-      inspections_index: 63
+      inspections_index: 63,
+      wedges_house_blocks: 64
 
     }.freeze
   end

@@ -111,6 +111,7 @@ Rails.application.routes.draw do
       end
       resources :wedges, except: :index do
         get '/', to: 'public/wedges#index', on: :collection
+        get 'house_blocks', to: 'wedges#house_blocks', on: :member
       end
       resources :reports do
         get :house_status, on: :collection, action: :house_status

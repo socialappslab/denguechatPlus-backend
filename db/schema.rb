@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_24_174554) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_28_172642) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -132,6 +132,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_24_174554) do
     t.integer "external_id"
     t.string "source"
     t.datetime "last_sync_time"
+    t.bigint "neighborhood_id"
+    t.index ["neighborhood_id"], name: "index_house_blocks_on_neighborhood_id"
     t.index ["wedge_id"], name: "index_house_blocks_on_wedge_id"
   end
 
@@ -614,6 +616,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_24_174554) do
   add_foreign_key "cities", "states"
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "user_accounts"
+  add_foreign_key "house_blocks", "neighborhoods"
   add_foreign_key "house_blocks", "wedges"
   add_foreign_key "house_statuses", "cities"
   add_foreign_key "house_statuses", "countries"
