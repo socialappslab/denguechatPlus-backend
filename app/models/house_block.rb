@@ -2,22 +2,25 @@
 #
 # Table name: house_blocks
 #
-#  id             :bigint           not null, primary key
-#  discarded_at   :datetime
-#  last_sync_time :datetime
-#  name           :string
-#  source         :string
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
-#  external_id    :integer
-#  wedge_id       :bigint
+#  id              :bigint           not null, primary key
+#  discarded_at    :datetime
+#  last_sync_time  :datetime
+#  name            :string
+#  source          :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  external_id     :integer
+#  neighborhood_id :bigint
+#  wedge_id        :bigint
 #
 # Indexes
 #
-#  index_house_blocks_on_wedge_id  (wedge_id)
+#  index_house_blocks_on_neighborhood_id  (neighborhood_id)
+#  index_house_blocks_on_wedge_id         (wedge_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (neighborhood_id => neighborhoods.id)
 #  fk_rails_...  (wedge_id => wedges.id)
 #
 class HouseBlock < ApplicationRecord
@@ -28,4 +31,5 @@ class HouseBlock < ApplicationRecord
 
   has_many :user_profile_house_blocks
   has_many :brigadists, class_name: 'UserProfile', through: :user_profile_house_blocks, source: :user_profile
+  belongs_to :neighborhood
 end
