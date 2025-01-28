@@ -40,7 +40,10 @@ module Api
       private
 
       def set_paper_trail_whodunnit
-        current_user.try(:id)
+        PaperTrail.request.whodunnit = {
+          id: current_user&.id,
+          full_name: current_user&.full_name
+        }.to_json
       end
     end
   end

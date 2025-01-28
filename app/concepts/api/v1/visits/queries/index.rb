@@ -17,6 +17,7 @@ module Api
               filter = {}
             end
             @model = Visit.includes(*includes.uniq).includes(user_account: :user_profile)
+                          .includes(:versions)
             @filter = filter
             @sort = sort
           end
