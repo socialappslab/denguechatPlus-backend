@@ -13,10 +13,12 @@ module Api
               optional(:name).maybe(:string)
               optional(:neighborhood_id).maybe(:integer)
               optional(:sector_id).maybe(:integer)
+              optional(:sector_name).maybe(:string)
             end
 
             optional(:page).maybe(:hash) do
               optional(:is_cursor).maybe(:bool)
+              optional(:size).maybe(:integer)
             end
 
             optional(:sort).maybe(:string)
