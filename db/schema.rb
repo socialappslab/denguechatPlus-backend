@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_28_172642) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_29_221100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -381,6 +381,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_28_172642) do
     t.string "notes_es"
     t.string "notes_en"
     t.string "notes_pt"
+    t.boolean "required", default: true
     t.index ["questionnaire_id"], name: "index_questions_on_questionnaire_id"
   end
 

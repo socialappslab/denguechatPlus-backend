@@ -14,6 +14,7 @@
 #  question_text_en :string
 #  question_text_es :string
 #  question_text_pt :string
+#  required         :boolean          default(TRUE)
 #  resource_name    :string
 #  resource_type    :string
 #  type_field       :string
