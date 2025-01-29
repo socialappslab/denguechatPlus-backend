@@ -37,8 +37,15 @@ module Api
             !house_block.brigadist.nil?
           end
 
-          attribute :house_ids do |house_block|
-            house_block.houses&.pluck(:id)&.compact
+          attribute :houses do |house_block|
+            next if house_block.houses.blank?
+
+            house_block.houses.map do |house|
+              {
+                id: house.id,
+                reference_code: house.reference_code,
+              }
+            end
           end
 
           attribute :brigadist do |house_block|
