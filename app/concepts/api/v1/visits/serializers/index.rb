@@ -26,7 +26,13 @@ module Api
           end
 
           attribute :house do |visit|
-            visit.house.reference_code if visit.house
+            next unless visit.house
+
+            {
+              id: visit.house.reference_code,
+              reference_code: visit.house.reference_code,
+              status: visit.house.status
+            }
           end
 
           attribute :visit_status, &:status

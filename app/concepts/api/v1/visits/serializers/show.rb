@@ -62,6 +62,16 @@ module Api
             }
           end
 
+          attribute :house do |visit|
+            next unless visit.house
+
+            {
+              id: visit.house.reference_code,
+              reference_code: visit.house.reference_code,
+              status: visit.house.status
+            }
+          end
+
           attribute :host do |object|
             next unless object.host
 
