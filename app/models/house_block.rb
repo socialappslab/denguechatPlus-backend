@@ -31,5 +31,5 @@ class HouseBlock < ApplicationRecord
 
   has_many :user_profile_house_blocks
   has_many :brigadists, class_name: 'UserProfile', through: :user_profile_house_blocks, source: :user_profile
-  belongs_to :neighborhood
+  belongs_to :neighborhood, optional: true
 end
