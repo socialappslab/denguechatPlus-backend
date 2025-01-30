@@ -44,7 +44,7 @@ module Api
               end
               attrs.delete(:id)
               if @input['password']
-                attrs['password'] = @input[:password]
+                attrs['password'] = @input[:password].downcase
               end
               unless @ctx[:model].update(attrs)
                 return Failure({ ctx: @ctx, type: :invalid })
