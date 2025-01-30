@@ -48,14 +48,14 @@ module Api
             end
 
             def validate_password
-              return Success({ ctx: @user_account, type: :success }) if @params[:password] == @params[:password_confirmation]
+              return Success({ ctx: @user_account, type: :success }) if @params[:password].downcase == @params[:password_confirmation].downcase
 
               Failure({ ctx: @ctx, type: :invalid,
                         errors: ErrorFormater.new_error(field: :base, msg: 'Passwords do not match', custom_predicate: :format?) })
             end
 
             def update_password
-              @user_account.password = @params[:password]
+              @user_account.password = @params[:password].downcase
               if @user_account.save
                 @ctx[:data] = @user_account
                 @user_token.touch(:used_at)

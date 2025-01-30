@@ -40,8 +40,8 @@ module Api
               rol = Role.find_by(name: 'brigadista') || Role.first
               @ctx[:model] = @ctx[:user_profile].create_user_account(username: @params[:username].downcase,
                                                                      phone: @params[:phone],
-                                                                     password: @params[:password],
-                                                                     password_confirmation: @params[:password], roles: [rol])
+                                                                     password: @params[:password].downcase,
+                                                                     password_confirmation: @params[:password].downcase, roles: [rol])
               return Failure({ ctx: @ctx, type: :invalid }) unless @ctx[:model].persisted?
 
               Success({ ctx: @ctx, type: :success })
