@@ -19,6 +19,7 @@ module Api
 
           def call
             @model.yield_self(&method(:wedge_clause))
+                  .yield_self(&method(:wedge_name_clause))
                   .yield_self(&method(:team_clause))
                   .yield_self(&method(:name_clause))
                   .yield_self(&method(:user_profile_clause))
@@ -54,6 +55,13 @@ module Api
             return relation if @filter.nil? || @filter[:name].blank?
 
             relation.where('house_blocks.name ilike :query', query: "%#{@filter[:name]}%")
+          end
+
+
+          def wedge_name_clause(relation)
+            return relation if @filter.nil? || @filter[:wedge].blank?
+
+            relation.joins(:wedge).where('wedges.name ilike :query', query: "%#{@filter[:wedge]}%")
           end
 
           def user_profile_clause(relation)
