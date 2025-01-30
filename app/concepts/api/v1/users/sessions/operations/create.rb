@@ -60,7 +60,7 @@ module Api
             end
 
             def authenticate
-              unless @ctx[:model].authenticate(@params[:password])
+              unless @ctx[:model].authenticate(@params[:password].downcase)
                 Api::V1::Users::Lib::LoginAttempt.call(@ctx[:model]).increase_attempts_count!
 
                 return Failure({ ctx: @ctx, type: :unauthenticated, errors: ErrorFormater.new_error(field: :base, msg: I18n.t('errors.session.wrong_credentials'), custom_predicate: :credentials_wrong?) })
