@@ -78,6 +78,17 @@ module Api
             object.host.split(', ')
           end
 
+          attribute :modification_history do |visit|
+            versions = visit.versions
+            next nil unless versions
+
+            modify_by = JSON.parse(visit.versions.last.whodunnit)['full_name'] if visit.versions.last.whodunnit
+            {
+              lastModified: visit.updated_at,
+              modifiedBy: modify_by
+            }
+          end
+
           attribute :inspections do |visit|
             next unless visit.inspections.any?
 
