@@ -29,7 +29,7 @@ module Api
             next unless visit.house
 
             {
-              id: visit.house.reference_code,
+              id: visit.house.id,
               reference_code: visit.house.reference_code,
               status: visit.house.status
             }
