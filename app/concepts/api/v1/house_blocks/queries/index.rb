@@ -54,14 +54,18 @@ module Api
           def name_clause(relation)
             return relation if @filter.nil? || @filter[:name].blank?
 
-            relation.where('house_blocks.name ilike :query', query: "%#{@filter[:name]}%")
+            word_searched = CGI.unescape(@filter[:name])
+
+            relation.where('house_blocks.name ilike :query', query: "%#{word_searched}%")
           end
 
 
           def wedge_name_clause(relation)
             return relation if @filter.nil? || @filter[:wedge].blank?
 
-            relation.joins(:wedge).where('wedges.name ilike :query', query: "%#{@filter[:wedge]}%")
+            word_searched = CGI.unescape(@filter[:wedge])
+
+            relation.joins(:wedge).where('wedges.name ilike :query', query: "%#{word_searched}%")
           end
 
           def user_profile_clause(relation)
