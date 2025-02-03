@@ -20,15 +20,16 @@ module Gis
           password: password
         )
       rescue PG::Error => e
-        Rollbar.error(e, {
-          message: "Error connecting to GIS database",
-          context: {
+        Sentry.with_scope do |scope|
+          scope.set_extra('message', "Error connecting to GIS database")
+          scope.set_context('database', {
             host: host,
             port: port,
             dbname: dbname,
             user: user
-          }
-        })
+          })
+          Sentry.capture_exception(e)
+        end
         raise ConnectionError, "Unnable to connect with GIS DB: #{e.message}"
       end
 
@@ -38,13 +39,14 @@ module Gis
           result = conn.exec_params(sql, params)
           process_result(result)
         rescue PG::Error => e
-          Rollbar.error(e, {
-            message: "Error executing GIS query",
-            context: {
+          Sentry.with_scope do |scope|
+            scope.set_extra('message', "Error executing GIS query")
+            scope.set_context('query', {
               sql: sql,
               params: params
-            }
-          })
+            })
+            Sentry.capture_exception(e)
+          end
           raise QueryError, "Error executing GIS query: #{e.message}"
         ensure
           conn.close if conn
@@ -58,13 +60,14 @@ module Gis
 
         result.map { |row| symbolize_keys(row) }
       rescue StandardError => e
-        Rollbar.error(e, {
-          message: "Error processing GIS query result",
-          context: {
-            result_size: result&.ntuples,
+        Sentry.with_scope do |scope|
+          scope.set_extra('message', "Error processing GIS query result")
+          scope.set_context('result', {
+            size: result&.ntuples,
             error_type: e.class.name
-          }
-        })
+          })
+          Sentry.capture_exception(e)
+        end
         raise ProcessingError, "Error processing GIS query result: #{e.message}"
       end
 

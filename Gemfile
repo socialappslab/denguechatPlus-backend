@@ -95,7 +95,10 @@ gem 'dry-container'
 gem 'ffaker'
 
 # error login and tracking
-gem 'rollbar'
+gem "stackprof"
+gem "sentry-ruby"
+gem "sentry-rails"
+
 
 # sms gem with twilio
 gem 'twilio-ruby', '~> 7.3.6'
