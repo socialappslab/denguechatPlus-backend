@@ -75,7 +75,12 @@ module Api
           attribute :host do |object|
             next unless object.host
 
-            object.host.split(', ')
+            object.host.split(', ')&.map do
+              {
+                id: object.host,
+                value: object.host,
+              }
+            end
           end
 
           attribute :modification_history do |visit|
