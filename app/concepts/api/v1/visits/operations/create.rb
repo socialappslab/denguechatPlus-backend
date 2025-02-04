@@ -97,6 +97,10 @@ module Api
           end
 
           def create_visit
+            hosts = @ctx[:model].delete(:host)
+            if hosts
+              @ctx[:host] = hosts.join(', ')
+            end
             begin
               @ctx[:model] = Visit.create!(@params)
               Success({ ctx: @ctx, type: :created })
