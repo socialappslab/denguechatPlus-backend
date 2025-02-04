@@ -45,6 +45,10 @@ module Api
           end
 
           def update_visit
+            hosts = @params.delete(:host)
+            if hosts
+              @params[:host] = hosts.join(', ')
+            end
             begin
               visit = Visit.find_by(id: @params[:id])
               visit.update!(@params)
