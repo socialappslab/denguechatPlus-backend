@@ -38,7 +38,9 @@ module Api
             container.type_contents.map(&:name_es).join(', ')
           end
 
-          attribute :status, &:color
+          attribute :status do |container|
+            container.color
+          end
 
           attribute :water_source_type do |container|
             next unless container.water_source_type

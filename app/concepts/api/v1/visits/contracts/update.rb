@@ -16,7 +16,7 @@ module Api
             optional(:house_id).filled(:integer)
             optional(:visited_at).filled(:string)
             optional(:user_account_id).filled(:integer)
-            optional(:host).filled(:string)
+            optional(:host)
             optional(:notes).maybe(:string)
             optional(:visit_permission).filled(:bool)
 

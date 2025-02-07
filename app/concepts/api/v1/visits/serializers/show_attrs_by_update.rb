@@ -48,6 +48,7 @@ module Api
 
           attribute :visit do |visit|
             {
+              visitStatus: visit.status,
               hardFields: {
                 visitedAt: visit.visited_at,
                 brigade: visit.team.name,

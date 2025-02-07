@@ -50,9 +50,10 @@ module Api
 
           attribute :modification_history do |visit|
             versions = visit.versions
-            next nil unless versions
+            next unless versions
+            next unless versions.last
 
-            modify_by = JSON.parse(visit.versions.last.whodunnit)['full_name'] if visit.versions.last.whodunnit
+            modify_by = JSON.parse(visit.versions.last.whodunnit)['full_name'] if visit.versions&.last.whodunnit
             {
               lastModified: visit.updated_at,
               modifiedBy: modify_by
