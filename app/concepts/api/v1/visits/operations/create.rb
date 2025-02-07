@@ -97,9 +97,9 @@ module Api
           end
 
           def create_visit
-            hosts = @ctx[:model].delete(:host)
+            hosts = @params.delete(:host)
             if hosts
-              @ctx[:host] = hosts.join(', ')
+              @params[:host] = hosts.join(', ')
             end
             begin
               @ctx[:model] = Visit.create!(@params)

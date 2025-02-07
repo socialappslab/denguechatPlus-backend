@@ -17,7 +17,6 @@ module Api
               filter = {}
             end
             @model = Visit.includes(*includes.uniq).includes(user_account: :user_profile)
-                          .includes(:versions)
             @filter = filter
             @sort = sort
           end
@@ -145,6 +144,8 @@ module Api
             sort[:field] = 'houses.id' if sort[:field].include?('house')
             sort[:field] = 'visits.status' if sort[:field].include?('visit_status')
             sort[:field] = 'houses.wedge_id' if sort[:field].include?('wedge')
+            sort[:field] = 'visits.id' if sort[:field] == 'id'
+
             relation.order("#{sort[:field]} #{direction}")
           end
         end

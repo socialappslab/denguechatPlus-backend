@@ -68,7 +68,7 @@ module Gis
           location."location_code" reference_code,
           ST_Y(st_transform(st_centroid(geom), 4326)) as latitude,
           ST_X(st_transform(st_centroid(geom), 4326)) as longitude,
-          location.block_number house_block_id,
+          location."Tariki" house_block_id,
           location."SectorMOH24" sector_id,
           location."Cuna" wedge_id,
           'GIS' as source,
@@ -82,7 +82,7 @@ module Gis
           and location."deactive_date" is null
           and location."SectorMOH24" is not null
           and location."Cuna" is not null
-          and location.block_number is not null
+          and location."Tariki" is not null
           ORDER BY location."location_code", location.id
           offset #{offset}
           limit #{limit}
