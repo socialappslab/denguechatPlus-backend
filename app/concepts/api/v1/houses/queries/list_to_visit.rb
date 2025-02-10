@@ -20,6 +20,7 @@ module Api
           def call
             @model.yield_self(&method(:houses_by_user))
                   .yield_self(&method(:reference_code_clause))
+                  .order(:reference_code)
           end
 
           private
