@@ -58,7 +58,7 @@ module Api
           def reference_code_clause(relation)
             return relation if @filter.nil? || @filter[:reference_code].blank?
 
-            relation.where('houses.reference_code = :query', query: @filter[:reference_code])
+            relation.where('houses.reference_code ILIKE ?', "%#{@filter[:reference_code]}%")
           end
 
           def house_block_clause(relation)
