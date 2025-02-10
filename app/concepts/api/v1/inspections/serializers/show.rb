@@ -83,14 +83,19 @@ module Api
           build_was_chemically_treated = lambda { |container|
             [
               {
-                name: "Sí, fue tratado (revise el registro detrás de la puerta)",
-                value: "Sí, fue tratado (revise el registro detrás de la puerta)",
-                selected: container.was_chemically_treated == "Sí, fue tratado (revise el registro detrás de la puerta)"
+                name: 'Sí, fue tratado (revise el registro detrás de la puerta)',
+                value: 'Sí, fue tratado (revise el registro detrás de la puerta)',
+                selected: container.was_chemically_treated == 'Sí, fue tratado (revise el registro detrás de la puerta)'
               },
               {
-                name: "No, no fue tratado",
-                value: "No, no fue tratado",
-                selected: container.was_chemically_treated == "No, no fue tratado"
+                name: 'No, no fue tratado',
+                value: 'No, no fue tratado',
+                selected: container.was_chemically_treated == 'No, no fue tratado'
+              },
+              {
+                name: 'No lo sé',
+                value: 'No lo sé',
+                selected: container.was_chemically_treated == 'No lo sé'
               }
             ]
           }
