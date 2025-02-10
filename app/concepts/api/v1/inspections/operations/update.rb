@@ -46,7 +46,7 @@ module Api
             begin
               inspection = Inspection.find_by(id: @params[:id])
               inspection = manage_photo(inspection)
-              @params[:color] = analyze_inspection_status(inspection, @params[:type_content_ids])
+              @params[:color] = analyze_inspection_status(@params)
               inspection.update(@params)
               @ctx[:model] = inspection
               Success({ ctx: @ctx, type: :created })
@@ -132,18 +132,18 @@ module Api
             inspection
           end
 
-          def analyze_inspection_status(inspection, type_content_id = [])
-            type_content_id ||= []
-            type_content_id.map!(&:to_i)
+          def analyze_inspection_status( params = {})
+            params[:type_content_ids] ||= {}
+            params[:type_content_ids].map!(&:to_i)
             container_protection_ids = ContainerProtection.where(name_es: ['Tapa no hermética', 'Si, tiene tapa pero no está bien cerrado', 'Techo', 'Otro', 'No tiene']).pluck(:id)
             ids_red_cases = TypeContent.where(name_es: %w[Larvas Pupas Huevos]).pluck(:id)
 
-            return 'green' if type_content_id.nil? || type_content_id.blank?
-            return 'green' if TypeContent.find_by(id: type_content_id).name_es == 'Nada' && !inspection[:container_protection_id].in?(container_protection_ids)
+            return 'green' if params[:type_content_ids].nil? || params[:type_content_ids].blank?
+            return 'green' if TypeContent.find_by(id: params[:type_content_ids]).name_es == 'Nada' && !params[:container_protection_id].in?(container_protection_ids)
 
-            return 'red' if (ids_red_cases & type_content_id).any? if type_content_id.any?
-            return 'yellow' if (ids_red_cases & type_content_id).none? && inspection[:container_protection_id].in?(container_protection_ids)
-            return 'yellow' if  inspection[:has_water] && !inspection[:container_protection_id].in?(container_protection_ids)
+            return 'red' if (ids_red_cases & params[:type_content_ids]).any? if params[:type_content_ids].any?
+            return 'yellow' if (ids_red_cases & params[:type_content_ids]).none? && params[:container_protection_id].in?(container_protection_ids)
+            return 'yellow' if  params[:has_water] && !params[:container_protection_id].in?(container_protection_ids)
 
             'green'
 

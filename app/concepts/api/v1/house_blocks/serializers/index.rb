@@ -15,46 +15,42 @@ module Api
             house_block.team&.name
           end
 
-          attribute :house_ids do |house_block|
-            house_block.houses&.pluck(:id)&.compact
+          attribute :neighborhood do |house_block|
+            next unless house_block.neighborhood
+
+            {
+              id: house_block.neighborhood&.id,
+              name: house_block.neighborhood&.name
+            }
+          end
+
+          attribute :wedge do |house_block|
+            next unless house_block.wedge
+
+            {
+              id: house_block.wedge&.id,
+              name: house_block.wedge&.name
+            }
           end
 
           attribute :in_use do |house_block|
             !house_block.brigadist.nil?
           end
 
+          attribute :houses do |house_block|
+            next if house_block.houses.blank?
+
+            house_block.houses.map do |house|
+              {
+                id: house.id,
+                reference_code: house.reference_code,
+              }
+            end
+          end
+
           attribute :brigadist do |house_block|
             "#{house_block.brigadist&.first_name}, #{house_block.brigadist&.last_name}"
           end
-
-          # attribute :state do |house_block|
-          #   next unless house_block.wedge
-          #   next unless house_block.wedge.sector
-          #
-          #   house_block.wedge.sector.state.name
-          # end
-          #
-          # attribute :city do |house_block|
-          #   next unless house_block.wedge
-          #   next unless house_block.wedge.sector
-          #
-          #   house_block.wedge.sector.city.name
-          # end
-          #
-          # attribute :neighborhood do |house_block|
-          #   next unless house_block.wedge
-          #   next unless house_block.wedge.sector
-          #
-          #   house_block.wedge.sector.name
-          # end
-          #
-          # attribute :wedge do |house_block|
-          #   next unless house_block.wedge
-          #
-          #   house_block.wedge&.name
-          # end
-
-
         end
       end
     end

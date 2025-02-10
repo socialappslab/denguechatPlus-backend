@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_23_031846) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_29_221100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -132,6 +132,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_23_031846) do
     t.integer "external_id"
     t.string "source"
     t.datetime "last_sync_time"
+    t.bigint "neighborhood_id"
+    t.index ["neighborhood_id"], name: "index_house_blocks_on_neighborhood_id"
     t.index ["wedge_id"], name: "index_house_blocks_on_wedge_id"
   end
 
@@ -224,6 +226,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_23_031846) do
     t.string "was_chemically_treated"
     t.string "other_elimination_method"
     t.string "color"
+    t.string "location"
     t.index ["breeding_site_type_id"], name: "index_inspections_on_breeding_site_type_id"
     t.index ["container_protection_id"], name: "index_inspections_on_container_protection_id"
     t.index ["created_by_id"], name: "index_inspections_on_created_by_id"
@@ -378,6 +381,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_23_031846) do
     t.string "notes_es"
     t.string "notes_en"
     t.string "notes_pt"
+    t.boolean "required", default: true
     t.index ["questionnaire_id"], name: "index_questions_on_questionnaire_id"
   end
 
@@ -613,6 +617,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_23_031846) do
   add_foreign_key "cities", "states"
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "user_accounts"
+  add_foreign_key "house_blocks", "neighborhoods"
   add_foreign_key "house_blocks", "wedges"
   add_foreign_key "house_statuses", "cities"
   add_foreign_key "house_statuses", "countries"

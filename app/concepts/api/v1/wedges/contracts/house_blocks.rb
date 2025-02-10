@@ -4,17 +4,12 @@ module Api
   module V1
     module Wedges
       module Contracts
-        class Index < Dry::Validation::Contract
+        class HouseBlocks < Dry::Validation::Contract
           def self.kall(...)
             new.call(...)
           end
           params do
-            optional(:filter).maybe(:hash) do
-              optional(:name).maybe(:string)
-              optional(:neighborhood_id).maybe(:integer)
-              optional(:sector_id).maybe(:integer)
-              optional(:sector_name).maybe(:string)
-            end
+            required(:id).filled(:integer)
 
             optional(:page).maybe(:hash) do
               optional(:is_cursor).maybe(:bool)

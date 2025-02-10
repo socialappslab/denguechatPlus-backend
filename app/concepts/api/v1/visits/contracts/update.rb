@@ -16,7 +16,7 @@ module Api
             optional(:house_id).filled(:integer)
             optional(:visited_at).filled(:string)
             optional(:user_account_id).filled(:integer)
-            optional(:host).filled(:string)
+            optional(:host)
             optional(:notes).maybe(:string)
             optional(:visit_permission).filled(:bool)
 
@@ -25,14 +25,14 @@ module Api
             optional(:delete_inspection_ids).array(:integer)
           end
 
-
-          rule(:house_id) do
-            house_exists = ::House.find_by(id: value).present?
-            if !house_exists && !values[:house]
-              key.failure(text: 'The house not exists, you need to send a house obj with the new house data',
-                          predicate: :not_exists?)
-            end
-          end
+          #TODO: review with Gonza.
+          # rule(:house_id) do
+          #   house_exists = ::House.find_by(id: value).present?
+          #   if !house_exists && !values[:house]
+          #     key.failure(text: 'The house not exists, you need to send a house obj with the new house data',
+          #                 predicate: :not_exists?)
+          #   end
+          # end
 
           rule(:user_account_id) do
             unless UserAccount.kept.exists?(id: value)

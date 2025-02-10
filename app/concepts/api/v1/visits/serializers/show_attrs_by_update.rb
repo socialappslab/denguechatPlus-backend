@@ -48,10 +48,12 @@ module Api
 
           attribute :visit do |visit|
             {
+              visitStatus: visit.status,
               hardFields: {
                 visitedAt: visit.visited_at,
                 brigade: visit.team.name,
-                host: visit.host,
+
+                host: visit.host.split(', '),
                 brigadist: {
                   id: visit.user_account.id,
                   fullName: visit.user_account.full_name,

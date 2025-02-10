@@ -34,6 +34,7 @@ module Api
                   resourceName: question.resource_name.blank? ? nil : question.resource_name,
                   resourceType: question.resource_type,
                   image: get_image_obj.call(question),
+                  required: question.required,
                   options: question.options
                                    .sort_by(&:position)
                                    .map do |option|

@@ -9,6 +9,7 @@
 #  has_water                  :boolean
 #  lid_type                   :string
 #  lid_type_other             :string
+#  location                   :string
 #  other_elimination_method   :string
 #  other_protection           :string
 #  tracking_type_required     :string

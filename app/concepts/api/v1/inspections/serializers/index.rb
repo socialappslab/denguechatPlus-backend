@@ -33,12 +33,14 @@ module Api
           attribute :elimination_method_type_other, &:other_elimination_method
 
           attribute :type_contents do |container|
-            next if container.type_contents.present?
+            next if container.type_contents.blank?
 
             container.type_contents.map(&:name_es).join(', ')
           end
 
-          attribute :status, &:color
+          attribute :status do |container|
+            container.color
+          end
 
           attribute :water_source_type do |container|
             next unless container.water_source_type
@@ -50,6 +52,8 @@ module Api
           attribute :water_source_other, &:water_source_other
 
           attribute :has_water, &:has_water
+
+          attribute :location, &:location
 
           attribute :container_protection do |container|
             next unless container.container_protection

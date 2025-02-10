@@ -55,6 +55,10 @@ module Api
             }
           end
 
+          attribute :visitStatus do |object|
+            object.status
+          end
+
           attribute :wedge do |object|
             {
               id: @wedge.id,
@@ -62,10 +66,32 @@ module Api
             }
           end
 
+          attribute :house do |visit|
+            next unless visit.house
+
+            {
+              id: visit.house.id,
+              reference_code: visit.house.reference_code,
+              status: visit.house.status
+            }
+          end
+
           attribute :host do |object|
             next unless object.host
 
             object.host.split(', ')
+          end
+
+          attribute :modification_history do |visit|
+            versions = visit.versions
+            next nil unless versions
+            next unless versions.last
+
+            modify_by = JSON.parse(visit.versions.last.whodunnit)['full_name'] if visit.versions.last.whodunnit
+            {
+              lastModified: visit.updated_at,
+              modifiedBy: modify_by
+            }
           end
 
           attribute :inspections do |visit|

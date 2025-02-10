@@ -12,7 +12,7 @@ module Api
 
           params do
             required(:answers).filled(:array).each(:hash)
-            required(:host).filled(:string)
+            optional(:host).filled(:array)
             required(:visit_permission).filled(:bool)
             required(:visited_at).filled(:date_time)
             optional(:house_id).filled(:integer)

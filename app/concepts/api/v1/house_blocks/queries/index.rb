@@ -8,7 +8,7 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort)
-            @model = HouseBlock
+            @model = HouseBlock.includes(:neighborhood, :wedge)
             @filter = filter
             @sort = sort
           end
@@ -19,6 +19,7 @@ module Api
 
           def call
             @model.yield_self(&method(:wedge_clause))
+                  .yield_self(&method(:wedge_name_clause))
                   .yield_self(&method(:team_clause))
                   .yield_self(&method(:name_clause))
                   .yield_self(&method(:user_profile_clause))
@@ -53,7 +54,18 @@ module Api
           def name_clause(relation)
             return relation if @filter.nil? || @filter[:name].blank?
 
-            relation.where('house_blocks.name ilike :query', query: "%#{@filter[:name]}%")
+            word_searched = CGI.unescape(@filter[:name])
+
+            relation.where('house_blocks.name ilike :query', query: "%#{word_searched}%")
+          end
+
+
+          def wedge_name_clause(relation)
+            return relation if @filter.nil? || @filter[:wedge].blank?
+
+            word_searched = CGI.unescape(@filter[:wedge])
+
+            relation.joins(:wedge).where('wedges.name ilike :query', query: "%#{word_searched}%")
           end
 
           def user_profile_clause(relation)

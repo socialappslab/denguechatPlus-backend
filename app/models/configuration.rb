@@ -14,13 +14,7 @@ class Configuration < ApplicationRecord
 
   def self.attempts_number
     Rails.cache.fetch('attempts_number', expires_in: 12.hours) do
-      Configuration.find_by(field_name: 'attempts_number')&.value&.to_i || 5
-    end
-  end
-
-  def competing_price
-    Rails.cache.fetch("#{cache_key_with_version}/competing_price", expires_in: 12.hours) do
-      Competitor::API.find_price(id)
+      Configuration.find_by(field_name: 'attempts_number')&.value&.to_i || 10
     end
   end
 

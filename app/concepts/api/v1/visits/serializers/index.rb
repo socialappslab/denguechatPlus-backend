@@ -26,7 +26,13 @@ module Api
           end
 
           attribute :house do |visit|
-            visit.house.reference_code if visit.house
+            next unless visit.house
+
+            {
+              id: visit.house.id,
+              reference_code: visit.house.reference_code,
+              status: visit.house.status
+            }
           end
 
           attribute :visit_status, &:status
@@ -34,11 +40,24 @@ module Api
           attribute :brigadist do |visit|
             'usuario eliminado'
             next if visit.user_account.nil?
+
             visit.user_account.user_profile.full_name
           end
 
           attribute :team do |visit|
             visit.team.name if visit.team
+          end
+
+          attribute :modification_history do |visit|
+            versions = visit.versions
+            next unless versions
+            next unless versions.last
+
+            modify_by = JSON.parse(visit.versions.last.whodunnit)['full_name'] if visit.versions&.last.whodunnit
+            {
+              lastModified: visit.updated_at,
+              modifiedBy: modify_by
+            }
           end
         end
       end

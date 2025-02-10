@@ -37,6 +37,7 @@ module Api
               begin
                 @ctx[:model] = HouseBlock.find_by(id: @data[:id])
                 update_houses!(@house_ids) if @house_ids.present?
+                @ctx[:model].update!(@ctx['contract.default'].values.data)
                 Success({ ctx: @ctx, type: :created })
               rescue ActiveRecord::RecordInvalid => e
                 errors = ErrorFormater.new_error(field: :base, msg: e.message, custom_predicate: :user_account_without_confirmation?)

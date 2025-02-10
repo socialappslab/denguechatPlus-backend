@@ -2,9 +2,12 @@
 
 module Api
   module V1
-    class HouseBlocksController < AuthorizedApiController
+    class HouseBlocksController < ApiController
+      before_action :authorize_access_request!, only: %i[create update]
+      before_action :check_permissions!, only: %i[create update]
 
       def index
+        current_user ||= nil
         endpoint operation: Api::V1::HouseBlocks::Operations::Index,
                  renderer_options: {
                    serializer: Api::V1::HouseBlocks::Serializers::Index

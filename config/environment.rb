@@ -1,18 +1,16 @@
 # frozen_string_literal: true
-
 # config/environment.rb
-
 require File.expand_path('../application', __FILE__)
-require File.expand_path('../rollbar', __FILE__)
 
 notify = ->(e) do
   begin
-    Rollbar.with_config(use_async: false) do
-      Rollbar.error(e)
+    Sentry.configure_scope do |scope|
+      scope.set_tags(async: false)
+      Sentry.capture_exception(e)
     end
   rescue
-    Rails.logger.error "Synchronous Rollbar notification failed.  Sending async to preserve info"
-    Rollbar.error(e)
+    Rails.logger.error "Synchronous Sentry notification failed. Sending async to preserve info"
+    Sentry.capture_exception(e)
   end
 end
 

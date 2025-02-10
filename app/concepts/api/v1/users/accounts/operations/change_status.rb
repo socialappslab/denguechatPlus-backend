@@ -13,6 +13,8 @@ module Api
             step :validate_schema
             step :retrieve_user
             step :change_user_status
+            tee :restart_login_attemps_counter
+            tee :send_sms_notification
 
             def params(input)
               @ctx = {}
@@ -41,6 +43,18 @@ module Api
               return Success({ ctx: @ctx, type: :success }) if @ctx[:model].update(@ctx['contract.default'].values.data)
 
               Failure({ ctx: @ctx, type: :invalid })
+            end
+
+            def restart_login_attemps_counter
+              if  @ctx[:model].previous_changes[:status]  == ['locked', 'active']
+                Api::V1::Users::Lib::LoginAttempt.call(@ctx[:model]).reset_attempts_count!
+              end
+            end
+
+            def send_sms_notification
+              if @ctx[:model].previous_changes[:status]  == ['pending', 'active']
+                ::Users::ApprovalAccountWorker.perform_async(@ctx[:model].id)
+              end
             end
 
           end
