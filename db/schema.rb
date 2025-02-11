@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_29_221100) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_11_154644) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -205,6 +205,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_29_221100) do
     t.index ["wedge_id"], name: "index_houses_on_wedge_id"
   end
 
+  create_table "inspection_container_protections", force: :cascade do |t|
+    t.bigint "inspection_id"
+    t.bigint "container_protection_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["container_protection_id"], name: "idx_on_container_protection_id_2b631ae959"
+    t.index ["inspection_id"], name: "index_inspection_container_protections_on_inspection_id"
+  end
+
   create_table "inspections", force: :cascade do |t|
     t.bigint "visit_id", null: false
     t.bigint "breeding_site_type_id", null: false
@@ -221,14 +230,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_29_221100) do
     t.string "water_source_other"
     t.string "lid_type"
     t.string "lid_type_other"
-    t.bigint "container_protection_id"
     t.string "other_protection"
     t.string "was_chemically_treated"
     t.string "other_elimination_method"
     t.string "color"
     t.string "location"
     t.index ["breeding_site_type_id"], name: "index_inspections_on_breeding_site_type_id"
-    t.index ["container_protection_id"], name: "index_inspections_on_container_protection_id"
     t.index ["created_by_id"], name: "index_inspections_on_created_by_id"
     t.index ["elimination_method_type_id"], name: "index_inspections_on_elimination_method_type_id"
     t.index ["treated_by_id"], name: "index_inspections_on_treated_by_id"
@@ -635,8 +642,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_29_221100) do
   add_foreign_key "houses", "teams"
   add_foreign_key "houses", "user_profiles"
   add_foreign_key "houses", "wedges"
+  add_foreign_key "inspection_container_protections", "container_protections"
+  add_foreign_key "inspection_container_protections", "inspections"
   add_foreign_key "inspections", "breeding_site_types"
-  add_foreign_key "inspections", "container_protections"
   add_foreign_key "inspections", "elimination_method_types"
   add_foreign_key "inspections", "user_accounts", column: "created_by_id"
   add_foreign_key "inspections", "user_accounts", column: "treated_by_id"

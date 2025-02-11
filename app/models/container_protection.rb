@@ -14,6 +14,7 @@
 class ContainerProtection < ApplicationRecord
   include Discard::Model
 
-  has_many :inspections, dependent: :nullify
-
+  # has_many :inspections, dependent: :nullify
+  has_many :inspection_container_protections
+  has_many :inspections, through: :inspection_container_protections
 end

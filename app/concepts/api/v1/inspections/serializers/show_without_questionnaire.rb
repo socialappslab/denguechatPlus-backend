@@ -53,11 +53,6 @@ module Api
 
           attribute :location, &:location
 
-          attribute :container_protection do |container|
-            next unless container.container_protection
-
-            container.container_protection.name_es
-          end
 
           attribute :container_protection_other, &:other_protection
 
