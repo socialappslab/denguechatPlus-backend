@@ -36,7 +36,10 @@ module Api
             neighborhood_id = @user_account.teams&.first&.neighborhood_id
             return relation if neighborhood_id.nil?
 
-            relation.where(house_block_id: house_block_ids, neighborhood_id: neighborhood_id)
+            wedge_id = @user_account.teams&.first&.wedge_id
+            return relation if wedge_id.nil?
+
+            relation.where(house_block_id: house_block_ids, neighborhood_id: neighborhood_id, wedge_id: wedge_id)
           end
 
           def reference_code_clause(relation)

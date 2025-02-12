@@ -18,7 +18,6 @@
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
 #  breeding_site_type_id      :bigint           not null
-#  container_protection_id    :bigint
 #  created_by_id              :bigint           not null
 #  elimination_method_type_id :bigint
 #  treated_by_id              :bigint           not null
@@ -28,7 +27,6 @@
 # Indexes
 #
 #  index_inspections_on_breeding_site_type_id       (breeding_site_type_id)
-#  index_inspections_on_container_protection_id     (container_protection_id)
 #  index_inspections_on_created_by_id               (created_by_id)
 #  index_inspections_on_elimination_method_type_id  (elimination_method_type_id)
 #  index_inspections_on_treated_by_id               (treated_by_id)
@@ -38,7 +36,6 @@
 # Foreign Keys
 #
 #  fk_rails_...  (breeding_site_type_id => breeding_site_types.id)
-#  fk_rails_...  (container_protection_id => container_protections.id)
 #  fk_rails_...  (created_by_id => user_accounts.id)
 #  fk_rails_...  (elimination_method_type_id => elimination_method_types.id)
 #  fk_rails_...  (treated_by_id => user_accounts.id)
