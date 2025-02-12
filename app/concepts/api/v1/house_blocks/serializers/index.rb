@@ -25,11 +25,11 @@ module Api
           end
 
           attribute :wedge do |house_block|
-            next unless house_block.wedge
-
+            next if house_block.wedges.blank?
+            wedges = house_block.wedges.sort_by(&:external_id)
             {
-              id: house_block.wedge&.id,
-              name: house_block.wedge&.name
+              id: wedges&.first.id,
+              name: wedges&.pluck(:name)&.join(", ")
             }
           end
 

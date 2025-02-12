@@ -16,5 +16,6 @@ class Wedge < ApplicationRecord
 
   has_many :neighborhood_wedges, dependent: :destroy
   has_many :neighborhoods, through: :neighborhood_wedges
-  has_many :house_blocks
+  has_many :house_block_wedges, dependent: :destroy
+  has_many :house_blocks, through: :house_block_wedges
 end
