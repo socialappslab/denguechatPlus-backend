@@ -8,7 +8,7 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort)
-            @model = HouseBlock.includes(:neighborhood, :wedge)
+            @model = HouseBlock.includes(:neighborhood, :wedges)
             @filter = filter
             @sort = sort
           end
@@ -33,7 +33,7 @@ module Api
           def wedge_clause(relation)
             return relation if @filter.nil? || @filter[:wedge_id].blank?
 
-            relation.where(wedge_id: @filter[:wedge_id])
+            relation.joins(:wedges).where(wedges: { id: @filter[:wedge_id] })
           end
 
           def team_clause(relation)
@@ -42,30 +42,26 @@ module Api
             team = Team.find_by(id: @filter[:team_id])
             return relation unless team
 
-            wedge_id = team.wedge_id
-            return relation unless wedge_id
-
-            neighborhood_id = team.neighborhood_id
-            return relation unless neighborhood_id
-
-            relation.joins(:houses).where(houses: { neighborhood_id: neighborhood_id, wedge_id: wedge_id }).distinct
+            relation.joins(:houses)
+                    .where(houses: { neighborhood_id: team.neighborhood_id })
+                    .joins(:wedges)
+                    .where(wedges: { id: team.wedge_id })
+                    .distinct
           end
 
           def name_clause(relation)
             return relation if @filter.nil? || @filter[:name].blank?
 
             word_searched = CGI.unescape(@filter[:name])
-
-            relation.where('house_blocks.name ilike :query', query: "%#{word_searched}%")
+            relation.where('house_blocks.name ILIKE ?', "%#{word_searched}%")
           end
-
 
           def wedge_name_clause(relation)
             return relation if @filter.nil? || @filter[:wedge].blank?
 
             word_searched = CGI.unescape(@filter[:wedge])
-
-            relation.joins(:wedge).where('wedges.name ilike :query', query: "%#{word_searched}%")
+            relation.joins(:wedges)
+                    .where('wedges.name ILIKE ?', "%#{word_searched}%")
           end
 
           def user_profile_clause(relation)
