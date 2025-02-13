@@ -114,11 +114,13 @@ module Api
                   water_source_type_name: inspection.water_source_type&.name,
                   water_source_other: inspection.water_source_other
                 },
-                container_protection: {
-                  id: inspection.container_protection_id,
-                  name: inspection.container_protection&.send("name_#{visit.language}"),
-                  container_protection_other: inspection.other_protection
-                },
+                container_protections: inspection.container_protections.map do |protection|
+                  {
+                    id: protection.id,
+                    name: protection&.send("name_#{visit.language}")
+                  }
+                end,
+                other_container_protection: inspection.other_protection,
                 inspection_type_contents: [
                   inspection.type_contents.map do |content|
                     {

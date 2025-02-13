@@ -55,10 +55,15 @@ module Api
 
           attribute :location, &:location
 
-          attribute :container_protection do |container|
-            next unless container.container_protection
+          attribute :container_protections do |container|
+            next if container.container_protections.blank?
 
-            container.container_protection.name_es
+            container.container_protections.map do |protection|
+              {
+                id: protection.id,
+                name: protection&.name_es
+              }
+            end
           end
 
           attribute :container_protection_other, &:other_protection

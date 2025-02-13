@@ -50,9 +50,9 @@ module Api
                   end
                 end
 
-                if inspection.has_key?('container_protection_id')
-                  unless ContainerProtection.exists?(id: inspection['container_protection_id'])
-                    key(:container_protection_id).failure(text: "The ContainerProtection does not exist",
+                if inspection.has_key?('container_protection_ids')
+                  unless ContainerProtection.exists?(id: inspection['container_protection_ids'])
+                    key(:container_protection_ids).failure(text: "The ContainerProtection does not exist",
                                                           predicate: :not_exists?)
                   end
                 end
@@ -61,12 +61,12 @@ module Api
 
                 if inspection.has_key?('type_content_id')
                   unless inspection['type_content_id']
-                    key(:container_protection_id).failure(text: "The TypeContent does not exist",
+                    key(:type_content_id).failure(text: "The TypeContent does not exist",
                                                           predicate: :not_exists?)
                   end
 
                   if inspection['type_content_id'] && !inspection['type_content_id'].all? {|id| TypeContent.exists?(id: id)}
-                    key(:container_protection_id).failure(text: "The TypeContent does not exist",
+                    key(:type_content_id).failure(text: "The TypeContent does not exist",
                                                           predicate: :not_exists?)
                   end
                 end

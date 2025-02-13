@@ -49,7 +49,8 @@ class Inspection < ApplicationRecord
   belongs_to :water_source_type, optional: true
   belongs_to :created_by, class_name: 'UserAccount'
   belongs_to :treated_by, class_name: 'UserAccount'
-  belongs_to :container_protection, optional: true
+  has_many :inspection_container_protections
+  has_many :container_protections, through: :inspection_container_protections
   has_many :inspection_type_contents, dependent: :nullify
   has_many :type_contents, through: :inspection_type_contents
   has_one_attached :photo

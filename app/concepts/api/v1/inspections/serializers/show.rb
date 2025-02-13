@@ -65,12 +65,13 @@ module Api
           }
 
           build_container_protection = lambda { |container|
+            container_protections = container.container_protection_ids
             ContainerProtection.all.map do |bst|
               res = {
                 id: bst.id,
                 name: bst.name_es,
                 value: bst.id,
-                selected: bst.id == container.container_protection_id
+                selected: bst.id.in?(container_protections)
               }
               if bst.name_es.downcase.in?(['otro', 'other', 'outro'])
                 res[:is_text_area] = true
@@ -138,7 +139,7 @@ module Api
 
           attribute :location, &:location
 
-          attribute :container_protection do |container|
+          attribute :container_protections do |container|
             build_container_protection.call(container)
           end
 
