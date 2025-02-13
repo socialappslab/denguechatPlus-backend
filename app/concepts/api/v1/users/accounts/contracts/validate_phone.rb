@@ -26,15 +26,17 @@ module Api
               end
             end
 
-            rule(:username) do
-              if value.length < 3
-                key.failure("must be at least 3 characters long")
-              end
+            # rule(:username) do
+            #   if value.length < 3
+            #     key.failure("must be at least 3 characters long")
+            #   end
+            #
+            #   if value.match?(/[^a-zA-Z0-9_]/)
+            #     key.failure("can only contain letters, numbers, and underscores")
+            #   end
+            # end
 
-              if value.match?(/[^a-zA-Z0-9_]/)
-                key.failure("can only contain letters, numbers, and underscores")
-              end
-            end
+
           end
         end
       end

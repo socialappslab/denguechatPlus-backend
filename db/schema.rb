@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_11_154644) do
+
+ActiveRecord::Schema[7.1].define(version: 2025_02_11_213009) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -123,18 +124,26 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_11_154644) do
     t.string "name_pt"
   end
 
+  create_table "house_block_wedges", force: :cascade do |t|
+    t.bigint "house_block_id", null: false
+    t.bigint "wedge_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["house_block_id", "wedge_id"], name: "index_house_block_wedges_on_house_block_id_and_wedge_id", unique: true
+    t.index ["house_block_id"], name: "index_house_block_wedges_on_house_block_id"
+    t.index ["wedge_id"], name: "index_house_block_wedges_on_wedge_id"
+  end
+
   create_table "house_blocks", force: :cascade do |t|
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name"
-    t.bigint "wedge_id"
     t.integer "external_id"
     t.string "source"
     t.datetime "last_sync_time"
     t.bigint "neighborhood_id"
     t.index ["neighborhood_id"], name: "index_house_blocks_on_neighborhood_id"
-    t.index ["wedge_id"], name: "index_house_blocks_on_wedge_id"
   end
 
   create_table "house_statuses", force: :cascade do |t|
@@ -624,8 +633,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_11_154644) do
   add_foreign_key "cities", "states"
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "user_accounts"
+  add_foreign_key "house_block_wedges", "house_blocks"
+  add_foreign_key "house_block_wedges", "wedges"
   add_foreign_key "house_blocks", "neighborhoods"
-  add_foreign_key "house_blocks", "wedges"
   add_foreign_key "house_statuses", "cities"
   add_foreign_key "house_statuses", "countries"
   add_foreign_key "house_statuses", "house_blocks"
