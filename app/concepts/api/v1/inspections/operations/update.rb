@@ -139,11 +139,13 @@ module Api
             ids_red_cases = TypeContent.where(name_es: %w[Larvas Pupas Huevos]).pluck(:id)
 
             return 'green' if params[:type_content_ids].nil? || params[:type_content_ids].blank?
-            return 'green' if TypeContent.find_by(id: params[:type_content_ids]).name_es == 'Nada' && !params[:container_protection_ids].in?(container_protection_ids)
-
+            if TypeContent.find_by(id: params[:type_content_ids]).name_es == 'Nada'
+              container_ids = params[:container_protection_ids].map(&:to_i)
+              return 'green' if container_ids.any? { |id| !container_protection_ids.include?(id) }
+            end
             return 'red' if (ids_red_cases & params[:type_content_ids]).any? if params[:type_content_ids].any?
-            return 'yellow' if (ids_red_cases & params[:type_content_ids]).none? && params[:container_protection_ids].in?(container_protection_ids)
-            return 'yellow' if  params[:has_water] && params[:container_protection_ids].in?(container_protection_ids)
+            return 'yellow' if (ids_red_cases & params[:type_content_ids]).none? && params[:container_protection_ids].map(&:to_i).any? { |id| container_protection_ids.include?(id) }
+            return 'yellow' if  params[:has_water] && !params[:container_protection_ids].map(&:to_i).any? { |id| container_protection_ids.include?(id) }
 
             'green'
 
