@@ -143,7 +143,7 @@ module Api
 
             return 'red' if (ids_red_cases & params[:type_content_ids]).any? if params[:type_content_ids].any?
             return 'yellow' if (ids_red_cases & params[:type_content_ids]).none? && params[:container_protection_ids].in?(container_protection_ids)
-            return 'yellow' if  params[:has_water] && !params[:container_protection_ids].in?(container_protection_ids)
+            return 'yellow' if  params[:has_water] && params[:container_protection_ids].in?(container_protection_ids)
 
             'green'
 
