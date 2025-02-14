@@ -25,7 +25,7 @@ module Api
             optional(:was_chemically_treated).maybe(:string)
             optional(:water_source_other).maybe(:string)
 
-            optional(:container_protection_id).maybe(:integer)
+            optional(:container_protection_ids).maybe(:array)
             optional(:elimination_method_type_id).maybe(:integer)
             optional(:water_source_type_id).maybe(:integer)
             optional(:type_content_ids).maybe(:array)
@@ -68,7 +68,7 @@ module Api
             end
           end
 
-          rule(:container_protection_id) do
+          rule(:container_protection_ids) do
             if key?
               unless ContainerProtection.exists?(id: value)
                 key.failure(text: "The ContainerProtection does not exist", predicate: :not_exists?)

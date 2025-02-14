@@ -8,7 +8,7 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(params)
-            includes = %i[breeding_site_type elimination_method_type water_source_type container_protection inspection_type_contents]
+            includes = %i[breeding_site_type elimination_method_type water_source_type container_protections inspection_type_contents]
             @model = Inspection.includes(*includes)
             @visit_id = params[:id]
           end
