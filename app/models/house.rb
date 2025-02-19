@@ -74,4 +74,13 @@ class House < ApplicationRecord
   enum status: { green: "0", yellow: "1", red: "2" }
   enum assignment_status: { assigned: 1, orphaned: 0}
 
+
+  def is_tariki?(new_status = status)
+    last_statuses = HouseStatus.where(house_id: id).last(3).pluck(:status)
+    return false if last_statuses.count < 3
+    return true if last_statuses == %w[green green green] && new_status == 'green'
+
+    false
+  end
+
 end

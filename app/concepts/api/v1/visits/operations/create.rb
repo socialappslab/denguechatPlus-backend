@@ -26,6 +26,7 @@ module Api
           tee :update_house_status
           tee :create_house_status_daily
           tee :set_language
+          tee :assign_points
 
 
           def check_request_attrs(input)
@@ -54,11 +55,11 @@ module Api
 
           def depurate_inspection_list
             if @params.key?('inspections')
-              inspections = @params["inspections"]
+              inspections = @params['inspections']
               inspections.reject! do |inspection|
                 (inspection.keys - %w[quantity_founded status_color]).empty?
               end
-              @params["inspections"] = inspections
+              @params['inspections'] = inspections
             end
             @params.delete('inspections') if @params.key?('inspections') && @params['inspections']&.empty?
           end
@@ -235,28 +236,29 @@ module Api
 
           def update_house_status
             colors = {
-              'red' => "Rojo",
-              'yellow' => "Amarillo",
-              'green' => "Verde"
+              'red' => 'Rojo',
+              'yellow' => 'Amarillo',
+              'green' => 'Verde'
             }
             inspections_ids = @ctx[:model].inspections.pluck(:id)
             if !inspections_ids.empty?
               counts = @ctx[:model].inspections.group(:color).count
               result = {
-                infected_containers: counts["red"] || 0,
-                potential_containers: counts["yellow"] || 0,
-                non_infected_containers: counts["green"] || 0,
+                infected_containers: counts['red'] || 0,
+                potential_containers: counts['yellow'] || 0,
+                non_infected_containers: counts['green'] || 0,
                 last_visit: @params[:visited_at] || Time.now.utc,
-                status: if (counts["red"] || 0) > 0
-                          "red"
-                        elsif (counts["yellow"] || 0) > 0
-                          "yellow"
-                        elsif (counts["green"] || 0) > 0
-                          "green"
+                status: if (counts['red'] || 0) > 0
+                          'red'
+                        elsif (counts['yellow'] || 0) > 0
+                          'yellow'
+                        elsif (counts['green'] || 0) > 0
+                          'green'
                         else
-                          "green"
+                          'green'
                         end
               }
+              result[:tariki_status] = @house.is_tariki?(result[:status])
               @house.update!(result)
               @ctx[:model].update!(status: colors[result[:status]])
               elsif inspections_ids.empty? && @params[:visit_permission]
@@ -298,6 +300,7 @@ module Api
             ids_red_cases = TypeContent.where(name_es: %w[Larvas Pupas Huevos]).pluck(:id)
 
             return 'green' if type_content_id.nil? || type_content_id.blank?
+
             if TypeContent.find_by(id: type_content_id).name_es == 'Nada'
               container_ids = inspection[:container_protection_ids].map(&:to_i)
               return 'green' if container_ids.any? { |id| !container_protection_ids.include?(id) }
@@ -327,6 +330,26 @@ module Api
                                    end
             Success({ ctx: @ctx, type: :success })
           end
+
+          def assign_points
+            existing_point = Point.where(
+              user_account_id: @current_user.id,
+              team_id: @current_user.teams&.first&.id,
+              house_id: @house.id
+            ).where("DATE(created_at)::date = ?::date", Date.current)&.first
+
+            unless existing_point
+              Point.create(
+                user_account_id: @current_user.id,
+                team_id: @current_user.teams&.first&.id,
+                house_id: @house.id,
+                value: Constants::VisitParams::TARIKI_POINT
+              )
+            end
+          end
+
+          private
+
         end
       end
     end

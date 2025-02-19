@@ -74,6 +74,11 @@ Rails.application.routes.draw do
           end
         end
       end
+      resources :points, only: %i[accumulated_points] do
+        collection do
+          get :accumulated_points
+        end
+      end
       resources :comments, only: [] do
         resources :likes, only: %i[create destroy]
       end
