@@ -66,7 +66,8 @@ module Constants
       houses_orphan_houses: 61,
       house_already_assigned: 62,
       inspections_index: 63,
-      wedges_house_blocks: 64
+      wedges_house_blocks: 64,
+      points_accumulated_points: 65
 
     }.freeze
   end
