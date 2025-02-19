@@ -4,8 +4,8 @@ module Api
   module V1
     module Points
       module Serializers
-        class AccumulatedPoints < ApplicationSerializer
-          set_type :accumulated_points
+        class Ranking < ApplicationSerializer
+          set_type :ranking
 
           attributes :total_points
 
