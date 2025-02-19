@@ -77,6 +77,7 @@ Rails.application.routes.draw do
       resources :points, only: %i[accumulated_points] do
         collection do
           get :accumulated_points
+          get :ranking
         end
       end
       resources :comments, only: [] do
