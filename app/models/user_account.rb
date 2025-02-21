@@ -39,6 +39,7 @@ class UserAccount < ApplicationRecord
   has_many :permissions, through: :roles
   has_many :user_code_recoveries
   accepts_nested_attributes_for :user_profile,  update_only: true
+  before_save :downcase_username_and_password!
 
   default_scope { where(discarded_at: nil) }
 
@@ -80,5 +81,12 @@ class UserAccount < ApplicationRecord
 
   def last_recovery_code_sent_at
     user_code_recoveries.last&.created_at
+  end
+
+  private
+  def downcase_username_and_password!
+    self.password = password.downcase.gsub(/\s+/, '') if password.present?
+    self.username = username.downcase.gsub(/\s+/, '') if username.present?
+    self.phone = phone.gsub(/\s+/, '') if phone.present?
   end
 end
