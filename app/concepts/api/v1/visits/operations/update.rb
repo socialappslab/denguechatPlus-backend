@@ -137,8 +137,8 @@ module Api
 
               unless existing_point
                 Point.create(
-                  user_account_id: @current_user.id,
-                  team_id: @current_user.teams&.first&.id,
+                  user_account_id: @ctx[:model].user_account_id,
+                  team_id: @ctx[:model].user_account.teams&.first&.id,
                   house_id: @house.id,
                   value: Constants::VisitParams::TARIKI_POINT
                 )
