@@ -6,6 +6,7 @@ module Gis
         total_processed = 0
         failed_records = []
         sync_log = SyncLog.create(start_date: Time.current)
+        res = {created: 0, updated: 0}
 
         loop do
           external_houses_batch = Gis::Connection.query(query_builder(offset, batch_size))
@@ -33,6 +34,13 @@ module Gis
         end
         sync_log.update!(end_date: Time.current,
                          processed: total_processed, errors_quantity: failed_records.size)
+        today_start = Date.today.beginning_of_day
+        today_end = Date.today.end_of_day
+
+        res[:created] = ::House.where(created_at: today_start..today_end, updated_at: today_start..today_end).count
+        res[:updated] = ::House.where.not(created_at: today_start..today_end).where(updated_at: today_start..today_end).count
+        sync_log.update!(houses_created: res[:created], houses_updated: res[:updated])
+        sync_log
       end
 
       private

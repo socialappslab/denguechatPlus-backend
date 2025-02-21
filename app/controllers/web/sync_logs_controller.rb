@@ -28,7 +28,7 @@ module Web
 
       scope = scope.where("message ILIKE ?", "%#{params[:message]}%") if params[:message].present?
       scope = scope.where(item_id: params[:item_id].upcase) if params[:item_id].present?
-
+      @sync_log = SyncLog.find_by(id: params[:id])
       @pagy, @errors = pagy(scope.order(created_at: :desc), items: 10)
     end
 
