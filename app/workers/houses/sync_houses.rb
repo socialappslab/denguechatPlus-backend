@@ -6,13 +6,13 @@ module Houses
 
     def perform
 
-      Gis::Neighborhood.sync(neighborhoods_data_query.keys)
+      sector_result = Gis::Neighborhood.sync(neighborhoods_data_query.keys)
       neighborhoods_data_updated = neighborhoods_data_query
 
-      Gis::Wedge.sync(neighborhoods_data_updated)
+      wedge_result= Gis::Wedge.sync(neighborhoods_data_updated)
       wedges_data = wedges_data_query
 
-      Gis::HouseBlock.sync(house_blocks_data_query.keys, wedges_data, neighborhoods_data_updated)
+      house_block_result = Gis::HouseBlock.sync(house_blocks_data_query.keys, wedges_data, neighborhoods_data_updated)
       house_blocks_data = house_blocks_data_query
 
       mappings = {
@@ -20,7 +20,13 @@ module Houses
         wedges: wedges_data,
         house_blocks: house_blocks_data
       }
-      Gis::House.sync(BATCH_SIZE, mappings)
+      sync_log = Gis::House.sync(BATCH_SIZE, mappings)
+      sync_log.update!(sectors_created: sector_result[:create],
+                       sectors_updated: sector_result[:update],
+                       wedges_created: wedge_result[:create],
+                       wedges_updated: wedge_result[:update],
+                       house_blocks_created: house_block_result[:create],
+                       house_blocks_updated: house_block_result[:update])
     end
 
     private

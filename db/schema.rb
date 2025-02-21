@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_18_184232) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_21_203645) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -473,6 +473,14 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_18_184232) do
     t.integer "errors_quantity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "houses_updated"
+    t.integer "houses_created"
+    t.integer "house_blocks_updated"
+    t.integer "house_blocks_created"
+    t.integer "wedges_updated"
+    t.integer "wedges_created"
+    t.integer "sectors_updated"
+    t.integer "sectors_created"
   end
 
   create_table "teams", force: :cascade do |t|

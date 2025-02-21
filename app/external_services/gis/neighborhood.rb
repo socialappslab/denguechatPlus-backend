@@ -2,9 +2,12 @@ module Gis
   class Neighborhood
     class << self
       def sync(current_neighborhood_keys)
+        res = {update: 2, create: 0}
         query = query_builder(current_neighborhood_keys)
         new_neighborhoods = Gis::Connection.query(query)
+        res[:create] = new_neighborhoods.count
         ::Neighborhood.create!(new_neighborhoods) if new_neighborhoods.any?
+        res
       end
 
       private

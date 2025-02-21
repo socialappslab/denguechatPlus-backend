@@ -25,13 +25,18 @@
             <%= log.errors_quantity %>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm">
+
             <% if log.errors_quantity && log.errors_quantity <= 0 %>
-   <span class="inline-flex items-center px-3 py-1.5 text-green-600">
-     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-       <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-     </svg>
-     No errors
-   </span>
+              <%= link_to web_sync_log_path(log),
+                          class: "inline-flex items-center px-3 py-1.5 rounded-md text-red-600 hover:text-red-800 hover:bg-red-50 transition-colors duration-150" do %>
+                   <span class="inline-flex items-center text-green-600">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                      </svg>
+                      View details
+                  </span>
+              <% end %>
             <% else %>
               <%= link_to web_sync_log_path(log),
                           class: "inline-flex items-center px-3 py-1.5 rounded-md text-red-600 hover:text-red-800 hover:bg-red-50 transition-colors duration-150" do %>
@@ -39,7 +44,7 @@
                   <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
                   <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
                 </svg>
-                View errors
+                View details
               <% end %>
             <% end %>
           </td>
