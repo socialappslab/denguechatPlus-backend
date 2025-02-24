@@ -20,7 +20,7 @@ module Api
                 key.failure(text: "must have at least 9 digits", predicate: :min_size?)
               end
               if values[:username] && values[:phone]
-                unless UserAccount.find_by(username: values[:username], phone: values[:phone])
+                unless UserAccount.where("LOWER(username) = ? AND phone = ?", values[:username].downcase.gsub(/\s+/, ''), values[:phone]).any?
                   key(:user_name_and_phone).failure(text: "does not match the user's registered phone number", predicate: :not_found?)
                 end
               end

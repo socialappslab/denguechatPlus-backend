@@ -40,7 +40,7 @@ module Api
             end
 
             def retrieve_user
-              @user_account = UserAccount.find_by(username: @params[:username], phone: @params[:phone])
+              @user_account = UserAccount.where("LOWER(username) = ? AND phone = ?", @params[:username].downcase.gsub(/\s+/, ''), @params[:phone])&.first
               return Success({ ctx: @user_account, type: :success }) if @user_account
 
               Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'Invalid code', custom_predicate: :not_found? )})
