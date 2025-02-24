@@ -96,7 +96,7 @@ module Api
               if result.success?
                 if !values[:username].nil? && values[:username].blank?
                   key(:username).failure(text: "Username can't be null", predicate: :credentials_wrong?)
-                elsif values[:username] && UserAccount.where.not(user_profile_id: values[:id]).exists?(username: value.downcase)
+                elsif values[:username] &&  UserAccount.where.not(user_profile_id: values[:id]).where("LOWER(username) = ?", values[:username].downcase.gsub(/\s+/, '')).any?
                   key(:username).failure(text: 'The username already used by other user', predicate: :user_username_unique?)
                 end
               end
