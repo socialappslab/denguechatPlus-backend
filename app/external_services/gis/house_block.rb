@@ -3,6 +3,7 @@ module Gis
     class << self
 
       def sync(current_house_block_ids, wedge_ids, sector_ids)
+        res = {update: 0, create: 0}
         new_house_blocks = Gis::Connection.query(query_builder(current_house_block_ids))
         if new_house_blocks.any?
           begin
@@ -16,8 +17,10 @@ module Gis
               record.last_sync_time = Time.current
 
               if record.new_record?
+                res[:create] += 1
                 record.wedge_ids = [wedge_ids[house_block[:wedge_id].to_i]]
               else
+                res[:update] += 1
                 current_wedge_ids = record.wedge_ids
                 record.wedge_ids = current_wedge_ids | [wedge_ids[house_block[:wedge_id].to_i]]
               end
@@ -28,6 +31,7 @@ module Gis
             puts "Error with new_house_blocks: #{e}"
           end
         end
+        res
       end
       private
 

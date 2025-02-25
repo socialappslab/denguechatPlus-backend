@@ -37,7 +37,7 @@ module Api
             def model
               searched_field = @ctx['contract.default'][:type]
               searched_value = @ctx['contract.default'][searched_field]
-              model = UserAccount.find_by(searched_field => searched_value.downcase)
+              model = UserAccount.where("LOWER(#{searched_field}) = ?", searched_value.downcase.gsub(/\s+/, ''))&.first
 
               unless model
                 return Failure({ ctx: @ctx, type: :unauthenticated,

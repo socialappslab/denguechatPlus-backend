@@ -15,6 +15,7 @@ module Api
           tee :update_house_status
           tee :update_house_status_daily
           tee :set_language
+          tee :assign_points
 
 
           def params(input)
@@ -124,6 +125,31 @@ module Api
                                      'es'
                                    end
             Success({ ctx: @ctx, type: :success })
+          end
+
+          def assign_points
+            if @house.is_tariki?
+              existing_point = Point.where(
+                user_account_id: @ctx[:model].user_account_id,
+                team_id: @ctx[:model].user_account.teams&.first&.id,
+                house_id: @house.id
+              ).where("DATE(created_at)::date = ?::date", Date.current)&.first
+
+              unless existing_point
+                Point.create(
+                  user_account_id: @ctx[:model].user_account_id,
+                  team_id: @ctx[:model].user_account.teams&.first&.id,
+                  house_id: @house.id,
+                  value: Constants::VisitParams::TARIKI_POINT
+                )
+              end
+            else
+              Point.where(
+                user_account_id: @ctx[:model].user_account_id,
+                team_id: @ctx[:model].user_account.teams&.first&.id,
+                house_id: @house.id
+              ).where("DATE(created_at)::date = ?::date", Date.current).destroy_all
+            end
           end
         end
       end

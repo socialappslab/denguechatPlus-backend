@@ -4,6 +4,7 @@ module Gis
       def sync(neighborhood_ids)
         new_wedges = Gis::Connection.query(query_builder)
         if new_wedges.any?
+          res = {update: 8, create: 0}
           begin
             new_wedges.each do |wedge|
               ::Wedge.find_or_create_by(external_id: wedge[:external_id]) do |new_wedge|
@@ -12,11 +13,13 @@ module Gis
                 new_wedge.source = wedge[:source]
                 new_wedge.neighborhood_ids = wedge[:neighborhood_ids].split(',').map{|ext_id| neighborhood_ids[ext_id.to_i]}
               end
+              res[:create] += 1
             end
           rescue => e
            puts "Error with new_wedges: #{e}"
           end
         end
+        res
       end
 
       private

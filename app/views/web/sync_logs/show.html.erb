@@ -8,9 +8,55 @@
   </a>
 </div>
 
+<!-- Nuevo bloque de resumen -->
+<div class="max-w-7xl mx-auto bg-white rounded-lg shadow mb-6">
+  <div class="px-6 py-4 border-b border-gray-200">
+    <h2 class="text-xl font-bold">Synchronization resume</h2>
+  </div>
+  <div class="px-6 py-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <h3 class="text-lg font-semibold mb-3">General information</h3>
+        <ul class="space-y-2">
+          <li><span class="font-medium">ID:</span> <%= @sync_log.id %></li>
+          <li><span class="font-medium">Started at:</span> <%= @sync_log.start_date.strftime("%m/%d/%Y, %I:%M:%S %p") %></li>
+          <li><span class="font-medium">Ended at:</span> <%= @sync_log.end_date.strftime("%m/%d/%Y, %I:%M:%S %p") %></li>
+          <li><span class="font-medium">Duration:</span> <%= (@sync_log.end_date - @sync_log.start_date).to_i %> segundos</li>
+          <li><span class="font-medium">Total processed:</span> <%= @sync_log.processed %></li>
+          <li><span class="font-medium">Errores:</span> <%= @sync_log.errors_quantity %></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold mb-3">Changes summary</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h4 class="font-medium mb-2">Updates</h4>
+            <ul class="space-y-1">
+              <li><span class="font-medium">Houses:</span> <%= @sync_log.houses_updated %></li>
+              <li><span class="font-medium">Frente a frentes:</span> <%= @sync_log.house_blocks_updated %></li>
+              <li><span class="font-medium">Wedges:</span> <%= @sync_log.wedges_updated %></li>
+              <li><span class="font-medium">Sectors:</span> <%= @sync_log.sectors_updated %></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-medium mb-2">New data</h4>
+            <ul class="space-y-1">
+              <li><span class="font-medium">Houses:</span> <%= @sync_log.houses_created %></li>
+              <li><span class="font-medium">Frente a frentes:</span> <%= @sync_log.house_blocks_created %></li>
+              <li><span class="font-medium">Wedges:</span> <%= @sync_log.wedges_created %></li>
+              <li><span class="font-medium">Sectors:</span> <%= @sync_log.sectors_created %></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bloque original de errores -->
 <div class="max-w-7xl mx-auto bg-white rounded-lg shadow">
   <div class="px-6 py-4 border-b border-gray-200">
-    <h2 class="text-xl font-bold">Sync History</h2>
+    <h2 class="text-xl font-bold">Errores de Sincronización</h2>
   </div>
   <div class="overflow-x-auto">
     <%= render 'error_filters' %>
