@@ -65,7 +65,7 @@ module Api
             rule(:username) do
               if values[:username].nil? && values[:phone].nil?
                 key(:username).failure(text: :user_credential_requirement, predicate: :credentials_wrong?)
-              elsif values[:username] && UserAccount.where("LOWER(username) = ?", values[:username].downcase.gsub(/\s+/, '')).any?
+              elsif values[:username] && UserAccount.where("REPLACE(LOWER(username), ' ', '') = ?", values[:username].downcase.gsub(/\s+/, '')).any?
                 key(:username).failure(text: :user_username_unique?, predicate: :user_username_unique?)
               end
             end
