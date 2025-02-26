@@ -40,6 +40,7 @@ class UserAccount < ApplicationRecord
   has_many :user_code_recoveries
   accepts_nested_attributes_for :user_profile,  update_only: true
   before_save :downcase_username_and_password!
+  has_many :points, as: :pointable
 
   default_scope { where(discarded_at: nil) }
 
@@ -48,7 +49,6 @@ class UserAccount < ApplicationRecord
            :last_name,
            :gender,
            :email,
-           :points,
            :city_id,
            :neighborhood_id,
            :organization_id,

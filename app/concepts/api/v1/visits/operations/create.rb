@@ -26,7 +26,7 @@ module Api
           tee :update_house_status
           tee :create_house_status_daily
           tee :set_language
-          tee :assign_points
+          tee :manage_points
 
 
           def check_request_attrs(input)
@@ -258,7 +258,7 @@ module Api
                           'green'
                         end
               }
-              result[:tariki_status] = @house.is_tariki?(result[:status])
+              result[:tariki_status] = @house.is_tariki?
               @house.update!(result)
               @ctx[:model].update!(status: colors[result[:status]])
               elsif inspections_ids.empty? && @params[:visit_permission]
@@ -331,24 +331,10 @@ module Api
             Success({ ctx: @ctx, type: :success })
           end
 
-          def assign_points
-            existing_point = Point.where(
-              user_account_id: @current_user.id,
-              team_id: @current_user.teams&.first&.id,
-              house_id: @house.id
-            ).where("DATE(created_at)::date = ?::date", Date.current)&.first
-
-            unless existing_point
-              Point.create(
-                user_account_id: @current_user.id,
-                team_id: @current_user.teams&.first&.id,
-                house_id: @house.id,
-                value: Constants::VisitParams::TARIKI_POINT
-              )
-            end
+          def manage_points
+            Api::V1::Points::Services::Transactions.assign_point(earner: @current_user, house_id: @house.id, visit_id: @ctx[:model].id) if @house.is_tariki?
+            Api::V1::Points::Services::Transactions.remove_point(earner: @current_user, house_id: @house.id, visit_id: @ctx[:model].id) unless @house.is_tariki?
           end
-
-          private
 
         end
       end
