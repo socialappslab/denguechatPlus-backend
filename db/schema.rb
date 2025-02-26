@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_26_000751) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_26_125721) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -213,6 +213,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_26_000751) do
     t.integer "assignment_status"
     t.string "source"
     t.datetime "last_sync_time"
+    t.integer "consecutive_green_status", default: 0
     t.index ["city_id"], name: "index_houses_on_city_id"
     t.index ["country_id"], name: "index_houses_on_country_id"
     t.index ["house_block_id"], name: "index_houses_on_house_block_id"
