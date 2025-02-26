@@ -73,14 +73,18 @@ class House < ApplicationRecord
 
   enum status: { green: "0", yellow: "1", red: "2" }
   enum assignment_status: { assigned: 1, orphaned: 0}
+  
 
+  def is_tariki?
+    return false unless status == 'green'
 
-  def is_tariki?(new_status = status)
-    last_statuses = HouseStatus.where(house_id: id).last(3).pluck(:status)
-    return false if last_statuses.count < 3
-    return true if last_statuses == %w[green green green] && new_status == 'green'
+    min_consecutive_green = AppConfigParam.find_by(name: 'consecutive_green_statuses_for_tariki_house')&.value.to_i
+    return false if min_consecutive_green <= 0
 
-    false
+    return true if min_consecutive_green == 1
+
+    statuses = HouseStatus.where(house_id: id).order(created_at: :desc).limit(min_consecutive_green).pluck(:status)
+
+    statuses.all? { |status| status == 'green' }
   end
-
 end

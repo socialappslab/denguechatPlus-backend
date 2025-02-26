@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_21_203645) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_26_000751) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -41,6 +41,18 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_21_203645) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "app_config_params", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.string "param_source"
+    t.string "param_type"
+    t.string "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_app_config_params_on_name", unique: true
+    t.index ["param_source", "name"], name: "index_app_config_params_on_param_source_and_name"
   end
 
   create_table "breeding_site_type_aditional_informations", force: :cascade do |t|
@@ -347,15 +359,14 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_21_203645) do
   end
 
   create_table "points", force: :cascade do |t|
-    t.integer "user_account_id"
-    t.integer "team_id"
-    t.integer "house_id"
     t.integer "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["team_id"], name: "index_points_on_team_id"
-    t.index ["user_account_id", "team_id"], name: "index_points_on_user_account_id_and_team_id"
-    t.index ["user_account_id"], name: "index_points_on_user_account_id"
+    t.string "pointable_type"
+    t.bigint "pointable_id"
+    t.integer "house_id"
+    t.integer "visit_id"
+    t.index ["pointable_type", "pointable_id"], name: "index_points_on_pointable_type_and_pointable_id"
   end
 
   create_table "posts", force: :cascade do |t|

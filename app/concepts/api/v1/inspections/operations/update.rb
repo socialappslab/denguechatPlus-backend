@@ -112,28 +112,10 @@ module Api
 
           def assign_points
             user_account = @visit.user_account
-            if @house.is_tariki?
-              existing_point = Point.where(
-                user_account_id: user_account.id,
-                team_id: user_account.teams&.first&.id,
-                house_id: @house.id
-              ).where("DATE(created_at)::date = ?::date", Date.current)&.first
 
-              unless existing_point
-                Point.create(
-                  user_account_id: user_account.id,
-                  team_id: user_account.teams&.first&.id,
-                  house_id: @house.id,
-                  value: Constants::VisitParams::TARIKI_POINT
-                )
-              end
-            else
-              Point.where(
-                user_account_id: user_account.id,
-                team_id: user_account.teams&.first&.id,
-                house_id: @house.id
-              ).where("DATE(created_at)::date = ?::date", Date.current).destroy_all
-            end
+            Api::V1::Points::Services::Transactions.assign_point(earner: user_account, house_id: @house.id, visit_id: @visit.id) if @house.is_tariki?
+            Api::V1::Points::Services::Transactions.remove_point(earner: user_account, house_id: @house.id, visit_id: @visit.id) unless @house.is_tariki?
+
           end
 
           private
