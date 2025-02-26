@@ -21,7 +21,7 @@ module Api
               return
             end
 
-            existing_points =  earner.points.where(house_id:, visit_id:).where("DATE(created_at)::date = ?::date", Date.current)&.first
+            existing_points =  earner.points.where(house_id:).where("DATE(created_at)::date = ?::date", Date.current)&.first
 
             return if existing_points
 
