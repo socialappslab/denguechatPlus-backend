@@ -295,22 +295,18 @@ module Api
           end
 
           def analyze_inspection_status(inspection, type_content_id = [])
-            type_content_id ||= []
-            container_protection_ids = ContainerProtection.where(name_es: ['Tapa no hermética', 'Si, tiene tapa pero no está bien cerrado', 'Techo', 'Otro', 'No tiene']).pluck(:id)
-            ids_red_cases = TypeContent.where(name_es: %w[Larvas Pupas Huevos]).pluck(:id)
+            return 'green' unless inspection[:has_water]
 
-            return 'green' if type_content_id.nil? || type_content_id.blank?
+            results = Option.joins(:question)
+                  .where(
+                    "(questions.resource_name = 'type_content_id' AND options.resource_id IN (?))
+                     OR (questions.resource_name = 'container_protection_ids' AND options.resource_id IN (?))",
+                    type_content_id, inspection[:container_protection_ids]
+                  )
+                  .group(:status_color)
+                  .sum(:weighted_points)
 
-            if TypeContent.find_by(id: type_content_id).name_es == 'Nada'
-              container_ids = inspection[:container_protection_ids].map(&:to_i)
-              return 'green' if container_ids.any? { |id| !container_protection_ids.include?(id) }
-            end
-            return 'red' if (ids_red_cases & type_content_id).any? if type_content_id.any?
-            return 'yellow' if (ids_red_cases & type_content_id).none? && inspection[:container_protection_ids].in?(container_protection_ids)
-            return 'yellow' if  inspection[:has_water] && !inspection[:container_protection_ids].in?(container_protection_ids)
-
-            'green'
-
+            results.key(results.values.max)&.downcase || 'green'
           end
 
           def container_status_analyzer(inspection)
