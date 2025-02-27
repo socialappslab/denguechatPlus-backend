@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_26_125721) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_27_122943) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -333,6 +333,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_26_125721) do
     t.integer "position"
     t.string "show_in_case"
     t.string "selected_case"
+    t.integer "weighted_points"
     t.index ["question_id"], name: "index_options_on_question_id"
   end
 
