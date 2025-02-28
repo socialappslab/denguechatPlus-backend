@@ -207,12 +207,12 @@ module Api
 
           def create_and_get_house_id
             house_block = HouseBlock.find_by(id: @house_info[:house_block_id])
-            wedge = house_block.wedge
-            neighborhood = wedge.sector
+            team =  @current_user.teams&.first
+            wedge = team.wedge
+            neighborhood = team.sector
             city = neighborhood.city
             state = neighborhood.state
             country = neighborhood.country
-            team =  @current_user.teams&.first
             user_profile = @current_user.user_profile
             reference_code = generate_code(country, state, city, wedge, house_block)
             location_status = @house_info[:latitude] && @house_info[:longitude] ? 'with_coordinates' : 'without_coordinates'
