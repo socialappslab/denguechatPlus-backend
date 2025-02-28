@@ -214,7 +214,7 @@ module Api
             state = neighborhood.state
             country = neighborhood.country
             user_profile = @current_user.user_profile
-            reference_code = generate_code(country, state, city, wedge, house_block)
+            reference_code = @house_info[:reference_code] || generate_code(country, state, city, wedge, house_block)
             location_status = @house_info[:latitude] && @house_info[:longitude] ? 'with_coordinates' : 'without_coordinates'
             @house_info[:latitude] = @house_info[:latitude] || -3.775520
             @house_info[:longitude] = @house_info[:longitude] || -73.450878
