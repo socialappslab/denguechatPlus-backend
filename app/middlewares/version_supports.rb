@@ -34,6 +34,8 @@ class VersionSupports
   def call(env)
     @app_version = env['HTTP_X_APP_VERSION']
     @client_device = env['HTTP_X_CLIENT_DEVICE']
+
+    return app.call(env) if ENV['ENABLE_MOBILE_VERSION_CHECK'] && ENV['ENABLE_MOBILE_VERSION_CHECK'] != '1'
     return app.call(env) if skip_env? || !deprecated?(env)
 
     Rails.logger.debug { "Unsupported mobile app version: #{app_version}" }
