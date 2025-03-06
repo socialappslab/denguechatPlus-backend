@@ -14,6 +14,7 @@ module Api
           tee :page_pagination?
           tee :paginate
           tee :meta
+          tee :expose
 
           def params(input)
             @ctx = {}
@@ -51,6 +52,16 @@ module Api
           def meta
             @ctx[:meta] = {
               total: @ctx[:pagy].count
+            }
+          end
+
+          def expose
+            @ctx[:expose] = {
+              language: if @params.key?(:language) && @params[:language].in?(%w[en es pt])
+                          @params[:language]
+                        else
+                          'es'
+                        end
             }
           end
         end
