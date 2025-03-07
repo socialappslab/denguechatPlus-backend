@@ -5,6 +5,7 @@
 # Table name: roles
 #
 #  id            :bigint           not null, primary key
+#  discarded_at  :datetime
 #  name          :string
 #  resource_type :string
 #  created_at    :datetime         not null
