@@ -200,12 +200,11 @@ module Api
             @house = House.find_by(reference_code: @house_info[:reference_code])
             return @house&.id if @house
 
-            similar_house = Api::V1::Visits::Services::HouseFinderByCoordsService.find_similar_house(latitude: @house_info[:latitude],
-                                                                                                     longitude: @house_info[:longitude],
-                                                                                                     house_block_id: @house_info[:house_block_id])
+            # similar_house = Api::V1::Visits::Services::HouseFinderByCoordsService.find_similar_house(latitude: @house_info[:latitude],
+            #                                                                                          longitude: @house_info[:longitude],
+            #                                                                                          house_block_id: @house_info[:house_block_id])
 
-
-            @house = similar_house ? similar_house : create_and_get_house_id
+            @house =  create_and_get_house_id
 
             @house.id
           end

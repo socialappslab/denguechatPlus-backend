@@ -3,7 +3,7 @@
 class VersionSupports
   MOBILE_APP_CLIENT_DEVICE = 'mobile'
   ENVS_TO_SKIP_AUTH = %w[test].freeze
-  PATHS_TO_SKIP_AUTH = %w[health sidekiq web].freeze
+  PATHS_TO_SKIP_AUTH = %w[health sidekiq web rails/active_storage].freeze
   DEPRECATED_RESPONSE = -> {
     [
       426,
