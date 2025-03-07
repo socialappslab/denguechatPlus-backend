@@ -84,6 +84,7 @@ module Api
                           "green"
                         end
               }
+              result[:tariki_status] = @house.is_tariki?
               @house.update!(result)
               @visit.update!(status: colors[result[:status]])
             elsif @inspections.empty? && @visit.visit_permission
@@ -112,28 +113,10 @@ module Api
 
           def assign_points
             user_account = @visit.user_account
-            if @house.is_tariki?
-              existing_point = Point.where(
-                user_account_id: user_account.id,
-                team_id: user_account.teams&.first&.id,
-                house_id: @house.id
-              ).where("DATE(created_at)::date = ?::date", Date.current)&.first
 
-              unless existing_point
-                Point.create(
-                  user_account_id: user_account.id,
-                  team_id: user_account.teams&.first&.id,
-                  house_id: @house.id,
-                  value: Constants::VisitParams::TARIKI_POINT
-                )
-              end
-            else
-              Point.where(
-                user_account_id: user_account.id,
-                team_id: user_account.teams&.first&.id,
-                house_id: @house.id
-              ).where("DATE(created_at)::date = ?::date", Date.current).destroy_all
-            end
+            Api::V1::Points::Services::Transactions.assign_point(earner: user_account, house_id: @house.id, visit_id: @visit.id) if @house.is_tariki?
+            Api::V1::Points::Services::Transactions.remove_point(earner: user_account, house_id: @house.id, visit_id: @visit.id) unless @house.is_tariki?
+
           end
 
           private
@@ -160,22 +143,20 @@ module Api
           end
 
           def analyze_inspection_status( params = {})
+
             params[:type_content_ids] ||= {}
-            params[:type_content_ids].map!(&:to_i)
-            container_protection_ids = ContainerProtection.where(name_es: ['Tapa no hermética', 'Si, tiene tapa pero no está bien cerrado', 'Techo', 'Otro', 'No tiene']).pluck(:id)
-            ids_red_cases = TypeContent.where(name_es: %w[Larvas Pupas Huevos]).pluck(:id)
+            type_content_id = params[:type_content_ids].map!(&:to_i)
 
-            return 'green' if params[:type_content_ids].nil? || params[:type_content_ids].blank?
-            if TypeContent.find_by(id: params[:type_content_ids]).name_es == 'Nada'
-              container_ids = params[:container_protection_ids].map(&:to_i)
-              return 'green' if container_ids.any? { |id| !container_protection_ids.include?(id) }
-            end
-            return 'red' if (ids_red_cases & params[:type_content_ids]).any? if params[:type_content_ids].any?
-            return 'yellow' if (ids_red_cases & params[:type_content_ids]).none? && params[:container_protection_ids].map(&:to_i).any? { |id| container_protection_ids.include?(id) }
-            return 'yellow' if  params[:has_water] && !params[:container_protection_ids].map(&:to_i).any? { |id| container_protection_ids.include?(id) }
+            results = Option.joins(:question)
+                            .where(
+                              "(questions.resource_name = 'type_content_id' AND options.resource_id IN (?))
+                     OR (questions.resource_name = 'container_protection_ids' AND options.resource_id IN (?))",
+                              type_content_id, params[:container_protection_ids].map(&:to_i)
+                            )
+                            .group(:status_color)
+                            .sum(:weighted_points)
 
-            'green'
-
+            results.key(results.values.max)&.downcase || 'green'
           end
 
           def container_status_analyzer(inspection)

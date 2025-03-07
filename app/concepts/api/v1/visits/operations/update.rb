@@ -92,6 +92,7 @@ module Api
                           "green"
                         end
               }
+              result[:tariki_status] = @house.is_tariki?
               @house.update!(result)
               @ctx[:model].update!(status: colors[result[:status]])
             else
@@ -128,28 +129,8 @@ module Api
           end
 
           def assign_points
-            if @house.is_tariki?
-              existing_point = Point.where(
-                user_account_id: @ctx[:model].user_account_id,
-                team_id: @ctx[:model].user_account.teams&.first&.id,
-                house_id: @house.id
-              ).where("DATE(created_at)::date = ?::date", Date.current)&.first
-
-              unless existing_point
-                Point.create(
-                  user_account_id: @ctx[:model].user_account_id,
-                  team_id: @ctx[:model].user_account.teams&.first&.id,
-                  house_id: @house.id,
-                  value: Constants::VisitParams::TARIKI_POINT
-                )
-              end
-            else
-              Point.where(
-                user_account_id: @ctx[:model].user_account_id,
-                team_id: @ctx[:model].user_account.teams&.first&.id,
-                house_id: @house.id
-              ).where("DATE(created_at)::date = ?::date", Date.current).destroy_all
-            end
+            Api::V1::Points::Services::Transactions.assign_point(earner: @ctx[:model].user_account, house_id: @house.id, visit_id: @ctx[:model].id) if @house.is_tariki?
+            Api::V1::Points::Services::Transactions.remove_point(earner:@ctx[:model].user_account, house_id: @house.id, visit_id: @ctx[:model].id) unless @house.is_tariki?
           end
         end
       end

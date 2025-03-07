@@ -19,6 +19,7 @@
 #  status_color          :string
 #  type_option           :string
 #  value                 :string
+#  weighted_points       :integer
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #  question_id           :bigint           not null

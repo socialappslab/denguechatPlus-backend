@@ -43,6 +43,7 @@ class Team < ApplicationRecord
   belongs_to :wedge, class_name: 'Wedge'
   has_many :visits, dependent: :nullify
   has_one :city, through: :sector
+  has_many :points, as: :pointable
 
 
   def leaders

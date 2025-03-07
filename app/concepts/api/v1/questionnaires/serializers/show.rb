@@ -43,6 +43,7 @@ module Api
                       name: option.send("name_#{questionnaire.language}"),
                       group: option.send("group_#{questionnaire.language}"),
                       resourceId: option.resource_id,
+                      weightedPoints: option&.weighted_points,
                       required: option.required,
                       optionType: option.type_option,
                       statusColor: option.status_color,

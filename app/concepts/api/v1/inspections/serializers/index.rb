@@ -38,8 +38,8 @@ module Api
             container.type_contents.map(&:name_es).join(', ')
           end
 
-          attribute :status do |container|
-            container.color
+          attribute :status do |container, params|
+            container.color ? I18n.with_locale(params[:language]) { I18n.t("visits.colors.#{container.color}") } : nil
           end
 
           attribute :water_source_type do |container|

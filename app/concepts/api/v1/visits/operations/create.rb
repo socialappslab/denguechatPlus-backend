@@ -26,7 +26,7 @@ module Api
           tee :update_house_status
           tee :create_house_status_daily
           tee :set_language
-          tee :assign_points
+          tee :manage_points
 
 
           def check_request_attrs(input)
@@ -197,24 +197,28 @@ module Api
           end
 
           def find_similar_or_create_house_id
-            similar_house = Api::V1::Visits::Services::HouseFinderByCoordsService.find_similar_house(latitude: @house_info[:latitude],
-                                                                                                     longitude: @house_info[:longitude],
-                                                                                                     house_block_id: @house_info[:house_block_id])
+            @house = House.find_by(reference_code: @house_info[:reference_code])
+            return @house&.id if @house
 
-            @house = similar_house ? similar_house : create_and_get_house_id
+            # similar_house = Api::V1::Visits::Services::HouseFinderByCoordsService.find_similar_house(latitude: @house_info[:latitude],
+            #                                                                                          longitude: @house_info[:longitude],
+            #                                                                                          house_block_id: @house_info[:house_block_id])
+
+            @house =  create_and_get_house_id
+
             @house.id
           end
 
           def create_and_get_house_id
             house_block = HouseBlock.find_by(id: @house_info[:house_block_id])
-            wedge = house_block.wedge
-            neighborhood = wedge.sector
+            team =  @current_user.teams&.first
+            wedge = team.wedge
+            neighborhood = team.sector
             city = neighborhood.city
             state = neighborhood.state
             country = neighborhood.country
-            team =  @current_user.teams&.first
             user_profile = @current_user.user_profile
-            reference_code = generate_code(country, state, city, wedge, house_block)
+            reference_code = @house_info[:reference_code] || generate_code(country, state, city, wedge, house_block)
             location_status = @house_info[:latitude] && @house_info[:longitude] ? 'with_coordinates' : 'without_coordinates'
             @house_info[:latitude] = @house_info[:latitude] || -3.775520
             @house_info[:longitude] = @house_info[:longitude] || -73.450878
@@ -258,7 +262,7 @@ module Api
                           'green'
                         end
               }
-              result[:tariki_status] = @house.is_tariki?(result[:status])
+              result[:tariki_status] = @house.is_tariki?
               @house.update!(result)
               @ctx[:model].update!(status: colors[result[:status]])
               elsif inspections_ids.empty? && @params[:visit_permission]
@@ -295,22 +299,18 @@ module Api
           end
 
           def analyze_inspection_status(inspection, type_content_id = [])
-            type_content_id ||= []
-            container_protection_ids = ContainerProtection.where(name_es: ['Tapa no hermética', 'Si, tiene tapa pero no está bien cerrado', 'Techo', 'Otro', 'No tiene']).pluck(:id)
-            ids_red_cases = TypeContent.where(name_es: %w[Larvas Pupas Huevos]).pluck(:id)
+            return 'green' unless inspection[:has_water]
 
-            return 'green' if type_content_id.nil? || type_content_id.blank?
+            results = Option.joins(:question)
+                  .where(
+                    "(questions.resource_name = 'type_content_id' AND options.resource_id IN (?))
+                     OR (questions.resource_name = 'container_protection_ids' AND options.resource_id IN (?))",
+                    type_content_id, inspection[:container_protection_ids]
+                  )
+                  .group(:status_color)
+                  .sum(:weighted_points)
 
-            if TypeContent.find_by(id: type_content_id).name_es == 'Nada'
-              container_ids = inspection[:container_protection_ids].map(&:to_i)
-              return 'green' if container_ids.any? { |id| !container_protection_ids.include?(id) }
-            end
-            return 'red' if (ids_red_cases & type_content_id).any? if type_content_id.any?
-            return 'yellow' if (ids_red_cases & type_content_id).none? && inspection[:container_protection_ids].in?(container_protection_ids)
-            return 'yellow' if  inspection[:has_water] && !inspection[:container_protection_ids].in?(container_protection_ids)
-
-            'green'
-
+            results.key(results.values.max)&.downcase || 'green'
           end
 
           def container_status_analyzer(inspection)
@@ -331,24 +331,10 @@ module Api
             Success({ ctx: @ctx, type: :success })
           end
 
-          def assign_points
-            existing_point = Point.where(
-              user_account_id: @current_user.id,
-              team_id: @current_user.teams&.first&.id,
-              house_id: @house.id
-            ).where("DATE(created_at)::date = ?::date", Date.current)&.first
-
-            unless existing_point
-              Point.create(
-                user_account_id: @current_user.id,
-                team_id: @current_user.teams&.first&.id,
-                house_id: @house.id,
-                value: Constants::VisitParams::TARIKI_POINT
-              )
-            end
+          def manage_points
+            Api::V1::Points::Services::Transactions.assign_point(earner: @current_user, house_id: @house.id, visit_id: @ctx[:model].id) if @house.is_tariki?
+            Api::V1::Points::Services::Transactions.remove_point(earner: @current_user, house_id: @house.id, visit_id: @ctx[:model].id) unless @house.is_tariki?
           end
-
-          private
 
         end
       end
