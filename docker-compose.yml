@@ -1,0 +1,84 @@
+version: '3'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3100:3000"
+    volumes:
+      - .:/rails:cached
+      - bundle_cache:/usr/local/bundle
+      - tmp_data:/rails/tmp
+    depends_on:
+      - db
+      - redis
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://postgres:password@db:5432/app_development
+      REDIS_URL: redis://redis:6379/0
+      ANYCABLE_REDIS_URL: redis://redis:6379/1
+    stdin_open: true
+    tty: true
+
+  db:
+    image: postgres:14
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: app_development
+    ports:
+      - "5433:5432"
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: bundle exec sidekiq
+    volumes:
+      - .:/rails:cached
+      - bundle_cache:/usr/local/bundle
+      - tmp_data:/rails/tmp
+    depends_on:
+      - db
+      - redis
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://postgres:password@db:5432/app_development
+      REDIS_URL: redis://redis:6379/0
+      SIDEKIQ_REDIS_URL: redis://redis:6379/0
+
+  anycable:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: bundle exec anycable
+    volumes:
+      - .:/rails:cached
+      - bundle_cache:/usr/local/bundle
+      - tmp_data:/rails/tmp
+    depends_on:
+      - redis
+    environment:
+      RAILS_ENV: development
+      REDIS_URL: redis://redis:6379/0
+      ANYCABLE_REDIS_URL: redis://redis:6379/1
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
+  redis_data:
+  bundle_cache:
+  tmp_data:

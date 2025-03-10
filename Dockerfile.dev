@@ -1,0 +1,32 @@
+FROM ruby:3.1.2
+
+# Instalar dependencias esenciales
+RUN apt-get update -qq && \
+    apt-get install -y build-essential libpq-dev nodejs npm postgresql-client \
+    # Agregar cmake y otras dependencias necesarias para rugged
+    cmake pkg-config libssl-dev libssh2-1-dev \
+    # Otras posibles dependencias útiles
+    git imagemagick libvips && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Instalar yarn
+RUN npm install -g yarn
+
+# Configurar directorio de trabajo
+WORKDIR /rails
+
+# Copiar Gemfile y Gemfile.lock
+COPY Gemfile Gemfile.lock ./
+
+# Instalar gemas
+RUN bundle install
+
+# Copiar el resto de la aplicación
+COPY . .
+
+# Configurar puerto
+EXPOSE 3000
+
+# Comando predeterminado
+CMD ["rails", "server", "-b", "0.0.0.0"]

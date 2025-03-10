@@ -138,12 +138,9 @@ end
 group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   gem 'error_highlight', '>= 0.4.0', platforms: [:ruby]
-  gem 'spring', '~> 4.1'
-  gem 'spring-watcher-listen', '~> 2.1'
 end
 
 group :test do
-  gem 'dox', '~> 2.1', require: false
   gem 'email_spec', '~> 2.2'
   gem 'fuubar', '~> 2.5'
   gem 'json_matchers', '~> 0.11'
