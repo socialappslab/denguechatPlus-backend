@@ -11,6 +11,7 @@ module Api
             tee :params
             step :validate_schema
             step :retrieve_user
+            step :validate_source
             step :update_user
             tee :add_includes
 
@@ -18,6 +19,8 @@ module Api
               @ctx = {}
               @params = to_snake_case(input[:params])
               @input = input[:params]
+              @current_user = input[:current_user]
+              @source = input[:source]
             end
             def validate_schema
               @ctx['contract.default'] = Api::V1::Users::Accounts::Contracts::Update.kall(@params)
@@ -34,6 +37,20 @@ module Api
 
               errors = ErrorFormater.new_error(field: :base, msg: I18n.t('errors.users.not_found'), custom_predicate: :not_found? )
               Failure({ ctx: @ctx, type: :invalid, errors: errors }) if @ctx[:model].nil?
+            end
+
+            def validate_source
+              res = Success({ ctx: @ctx, type: :success })
+
+              if @source != 'web'
+                if @current_user.id != @ctx['contract.default']['id']&.to_i
+                  errors = ErrorFormater.new_error(field: :base, msg: I18n.t('errors.users.not_found'), custom_predicate: :not_found? )
+                  res = Failure({ ctx: @ctx, type: :invalid, errors: errors })
+                else
+                  res = Success({ ctx: @ctx, type: :success })
+                end
+              end
+              res
             end
 
             def update_user
