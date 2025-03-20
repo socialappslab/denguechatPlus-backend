@@ -76,7 +76,7 @@ module Gis
           location."location_code" reference_code,
           ST_Y(st_transform(st_centroid(geom), 4326)) as latitude,
           ST_X(st_transform(st_centroid(geom), 4326)) as longitude,
-          location."Tariki" house_block_id,
+          location."TarikiC" house_block_id,
           location."SectorMOH24" sector_id,
           location."Cuna" wedge_id,
           'GIS' as source,
@@ -90,7 +90,7 @@ module Gis
           and location."deactive_date" is null
           and location."SectorMOH24" is not null
           and location."Cuna" is not null
-          and location."Tariki" is not null
+          and location."TarikiC" is not null
           ORDER BY location."location_code", location.id
           offset #{offset}
           limit #{limit}
@@ -111,11 +111,22 @@ module Gis
           has_team = existing_house_teams.key?(reference_code) && existing_house_teams[reference_code].present?
           status = ext_house[:house_block_id] ? 1 : 0
 
+          p "#######"
+          p "#######"
+          p "#######"
+          p "#######"
+          p "#######"
+          p mappings[:house_blocks][ext_house[:house_block_id]]
+          p "#######"
+          p "#######"
+          p "#######"
+          p "#######"
+
           {
             reference_code:,
             latitude: ext_house[:latitude],
             longitude: ext_house[:longitude],
-            house_block_id: mappings[:house_blocks][ext_house[:house_block_id].to_i],
+            house_block_id: mappings[:house_blocks][ext_house[:house_block_id]],
             neighborhood_id: mappings[:neighborhoods][ext_house[:sector_id].to_i],
             wedge_id: mappings[:wedges][ext_house[:wedge_id].to_i],
             source: ext_house[:source],

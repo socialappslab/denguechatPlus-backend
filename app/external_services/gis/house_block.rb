@@ -9,9 +9,9 @@ module Gis
           begin
             new_house_blocks.each do |house_block|
               wedge_id = wedge_ids[house_block[:wedge_id].to_i]
-              record = ::HouseBlock.find_or_initialize_by(external_id: house_block[:external_id])
+              record = ::HouseBlock.find_or_initialize_by(name: house_block[:name])
 
-              record.name = house_block[:external_id]
+              record.name = house_block[:name]
               record.source = house_block[:source]
               record.neighborhood_id = sector_ids[house_block[:sector_id].to_i]
               record.last_sync_time = Time.current
