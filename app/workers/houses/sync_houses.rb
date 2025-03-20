@@ -39,7 +39,7 @@ module Houses
     end
 
     def house_blocks_data_query
-      HouseBlock.where.not(external_id: nil).pluck(:external_id, :id).to_h
+      HouseBlock.where.not(name: nil).pluck(:name, :id).to_h
     end
   end
 end
