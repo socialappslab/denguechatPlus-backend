@@ -111,17 +111,6 @@ module Gis
           has_team = existing_house_teams.key?(reference_code) && existing_house_teams[reference_code].present?
           status = ext_house[:house_block_id] ? 1 : 0
 
-          p "#######"
-          p "#######"
-          p "#######"
-          p "#######"
-          p "#######"
-          p mappings[:house_blocks][ext_house[:house_block_id]]
-          p "#######"
-          p "#######"
-          p "#######"
-          p "#######"
-
           {
             reference_code:,
             latitude: ext_house[:latitude],
