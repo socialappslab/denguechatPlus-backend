@@ -38,8 +38,8 @@ module Gis
       def query_builder(current_house_block_ids)
         <<~SQL
               SELECT DISTINCT 
-              location."Tariki" as external_id,
-              location."Tariki" as name,
+              location."TarikiC" as external_id,
+              location."TarikiC" as name,
               location."Cuna" as wedge_id,
               location."SectorMOH24" as sector_id,
               'GIS' as source
@@ -49,7 +49,7 @@ module Gis
               AND location."deactive_date" is null
               AND location."SectorMOH24" is not null 
               AND location."Cuna" is not null
-          GROUP BY location."Tariki", location."Cuna", location."SectorMOH24"
+          GROUP BY location."TarikiC", location."Cuna", location."SectorMOH24"
         SQL
       end
     end

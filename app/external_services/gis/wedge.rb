@@ -8,7 +8,7 @@ module Gis
           begin
             new_wedges.each do |wedge|
               ::Wedge.find_or_create_by(external_id: wedge[:external_id]) do |new_wedge|
-                new_wedge.name = wedge[:external_id]
+                new_wedge.name = wedge[:name]
                 new_wedge.external_id = wedge[:external_id]
                 new_wedge.source = wedge[:source]
                 new_wedge.neighborhood_ids = wedge[:neighborhood_ids].split(',').map{|ext_id| neighborhood_ids[ext_id.to_i]}
@@ -28,7 +28,7 @@ module Gis
         <<~SQL
           SELECT
               location."Cuna" as external_id,
-              location."Cuna" as name,
+              concat('Cuña', location."Cuna") as name,
               STRING_AGG(DISTINCT CAST(location."SectorMOH24" AS TEXT), ', ') as neighborhood_ids,
               'GIS' as source
           FROM "gis"."location" as location
