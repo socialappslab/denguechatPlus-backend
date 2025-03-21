@@ -2,17 +2,21 @@ module Gis
   class Neighborhood
     class << self
       def sync(current_neighborhood_keys)
-        res = {update: 2, create: 0}
-        query = query_builder(current_neighborhood_keys)
-        new_neighborhoods = Gis::Connection.query(query)
-        res[:create] = new_neighborhoods.count
-        ::Neighborhood.create!(new_neighborhoods) if new_neighborhoods.any?
+        res = {update: 0, create: 0}
+        external_data = Gis::Connection.query(query_builder)
+        external_data.each do |obj|
+          sector_instance = ::Neighborhood.find_or_initialize_by(obj)
+          res[:update] += 1 if sector_instance.persisted?
+          res[:create] += 1 unless sector_instance.persisted?
+          sector_instance.save!
+        end
         res
       end
 
       private
 
-      def query_builder(current_neighborhood_keys)
+
+      def query_builder
         <<~SQL
           select  distinct location."SectorMOH24" external_id,
           'Sector ' || location."SectorMOH24" as name,
@@ -23,11 +27,12 @@ module Gis
           where
           location."location_code" is not null
           and location."deactive_date" is null
-          and location."SectorMOH24" not in (#{current_neighborhood_keys.join(',')})
+          and location."SectorMOH24" is not null
           and location."Cuna" is not null
           and location."block_number" is not null
         SQL
       end
+
     end
   end
 end
