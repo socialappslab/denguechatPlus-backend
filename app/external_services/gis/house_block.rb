@@ -9,9 +9,9 @@ module Gis
           begin
             new_house_blocks.each do |house_block|
               wedge_id = wedge_ids[house_block[:wedge_id].to_i]
-              record = ::HouseBlock.find_or_initialize_by(external_id: house_block[:external_id])
+              record = ::HouseBlock.find_or_initialize_by(name: house_block[:name])
 
-              record.name = house_block[:external_id]
+              record.name = house_block[:name]
               record.source = house_block[:source]
               record.neighborhood_id = sector_ids[house_block[:sector_id].to_i]
               record.last_sync_time = Time.current
@@ -38,8 +38,8 @@ module Gis
       def query_builder(current_house_block_ids)
         <<~SQL
               SELECT DISTINCT 
-              location."Tariki" as external_id,
-              location."Tariki" as name,
+              location."TarikiC" as external_id,
+              location."TarikiC" as name,
               location."Cuna" as wedge_id,
               location."SectorMOH24" as sector_id,
               'GIS' as source
@@ -49,7 +49,7 @@ module Gis
               AND location."deactive_date" is null
               AND location."SectorMOH24" is not null 
               AND location."Cuna" is not null
-          GROUP BY location."Tariki", location."Cuna", location."SectorMOH24"
+          GROUP BY location."TarikiC", location."Cuna", location."SectorMOH24"
         SQL
       end
     end

@@ -25,7 +25,7 @@ module Api
                  renderer_options: {
                    serializer: Api::V1::Users::Accounts::Serializers::ShowCurrentUser
                  },
-                 options: { current_user: }
+                 options: { current_user:, source: request.headers['X-Client-Device'] }
       end
 
       def delete_account
