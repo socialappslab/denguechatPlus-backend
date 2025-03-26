@@ -5,7 +5,7 @@ module Gis
         res = {update: 0, create: 0}
         external_data = Gis::Connection.query(query_builder)
         external_data.each do |obj|
-          sector_instance = ::Neighborhood.find_or_initialize_by(obj)
+          sector_instance = ::Neighborhood.find_or_initialize_by(external_id: obj[:external_id])
           res[:update] += 1 if sector_instance.persisted?
           res[:create] += 1 unless sector_instance.persisted?
           sector_instance.save!

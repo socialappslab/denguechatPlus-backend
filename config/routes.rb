@@ -15,6 +15,7 @@ Rails.application.routes.draw do
         get 'me', on: :collection, action: :show_current_user
         get 'get_by_id/:id', on: :collection, action: :show
         put 'change_team/', on: :collection, action: :change_team
+        put 'update_password/', on: :collection, action: :update_password
         member do
           put 'change_status'
         end
