@@ -55,6 +55,14 @@ module Api
                  options: { current_user: }
       end
 
+      def update_password
+        endpoint operation: Api::V1::Users::Accounts::Operations::UpdatePassword,
+                 renderer_options: {
+                   serializer: Api::V1::Users::Accounts::Serializers::ShowCurrentUser
+                 },
+                 options: { current_user: }
+      end
+
     end
   end
 end
