@@ -50,7 +50,7 @@ Rails.application.routes.draw do
           delete :destroy
         end
       end
-      resources :houses, only: %i[index] do
+      resources :houses, only: %i[index update] do
         collection do
           get :list_to_visit
           get :orphan_houses
