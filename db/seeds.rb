@@ -1,396 +1,184 @@
-# frozen_string_literal: true
-require 'json'
-require 'open-uri'
+# db/seeds.rb
+# This file contains all the record creation needed to seed the database with default values.
+# The data can then be loaded with the bin/rails db:seed command or created alongside the database with db:setup.
 require_relative '../db/files/permissions'
-require_relative '../db/files/questions'
-require_relative '../db/files/users'
 
-###################################
-###################################
-# Auxiliary methods
-###################################
-###################################
 
-# get images from internet for container type
-def get_all_images_for_containers
-  results = []
-  types = {
-    tanque: 'https://thumbs.dreamstime.com/z/tanque-de-agua-cemento-227472829.jpg?ct=jpeg',
-    bidon: 'https://www.um.es/grzba/Vigilancia_Mosquito_Tigre/Imagenes/cria/Bidones.jpg',
-    pozo: 'https://www.iagua.es/sites/default/files/styles/thumbnail-830x455/public/pozo_agua_portada.jpg?itok=yAUNA4_N',
-    house_parts: 'https://www.um.es/grzba/Vigilancia_Mosquito_Tigre/Imagenes/cria/fuente.jpg',
-    tires: 'https://www.um.es/grzba/Vigilancia_Mosquito_Tigre/Imagenes/cria/neumaticos.jpg',
-    others: 'https://www.um.es/grzba/Vigilancia_Mosquito_Tigre/Imagenes/cria/Cubo.jpg',
-    natural_elements: 'https://pacificsprings.com.au/wp-content/uploads/2023/08/natural-spring-water.jpg'
-  }.freeze
+puts 'Cleaning database...'
+RolePermission.destroy_all
+Permission.destroy_all
+Role.destroy_all
+UserAccount.destroy_all
+UserProfile.destroy_all
+Team.destroy_all
+Neighborhood.destroy_all
+City.destroy_all
+Organization.destroy_all
 
-  types.each do |key, url|
-    begin
-      res = URI.open(url)
-    rescue StandardError => error
-      Rails.logger.debug error
-      res = nil
-    end
-    results << { io: res, filename: key.to_s, content_type: 'image/jpg' }
-  end
-  results
+puts 'Creating organizations...'
+Organization.create!(
+  id: 1,
+  name: 'Tariki'
+)
+
+country = Country.create!(name: 'Peru')
+
+
+state = State.create!(name: 'Loreto', country_id: 1)
+
+city = City.create!(name: 'Iquitos', country_id: 1, state_id: 1)
+
+
+
+puts 'Creating neighborhoods...'
+neighborhoods = [
+  { name: 'Sector 4 (Maynas)', city_id: 1, state_id: state.id, country_id: country.id },
+  { name: 'Sector 16 (Tupac Amaru)', city_id: 1, state_id: state.id, country_id: country.id }
+]
+
+neighborhoods.each do |neighborhood_data|
+  Neighborhood.create!(neighborhood_data)
 end
 
-def get_images_for_questionnaire
-  results = []
-  types = {
-    'Comencemos en la huerta': 'https://i.imghippo.com/files/lBlRv1724220223.png',
-    'Revisemos dentro de la casa': 'https://i.imghippo.com/files/hfv801724220367.png',
-    'Tanques (cemento, polietileno, metal, otro material)': 'https://i.imghippo.com/files/owjeu1724220878.png',
-    'Bidones/Cilindros (metal, plástico)': 'https://i.imghippo.com/files/ta0H31724220912.png',
-    'Pozos': 'https://i.imghippo.com/files/PXsOQ1724220823.png',
-    'Estructura o partes de la casa': 'https://i.imghippo.com/files/z8Yex1724220962.png',
-    'Llanta': 'https://i.imghippo.com/files/hYKbi1724220688.png',
-    'Elementos naturales': 'https://i.imghippo.com/files/JjdHE1724220604.png',
-    'Otros': 'https://i.imghippo.com/files/hxNCm1724220325.png',
-  }.freeze
+wedges = [
+  { name: 'Cuña 1', external_id: 1, source: 'GIS', neighborhood_ids: [1] },
+  { name: 'Cuña 2', external_id: 2, source: 'GIS', neighborhood_ids: [1] },
+  { name: 'Cuña 3', external_id: 3, source: 'GIS', neighborhood_ids: [1] },
+  { name: 'Cuña 11', external_id: 11, source: 'GIS', neighborhood_ids: [2] },
+  { name: 'Cuña 12', external_id: 12, source: 'GIS', neighborhood_ids: [2] },
+  { name: 'Cuña 13', external_id: 13, source: 'GIS', neighborhood_ids: [1] },
+  { name: 'Cuña 14', external_id: 14, source: 'GIS', neighborhood_ids: [1] },
+  { name: 'Cuña 15', external_id: 15, source: 'GIS', neighborhood_ids: [1] },
+  { name: 'Cuña 16', external_id: 16, source: 'GIS', neighborhood_ids: [2] },
+  { name: 'Cuña 4', external_id: 4, source: 'GIS', neighborhood_ids: [1] },
+  { name: 'Cuña 5', external_id: 5, source: 'GIS', neighborhood_ids: [1] },
+  { name: 'Cuña 6', external_id: 6, source: 'GIS', neighborhood_ids: [1] },
+  { name: 'Cuña 7', external_id: 7, source: 'GIS', neighborhood_ids: [1] },
+  { name: 'Cuña 8', external_id: 8, source: 'GIS', neighborhood_ids: [1] },
+  { name: 'Cuña 9', external_id: 9, source: 'GIS', neighborhood_ids: [2] },
+  { name: 'Cuña 10', external_id: 10, source: 'GIS', neighborhood_ids: [2] }
+]
 
-  types.each do |key, url|
-    begin
-      res = URI.open(url)
-    rescue StandardError => error
-      Rails.logger.debug error
-      res = nil
-    end
-    results << { io: res, filename: key.to_s, content_type: 'image/jpg' }
-  end
-  results
+wedges.each do |wedge_data|
+  Wedge.create!(wedge_data)
 end
 
-###################################
-###################################
-# Create initial data
-###################################
-###################################
+puts 'Creating teams...'
+teams = [
+  { name: 'Brigadada 1', organization_id: 1, neighborhood_id: 1, wedge_id: 1 },
+  { name: 'DengueKillers', organization_id: 1, neighborhood_id:  1, wedge_id: 1 },
+  { name: 'Iquitos Team', organization_id: 1, neighborhood_id: 1, wedge_id: 1 },
+]
 
-unless SeedTask.find_by(task_name: 'clean_db_v4')
-  task_to_re_run = %i[create_wedges create_roles_v2 create_permissions_v2
-                      assign_permissions_to_roles_v2 create_teams_v2 user_account_v2
-                      create_house_blocks_v2 create_houses_v2 states_and_cities_v2]
-  HouseBlock.destroy_all
-  Visit.destroy_all
-  House.destroy_all
-  Team.destroy_all
-  UserAccount.destroy_all
-  UserProfile.destroy_all
-  Role.destroy_all
-  Permission.destroy_all
-  Inspection.destroy_all
-  Visit.destroy_all
-  Wedge.destroy_all
-  Neighborhood.destroy_all
-  State.destroy_all
-  SeedTask.where(task_name: task_to_re_run).destroy_all
-  SeedTask.create!(task_name: 'clean_db_v4') if State.count.zero? && City.count.zero?
-
+teams.each do |team_data|
+  Team.create!(team_data)
 end
 
-# default country
-unless SeedTask.find_by(task_name: 'country')
-  country = Country.create!(name: 'Peru')
-  SeedTask.create!(task_name: 'country') if country.persisted?
-end
+puts 'Creatings permissions and roles'
 
-# states_and_cities
-unless SeedTask.find_by(task_name: 'states_and_cities_v2')
-  country = Country.first
-  data = JSON.parse(Rails.root.join('db/files/states_cities.json').read)
-  data.each do |state|
-    state_persisted = State.create!(name: state['state_name'], country:)
-
-    #create cities
-    state['cities']&.each do |city|
-      city_persisted = City.create!(name: city['name'], state: state_persisted, country:)
-
-
-      #create neighboorhoods
-      city['neighborhoods']&.each do |neighborhood|
-        Neighborhood.create!(name: neighborhood['name'], state: state_persisted, country:, city:city_persisted)
-      end
-    end
-  end
-
-  SeedTask.create!(task_name: 'states_and_cities_v2') if State.count.positive? && City.count.positive?
-end
-
-#create default wedges
-unless SeedTask.find_by(task_name: 'create_wedges')
-  Wedge.create!(name: 'Cuña 1', sector: Neighborhood.last)
-  Wedge.create!(name: 'Cuña 2', sector: Neighborhood.last)
-  Wedge.create!(name: 'Cuña 3', sector: Neighborhood.last)
-  Wedge.create!(name: 'Cuña 4', sector: Neighborhood.last)
-  SeedTask.create!(task_name: 'create_wedges')
-end
-
-#create default special_places
-unless SeedTask.find_by(task_name: 'create_special_places_v1')
-  SpecialPlace.destroy_all
-  SpecialPlace.create!(name_es: 'Organizaciones', name_en: 'Organizations', name_pt: 'Organizações')
-  SpecialPlace.create!(name_es: 'Huerta', name_en: 'Garden', name_pt: 'Horta')
-  SpecialPlace.create!(name_es: 'Educación', name_en: 'Education', name_pt: 'Educação')
-  SpecialPlace.create!(name_es: 'Casa', name_en: 'House', name_pt: 'Casa')
-  SpecialPlace.create!(name_es: 'Negocio', name_en: 'Business', name_pt: 'Negócio')
-  SeedTask.create!(task_name: 'create_special_places_v1')
-end
-
-# default organization
-unless SeedTask.find_by(task_name: 'organization')
-  organization = Organization.create!(name: 'Tariki')
-  SeedTask.create!(task_name: 'organization') if organization.persisted?
-end
-
-# roles
-unless SeedTask.find_by(task_name: 'create_roles_v2')
-  Constants::Role::ALLOWED_NAMES.each { |rol| Role.create!(name: rol) }
-  SeedTask.create!(task_name: 'create_roles_v2') if Role.count == 4
-end
-
-# permissions
-unless SeedTask.find_by(task_name: 'create_permissions_v2')
-  Permission.insert_all(ACTION_AND_RESOURCES) # rubocop:disable Rails/SkipsModelValidations
-  SeedTask.create!(task_name: 'create_permissions_v2') if Permission.count == 79
-end
-
-# assign permissions to roles
-unless SeedTask.find_by(task_name: 'assign_permissions_to_roles_v2')
-  ROLES_PERMISSIONS[:roles].each do |item|
-    begin
-      rol = Role.find_by(name: item[:name])
-      permissions = []
-      not_found = []
-      item[:permissions].each do |permission|
-        permission_found = Permission.find_by(name: permission[:name], resource: permission[:resource])
-        if permission_found
-          permissions << permission_found
-        else
-          not_found << "name: #{permission[:name]} - resource: #{permission[:resource]}"
-          Rails.logger.debug not_found
-        end
-      end
-    rescue StandardError => error
-      Rails.logger.debug error
-      Rails.logger.debug not_found
-    end
-    rol.permissions = permissions if permissions.any?
-  end
-
-  SeedTask.create!(task_name: 'assign_permissions_to_roles_v2')
-end
-
-#teams
-unless SeedTask.find_by(task_name: 'create_teams_v2')
-  Team.create!(name: 'Dengue killers', organization: Organization.first, sector: Neighborhood.last, wedge: Wedge.last)
-  Team.create!(name: 'Anti Aedes', organization: Organization.first, sector: Neighborhood.last, wedge: Wedge.last)
-  SeedTask.create!(task_name: 'create_teams_v2')
-
-end
-
-# user account and user_profile
-unless SeedTask.find_by(task_name: 'user_account_v2')
-  create_default_users
-  SeedTask.create!(task_name: 'user_account_v2')
-end
-
-# assign team_leader to teams
-unless SeedTask.find_by(task_name: 'assign_team_leader_to_teams')
-  user_account = UserAccount.find_by(username: 'team_leader')
-  team = Team.find_by(name: 'Dengue killers')
-  team.leader_id = user_account.id
-  team.save!
-  SeedTask.create!(task_name: 'assign_team_leader_to_teams')
-end
-
-#create default_house_blocks
-unless SeedTask.find_by(task_name: 'create_house_blocks_v2')
-
-  team = Team.first
-  team.members << UserAccount.find_by(username: 'brigadista').user_profile
-  team.members.each_with_index { |brigadist, index|
- HouseBlock.create!(name: "Bloque #{index}", team_id: team.id, wedge: Wedge.last, brigadist:) }
-
-  SeedTask.create!(task_name: 'create_house_blocks_v2')
-end
-
-#create houses
-unless SeedTask.find_by(task_name: 'create_houses_v2')
-
-  house_blocks = HouseBlock.all
-  (1..10).each_with_index do |obj, index|
-    house_block = house_blocks.sample
-    house = House.new
-    house.country = Country.first
-    house.state = State.first
-    house.city = City.first
-    house.neighborhood = Neighborhood.first
-    house.wedge = Wedge.first
-    house.house_block = house_block
-    house.created_by = UserProfile.first
-    house.reference_code = index
-    house.status = 'green'
-    house.team = Team.first
-    house.longitude = rand(680000.0..681000.0).round(10)
-    house.latitude = rand(7471000.0..7472000.0).round(10)
-    house.save!
-  end
-
-  SeedTask.create!(task_name: 'create_houses_v2')
-end
-
-
-# assign images to container types
-# unless SeedTask.find_by(task_name: 'assign_images_to_container_types')
-#   images = get_all_images_for_containers
-#   ContainerType.all.zip(images).each do |container, image_hash|
-#     container.photo.attach(image_hash)
-#     image_hash[:io].unlink
-#   end
-#   SeedTask.create!(task_name: 'assign_images_to_container_types')
-# end
-
-
-
-
-
-#create default versions params
-unless SeedTask.find_by(task_name: 'create_visit_params')
-  data = Constants::VisitParams::RESOURCES
-  data.each { |value_params| VisitParamVersion.find_or_create_by(name: value_params) }
-  SeedTask.create!(task_name: 'create_visit_params')
-end
-
-#create questions
-unless SeedTask.find_by(task_name: 'create_questions_v6')
-
-  Option.destroy_all
-  Question.destroy_all
-  Questionnaire.discard_all
-
-  images = get_images_for_questionnaire
-
-  questionnaire = Questionnaire.create!(
-    name: 'Cuestionario de Zancudos',
-    current_form: true,
-    initial_question: 1,
-    final_question: 19
+ACTION_AND_RESOURCES.each do |permission_attrs|
+  permission = Permission.find_or_initialize_by(
+    name: permission_attrs[:name],
+    resource: permission_attrs[:resource]
   )
 
-  QUESTIONS_DATA.each do |question_data|
-    options_data = question_data.delete(:options)
-    question = questionnaire.questions.create!(question_data)
+  if permission.new_record?
+    permission.save!
+    puts "Created permission: #{permission_attrs[:name]} - #{permission_attrs[:resource]}"
+  end
+end
 
-    if options_data&.any?
-      options_data&.each do |option_data|
-        question.options.create!(option_data)
+ROLES_PERMISSIONS[:roles].each do |role_data|
+  role = Role.find_or_initialize_by(name: role_data[:name])
+
+  if role.new_record?
+    role.save!
+    puts "Created role: #{role_data[:name]}"
+  end
+
+  role_data[:permissions].each do |permission_attrs|
+    permission = Permission.find_by(
+      name: permission_attrs[:name],
+      resource: permission_attrs[:resource]
+    )
+
+    if permission
+      unless RolePermission.exists?(role: role, permission: permission)
+        RolePermission.create!(role: role, permission: permission)
+        puts "Assigned permission #{permission_attrs[:name]} - #{permission_attrs[:resource]} to role #{role.name}"
       end
+    else
+      puts "Warning: Permission #{permission_attrs[:name]} - #{permission_attrs[:resource]} not found"
     end
   end
-
-  images.each do |image|
-    resource = Question.find_by(question_text_es: image[:filename])
-    resource ||= Option.find_by(name_es: image[:filename])
-    next unless resource
-
-    resource.image.attach(image)
-    image[:io].unlink
-  end
-
-  SeedTask.create!(task_name: 'create_questions_v6')
-
 end
 
+puts 'Permissions and roles update completed!'
 
-unless SeedTask.find_by(task_name: 'permissions_for_change_brigade')
-  roles = Role.where(name: %w[admin brigadista])
-  permission = Permission.create(name: 'change_team', resource: 'users')
-  roles.each {|rol| rol.permissions << permission}
-  SeedTask.create(task_name: 'permissions_for_change_brigade')
+
+puts 'Creating user profiles...'
+user_profiles_data = [
+  { first_name: 'Tomas', last_name: 'Heredia', email: 'briga@gmail.com', city_id: 1, neighborhood_id: 1,
+    organization_id: 1, team_id: 1, gender: nil, language: 'es'},
+  { first_name: 'María', last_name: 'Trujillo', email: nil, city_id: 1, neighborhood_id: 1, organization_id: 1,
+    team_id: 1, gender: nil, language: 'es' },
+  { first_name: 'Francisco', last_name: 'Pardo', email: nil, city_id: 1, neighborhood_id: 1, organization_id: 1,
+    team_id: 1, gender: nil, language: 'es' },
+]
+
+user_profiles_data.each do |profile_data|
+  UserProfile.create!(profile_data)
 end
 
-unless SeedTask.find_by(task_name: 'permissions_for_posts_likes_and_comments')
-  roles = Role.all
-  actions = %i[create index show update destroy like]
-  resources = %i[posts comments]
-  permissions = []
+puts 'Creating user accounts...'
+user_accounts_data = [
+  {  user_profile_id: 1, phone: "'+63138546", username: 'brigadista', status: 1, failed_attempts: 0, role_ids: [1], password: 'test2024#1' },
+  {  user_profile_id: 2, phone: "'+51918135", username: 'team_leader', status: 1, failed_attempts: 0, role_ids: [2], password: 'test2024#2' },
+  { user_profile_id: 3, phone: "'+88035918", username: 'admin', status: 1, failed_attempts: 0, role_ids: [3], password: 'test2024#3' },
 
-  resources.product(actions).each do |resource, action|
-    permissions << Permission.create(name: action, resource:)
-  end
+]
 
-  roles.each {|rol| rol.permissions << permissions }
-  SeedTask.create(task_name: 'permissions_for_posts_likes_and_comments')
+user_accounts_data.each do |account_data|
+  UserAccount.create!(account_data)
 end
 
-unless SeedTask.find_by(task_name: 'permission_for_find_address')
-  roles = Role.where(name: %w[admin brigadista team_leader])
-  permission = Permission.create(name: 'find_address', resource: 'get_address')
-  roles.each {|rol| rol.permissions << permission}
-  SeedTask.create(task_name: 'permission_for_find_address')
-end
-
-unless SeedTask.find_by(task_name: 'special_place_to_last_params')
-  VisitParamVersion.find_or_create_by(name: 'special_places')
-  SeedTask.create(task_name: 'special_place_to_last_params')
-end
-
-unless SeedTask.find_by(task_name: 'remove_content_type_from_params')
-  vp = VisitParamVersion.find_by_name('container_types')
-  vp.destroy if vp
-  SeedTask.create(task_name: 'container_types')
-end
+puts 'Seeds completed successfully!'
 
 
-unless SeedTask.find_by(task_name: 'permissions_for_change_brigade_v2')
-  roles = Role.where(name: %w[team_leader])
-  permission = Permission.find_or_create_by(name: 'change_team', resource: 'users')
-  roles.each {|rol| rol.permissions << permission}
-  SeedTask.create(task_name: 'permissions_for_change_brigade_v2')
-end
+puts "Creating house blocks"
+house_blocks_data = [
+  { name: "9 de julio", external_id: nil, source: "GIS", wedge_ids: [27] },
+  { name: "Psj. Bambamarca", external_id: nil, source: "GIS", wedge_ids: [22] },
+  { name: "Jose Olaya, Tahuantisuyo", external_id: nil, source: "GIS", wedge_ids: [23] },
+  { name: "Cabo Pantoja (Cuna 5)", external_id: nil, source: "GIS", wedge_ids: [18] },
+  { name: "Palestina, Tahuantisuyo, Jose Olaya", external_id: nil, source: "GIS", wedge_ids: [25] },
+  { name: "Diego de Almagro, Psj. Diego de Almagro (Cuna 8)", external_id: nil, source: "GIS", wedge_ids: [21] },
+  { name: "Tupac Amaru (Cuna 2)", external_id: nil, source: "GIS", wedge_ids: [14] },
+  { name: "Diego de Almagro", external_id: nil, source: "GIS", wedge_ids: [17] },
+  { name: "Diego de Almagro, Piura (Cuna 8)", external_id: nil, source: "GIS", wedge_ids: [21] },
+  { name: "Borja, Misti (Cuna 7)", external_id: nil, source: "GIS", wedge_ids: [20] },
+  { name: "Trujillo, Piura (Cuna 8)", external_id: nil, source: "GIS", wedge_ids: [21] },
+  { name: "Urarinas, Secoya", external_id: nil, source: "GIS", wedge_ids: [26] },
+  { name: "Armando Fortes", external_id: nil, source: "GIS", wedge_ids: [26] },
+  { name: "Trujillo, Augusto Freyre (Cuna 8)", external_id: nil, source: "GIS", wedge_ids: [21] },
+  { name: "Los Proceres, Independencia (Cuna 3)", external_id: nil, source: "GIS", wedge_ids: [15] },
+  { name: "Cuzco, 28 de Julio (Cuna 6)", external_id: nil, source: "GIS", wedge_ids: [19] },
+  { name: "Cabo Pantoja, 28 de Julio (Cuna 5)", external_id: nil, source: "GIS", wedge_ids: [18] },
+  { name: "9 de julio (Cuna 14)", external_id: nil, source: "GIS", wedge_ids: [27] },
+  { name: "Urb. Sarita Colonia (sur)", external_id: nil, source: "GIS", wedge_ids: [29] },
+  { name: "Independencia, Manco Capac (Cuna 3)", external_id: nil, source: "GIS", wedge_ids: [15] },
+  { name: "Bertha Nunes, Santos Atahualpa, Micaela Bastidas", external_id: nil, source: "GIS", wedge_ids: [29] },
+  { name: "Los Libertadores", external_id: nil, source: "GIS", wedge_ids: [27] },
+  { name: "Benavides, Augusto Freyre (Cuna 6)", external_id: nil, source: "GIS", wedge_ids: [19] },
+  { name: nil, external_id: nil, source: "GIS", wedge_ids: [21] },
+  { name: "Huanuco, 28 de julio (Cuna 5)", external_id: nil, source: "GIS", wedge_ids: [18] },
+  { name: "Panama, Iquitos (Cuna 3)", external_id: nil, source: "GIS", wedge_ids: [15] },
+  { name: "Trujillo (Cuna 2)", external_id: nil, source: "GIS", wedge_ids: [14] },
+  { name: "Inca Roca (Cuna 11)", external_id: nil, source: "GIS", wedge_ids: [24] },
+  { name: "Panama, Huanuco (Cuna 5)", external_id: nil, source: "GIS", wedge_ids: [18] }
+]
 
-unless SeedTask.find_by(task_name: 'permissions_for_list_wedges')
-  roles = Role.where(name: %w[team_leader admin])
-  permission = Permission.find_or_create_by(name: 'index', resource: 'wedges')
-  roles.each do |role|
-    role.permissions << permission unless role.permissions.exists?(permission.id)
-  end
-  SeedTask.create(task_name: 'permissions_for_list_wedges')
-end
 
-unless SeedTask.find_by(task_name: 'move_brigadists_to_mtm_house_blocks')
-  HouseBlock.where.not(user_profile_id: nil).find_each do |house_block|
-    UserProfileHouseBlock.create!(house_block: house_block, user_profile: house_block.brigadist)
-  end
-  SeedTask.create(task_name: 'move_brigadists_to_mtm_house_blocks')
-end
-
-unless SeedTask.find_by(task_name: 'create_reports_house_status_ability')
-  roles = Role.where(name: %w[brigadista team_leader admin])
-  permission = Permission.find_or_create_by(name: 'house_status', resource: 'reports')
-  roles.each do |role|
-    role.permissions << permission unless role.permissions.exists?(permission.id)
-  end
-  SeedTask.create(task_name: 'create_reports_house_status_ability')
-end
-
-
-unless SeedTask.find_by(task_name: 'create_reports_brigadist_performance_ability')
-  roles = Role.where(name: %w[brigadista team_leader admin])
-  permission = Permission.find_or_create_by(name: 'brigadists_performance', resource: 'reports')
-  roles.each do |role|
-    role.permissions << permission unless role.permissions.exists?(permission.id)
-  end
-  SeedTask.create(task_name: 'create_reports_brigadist_performance_ability')
-end
-
-unless SeedTask.find_by(task_name: 'create_user_delete_ability')
-  roles = Role.where(name: %w[brigadista team_leader admin])
-  permission = Permission.find_or_create_by(name: 'delete_account', resource: 'users')
-  roles.each do |role|
-    role.permissions << permission unless role.permissions.exists?(permission.id)
-  end
-  SeedTask.create(task_name: 'create_user_delete_ability')
+house_blocks_data.each do |house_block|
+  HouseBlock.create!(house_block)
 end
