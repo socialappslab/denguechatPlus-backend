@@ -4,6 +4,7 @@
 #
 #  id           :bigint           not null, primary key
 #  description  :string
+#  discarded_at :datetime
 #  name         :string
 #  param_source :string
 #  param_type   :string
@@ -17,4 +18,6 @@
 #  index_app_config_params_on_param_source_and_name  (param_source,name)
 #
 class AppConfigParam < ApplicationRecord
+  include Discard::Model
+
 end

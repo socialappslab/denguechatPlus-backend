@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_21_125351) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_07_152610) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -51,6 +51,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_21_125351) do
     t.string "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "discarded_at"
     t.index ["name"], name: "index_app_config_params_on_name", unique: true
     t.index ["param_source", "name"], name: "index_app_config_params_on_param_source_and_name"
   end
