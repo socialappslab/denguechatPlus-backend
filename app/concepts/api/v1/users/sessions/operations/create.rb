@@ -40,7 +40,7 @@ module Api
               model = UserAccount.where("LOWER(#{searched_field}) = ?", searched_value.downcase.gsub(/\s+/, ''))&.first
 
               unless model
-                Api::V1::Users::Lib::ReportFailuresOnLogin.call(params: @params, error_type: 'user_does_not_exist')
+                Api::V1::Users::Lib::ReportFailuresOnLogin.call(params: @params, error_phase: 'user_does_not_exist')
 
                 return Failure({ ctx: @ctx, type: :unauthenticated,
                                  errors: ErrorFormater.new_error(field: :base, msg: I18n.t('errors.session.wrong_credentials'), custom_predicate: :credentials_wrong?) })
@@ -64,7 +64,7 @@ module Api
             def authenticate
               unless @ctx[:model].authenticate(@params[:password].downcase)
                 Api::V1::Users::Lib::LoginAttempt.call(@ctx[:model]).increase_attempts_count!
-                Api::V1::Users::Lib::ReportFailuresOnLogin.call(params: @params, error_type: 'invalid_password')
+                Api::V1::Users::Lib::ReportFailuresOnLogin.call(params: @params, error_phase: 'invalid_password')
 
                 return Failure({ ctx: @ctx, type: :unauthenticated, errors: ErrorFormater.new_error(field: :base, msg: I18n.t('errors.session.wrong_credentials'), custom_predicate: :credentials_wrong?) })
               end

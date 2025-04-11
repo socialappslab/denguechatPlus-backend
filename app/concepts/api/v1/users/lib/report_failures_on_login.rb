@@ -5,9 +5,10 @@ module Api
     module Users
       module Lib
         class ReportFailuresOnLogin
-          def self.call(params:, error_type:)
+          def self.call(params:, error_phase:)
             Sentry.with_scope do |scope|
               scope.set_tag(:env, 'login_issue')
+              scope.set_tag(:error_phase, error_phase)
               scope.set_tag(:user_name, params['username'])
               scope.set_tag(:phone, params['phone'])
               scope.set_tag(:login_type, params['type'])
@@ -16,7 +17,8 @@ module Api
                 {
                   user_name: params['username'],
                   phone: params['phone'],
-                  login_type: params['type']
+                  login_type: params['type'],
+                  error_phase: params['error_phase']
                 }
               )
 
