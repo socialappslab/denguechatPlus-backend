@@ -17,7 +17,7 @@ module ExternalServices
       client.messages.create(
         from: ENV['TWILIO_PHONE_NUMBER'],
         to: phone,
-        body: "Su nombre de usuario #{username} ha sido aprobado., ya puede utilizar la aplicación DengueChatPlus desde su celular."
+        body: "Su nombre de usuario #{username} ha sido aprobado, ya puede utilizar la aplicación DengueChatPlus desde su celular."
       )
     end
   end
