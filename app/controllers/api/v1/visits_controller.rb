@@ -37,6 +37,11 @@ module Api
                  options: { current_user: }
       end
 
+      def download_information
+        endpoint operation: Api::V1::Visits::Operations::DownloadCsv,
+                 options: { current_user: }
+      end
+
       private
 
       def set_paper_trail_whodunnit
