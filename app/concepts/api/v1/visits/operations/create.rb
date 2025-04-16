@@ -332,8 +332,8 @@ module Api
           end
 
           def manage_points
-            Api::V1::Points::Services::Transactions.assign_point(earner: @current_user, house_id: @house.id, visit_id: @ctx[:model].id) if @house.is_tariki?
-            Api::V1::Points::Services::Transactions.remove_point(earner: @current_user, house_id: @house.id, visit_id: @ctx[:model].id) unless @house.is_tariki?
+            Api::V1::Points::Services::Transactions.assign_point(earner: @current_user, house_id: @house.id, visit_id: @ctx[:model].id) if @house.tariki_status
+            Api::V1::Points::Services::Transactions.remove_point(earner: @current_user, house_id: @house.id, visit_id: @ctx[:model].id) unless @house.tariki_status
           end
 
         end

@@ -114,8 +114,8 @@ module Api
           def assign_points
             user_account = @visit.user_account
 
-            Api::V1::Points::Services::Transactions.assign_point(earner: user_account, house_id: @house.id, visit_id: @visit.id) if @house.is_tariki?
-            Api::V1::Points::Services::Transactions.remove_point(earner: user_account, house_id: @house.id, visit_id: @visit.id) unless @house.is_tariki?
+            Api::V1::Points::Services::Transactions.assign_point(earner: user_account, house_id: @house.id, visit_id: @visit.id) if @house.tariki_status
+            Api::V1::Points::Services::Transactions.remove_point(earner: user_account, house_id: @house.id, visit_id: @visit.id) unless @house.tariki_status
 
           end
 
