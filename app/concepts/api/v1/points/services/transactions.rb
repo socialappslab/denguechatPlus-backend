@@ -21,9 +21,11 @@ module Api
               return
             end
 
-            existing_points =  earner.points.where(house_id:).where("DATE(created_at)::date = ?::date", Date.current)&.first
+            unless AppConfigParam.find_by(name: 'tariki_point_same_date', value: 1)
+              existing_points = earner.points.where(house_id:).where("DATE(created_at)::date = ?::date", Date.current)&.first
 
-            return if existing_points
+              return if existing_points
+            end
 
             self.assign_by_earner(earner: user_account, house_id:, visit_id:)
 
