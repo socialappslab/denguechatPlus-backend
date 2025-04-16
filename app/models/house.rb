@@ -78,7 +78,8 @@ class House < ApplicationRecord
   after_commit :update_consecutive_green_status
 
 
-  def is_tariki?
+  def is_tariki?(status_on_memory = nil)
+    status = status_on_memory || status
     return false unless status == 'green'
 
     min_consecutive_green = AppConfigParam.find_by(name: 'consecutive_green_statuses_for_tariki_house')&.value.to_i

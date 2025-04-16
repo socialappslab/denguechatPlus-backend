@@ -262,7 +262,7 @@ module Api
                           'green'
                         end
               }
-              result[:tariki_status] = @house.is_tariki?
+              result[:tariki_status] = @house.is_tariki?(colors[result[:status]])
               @house.update!(result)
               @ctx[:model].update!(status: colors[result[:status]])
               elsif inspections_ids.empty? && @params[:visit_permission]
