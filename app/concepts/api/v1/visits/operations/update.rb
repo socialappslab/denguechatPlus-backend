@@ -92,7 +92,7 @@ module Api
                           "green"
                         end
               }
-              result[:tariki_status] = @house.is_tariki?(colors[result[:status]])
+              result[:tariki_status] = @house.is_tariki?(result[:status])
               @house.update!(result)
               @ctx[:model].update!(status: colors[result[:status]])
             else
