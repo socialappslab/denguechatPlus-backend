@@ -68,6 +68,7 @@ class House < ApplicationRecord
   belongs_to :wedge
   belongs_to :house_block, optional: true
   has_many :house_statuses
+  has_many :visits
   belongs_to :created_by, class_name: 'UserProfile', optional: true, foreign_key: 'user_profile_id'
   belongs_to :special_place, optional: true
   belongs_to :team, optional: true
@@ -91,6 +92,23 @@ class House < ApplicationRecord
 
     statuses.all? { |status| status == 'green' }
   end
+
+
+  def consecutive_green_status_calculation
+    limit = AppConfigParam.find_by(name: 'consecutive_green_statuses_for_tariki_house')&.value.to_i
+    limit = 4 if limit.zero?
+
+    use_visits = AppConfigParam.find_by(name: 'tariki_point_same_date')&.value.to_i == 1
+
+    statuses = if use_visits
+                 visits.sort_by(&:created_at).last(limit).reverse.map(&:status)
+               else
+                 house_statuses.sort_by(&:created_at).last(limit).reverse.map(&:status)
+               end
+
+    statuses.take_while { |s| s.downcase == 'verde' || s.downcase == 'green' }.count
+  end
+
 
   private
 
