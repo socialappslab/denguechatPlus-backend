@@ -7,7 +7,11 @@ module Api
         class ListToVisit < ApplicationSerializer
           set_type :house
 
-          attributes :id, :reference_code, :house_type, :address, :latitude, :longitude, :consecutive_green_status, :notes, :status, :container_count, :created_at, :updated_at
+          attributes :id, :reference_code, :house_type, :address, :latitude, :longitude, :notes, :status, :container_count, :created_at, :updated_at
+
+          attribute :consecutive_green_status do |house|
+            house.consecutive_green_status_calculation
+          end
 
 
           attribute :state do |house|
