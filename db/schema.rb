@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_16_170101) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_23_124855) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -257,8 +257,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_16_170101) do
     t.string "other_elimination_method"
     t.string "color"
     t.string "location"
+    t.datetime "discarded_at"
     t.index ["breeding_site_type_id"], name: "index_inspections_on_breeding_site_type_id"
     t.index ["created_by_id"], name: "index_inspections_on_created_by_id"
+    t.index ["discarded_at"], name: "index_inspections_on_discarded_at"
     t.index ["elimination_method_type_id"], name: "index_inspections_on_elimination_method_type_id"
     t.index ["treated_by_id"], name: "index_inspections_on_treated_by_id"
     t.index ["visit_id"], name: "index_inspections_on_visit_id"
@@ -636,6 +638,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_16_170101) do
     t.integer "inspection_with_pupae"
     t.integer "inspection_with_eggs"
     t.integer "inspection_with_larvae"
+    t.datetime "discarded_at"
+    t.index ["discarded_at"], name: "index_visits_on_discarded_at"
     t.index ["house_id"], name: "index_visits_on_house_id"
     t.index ["questionnaire_id"], name: "index_visits_on_questionnaire_id"
     t.index ["team_id"], name: "index_visits_on_team_id"
