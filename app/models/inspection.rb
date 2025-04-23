@@ -6,6 +6,7 @@
 #  code_reference             :string
 #  color                      :string
 #  container_test_result      :string
+#  discarded_at               :datetime
 #  has_water                  :boolean
 #  lid_type                   :string
 #  lid_type_other             :string
@@ -28,6 +29,7 @@
 #
 #  index_inspections_on_breeding_site_type_id       (breeding_site_type_id)
 #  index_inspections_on_created_by_id               (created_by_id)
+#  index_inspections_on_discarded_at                (discarded_at)
 #  index_inspections_on_elimination_method_type_id  (elimination_method_type_id)
 #  index_inspections_on_treated_by_id               (treated_by_id)
 #  index_inspections_on_visit_id                    (visit_id)
