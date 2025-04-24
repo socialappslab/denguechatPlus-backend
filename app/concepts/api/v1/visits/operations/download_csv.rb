@@ -53,7 +53,7 @@ module Api
 
           def visit_headers
             [
-              "ref_sitio",
+              "codigo de referencia",
               "fecha_visita",
               "brigadista",
               "brigada",
@@ -75,29 +75,32 @@ module Api
 
           def inspection_headers
             %w[tipo_de_recipiente
- hay_agua_en_el_recipiente
-origen_del_agua
-otro_origen_del_agua
-tipo_de_protección
-otro_tipo_de_protección
-fue_tratado_por_el_ministerio_de_salud
-en_el_recipiente_habia
-acción_realizada_sobre_el_recipiente
-otra_acción]
+              hay_agua_en_el_recipiente
+              origen_del_agua
+              otro_origen_del_agua
+              tipo_de_protección
+              otro_tipo_de_protección
+              fue_tratado_por_el_ministerio_de_salud
+              en_reste_recipiente/envase_hay
+              acción_realizada_sobre_el_recipiente
+              otra_acción
+              foto_del_recipiente/envase]
           end
 
           def inspection_row(inspection)
             [
               inspection.breeding_site_type.name&.gsub(',', '-'),
-              inspection.has_water,
+              inspection.has_water ? 'Sí' : 'No',
               inspection&.water_source_type&.name&.gsub(',', '-'),
               inspection.water_source_other,
               inspection.container_protections&.pluck(:name_es)&.join("-"),
               inspection.other_protection,
-              bool(inspection.was_chemically_treated)&.gsub(',', '-'),
+              inspection.was_chemically_treated,
               inspection.type_contents&.pluck(:name_es)&.join("-"),
               inspection.elimination_method_type&.name_es&.gsub(',', '-'),
-              inspection.other_elimination_method
+              inspection.other_elimination_method,
+              inspection.photo.present? ? Rails.application.routes.url_helpers.url_for(inspection.photo) : ''
+
             ]
           end
 
