@@ -166,7 +166,7 @@ module Api
               inspection = Inspection.find_by(code_reference: obj[:code_reference])
               next unless inspection
 
-              photo = @photos.select { |file| file.original_filename == "#{inspection.code_reference}.#{file.content_type.split('/').last}" }
+              photo = @photos.select { |file| File.basename(file.original_filename, File.extname(file.original_filename)) == "#{inspection.code_reference}" }
               next if photo.blank?
 
               inspection.photo.attach(photo.first)
