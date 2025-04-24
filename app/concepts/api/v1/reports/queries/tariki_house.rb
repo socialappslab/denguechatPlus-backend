@@ -31,7 +31,7 @@ module Api
           attr_reader :neighborhood_id
 
           def fetch_data
-            sector_id = @current_user.neighborhood_id
+            sector_id = @current_user.teams&.first&.neighborhood_id || 0
             query = <<~SQL.squish
               WITH last_4_statuses AS (
                 SELECT house_id, status, updated_at, neighborhood_id,
