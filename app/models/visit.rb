@@ -4,6 +4,7 @@
 #
 #  id                     :bigint           not null, primary key
 #  answers                :jsonb
+#  discarded_at           :datetime
 #  host                   :string
 #  inspection_quantity    :integer
 #  inspection_with_eggs   :integer
@@ -24,6 +25,7 @@
 #
 # Indexes
 #
+#  index_visits_on_discarded_at      (discarded_at)
 #  index_visits_on_house_id          (house_id)
 #  index_visits_on_questionnaire_id  (questionnaire_id)
 #  index_visits_on_team_id           (team_id)
@@ -37,6 +39,8 @@
 #  fk_rails_...  (user_account_id => user_accounts.id)
 #
 class Visit < ApplicationRecord
+  include Discard::Model
+
   belongs_to :house
   belongs_to :user_account
   belongs_to :team
@@ -44,5 +48,18 @@ class Visit < ApplicationRecord
   has_many :inspections, dependent: :destroy
   accepts_nested_attributes_for :inspections
 
+  default_scope -> { kept }
   has_paper_trail on: [:update]
+
+  after_discard :discard_inspections
+
+  private
+
+  def discard_inspections
+    inspections.kept.find_each(&:discard)
+  end
+
+  def undiscard_inspections
+    inspections.discarded.find_each(&:undiscard)
+  end
 end

@@ -18,7 +18,8 @@ module Api
           end
 
           def call
-            @model.yield_self(&method(:houses_by_user))
+            @model.includes(:visits, :house_statuses)
+                  .yield_self(&method(:houses_by_user))
                   .yield_self(&method(:reference_code_clause))
                   .order(:reference_code)
           end
@@ -30,7 +31,7 @@ module Api
           def houses_by_user(relation)
             return relation if @user_account.nil?
 
-            house_block_ids =  @user_account.house_blocks.pluck(:id)
+            house_block_ids = @user_account.house_blocks.pluck(:id)
             return relation if house_block_ids.nil?
 
             neighborhood_id = @user_account.teams&.first&.neighborhood_id

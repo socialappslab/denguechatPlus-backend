@@ -12,12 +12,12 @@ module ExternalServices
       )
     end
 
-    def self.send_approval_message(phone)
+    def self.send_approval_message(phone, username)
       client = new.client
       client.messages.create(
         from: ENV['TWILIO_PHONE_NUMBER'],
         to: phone,
-        body: "Su usuario ha sido aprobado, ya puede utilizar la aplicación DengueChatPlus desde su celular."
+        body: "Su nombre de usuario #{username} ha sido aprobado, ya puede utilizar la aplicación DengueChatPlus desde su celular."
       )
     end
   end

@@ -12,6 +12,14 @@ module Api
                  options: { current_user: }
       end
 
+      def update
+        endpoint operation: Api::V1::Houses::Operations::Update,
+                 renderer_options: {
+                   serializer: Api::V1::Houses::Serializers::Show
+                 },
+                 options: { current_user: }
+      end
+
       def list_to_visit
         endpoint operation: Api::V1::Houses::Operations::ListToVisit,
                  renderer_options: {

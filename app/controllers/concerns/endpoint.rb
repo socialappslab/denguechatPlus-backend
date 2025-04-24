@@ -112,7 +112,12 @@ module Endpoint
   end
 
   def render_send_data(result)
-    options = result[:send_data]
-    send_data(options[:data], options.without(:data))
+    data = result.value![:send_data]
+    send_data(
+      data[:data],
+      filename: data[:filename] || "data.csv",
+      type: data[:type] || "text/csv",
+      disposition: "attachment"
+    )
   end
 end

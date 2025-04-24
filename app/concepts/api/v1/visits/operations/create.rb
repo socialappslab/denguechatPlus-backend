@@ -166,7 +166,7 @@ module Api
               inspection = Inspection.find_by(code_reference: obj[:code_reference])
               next unless inspection
 
-              photo = @photos.select { |file| file.original_filename == "#{inspection.code_reference}.#{file.content_type.split('/').last}" }
+              photo = @photos.select { |file| File.basename(file.original_filename, File.extname(file.original_filename)) == "#{inspection.code_reference}" }
               next if photo.blank?
 
               inspection.photo.attach(photo.first)
@@ -262,7 +262,7 @@ module Api
                           'green'
                         end
               }
-              result[:tariki_status] = @house.is_tariki?
+              result[:tariki_status] = @house.is_tariki?(result[:status])
               @house.update!(result)
               @ctx[:model].update!(status: colors[result[:status]])
               elsif inspections_ids.empty? && @params[:visit_permission]
@@ -332,8 +332,8 @@ module Api
           end
 
           def manage_points
-            Api::V1::Points::Services::Transactions.assign_point(earner: @current_user, house_id: @house.id, visit_id: @ctx[:model].id) if @house.is_tariki?
-            Api::V1::Points::Services::Transactions.remove_point(earner: @current_user, house_id: @house.id, visit_id: @ctx[:model].id) unless @house.is_tariki?
+            Api::V1::Points::Services::Transactions.assign_point(earner: @current_user, house_id: @house.id, visit_id: @ctx[:model].id) if @house.tariki_status
+            Api::V1::Points::Services::Transactions.remove_point(earner: @current_user, house_id: @house.id, visit_id: @ctx[:model].id) unless @house.tariki_status
           end
 
         end

@@ -15,6 +15,7 @@ Rails.application.routes.draw do
         get 'me', on: :collection, action: :show_current_user
         get 'get_by_id/:id', on: :collection, action: :show
         put 'change_team/', on: :collection, action: :change_team
+        put 'update_password/', on: :collection, action: :update_password
         member do
           put 'change_status'
         end
@@ -49,15 +50,18 @@ Rails.application.routes.draw do
           delete :destroy
         end
       end
-      resources :houses, only: %i[index] do
+      resources :houses, only: %i[index update] do
         collection do
           get :list_to_visit
           get :orphan_houses
         end
       end
       resources :house_blocks, only: %i[index update create]
-      resources :visits, only: %i[create index show update] do
+      resources :visits, only: %i[create index show update destroy] do
         resources :inspections, only: %i[index show update]
+        member do
+          get :download_information
+        end
       end
       resources :questionnaires, only: %i[current] do
         collection do

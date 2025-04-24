@@ -92,7 +92,7 @@ module Api
                           "green"
                         end
               }
-              result[:tariki_status] = @house.is_tariki?
+              result[:tariki_status] = @house.is_tariki?(result[:status])
               @house.update!(result)
               @ctx[:model].update!(status: colors[result[:status]])
             else
@@ -129,8 +129,8 @@ module Api
           end
 
           def assign_points
-            Api::V1::Points::Services::Transactions.assign_point(earner: @ctx[:model].user_account, house_id: @house.id, visit_id: @ctx[:model].id) if @house.is_tariki?
-            Api::V1::Points::Services::Transactions.remove_point(earner:@ctx[:model].user_account, house_id: @house.id, visit_id: @ctx[:model].id) unless @house.is_tariki?
+            Api::V1::Points::Services::Transactions.assign_point(earner: @ctx[:model].user_account, house_id: @house.id, visit_id: @ctx[:model].id) if @house.tariki_status
+            Api::V1::Points::Services::Transactions.remove_point(earner:@ctx[:model].user_account, house_id: @house.id, visit_id: @ctx[:model].id) unless @house.tariki_status
           end
         end
       end

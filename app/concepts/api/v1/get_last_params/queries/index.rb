@@ -28,11 +28,16 @@ module Api
           private
 
           def create_data_hash(visit_param_versions, ignored_columns= %w[created_at discarded_at])
+            visit_param_versions += [OpenStruct.new(
+              id: 1,
+              version: 1,
+              name: "AppConfigParam"
+            )]
             visit_param_versions.map do |param_version|
               model = get_model(param_version)
               allowed_columns = get_allowed_columns(model, ignored_columns)
               data = get_data(model, allowed_columns)
-              create_version_param(param_version, data)
+                create_version_param(param_version, data)
             end
           end
 
