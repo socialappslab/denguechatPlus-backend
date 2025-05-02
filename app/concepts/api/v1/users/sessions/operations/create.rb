@@ -13,6 +13,7 @@ module Api
             step :validate_schema
             step :model
             step :check_account_status
+            step :send_sms
             step :authenticate
             tee :access_expiration
             step :create_tokens
@@ -35,9 +36,10 @@ module Api
             end
 
             def model
-              searched_field = @ctx['contract.default'][:type]
-              searched_value = @ctx['contract.default'][searched_field]
-              model = UserAccount.where("LOWER(#{searched_field}) = ?", searched_value.downcase.gsub(/\s+/, ''))&.first
+              @searched_field = @ctx['contract.default'][:type]
+              @searched_field = 'phone' if @searched_field == 'sms'
+              @searched_value = @ctx['contract.default'][@searched_field]
+              model = UserAccount.where("LOWER(#{@searched_field}) = ?", @searched_value.downcase.gsub(/\s+/, ''))&.first
 
               unless model
                 Api::V1::Users::Lib::ReportFailuresOnLogin.call(params: @params, error_phase: 'user_does_not_exist')
@@ -61,7 +63,16 @@ module Api
               end
             end
 
+            def send_sms
+              if @ctx['contract.default'][:type] == 'sms'
+                 recovery_code = @ctx[:model].user_code_recoveries.create(code: SecureRandom.hex(3))
+                ::Twillio::UserMessage.send_login_code(@ctx[:model].normalized_phone, recovery_code.code)
+              end
+              Success({ ctx: @ctx, type: :success })
+            end
+
             def authenticate
+              return   Success({ ctx: @ctx, type: :success })   if @ctx['contract.default'][:type] == 'sms'
               unless @ctx[:model].authenticate(@params[:password].downcase)
                 Api::V1::Users::Lib::LoginAttempt.call(@ctx[:model]).increase_attempts_count!
                 Api::V1::Users::Lib::ReportFailuresOnLogin.call(params: @params, error_phase: 'invalid_password')
@@ -73,11 +84,13 @@ module Api
             end
 
             def access_expiration
+              return   Success({ ctx: @ctx, type: :success })   if @ctx['contract.default'][:type] == 'sms'
               @ctx[:access_exp] = is_mobile? ? Constants::User::ACCESS_TOKEN_EXPIRATION_MOBILE : Constants::User::ACCESS_TOKEN_EXPIRATION_WEB
               @ctx[:refresh_exp] = is_mobile? ? Constants::User::REFRESH_TOKEN_EXPIRATION_MOBILE : Constants::User::REFRESH_TOKEN_EXPIRATION_WEB
             end
 
             def create_tokens
+              return   Success({ ctx: @ctx, type: :success })   if @ctx['contract.default'][:type] == 'sms'
               result = Api::V1::Users::Lib::CreateTokens.call(@ctx, account: @ctx[:model],
                                                                     refresh_exp: @ctx[:refresh_exp],
                                                                     access_exp: @ctx[:access_exp])

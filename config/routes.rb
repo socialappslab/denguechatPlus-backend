@@ -25,6 +25,7 @@ Rails.application.routes.draw do
       namespace :users do
         resource :session, only: %i[create destroy], controller: :sessions do
           post 'refresh_token'
+          post 'validate_code'
         end
         resource :accounts, only: %i[create], controller: :accounts do
           collection do

@@ -14,12 +14,18 @@ module Api
             params do
               optional(:phone).filled(:string)
               optional(:username).filled(:string)
-              required(:password).filled(:string)
-              required(:type).filled(:string, included_in?: %w[phone username])
+              optional(:password).filled(:string)
+              required(:type).filled(:string, included_in?: %w[phone username sms])
             end
 
             rule(:phone) do |type, phone|
-              if values[:type].eql?('phone') && values[:phone].nil?
+              if (values[:type].eql?('phone') || values[:type].eql?('sms')) && values[:phone].nil?
+                key(:type).failure(text: :user_credential_requirement, predicate: :filled?)
+              end
+            end
+
+            rule(:password) do |type, password|
+              if (values[:type].eql?('phone') || values[:type].eql?('username')) && values[:password].nil?
                 key(:type).failure(text: :user_credential_requirement, predicate: :filled?)
               end
             end
