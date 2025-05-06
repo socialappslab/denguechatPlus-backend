@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_23_124855) do
+ActiveRecord::Schema[7.1].define(version: 2025_05_06_124756) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -236,11 +236,20 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_23_124855) do
     t.index ["inspection_id"], name: "index_inspection_container_protections_on_inspection_id"
   end
 
+  create_table "inspection_water_source_types", force: :cascade do |t|
+    t.bigint "inspection_id", null: false
+    t.bigint "water_source_type_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["inspection_id", "water_source_type_id"], name: "idx_on_inspection_id_water_source_type_id_36033ead1d", unique: true
+    t.index ["inspection_id"], name: "index_inspection_water_source_types_on_inspection_id"
+    t.index ["water_source_type_id"], name: "index_inspection_water_source_types_on_water_source_type_id"
+  end
+
   create_table "inspections", force: :cascade do |t|
     t.bigint "visit_id", null: false
     t.bigint "breeding_site_type_id", null: false
     t.bigint "elimination_method_type_id"
-    t.bigint "water_source_type_id"
     t.bigint "created_by_id", null: false
     t.bigint "treated_by_id", null: false
     t.string "code_reference"
@@ -264,7 +273,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_23_124855) do
     t.index ["elimination_method_type_id"], name: "index_inspections_on_elimination_method_type_id"
     t.index ["treated_by_id"], name: "index_inspections_on_treated_by_id"
     t.index ["visit_id"], name: "index_inspections_on_visit_id"
-    t.index ["water_source_type_id"], name: "index_inspections_on_water_source_type_id"
   end
 
   create_table "inspections_type_contents", id: false, force: :cascade do |t|
@@ -691,12 +699,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_23_124855) do
   add_foreign_key "houses", "wedges"
   add_foreign_key "inspection_container_protections", "container_protections"
   add_foreign_key "inspection_container_protections", "inspections"
+  add_foreign_key "inspection_water_source_types", "inspections"
+  add_foreign_key "inspection_water_source_types", "water_source_types"
   add_foreign_key "inspections", "breeding_site_types"
   add_foreign_key "inspections", "elimination_method_types"
   add_foreign_key "inspections", "user_accounts", column: "created_by_id"
   add_foreign_key "inspections", "user_accounts", column: "treated_by_id"
   add_foreign_key "inspections", "visits"
-  add_foreign_key "inspections", "water_source_types"
   add_foreign_key "inspections_type_contents", "inspections"
   add_foreign_key "inspections_type_contents", "type_contents"
   add_foreign_key "likes", "user_accounts"

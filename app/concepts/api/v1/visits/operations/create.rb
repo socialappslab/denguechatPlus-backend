@@ -8,7 +8,7 @@ module Api
           include Dry::Transaction
 
           Container = Struct.new(:has_water, :visit_id, :was_chemically_treated, :breeding_site_type_id,
-                                 :elimination_method_type_id, :water_source_type_id, :lid_type, :code_reference, :container_test_result,
+                                 :elimination_method_type_id, :water_source_type_ids, :lid_type, :code_reference, :container_test_result,
                                  :tracking_type_required, :created_by_id, :treated_by_id, :water_source_other, :lid_type_other,
                                  :container_protection_ids, :other_protection, :other_elimination_method, :type_content_id, keyword_init: true)
 

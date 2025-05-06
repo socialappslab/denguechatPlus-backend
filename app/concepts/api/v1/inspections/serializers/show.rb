@@ -49,14 +49,15 @@ module Api
           }
 
           build_water_source_type = lambda { |container|
-            WaterSourceType.all.map do |bst|
+            water_source_types = container.water_source_type_ids
+            WaterSourceType.all.map do |wst|
               res = {
-                id: bst.id,
-                name: bst.name,
-                value: bst.id,
-                selected: bst.id == container.water_source_type_id
+                id: wst.id,
+                name: wst.name,
+                value: wst.id,
+                selected: wst.id.in?(water_source_types)
               }
-              if bst.name.downcase.in?(['otro', 'other', 'outro'])
+              if wst.name.downcase.in?(['otro', 'other', 'outro'])
                 res[:is_text_area] = true
                 res[:other_resource_name]= 'waterSourceOther'
               end
