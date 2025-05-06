@@ -28,6 +28,7 @@ module Api
             optional(:container_protection_ids).maybe(:array)
             optional(:elimination_method_type_id).maybe(:integer)
             optional(:water_source_type_id).maybe(:integer)
+            optional(:water_source_type_ids).maybe(:array)
             optional(:type_content_ids).maybe(:array)
 
             optional(:delete_photo).maybe(:bool)
@@ -60,7 +61,7 @@ module Api
             end
           end
 
-          rule(:water_source_type_id) do
+          rule(:water_source_type_ids) do
             if key?
               unless WaterSourceType.exists?(id: value)
                 key.failure(text: "The WaterSourceType does not exist", predicate: :not_exists?)

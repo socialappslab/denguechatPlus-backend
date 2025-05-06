@@ -43,8 +43,8 @@ module Api
                   end
                 end
 
-                if inspection.has_key?('water_source_type_id')
-                  unless WaterSourceType.exists?(id: inspection['water_source_type_id'])
+                if inspection.has_key?('water_source_type_ids')
+                  unless WaterSourceType.exists?(id: inspection['water_source_type_ids'])
                     key(:water_source_type_id).failure(text: "The WaterSourceType does not exist",
                                                        predicate: :not_exists?)
                   end

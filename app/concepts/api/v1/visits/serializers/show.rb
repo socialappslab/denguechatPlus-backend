@@ -109,11 +109,12 @@ module Api
                   elimination_method_type_name: inspection.elimination_method_type&.send("name_#{visit.language}"),
                   elimination_method_type_other: inspection.other_elimination_method
                 },
-                waterSourceType: {
-                  water_source_type_id: inspection.water_source_type_id,
-                  water_source_type_name: inspection.water_source_type&.name,
-                  water_source_other: inspection.water_source_other
-                },
+                waterSourceType: inspection.water_source_types.map do |wst|
+                  {
+                    id: wst.id,
+                    name: wst.name
+                  }
+                end,
                 container_protections: inspection.container_protections.map do |protection|
                   {
                     id: protection.id,
