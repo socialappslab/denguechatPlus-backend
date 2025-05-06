@@ -4,7 +4,7 @@ module Api
   module V1
     module Points
       module Queries
-        class AccumulatedPoints
+        class   AccumulatedPoints
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort)
@@ -21,7 +21,7 @@ module Api
             @model.yield_self(&method(:by_user))
                   .yield_self(&method(:by_team))
                   .yield_self(&method(:by_date))
-                  .yield_self(&method(:sort_clause))
+                  .yield_self(&method(:sort_clause)).reorder(nil)
           end
 
           private
