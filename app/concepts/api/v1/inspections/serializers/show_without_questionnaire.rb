@@ -40,11 +40,10 @@ module Api
 
           attribute :status, &:color
 
-          attribute :water_source_type do |container|
-            next unless container.water_source_type
+          attribute :water_source_types do |container|
+            next if container.water_source_types.blank?
 
-            container.water_source_type.name
-
+            container.water_source_types.map(&:name).join(', ')
           end
 
           attribute :water_source_other, &:water_source_other
