@@ -29,9 +29,7 @@ module Api
           def calculate_counters
             base_filter = {}
 
-            if @filter[:team_id]
-              base_filter[:visits] = { team_id: @filter[:team_id] }
-            end
+            base_filter[:visits] = { team_id: @filter[:team_id] } if @filter[:team_id]
 
             if @filter[:wedge_id]
               base_filter[:houses] ||= {}
@@ -48,58 +46,50 @@ module Api
               base_filter[:houses].merge!(neighborhood_id: @filter[:neighborhood_id])
             end
 
-
             start_date = Date.today.beginning_of_week.to_date
             end_date = Date.today.end_of_week.to_date
             previous_start_date = 1.week.ago.beginning_of_week.to_date
             previous_end_date = 1.week.ago.end_of_week.to_date
 
             current_data = Visit
-                             .joins(:house)
-                             .select(
-                               "COUNT(DISTINCT CASE WHEN visits.visited_at BETWEEN '#{start_date}' AND '#{end_date}' THEN houses.id END) AS sites_this_week",
-                               "COUNT(DISTINCT houses.id) AS current_sites_count_total",
-                               "COUNT(CASE WHEN visits.visited_at BETWEEN '#{start_date}' AND '#{end_date}' THEN visits.id END) AS visits_this_week",
-                               "COUNT(visits.id) AS visits_total",
-                               "COUNT(DISTINCT houses.id) AS houses_total"
-                             )
-                             .where( base_filter)
-                             .take
-
-
+                           .joins(:house)
+                           .select(
+                             "COUNT(DISTINCT CASE WHEN visits.visited_at BETWEEN '#{start_date}' AND '#{end_date}' THEN houses.id END) AS sites_this_week",
+                             'COUNT(DISTINCT houses.id) AS current_sites_count_total',
+                             "COUNT(CASE WHEN visits.visited_at BETWEEN '#{start_date}' AND '#{end_date}' THEN visits.id END) AS visits_this_week",
+                             'COUNT(visits.id) AS visits_total',
+                             'COUNT(DISTINCT houses.id) AS houses_total'
+                           )
+                           .find_by(base_filter)
 
             previous_data = Visit
-                              .joins(:house)
-                              .select(
-                                "COUNT(DISTINCT CASE WHEN visits.visited_at BETWEEN '#{previous_start_date}' AND '#{previous_end_date}' THEN houses.id END) AS sites_previous_week",
-                                "COUNT(CASE WHEN visits.visited_at BETWEEN '#{previous_start_date}' AND '#{previous_end_date}' THEN visits.id END) AS visits_previous_week",
-                                )
-                              .where( base_filter)
-                              .take
+                            .joins(:house)
+                            .select(
+                              "COUNT(DISTINCT CASE WHEN visits.visited_at BETWEEN '#{previous_start_date}' AND '#{previous_end_date}' THEN houses.id END) AS sites_previous_week",
+                              "COUNT(CASE WHEN visits.visited_at BETWEEN '#{previous_start_date}' AND '#{previous_end_date}' THEN visits.id END) AS visits_previous_week"
+                            )
+                            .find_by(base_filter)
 
             base_filter[:house_statuses] = base_filter.delete(:visits) if base_filter.has_key?(:visits)
             house_current_status = HouseStatus
-                                     .joins(:house)
-                                     .select("houses.status, COUNT(distinct houses.id) AS house_count")
-                                     .where(base_filter)
-                                     .group("houses.status")
-
+                                   .joins(:house)
+                                   .select('houses.status, COUNT(distinct houses.id) AS house_count')
+                                   .where(base_filter)
+                                   .group('houses.status')
 
             status_counts = house_current_status.each_with_object({}) do |status, counts|
               counts[status.status] = status.house_count.to_i
             end
 
-            green_quantity = status_counts["0"] || 0
-            yellow_quantity = status_counts["1"] || 0
-            red_quantity = status_counts["2"] || 0
-
-
+            green_quantity = status_counts['0'] || 0
+            yellow_quantity = status_counts['1'] || 0
+            red_quantity = status_counts['2'] || 0
 
             current_visits = current_data&.visits_this_week.to_i
             previous_visits = previous_data&.visits_previous_week.to_i
             visit_variation_percentage = calculate_percentage_variation(current_visits, previous_visits)
-            site_variation_percentage = calculate_percentage_variation(current_data.current_sites_count_total, previous_data.sites_previous_week)
-
+            site_variation_percentage = calculate_percentage_variation(current_data.current_sites_count_total,
+                                                                       previous_data.sites_previous_week)
 
             StatusResults.new(
               current_data.current_sites_count_total,
@@ -110,11 +100,11 @@ module Api
               site_variation_percentage,
               visit_variation_percentage
             )
-
           end
 
           def calculate_percentage_variation(current, previous)
             return 0 if previous.zero?
+
             ((current - previous) / previous.to_f * 100).round(2)
           end
 

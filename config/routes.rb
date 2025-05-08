@@ -3,8 +3,7 @@
 require 'sidekiq/web'
 require 'sidekiq-scheduler/web'
 
-
-Sidekiq::Web.use Rack::Session::Cookie, secret: ENV.fetch("SIDEKIQ_WEBTOKEN")
+Sidekiq::Web.use Rack::Session::Cookie, secret: ENV.fetch('SIDEKIQ_WEBTOKEN')
 
 Rails.application.routes.draw do
   get 'up' => 'rails/health#show', as: :rails_health_check
@@ -163,8 +162,6 @@ Rails.application.routes.draw do
       get 'get_last_params', controller: 'get_last_params', action: 'index'
       get 'get_address', controller: 'get_address', action: 'find_address'
       delete 'users/delete_account', to: 'users#delete_account'
-
-
     end
   end
 
@@ -179,18 +176,18 @@ Rails.application.routes.draw do
         post :update_image_question
       end
     end
-    resources :sync_logs, only: [:show, :index]
+    resources :sync_logs, only: %i[show index]
   end
 
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
     username_match = ActiveSupport::SecurityUtils.secure_compare(
-      ::Digest::SHA256.hexdigest(username),
-      ::Digest::SHA256.hexdigest(ENV.fetch('SIDEKIQ_USERNAME', ''))
+      Digest::SHA256.hexdigest(username),
+      Digest::SHA256.hexdigest(ENV.fetch('SIDEKIQ_USERNAME', ''))
     )
 
     password_match = ActiveSupport::SecurityUtils.secure_compare(
-      ::Digest::SHA256.hexdigest(password),
-      ::Digest::SHA256.hexdigest(ENV.fetch('SIDEKIQ_PASSWORD', ''))
+      Digest::SHA256.hexdigest(password),
+      Digest::SHA256.hexdigest(ENV.fetch('SIDEKIQ_PASSWORD', ''))
     )
 
     username_match & password_match

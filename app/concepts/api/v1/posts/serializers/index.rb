@@ -23,17 +23,19 @@ module Api
 
           attribute :create_by_user do |post|
             next if post.user_account_id.blank?
+
             user = UserAccount.with_discarded.find(post.user_account_id)
 
             {
               accountId: post.user_account_id,
               userName: user.first_name,
-              lastName: user.last_name,
+              lastName: user.last_name
             }
           end
 
           attribute :createdBy do |post|
             next unless post.user_account_id
+
             user_account = UserAccount.with_discarded.find(post.user_account_id)
 
             "#{user_account.first_name}, #{user_account.last_name}"
@@ -73,8 +75,6 @@ module Api
           attribute :canDeleteByUser, &:can_delete_by_me
 
           attribute :canEditByUser, &:can_delete_by_me
-
-
         end
       end
     end

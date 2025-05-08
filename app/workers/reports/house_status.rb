@@ -29,8 +29,6 @@ module Reports
       end
 
       ::HouseStatus.insert_all(statuses_to_insert) if statuses_to_insert.any?
-
     end
   end
-
 end

@@ -44,7 +44,7 @@ module Api
       def change_status
         endpoint operation: Api::V1::Users::Accounts::Operations::ChangeStatus,
                  renderer_options: { serializer: Api::V1::Users::Accounts::Serializers::UserAccount },
-                 options: {  found_token:, current_user: }
+                 options: { found_token:, current_user: }
       end
 
       def change_team
@@ -62,7 +62,6 @@ module Api
                  },
                  options: { current_user: }
       end
-
     end
   end
 end

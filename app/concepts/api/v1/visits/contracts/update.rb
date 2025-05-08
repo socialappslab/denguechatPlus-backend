@@ -25,7 +25,7 @@ module Api
             optional(:delete_inspection_ids).array(:integer)
           end
 
-          #TODO: review with Gonza.
+          # TODO: review with Gonza.
           # rule(:house_id) do
           #   house_exists = ::House.find_by(id: value).present?
           #   if !house_exists && !values[:house]
@@ -55,33 +55,31 @@ module Api
 
                   question_number = key.to_s.match(QUESTION_KEY_FORMAT)[1].to_i
 
-                  if values[:id].present? && (visit = Visit.find_by(id: values[:id]))
-                    questionnaire = visit.questionnaire
-                    question =  Question.find_by(id: question_number, questionnaire_id: questionnaire.id)
-                    if question
-                      answer_id = answer_hash[key]
-                      unless question.options.where(id: answer_id).any?
-                        key([:answers, index]).failure(
-                          text: "The answer with id #{answer_id} does not exist by the question number #{question.id}",
-                          predicate: :not_exists?
-                        )
-                      end
-                    else
+                  next unless values[:id].present? && (visit = Visit.find_by(id: values[:id]))
+
+                  questionnaire = visit.questionnaire
+                  question = Question.find_by(id: question_number, questionnaire_id: questionnaire.id)
+                  if question
+                    answer_id = answer_hash[key]
+                    unless question.options.where(id: answer_id).any?
                       key([:answers, index]).failure(
-                        text: "Question with id #{question_number} does not exist for the questionnaire",
+                        text: "The answer with id #{answer_id} does not exist by the question number #{question.id}",
                         predicate: :not_exists?
                       )
                     end
+                  else
+                    key([:answers, index]).failure(
+                      text: "Question with id #{question_number} does not exist for the questionnaire",
+                      predicate: :not_exists?
+                    )
                   end
                 end
               end
             else
-              key.failure(text: "Answers is null or is blank",
+              key.failure(text: 'Answers is null or is blank',
                           predicate: :not_found?)
             end
           end
-
-
         end
       end
     end

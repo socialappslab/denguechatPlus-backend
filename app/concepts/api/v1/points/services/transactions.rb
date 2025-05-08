@@ -5,7 +5,7 @@ module Api
     module Points
       module Services
         class Transactions
-          def self.assign_point(earner: nil, house_id: nil, visit_id: nil )
+          def self.assign_point(earner: nil, house_id: nil, visit_id: nil)
             return unless earner
             return unless house_id
             return unless visit_id
@@ -22,14 +22,15 @@ module Api
             end
 
             unless AppConfigParam.find_by(name: 'tariki_point_same_date', value: 1)
-              existing_points = earner.points.where(house_id:).where("DATE(created_at)::date = ?::date", Date.current)&.first
+              existing_points = earner.points.where(house_id:).where('DATE(created_at)::date = ?::date',
+                                                                     Date.current)&.first
 
               return if existing_points
             end
 
-            self.assign_by_earner(earner: user_account, house_id:, visit_id:)
+            assign_by_earner(earner: user_account, house_id:, visit_id:)
 
-            self.assign_by_earner(earner: team, house_id:, visit_id:)
+            assign_by_earner(earner: team, house_id:, visit_id:)
           end
 
           def self.remove_point(earner: nil, house_id: nil, visit_id: nil)
@@ -40,26 +41,24 @@ module Api
             remove_points(earner:, house_id:, visit_id:)
           end
 
-          private
-
           def self.assign_by_earner(earner:, house_id:, visit_id:)
             point = if earner.class.name == 'UserAccount'
-              AppConfigParam.find_by("name = ?", "green_house_points_user_account")&.value
+                      AppConfigParam.find_by('name = ?', 'green_house_points_user_account')&.value
                     else
-              AppConfigParam.find_by("name = ?", "green_house_points_team")&.value
+                      AppConfigParam.find_by('name = ?', 'green_house_points_team')&.value
                     end
             return unless point
 
-            earner.points.create!(value: point, house_id: , visit_id: )
+            earner.points.create!(value: point, house_id:, visit_id:)
           end
 
           def self.remove_points(earner: nil, house_id: nil, visit_id: nil)
             visit = Visit.find_by(id: visit_id)
 
-            Point.where(pointable_id: visit.user_account_id, pointable_type: 'UserAccount', visit_id:, house_id:).destroy_all
+            Point.where(pointable_id: visit.user_account_id, pointable_type: 'UserAccount', visit_id:,
+                        house_id:).destroy_all
             Point.where(pointable_id: visit.team_id, pointable_type: 'Team', visit_id:, house_id:).destroy_all
           end
-
         end
       end
     end

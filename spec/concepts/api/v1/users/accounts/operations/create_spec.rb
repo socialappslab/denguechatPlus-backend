@@ -66,7 +66,7 @@ RSpec.describe Api::V1::Users::Accounts::Operations::Create do
         }
       end
 
-      include_examples 'has validation errors'
+      it_behaves_like 'has validation errors'
     end
   end
 end

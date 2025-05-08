@@ -27,11 +27,12 @@ module Api
           def create_organization
             begin
               @ctx[:model] = Organization.create(@ctx['contract.default'].values.data)
-              return Success({ ctx: @ctx, type: :created })
-            rescue => error
-              errors = ErrorFormater.new_error(field: :base, msg: error, custom_predicate: :user_account_without_confirmation? )
+              Success({ ctx: @ctx, type: :created })
+            rescue StandardError => error
+              errors = ErrorFormater.new_error(field: :base, msg: error,
+                                               custom_predicate: :user_account_without_confirmation?)
 
-              return Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
+              Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
             end
           end
         end

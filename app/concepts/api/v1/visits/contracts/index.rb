@@ -5,7 +5,6 @@ module Api
     module Visits
       module Contracts
         class Index < Dry::Validation::Contract
-
           def self.kall(...)
             new.call(...)
           end

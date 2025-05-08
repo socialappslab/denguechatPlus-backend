@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "csv"
+require 'csv'
 
 module Api
   module V1
@@ -43,7 +43,7 @@ module Api
               send_data: {
                 data: csv_data,
                 filename: "visita_#{visit.id}.csv",
-                type: "text/csv"
+                type: 'text/csv'
               },
               type: :send_data
             )
@@ -53,51 +53,51 @@ module Api
 
           def visit_headers
             [
-              "codigo de referencia",
-              "fecha_visita",
-              "brigadista",
-              "brigada",
-              "permiso para visitar la casa",
-              "notas"
+              'codigo de referencia',
+              'fecha_visita',
+              'brigadista',
+              'brigada',
+              'permiso para visitar la casa',
+              'notas'
             ]
           end
 
           def visit_row(visit)
             [
               visit.house&.reference_code,
-              visit.visited_at.strftime("%d/%m/%Y %H:%M"),
+              visit.visited_at.strftime('%d/%m/%Y %H:%M'),
               visit.user_account&.full_name,
               visit.team&.name,
-              visit.visit_permission ? "Sí" : "No",
+              visit.visit_permission ? 'Sí' : 'No',
               visit.notes
             ]
           end
 
           def inspection_headers
             %w[tipo_de_recipiente
-              hay_agua_en_el_recipiente
-              origen_del_agua
-              otro_origen_del_agua
-              tipo_de_protección
-              otro_tipo_de_protección
-              fue_tratado_por_el_ministerio_de_salud
-              en_reste_recipiente/envase_hay
-              acción_realizada_sobre_el_recipiente
-              otra_acción
-              foto_del_recipiente/envase]
+               hay_agua_en_el_recipiente
+               origen_del_agua
+               otro_origen_del_agua
+               tipo_de_protección
+               otro_tipo_de_protección
+               fue_tratado_por_el_ministerio_de_salud
+               en_reste_recipiente/envase_hay
+               acción_realizada_sobre_el_recipiente
+               otra_acción
+               foto_del_recipiente/envase]
           end
 
           def inspection_row(inspection)
             [
-              inspection.breeding_site_type.name&.gsub(',', '-'),
+              inspection.breeding_site_type.name&.tr(',', '-'),
               inspection.has_water ? 'Sí' : 'No',
-              inspection&.water_source_type&.name&.gsub(',', '-'),
+              inspection&.water_source_type&.name&.tr(',', '-'),
               inspection.water_source_other,
-              inspection.container_protections&.pluck(:name_es)&.join("-"),
+              inspection.container_protections&.pluck(:name_es)&.join('-'),
               inspection.other_protection,
               inspection.was_chemically_treated,
-              inspection.type_contents&.pluck(:name_es)&.join("-"),
-              inspection.elimination_method_type&.name_es&.gsub(',', '-'),
+              inspection.type_contents&.pluck(:name_es)&.join('-'),
+              inspection.elimination_method_type&.name_es&.tr(',', '-'),
               inspection.other_elimination_method,
               inspection.photo.present? ? Rails.application.routes.url_helpers.url_for(inspection.photo) : ''
 
@@ -105,7 +105,7 @@ module Api
           end
 
           def bool(value)
-            value ? "Sí" : "No"
+            value ? 'Sí' : 'No'
           end
         end
       end

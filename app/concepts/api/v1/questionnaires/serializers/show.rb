@@ -9,7 +9,7 @@ module Api
 
           attributes :initial_question, :final_question
 
-          get_image_obj = lambda do |record|
+          get_image_obj = ->(record) do
             return nil unless record&.image&.attached?
 
             {
@@ -17,7 +17,6 @@ module Api
               url: Rails.application.routes.url_helpers.url_for(record.image)
             }
           end
-
 
           attribute :questions do |questionnaire|
             next if questionnaire.questions.nil? || questionnaire.questions.empty?
@@ -31,7 +30,7 @@ module Api
                   description: question.send("description_#{questionnaire.language}"),
                   notes: question.send("notes_#{questionnaire.language}"),
                   next: question.next,
-                  resourceName: question.resource_name.blank? ? nil : question.resource_name,
+                  resourceName: question.resource_name.presence,
                   resourceType: question.resource_type,
                   image: get_image_obj.call(question),
                   required: question.required,
@@ -50,19 +49,19 @@ module Api
                       image: get_image_obj.call(option),
                       position: option.position,
                       next: option.next
-                    }.merge(option.type_option == 'boolean' || option.type_option == 'inputNumber' ? {value: option.value} : {})
-                     .merge(question.type_field == 'multiple' ? {disableOtherOptions: option.disable_other_options} : {})
-                     .merge(option.show_in_case == 'house' || option.show_in_case == 'orchard' ? {showInCase: option.show_in_case} : {})
-                     .merge(option.selected_case == 'house' || option.selected_case == 'orchard' ? {selectedCase: option.selected_case} : {})
-                     .merge(question.resource_name == 'breeding_site_type_id' ? {additionalInformation: BreedingSiteType.find_by(id: option.resource_id).serialized_additional_info} : {})
+                    }.merge(%w[boolean inputNumber].include?(option.type_option) ? { value: option.value } : {})
+                      .merge(question.type_field == 'multiple' ? { disableOtherOptions: option.disable_other_options } : {})
+                      .merge(%w[house
+                                orchard].include?(option.show_in_case) ? { showInCase: option.show_in_case } : {})
+                      .merge(%w[house
+                                orchard].include?(option.selected_case) ? { selectedCase: option.selected_case } : {})
+                      .merge(question.resource_name == 'breeding_site_type_id' ? { additionalInformation: BreedingSiteType.find_by(id: option.resource_id).serialized_additional_info } : {})
                   end
                 }
-              rescue => error
+              rescue StandardError => error
                 p error
               end
             end
-
-
           end
         end
       end

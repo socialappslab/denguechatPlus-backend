@@ -58,11 +58,13 @@ module Api
             return relation if @filter.nil? || @filter[:name].blank?
 
             relation.where(
-              'special_places.name_es ilike :query OR special_places.name_en ilike :query OR special_places.name_pt like :query', query: "%#{@filter[:name]}%")
+              'special_places.name_es ilike :query OR special_places.name_en ilike :query OR special_places.name_pt like :query', query: "%#{@filter[:name]}%"
+            )
           end
 
           def sort_clause(relation)
             return relation if @sort.nil? || @sort.blank?
+
             @sort[:field] = 'name_es' if @sort[:field] == 'name'
 
             sort_by_table_columns(relation) if @sort[:field]

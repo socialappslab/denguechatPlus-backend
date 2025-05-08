@@ -30,7 +30,6 @@ module Api
                  },
                  options: { current_user: }
       end
-
     end
   end
 end

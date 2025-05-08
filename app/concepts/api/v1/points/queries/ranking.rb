@@ -37,19 +37,17 @@ module Api
                             user_profiles.first_name || ' ' || user_profiles.last_name AS full_name,
                             COUNT(DISTINCT house_id) as total_sites,
                             SUM(points.value) as total_points")
-
           end
 
           def by_team(relation)
             return relation if @filter.nil? || @filter[:type].blank? || @filter[:type] != 'teams'
 
             relation.joins(:team)
-                    .group("teams.id, teams.name")
+                    .group('teams.id, teams.name')
                     .select("teams.id,
                             teams.name AS name,
                             COUNT(DISTINCT house_id) as total_sites,
                             SUM(points.value) as total_points")
-
           end
 
           def by_date(relation)

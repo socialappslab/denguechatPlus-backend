@@ -5,5 +5,4 @@ class ApiController < ApplicationController
   include Authentication
   include HttpAuthConcern
   include Deserializer
-
 end

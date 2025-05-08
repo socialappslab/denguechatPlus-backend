@@ -14,9 +14,9 @@ module Api
           end
 
           rule(:name) do
-            if values[:name] && !values[:name].blank? && Role.exists?(name: values[:name].downcase)
+            if values[:name] && values[:name].present? && Role.exists?(name: values[:name].downcase)
               key(:name).failure(text: 'Role name is used, please choose other name', predicate: :unique?)
-              end
+            end
           end
 
           rule(:permission_ids).each do

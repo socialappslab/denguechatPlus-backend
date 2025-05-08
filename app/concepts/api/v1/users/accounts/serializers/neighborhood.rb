@@ -9,7 +9,6 @@ module Api
             set_type :neighborhood
 
             attributes :name
-
           end
         end
       end

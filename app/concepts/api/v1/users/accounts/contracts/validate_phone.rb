@@ -16,13 +16,11 @@ module Api
             end
 
             rule(:phone) do
-              if value.to_s.length < 9
-                key.failure(text: "must have at least 9 digits", predicate: :min_size?)
-              end
-              if values[:username] && values[:phone]
-                unless UserAccount.where("LOWER(username) = ? AND phone = ?", values[:username].downcase.gsub(/\s+/, ''), values[:phone]).any?
-                  key(:user_name_and_phone).failure(text: "does not match the user's registered phone number", predicate: :not_found?)
-                end
+              key.failure(text: 'must have at least 9 digits', predicate: :min_size?) if value.to_s.length < 9
+              if values[:username] && values[:phone] && !UserAccount.where('LOWER(username) = ? AND phone = ?',
+                                                                           values[:username].downcase.gsub(/\s+/, ''), values[:phone]).any?
+                key(:user_name_and_phone).failure(text: "does not match the user's registered phone number",
+                                                  predicate: :not_found?)
               end
             end
 
@@ -35,8 +33,6 @@ module Api
             #     key.failure("can only contain letters, numbers, and underscores")
             #   end
             # end
-
-
           end
         end
       end

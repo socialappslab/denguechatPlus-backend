@@ -31,5 +31,4 @@ class City < ApplicationRecord
   has_many :neighborhoods, dependent: :destroy
   has_many :user_profiles
   accepts_nested_attributes_for :neighborhoods, allow_destroy: true
-
 end

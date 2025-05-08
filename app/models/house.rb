@@ -73,11 +73,10 @@ class House < ApplicationRecord
   belongs_to :special_place, optional: true
   belongs_to :team, optional: true
 
-  enum status: { green: "0", yellow: "1", red: "2" }
-  enum assignment_status: { assigned: 1, orphaned: 0}
+  enum :status, { green: '0', yellow: '1', red: '2' }
+  enum :assignment_status, { assigned: 1, orphaned: 0 }
 
   after_commit :update_consecutive_green_status
-
 
   def is_tariki?(status_on_memory = nil)
     status = status_on_memory || status
@@ -93,7 +92,6 @@ class House < ApplicationRecord
     statuses.all? { |status| status == 'green' }
   end
 
-
   def consecutive_green_status_calculation
     limit = AppConfigParam.find_by(name: 'consecutive_green_statuses_for_tariki_house')&.value.to_i
     limit = 4 if limit.zero?
@@ -106,9 +104,8 @@ class House < ApplicationRecord
                  house_statuses.sort_by(&:created_at).last(limit).reverse.map(&:status)
                end
 
-    statuses.take_while { |s| s.downcase == 'verde' || s.downcase == 'green' }.count
+    statuses.take_while { |s| %w[verde green].include?(s.downcase) }.count
   end
-
 
   private
 
@@ -116,13 +113,11 @@ class House < ApplicationRecord
     statuses = HouseStatus.where(house_id: id).order(created_at: :desc).pluck(:status)
     statuses.unshift(status)
     consecutive_count = 0
-    if statuses.first == "green"
+    if statuses.first == 'green'
       statuses.each do |status|
-        if status == "green"
-          consecutive_count += 1
-        else
-          break
-        end
+        break unless status == 'green'
+
+        consecutive_count += 1
       end
     else
       consecutive_count = 0
@@ -131,5 +126,3 @@ class House < ApplicationRecord
     update_column(:consecutive_green_status, consecutive_count)
   end
 end
-
-

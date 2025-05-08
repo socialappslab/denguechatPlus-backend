@@ -22,8 +22,6 @@ module Api
             if values[:member_ids] && !UserProfile.exists?(id: values[:member_ids])
               key(:member_ids).failure(text: 'user_profile does not exist', predicate: :not_found?)
             end
-
-
           end
 
           rule(:organization_id) do
@@ -49,7 +47,6 @@ module Api
               key(:name).failure(text: 'the team name is already in use', predicate: :unique?)
             end
           end
-
         end
       end
     end

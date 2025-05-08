@@ -3,11 +3,10 @@
 module Api
   module V1
     class PostsController < AuthorizedApiController
-
       def index
         endpoint operation: Api::V1::Posts::Operations::Index,
                  renderer_options: { serializer: Api::V1::Posts::Serializers::Index },
-                 options: {request:, current_user: }
+                 options: { request:, current_user: }
       end
 
       def show
@@ -38,7 +37,6 @@ module Api
         endpoint operation: Api::V1::Posts::Operations::Destroy,
                  options: { current_user: }
       end
-
     end
   end
 end
