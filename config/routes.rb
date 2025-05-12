@@ -16,6 +16,8 @@ Rails.application.routes.draw do
         get 'get_by_id/:id', on: :collection, action: :show
         put 'change_team/', on: :collection, action: :change_team
         put 'update_password/', on: :collection, action: :update_password
+        put 'change_house_block', on: :collection, action: :change_house_blocks
+
         member do
           put 'change_status'
         end
