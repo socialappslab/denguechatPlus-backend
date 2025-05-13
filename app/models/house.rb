@@ -106,7 +106,7 @@ class House < ApplicationRecord
                  house_statuses.sort_by(&:created_at).last(limit).reverse.map(&:status)
                end
 
-    statuses.take_while { |s| s.downcase == 'verde' || s.downcase == 'green' }.count
+    statuses.take_while { |s| s&.downcase == 'verde' || s&.downcase == 'green' }.count
   end
 
 
