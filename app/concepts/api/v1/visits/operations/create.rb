@@ -140,7 +140,7 @@ module Api
                     inspections_clean_format_object[:water_source_type_ids] ||=  []
                     inspections_clean_format_object[:water_source_type_ids] << [inspections_clean_format_object[:water_source_type_id]]
                   end
-                  inspections_clean_format_object[:water_source_type_ids].flatten!
+                  inspections_clean_format_object[:water_source_type_ids]&.flatten!
                   inspections_clean_format << inspections_clean_format_object
                 end
               end
