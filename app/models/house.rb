@@ -90,7 +90,7 @@ class House < ApplicationRecord
 
     statuses = HouseStatus.where(house_id: id).order(created_at: :desc).limit(min_consecutive_green).pluck(:status)
 
-    statuses.all? { |status| status == 'green' }
+    statuses.all? { |status| status == 'green' } && statuses.length >= min_consecutive_green
   end
 
 
