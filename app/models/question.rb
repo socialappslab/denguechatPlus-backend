@@ -18,12 +18,15 @@
 #  resource_name    :string
 #  resource_type    :string
 #  type_field       :string
+#  visible          :boolean          default(TRUE), not null
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
+#  parent_id        :integer
 #  questionnaire_id :bigint           not null
 #
 # Indexes
 #
+#  index_questions_on_parent_id         (parent_id)
 #  index_questions_on_questionnaire_id  (questionnaire_id)
 #
 # Foreign Keys
@@ -31,9 +34,14 @@
 #  fk_rails_...  (questionnaire_id => questionnaires.id)
 #
 class Question < ApplicationRecord
+  include Discard::Model
+  default_scope -> { kept }
+
   has_one_attached :image
   belongs_to :questionnaire
   has_many :options, dependent: :destroy
+  belongs_to :parent, class_name: 'Question', optional: true, inverse_of: :children
+  has_many :children, class_name: 'Question', foreign_key: 'parent_id', dependent: :destroy, inverse_of: :parent
 
   alias_attribute :question, :question_text
 end
