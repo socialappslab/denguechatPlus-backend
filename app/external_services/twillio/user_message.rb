@@ -12,6 +12,15 @@ module ExternalServices
       )
     end
 
+    def self.send_login_code(phone, code)
+      client = new.client
+      client.messages.create(
+        from: ENV['TWILIO_PHONE_NUMBER'],
+        to: phone,
+        body: "Su código para login en DengueChatPlus es: #{code} válido por 15 minutos."
+      )
+    end
+
     def self.send_approval_message(phone, username)
       client = new.client
       client.messages.create(

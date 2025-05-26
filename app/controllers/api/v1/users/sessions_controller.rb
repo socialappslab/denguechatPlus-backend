@@ -21,6 +21,13 @@ module Api
                    options: { found_token:, payload:}
         end
 
+        def validate_code
+          endpoint operation: Api::V1::Users::Sessions::Operations::ValidateCode,
+                   renderer_options: {
+                     serializer: Api::V1::Users::Sessions::Serializers::Create
+                   }
+        end
+
         def destroy
           authorize_refresh_request!
           endpoint operation: Api::V1::Users::Sessions::Operations::Destroy,

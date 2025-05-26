@@ -8,7 +8,7 @@ module Api
           include Dry::Transaction
 
           Container = Struct.new(:has_water, :visit_id, :was_chemically_treated, :breeding_site_type_id,
-                                 :elimination_method_type_id, :water_source_type_id, :lid_type, :code_reference, :container_test_result,
+                                 :elimination_method_type_id, :water_source_type_ids, :water_source_type_id, :lid_type, :code_reference, :container_test_result,
                                  :tracking_type_required, :created_by_id, :treated_by_id, :water_source_other, :lid_type_other,
                                  :container_protection_ids, :other_protection, :other_elimination_method, :type_content_id, keyword_init: true)
 
@@ -136,6 +136,11 @@ module Api
                   inspection[:visit_id] = visit_id
                   inspections_clean_format_object = Container.new(inspection.slice(*container_attrs)).to_h
                   inspections_clean_format_object.delete(:container_protection_ids) if inspections_clean_format_object[:container_protection_ids].nil?
+                  if inspections_clean_format_object[:water_source_type_id].present?
+                    inspections_clean_format_object[:water_source_type_ids] ||=  []
+                    inspections_clean_format_object[:water_source_type_ids] << [inspections_clean_format_object[:water_source_type_id]]
+                  end
+                  inspections_clean_format_object[:water_source_type_ids]&.flatten!
                   inspections_clean_format << inspections_clean_format_object
                 end
               end
@@ -143,9 +148,14 @@ module Api
             if inspections_clean_format.any?
               inspections_clean_format.each do |inspection_data|
                 type_content_id = inspection_data.delete(:type_content_id) if inspection_data.key?(:type_content_id)
+                inspection_data.delete(:water_source_type_id) if inspection_data.key?(:water_source_type_id)
                 inspection_data[:color] = analyze_inspection_status(inspection_data, type_content_id)
 
-                inspection = Inspection.create!(inspection_data)
+                begin
+                  inspection = Inspection.create!(inspection_data)
+                rescue => error
+                  p "hola"
+                end
 
                 if type_content_id
                   type_content = TypeContent.find_by(id: type_content_id)
@@ -265,11 +275,12 @@ module Api
               result[:tariki_status] = @house.is_tariki?(result[:status])
               @house.update!(result)
               @ctx[:model].update!(status: colors[result[:status]])
-              elsif inspections_ids.empty? && @params[:visit_permission]
-                @house.update!(infected_containers: 0, potential_containers: 0,
-                               non_infected_containers: 0, last_visit:  @params[:visited_at] || Time.now.utc,
-                               status: 'green')
-                @ctx[:model].update!(status: 'Verde')
+            elsif inspections_ids.empty? && @params[:visit_permission]
+              tariki_status = @house.is_tariki?('green')
+              @house.update!(infected_containers: 0, potential_containers: 0,
+                             non_infected_containers: 0, last_visit:  @params[:visited_at] || Time.now.utc,
+                             status: 'green', tariki_status:)
+              @ctx[:model].update!(status: 'Verde')
             else
               @house.update!(infected_containers: 0, potential_containers: 0,
                              non_infected_containers: 0, last_visit:  @params[:visited_at] || Time.now.utc,

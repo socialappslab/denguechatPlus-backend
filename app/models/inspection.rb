@@ -23,7 +23,6 @@
 #  elimination_method_type_id :bigint
 #  treated_by_id              :bigint           not null
 #  visit_id                   :bigint           not null
-#  water_source_type_id       :bigint
 #
 # Indexes
 #
@@ -33,7 +32,6 @@
 #  index_inspections_on_elimination_method_type_id  (elimination_method_type_id)
 #  index_inspections_on_treated_by_id               (treated_by_id)
 #  index_inspections_on_visit_id                    (visit_id)
-#  index_inspections_on_water_source_type_id        (water_source_type_id)
 #
 # Foreign Keys
 #
@@ -42,19 +40,19 @@
 #  fk_rails_...  (elimination_method_type_id => elimination_method_types.id)
 #  fk_rails_...  (treated_by_id => user_accounts.id)
 #  fk_rails_...  (visit_id => visits.id)
-#  fk_rails_...  (water_source_type_id => water_source_types.id)
 #
 class Inspection < ApplicationRecord
   belongs_to :visit
   belongs_to :breeding_site_type, optional: true
   belongs_to :elimination_method_type, optional: true
-  belongs_to :water_source_type, optional: true
   belongs_to :created_by, class_name: 'UserAccount'
   belongs_to :treated_by, class_name: 'UserAccount'
   has_many :inspection_container_protections
   has_many :container_protections, through: :inspection_container_protections
   has_many :inspection_type_contents, dependent: :nullify
   has_many :type_contents, through: :inspection_type_contents
+  has_many :inspection_water_source_types, dependent: :destroy
+  has_many :water_source_types, through: :inspection_water_source_types
   has_one_attached :photo
 
   has_paper_trail on: [:update]

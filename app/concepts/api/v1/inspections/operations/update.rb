@@ -10,6 +10,7 @@ module Api
           tee :params
           step :validate_schema
           tee :check_if_has_photo
+          tee :change_water_source_id_type_by_water_source_type_ids
           step :update_inspection
           tee :update_house_and_visit_status
           tee :update_house_status_daily
@@ -41,6 +42,13 @@ module Api
             @photo = @params[:photo] unless @params[:photo].blank?
             @params.delete(:delete_photo)
             @params.delete(:photo)
+          end
+
+          def change_water_source_id_type_by_water_source_type_ids
+            if @params.key?(:water_source_type_id)
+              @params[:water_source_type_ids] = [@params[:water_source_type_id]]
+              @params.delete(:water_source_type_id)
+            end
           end
 
           def update_inspection
