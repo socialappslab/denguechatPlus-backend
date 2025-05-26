@@ -84,11 +84,13 @@ class House < ApplicationRecord
     return false unless status == 'green'
 
     min_consecutive_green = AppConfigParam.find_by(name: 'consecutive_green_statuses_for_tariki_house')&.value.to_i
+    take_same_date_visit = AppConfigParam.find_by(name: 'tariki_point_same_date', value: 1)
+    associated_model = take_same_date_visit ? Visit : HouseStatus
     return false if min_consecutive_green <= 0
 
     return true if min_consecutive_green == 1
 
-    statuses = HouseStatus.where(house_id: id).order(created_at: :desc).limit(min_consecutive_green).pluck(:status)
+    statuses = associated_model.where(house_id: id).order(created_at: :desc).limit(min_consecutive_green).pluck(:status)
 
     statuses.all? { |status| status == 'green' } && statuses.length >= min_consecutive_green
   end
@@ -113,7 +115,9 @@ class House < ApplicationRecord
   private
 
   def update_consecutive_green_status
-    statuses = HouseStatus.where(house_id: id).order(created_at: :desc).pluck(:status)
+    take_same_date_visit = AppConfigParam.find_by(name: 'tariki_point_same_date', value: 1)
+    associated_model = take_same_date_visit ? Visit : HouseStatus
+    statuses = associated_model.where(house_id: id).order(created_at: :desc).pluck(:status)
     statuses.unshift(status)
     consecutive_count = 0
     if statuses.first == "green"
