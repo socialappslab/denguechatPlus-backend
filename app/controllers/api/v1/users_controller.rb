@@ -50,7 +50,7 @@ module Api
       def change_house_blocks
         endpoint operation: Api::V1::Users::Accounts::Operations::ChangeHouseBlock,
                  renderer_options: { serializer: Api::V1::Users::Accounts::Serializers::Show },
-                 options: {  found_token:, current_user: }
+                 options: { found_token:, current_user: }
       end
 
       def change_team

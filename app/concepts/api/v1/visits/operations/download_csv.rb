@@ -27,19 +27,19 @@ module Api
 
           def generate_csv(_input = nil)
             visit = Visit
-                      .includes(
-                        :house,
-                        :user_account,
-                        :team,
-                        inspections: [
-                          :breeding_site_type,
-                          :water_source_types,
-                          :container_protections,
-                          :type_contents,
-                          :elimination_method_type,
-                          :photo_attachment, :photo_blob # para evitar N+1 de ActiveStorage
-                        ]
-                      ).find(@params[:id])
+                    .includes(
+                      :house,
+                      :user_account,
+                      :team,
+                      inspections: [
+                        :breeding_site_type,
+                        :water_source_types,
+                        :container_protections,
+                        :type_contents,
+                        :elimination_method_type,
+                        :photo_attachment, :photo_blob # para evitar N+1 de ActiveStorage
+                      ]
+                    ).find(@params[:id])
 
             csv_data = CSV.generate(headers: true) do |csv|
               csv << visit_headers
@@ -104,7 +104,7 @@ module Api
             [
               inspection.breeding_site_type.name&.tr(',', '-'),
               inspection.has_water ? 'Sí' : 'No',
-              inspection&.water_source_types&.name&.gsub(',', '-'),
+              inspection&.water_source_types&.name&.tr(',', '-'),
               inspection.water_source_other,
               inspection.container_protections&.pluck(:name_es)&.join('-'),
               inspection.other_protection,

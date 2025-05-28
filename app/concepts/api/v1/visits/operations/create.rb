@@ -124,27 +124,32 @@ module Api
             @photo_ids = []
             visit_id = @ctx[:model].id
             @inspections&.each do |inspection|
-              @photo_ids << {code_reference: inspection[:code_reference], photo_id: inspection[:photo_id]} if inspection[:photo_id].present?
-              if inspection[:quantity_founded]
-                inspection[:quantity_founded] = inspection[:quantity_founded].to_i
-                inspection[:quantity_founded].times do
-                  inspection[:visit_id] = visit_id
-                  inspections_clean_format_object = Container.new(inspection.slice(*container_attrs)).to_h
-                  inspections_clean_format_object.delete(:container_protection_ids) if inspections_clean_format_object[:container_protection_ids].nil?
-                  if inspections_clean_format_object[:water_source_type_id].present?
-                    inspections_clean_format_object[:water_source_type_ids] ||=  []
-                    inspections_clean_format_object[:water_source_type_ids] << [inspections_clean_format_object[:water_source_type_id]]
-                  end
-                  inspections_clean_format_object[:water_source_type_ids]&.flatten!
-                  inspections_clean_format << inspections_clean_format_object
+              if inspection[:photo_id].present?
+                @photo_ids << { code_reference: inspection[:code_reference],
+                                photo_id: inspection[:photo_id] }
+              end
+              next unless inspection[:quantity_founded]
+
+              inspection[:quantity_founded] = inspection[:quantity_founded].to_i
+              inspection[:quantity_founded].times do
+                inspection[:visit_id] = visit_id
+                inspections_clean_format_object = Container.new(inspection.slice(*container_attrs)).to_h
+                if inspections_clean_format_object[:container_protection_ids].nil?
+                  inspections_clean_format_object.delete(:container_protection_ids)
                 end
                 if inspections_clean_format_object[:water_source_type_id].present?
                   inspections_clean_format_object[:water_source_type_ids] ||= []
                   inspections_clean_format_object[:water_source_type_ids] << [inspections_clean_format_object[:water_source_type_id]]
                 end
-                inspections_clean_format_object[:water_source_type_ids].flatten!
+                inspections_clean_format_object[:water_source_type_ids]&.flatten!
                 inspections_clean_format << inspections_clean_format_object
               end
+              if inspections_clean_format_object[:water_source_type_id].present?
+                inspections_clean_format_object[:water_source_type_ids] ||= []
+                inspections_clean_format_object[:water_source_type_ids] << [inspections_clean_format_object[:water_source_type_id]]
+              end
+              inspections_clean_format_object[:water_source_type_ids].flatten!
+              inspections_clean_format << inspections_clean_format_object
             end
             if inspections_clean_format.any?
               inspections_clean_format.each do |inspection_data|

@@ -92,7 +92,9 @@ class House < ApplicationRecord
     statuses = associated_model.where(house_id: id).order(created_at: :desc).limit(min_consecutive_green).pluck(:status)
     statuses&.shift
     statuses&.unshift(status)
-    statuses.all? { |status| status&.downcase == 'green' ||  status&.downcase == 'verde'} && statuses.length >= min_consecutive_green
+    statuses.all? do |status|
+      %w[green verde].include?(status&.downcase)
+    end && statuses.length >= min_consecutive_green
   end
 
   def consecutive_green_status_calculation
@@ -107,7 +109,7 @@ class House < ApplicationRecord
                  house_statuses.sort_by(&:created_at).last(limit).reverse.map(&:status)
                end
 
-    statuses.take_while { |s| s&.downcase == 'verde' || s&.downcase == 'green' }.count
+    statuses.take_while { |s| %w[verde green].include?(s&.downcase) }.count
   end
 
   private
