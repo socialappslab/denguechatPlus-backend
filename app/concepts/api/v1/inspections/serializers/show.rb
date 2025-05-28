@@ -7,8 +7,7 @@ module Api
         class Show < ApplicationSerializer
           set_type :inspection
 
-
-          build_breading_site_type = lambda { |container|
+          build_breading_site_type = ->(container) {
             BreedingSiteType.all.map do |bst|
               {
                 id: bst.id,
@@ -19,7 +18,7 @@ module Api
             end
           }
 
-          build_elimination_method_type = lambda { |container|
+          build_elimination_method_type = ->(container) {
             EliminationMethodType.all.map do |bst|
               res = {
                 id: bst.id,
@@ -28,27 +27,27 @@ module Api
                 selected: bst.id == container.elimination_method_type_id
               }
 
-              if bst.name_es.downcase.in?(['otro', 'other', 'outro'])
+              if bst.name_es.downcase.in?(%w[otro other outro])
                 res[:is_text_area] = true
-                res[:other_resource_name]= 'eliminationMethodTypeOther'
+                res[:other_resource_name] = 'eliminationMethodTypeOther'
               end
               res
             end
           }
 
-          build_type_contents = lambda { |container|
+          build_type_contents = ->(container) {
             TypeContent.all.map do |bst|
               {
                 id: bst.id,
                 name: bst.name_es,
                 value: bst.id,
                 selected: bst.id.in?(container.type_contents.pluck(:id)),
-                is_text_area: bst.name_es.downcase.in?(['otro', 'other', 'outro'])
+                is_text_area: bst.name_es.downcase.in?(%w[otro other outro])
               }
             end
           }
 
-          build_water_source_type = lambda { |container|
+          build_water_source_type = ->(container) {
             water_source_types = container.water_source_type_ids
             WaterSourceType.all.map do |wst|
               res = {
@@ -57,15 +56,15 @@ module Api
                 value: wst.id,
                 selected: wst.id.in?(water_source_types)
               }
-              if wst.name.downcase.in?(['otro', 'other', 'outro'])
+              if wst.name.downcase.in?(%w[otro other outro])
                 res[:is_text_area] = true
-                res[:other_resource_name]= 'waterSourceOther'
+                res[:other_resource_name] = 'waterSourceOther'
               end
               res
             end
           }
 
-          build_container_protection = lambda { |container|
+          build_container_protection = ->(container) {
             container_protections = container.container_protection_ids
             ContainerProtection.all.map do |bst|
               res = {
@@ -74,15 +73,15 @@ module Api
                 value: bst.id,
                 selected: bst.id.in?(container_protections)
               }
-              if bst.name_es.downcase.in?(['otro', 'other', 'outro'])
+              if bst.name_es.downcase.in?(%w[otro other outro])
                 res[:is_text_area] = true
-                res[:other_resource_name]= 'containerProtectionOther'
+                res[:other_resource_name] = 'containerProtectionOther'
               end
               res
             end
           }
 
-          build_was_chemically_treated = lambda { |container|
+          build_was_chemically_treated = ->(container) {
             [
               {
                 name: 'Sí, fue tratado (revise el registro detrás de la puerta)',
@@ -102,7 +101,7 @@ module Api
             ]
           }
 
-          get_image_obj = lambda do |record|
+          get_image_obj = ->(record) do
             return '' unless record&.photo&.attached?
 
             {
@@ -131,7 +130,6 @@ module Api
 
           attribute :water_source_type do |container|
             build_water_source_type.call(container)
-
           end
 
           attribute :water_source_other, &:water_source_other

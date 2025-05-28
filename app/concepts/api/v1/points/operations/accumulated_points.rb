@@ -32,10 +32,10 @@ module Api
           end
 
           def list
-            @ctx[:data] = Api::V1::Points::Queries::AccumulatedPoints.call(@ctx['contract.default']['filter'], @ctx[:sort])[0]
+            @ctx[:data] =
+              Api::V1::Points::Queries::AccumulatedPoints.call(@ctx['contract.default']['filter'], @ctx[:sort])[0]
             Success({ ctx: @ctx, type: :success })
           end
-
         end
       end
     end

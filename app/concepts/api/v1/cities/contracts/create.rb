@@ -20,7 +20,6 @@ module Api
             end
           end
 
-
           rule(:neighborhoods_attributes).each do
             if value[:id] && Neighborhood.exists?(id: values[:id], discarded_at: nil)
               key.failure('Neighborhood already exists in this city')
@@ -30,7 +29,7 @@ module Api
           rule(:state_id) do
             unless State.exists?(id: value)
               key(:state_id).failure(text: "The state with id: #{value} does not exist",
-                                 predicate: :not_exists?)
+                                     predicate: :not_exists?)
             end
           end
         end

@@ -43,7 +43,7 @@ RSpec.describe Api::V1::Users::Sessions::Operations::Create do
       end
     end
 
-    include_examples 'creates tokens for login'
+    it_behaves_like 'creates tokens for login'
 
     context 'when user account was not confirmed' do
       let(:user_account) do
@@ -52,7 +52,7 @@ RSpec.describe Api::V1::Users::Sessions::Operations::Create do
                :without_confirmation)
       end
 
-      include_examples 'creates tokens for login'
+      it_behaves_like 'creates tokens for login'
 
       it 'confirmed_at have to be nil' do
         expect(user_account).not_to be_confirmed_at
@@ -105,7 +105,7 @@ RSpec.describe Api::V1::Users::Sessions::Operations::Create do
         }
       end
 
-      include_examples 'has validation errors'
+      it_behaves_like 'has validation errors'
     end
 
     context 'when password is invalid' do
@@ -117,7 +117,7 @@ RSpec.describe Api::V1::Users::Sessions::Operations::Create do
       end
       let(:errors) { { base: ['Wrong credentials'] } }
 
-      include_examples 'has validation errors'
+      it_behaves_like 'has validation errors'
     end
 
     context 'when user does not exist' do
@@ -129,7 +129,7 @@ RSpec.describe Api::V1::Users::Sessions::Operations::Create do
       end
       let(:errors) { { base: ['Wrong credentials'] } }
 
-      include_examples 'has validation errors'
+      it_behaves_like 'has validation errors'
     end
   end
 end

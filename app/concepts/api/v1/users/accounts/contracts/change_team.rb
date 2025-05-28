@@ -28,7 +28,6 @@ module Api
                                       predicate: :not_exists?)
               end
             end
-
           end
         end
       end

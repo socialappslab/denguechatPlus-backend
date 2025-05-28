@@ -1,8 +1,8 @@
 module Gis
   class Neighborhood
     class << self
-      def sync(current_neighborhood_keys)
-        res = {update: 0, create: 0}
+      def sync(_current_neighborhood_keys)
+        res = { update: 0, create: 0 }
         external_data = Gis::Connection.query(query_builder)
         external_data.each do |obj|
           sector_instance = ::Neighborhood.find_or_initialize_by(external_id: obj[:external_id])
@@ -14,7 +14,6 @@ module Gis
       end
 
       private
-
 
       def query_builder
         <<~SQL
@@ -32,7 +31,6 @@ module Gis
           and location."block_number" is not null
         SQL
       end
-
     end
   end
 end

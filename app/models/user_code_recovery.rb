@@ -31,7 +31,6 @@ class UserCodeRecovery < ApplicationRecord
     ENCRYPTOR.decrypt_and_verify(code) if code.present?
   end
 
-
   private
 
   def set_expired_at

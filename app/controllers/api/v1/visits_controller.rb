@@ -21,14 +21,12 @@ module Api
         endpoint operation: Api::V1::Visits::Operations::Create,
                  renderer_options: { serializer: Api::V1::Visits::Serializers::Show },
                  options: { current_user: }
-
       end
 
       def update
         endpoint operation: Api::V1::Visits::Operations::Update,
                  renderer_options: { serializer: Api::V1::Visits::Serializers::ShowAttrsByUpdate },
                  options: { current_user: }
-
       end
 
       def inspections

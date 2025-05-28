@@ -48,7 +48,7 @@ RSpec.describe 'Api::V1::Users::Sessions', :dox do
           }
         end
 
-        include_examples 'renders unauthenticated error'
+        it_behaves_like 'renders unauthenticated error'
       end
     end
   end
@@ -84,7 +84,7 @@ RSpec.describe 'Api::V1::Users::Sessions', :dox do
       context 'when wrong token' do
         let(:headers) { { 'X-Refresh-Token': 'wrong_token' } }
 
-        include_examples 'renders unauthenticated error'
+        it_behaves_like 'renders unauthenticated error'
       end
 
       context 'when refresh token not found' do

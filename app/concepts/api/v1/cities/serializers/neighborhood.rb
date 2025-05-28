@@ -7,8 +7,7 @@ module Api
         class Neighborhood < ApplicationSerializer
           set_type :neighborhood
 
-          attributes  :name
-
+          attributes :name
         end
       end
     end

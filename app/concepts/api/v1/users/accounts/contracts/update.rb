@@ -47,7 +47,8 @@ module Api
             end
 
             rule(:user_profile_attributes) do
-              if value && value[:email].present? && UserProfile.where.not(id: values[:id]).exists?(['LOWER(email) = ?', value[:email].downcase])
+              if value && value[:email].present? && UserProfile.where.not(id: values[:id]).exists?(['LOWER(email) = ?',
+                                                                                                    value[:email].downcase])
                 key(:email).failure(text: :user_email_unique?, predicate: :user_email_unique?)
               end
 
@@ -64,7 +65,8 @@ module Api
               end
 
               if value && value[:team_id] && !Team.kept.exists?(id: value[:team_id])
-                key(:team_id).failure(text: "The brigade with id #{value[:team_id]} not exists", predicate: :not_exists?)
+                key(:team_id).failure(text: "The brigade with id #{value[:team_id]} not exists",
+                                      predicate: :not_exists?)
               end
 
               if value && value[:house_block_id] && !HouseBlock.exists?(id: value[:house_block_id])
@@ -75,11 +77,10 @@ module Api
 
                 if value[:team_id] && value[:house_block_id] && HouseBlock.find_by(id: value[:house_block_id])&.team_id != value[:team_id]
                   key(:house_team_id).failure(
-                    text: "The HouseBlock with id #{values[:house_block_id]} is not belongs to the new team", predicate: :is_new?)
+                    text: "The HouseBlock with id #{values[:house_block_id]} is not belongs to the new team", predicate: :is_new?
+                  )
                 end
               end
-
-
             end
 
             rule(:phone) do
@@ -96,8 +97,11 @@ module Api
               if result.success?
                 if !values[:username].nil? && values[:username].blank?
                   key(:username).failure(text: "Username can't be null", predicate: :credentials_wrong?)
-                elsif values[:username] &&  UserAccount.where.not(user_profile_id: values[:id]).where("LOWER(username) = ?", values[:username].downcase.gsub(/\s+/, '')).any?
-                  key(:username).failure(text: 'The username already used by other user', predicate: :user_username_unique?)
+                elsif values[:username] && UserAccount.where.not(user_profile_id: values[:id]).where(
+                  'LOWER(username) = ?', values[:username].downcase.gsub(/\s+/, '')
+                ).any?
+                  key(:username).failure(text: 'The username already used by other user',
+                                         predicate: :user_username_unique?)
                 end
               end
             end

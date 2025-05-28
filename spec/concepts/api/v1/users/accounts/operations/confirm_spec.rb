@@ -57,7 +57,7 @@ RSpec.describe Api::V1::Users::Accounts::Operations::Confirm do
       let(:params) { {} }
       let(:errors) { { token: ['must be filled'] } }
 
-      include_examples 'has validation errors'
+      it_behaves_like 'has validation errors'
     end
 
     context 'when token contains wrong user_id' do

@@ -17,7 +17,6 @@ module Api
           tee :set_language
           tee :assign_points
 
-
           def params(input)
             @ctx = {}
             @params = to_snake_case(input[:params])
@@ -42,24 +41,22 @@ module Api
                                            []
                                          else
                                            @params.delete(:delete_inspection_ids)
-            end
+                                         end
           end
 
           def update_visit
             hosts = @params.delete(:host)
-            if hosts
-              @params[:host] = hosts.join(', ')
-            end
+            @params[:host] = hosts.join(', ') if hosts
             begin
               visit = Visit.find_by(id: @params[:id])
               visit.update!(@params)
               @ctx[:model] = visit.reload
               Success({ ctx: @ctx, type: :created })
-            rescue => error
+            rescue StandardError => error
               errors = ErrorFormater.new_error(field: :base, msg: error,
                                                custom_predicate: :user_account_without_confirmation?)
 
-              return Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
+              Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
             end
           end
 
@@ -70,26 +67,31 @@ module Api
           def update_house_status
             @house = @ctx[:model].house
             colors = {
-              'red'=> "Rojo",
-              'yellow'=> "Amarillo",
-              'green' => "Verde"
+              'red' => 'Rojo',
+              'yellow' => 'Amarillo',
+              'green' => 'Verde'
             }
             inspections_ids = @ctx[:model].inspections.pluck(:id)
-            unless inspections_ids.empty?
+            if inspections_ids.empty?
+              @house.update!(infected_containers: 0, potential_containers: 0,
+                             non_infected_containers: 0, last_visit:  @params[:visited_at] || Time.now.utc,
+                             status: 'green')
+              @ctx[:model].update!(status: 'Verde')
+            else
               counts = @ctx[:model].inspections.group(:color).count
               result = {
-                infected_containers: counts["red"] || 0,
-                potential_containers: counts["yellow"] || 0,
-                non_infected_containers: counts["green"] || 0,
+                infected_containers: counts['red'] || 0,
+                potential_containers: counts['yellow'] || 0,
+                non_infected_containers: counts['green'] || 0,
                 last_visit: @params[:visited_at] || Time.now.utc,
-                status: if (counts["red"] || 0) > 0
-                          "red"
-                        elsif (counts["yellow"] || 0) > 0
-                          "yellow"
-                        elsif (counts["green"] || 0) > 0
-                          "green"
+                status: if (counts['red'] || 0) > 0
+                          'red'
+                        elsif (counts['yellow'] || 0) > 0
+                          'yellow'
+                        elsif (counts['green'] || 0) > 0
+                          'green'
                         else
-                          "green"
+                          'green'
                         end
               }
               result[:tariki_status] = @house.is_tariki?(result[:status])
@@ -115,7 +117,6 @@ module Api
             house_status.save
           end
 
-
           private
 
           def set_language
@@ -123,15 +124,21 @@ module Api
             @ctx[:model].define_singleton_method(:language=) { |value| @language = value }
             @ctx[:model].language = if @params.key?(:language) && @params[:language].in?(%w[en es pt])
                                       @params[:language]
-                                   else
-                                     'es'
-                                   end
+                                    else
+                                      'es'
+                                    end
             Success({ ctx: @ctx, type: :success })
           end
 
           def assign_points
-            Api::V1::Points::Services::Transactions.assign_point(earner: @ctx[:model].user_account, house_id: @house.id, visit_id: @ctx[:model].id) if @house.tariki_status
-            Api::V1::Points::Services::Transactions.remove_point(earner:@ctx[:model].user_account, house_id: @house.id, visit_id: @ctx[:model].id) unless @house.tariki_status
+            if @house.tariki_status
+              Api::V1::Points::Services::Transactions.assign_point(earner: @ctx[:model].user_account,
+                                                                   house_id: @house.id, visit_id: @ctx[:model].id)
+            end
+            return if @house.tariki_status
+
+            Api::V1::Points::Services::Transactions.remove_point(earner: @ctx[:model].user_account, house_id: @house.id,
+                                                                 visit_id: @ctx[:model].id)
           end
         end
       end

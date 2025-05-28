@@ -1,8 +1,6 @@
 class AddWeightedPointToOptions < ActiveRecord::Migration[7.1]
   def up
-    unless column_exists?(:options, :weighted_points)
-      add_column :options, :weighted_points, :integer
-    end
+    add_column :options, :weighted_points, :integer unless column_exists?(:options, :weighted_points)
 
     Option.reset_column_information
     option_points = {
@@ -24,7 +22,6 @@ class AddWeightedPointToOptions < ActiveRecord::Migration[7.1]
 
       option&.update!(weighted_points: points)
     end
-
   end
 
   def down

@@ -1,9 +1,7 @@
 class AddStatusToHouseStatus < ActiveRecord::Migration[7.1]
   def change
     # Agregar la columna `status` si no existe
-    unless column_exists?(:house_statuses, :status)
-      add_column :house_statuses, :status, :string
-    end
+    add_column :house_statuses, :status, :string unless column_exists?(:house_statuses, :status)
 
     HouseStatus.reset_column_information
     HouseStatus.find_each do |house_status|

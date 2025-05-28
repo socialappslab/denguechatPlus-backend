@@ -10,7 +10,7 @@ module Api
           attributes :initial_question, :final_question
 
           attribute :questions do |questionnaire|
-            get_image_obj = lambda do |record|
+            get_image_obj = ->(record) do
               return nil unless record&.image&.attached?
 
               {
@@ -19,7 +19,7 @@ module Api
               }
             end
 
-            serialize_question = lambda do |question|
+            serialize_question = ->(question) do
               {
                 id: question.id,
                 question: question.send("question_text_#{questionnaire.language}"),
@@ -53,7 +53,8 @@ module Api
                     hash[:selectedCase] = option.selected_case if %w[house orchard].include?(option.selected_case)
 
                     if question.resource_name == 'breeding_site_type_id'
-                      hash[:additionalInformation] = BreedingSiteType.find_by(id: option.resource_id)&.serialized_additional_info
+                      hash[:additionalInformation] =
+                        BreedingSiteType.find_by(id: option.resource_id)&.serialized_additional_info
                     end
                   end
                 end,

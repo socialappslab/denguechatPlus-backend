@@ -30,11 +30,12 @@ module Api
               optional(:sort).maybe(:string)
               optional(:order).maybe(:string, included_in?: %w[asc desc])
             end
-            rule(:filter) do |status|
+            rule(:filter) do |_status|
               if value && value[:status] && !value[:status].empty?
                 available_status = Constants::User::STATUS
                 if (value[:status] & available_status).empty?
-                  key(:status).failure(text: "you need choose some of them: #{available_status.join(', ')}",  predicate: :includes?)
+                  key(:status).failure(text: "you need choose some of them: #{available_status.join(', ')}",
+                                       predicate: :includes?)
                 end
               end
             end

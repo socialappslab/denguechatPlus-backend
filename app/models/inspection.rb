@@ -58,14 +58,15 @@ class Inspection < ApplicationRecord
   has_paper_trail on: [:update]
 
   def potential?
-    container_protection.present? && ['Tapa no hermética', 'Si, tiene tapa pero no está bien cerrado', 'Techo', 'Otro', 'No tiene'].include?(container_protection.name_es)
+    container_protection.present? && ['Tapa no hermética', 'Si, tiene tapa pero no está bien cerrado', 'Techo', 'Otro',
+                                      'No tiene'].include?(container_protection.name_es)
   end
 
   def infected?
     type_contents.exists?(name_es: %w[Larva Pupas Huevos])
   end
 
-  def status_i18n( selected_value= 'verde', lang= 'es')
+  def status_i18n(selected_value = 'verde', lang = 'es')
     case lang
     when 'es'
       [
@@ -83,7 +84,7 @@ class Inspection < ApplicationRecord
           name: 'rojo',
           value: 'red',
           selected: selected_value == 'red'
-        },
+        }
       ]
     when 'en'
       [
@@ -101,7 +102,7 @@ class Inspection < ApplicationRecord
           name: 'red',
           value: 'red',
           selected: selected_value == 'red'
-        },
+        }
       ]
     when 'pt'
       [
@@ -119,7 +120,7 @@ class Inspection < ApplicationRecord
           name: 'vermelho',
           value: 'red',
           selected: selected_value == 'red'
-        },
+        }
       ]
     else
       [
@@ -137,11 +138,8 @@ class Inspection < ApplicationRecord
           name: 'rojo',
           value: 'red',
           selected: selected_value == 'red'
-        },
+        }
       ]
     end
   end
-
-
-
 end
