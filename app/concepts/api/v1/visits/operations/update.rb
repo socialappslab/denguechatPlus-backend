@@ -97,6 +97,12 @@ module Api
               result[:tariki_status] = @house.is_tariki?(result[:status])
               @house.update!(result)
               @ctx[:model].update!(status: colors[result[:status]])
+            else
+              tariki_status = @house.is_tariki?('green')
+              @house.update!(infected_containers: 0, potential_containers: 0,
+                             non_infected_containers: 0, last_visit:  @params[:visited_at] || Time.now.utc,
+                             status: 'green', tariki_status:)
+              @ctx[:model].update!(status: 'Verde')
             end
           end
 

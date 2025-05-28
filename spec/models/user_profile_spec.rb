@@ -4,19 +4,34 @@
 #
 # Table name: user_profiles
 #
-#  id           :bigint           not null, primary key
-#  city         :string
-#  country      :string
-#  first_name   :string
-#  gender       :integer
-#  language     :string
-#  last_name    :string
-#  phone_number :string
-#  points       :integer
-#  slug         :string
-#  timezone     :string
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
+#  id              :bigint           not null, primary key
+#  email           :string
+#  first_name      :string
+#  gender          :integer
+#  language        :string
+#  last_name       :string
+#  points          :integer
+#  timezone        :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  city_id         :bigint
+#  neighborhood_id :bigint
+#  organization_id :bigint
+#  team_id         :bigint
+#
+# Indexes
+#
+#  index_user_profiles_on_city_id          (city_id)
+#  index_user_profiles_on_neighborhood_id  (neighborhood_id)
+#  index_user_profiles_on_organization_id  (organization_id)
+#  index_user_profiles_on_team_id          (team_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (city_id => cities.id)
+#  fk_rails_...  (neighborhood_id => neighborhoods.id)
+#  fk_rails_...  (organization_id => organizations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 RSpec.describe UserProfile do
   context 'fields' do
