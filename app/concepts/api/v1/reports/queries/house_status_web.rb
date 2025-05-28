@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+
 module Api
   module V1
     module Reports
@@ -10,13 +11,14 @@ module Api
           StatusResults = Struct.new(:house_quantity, :visit_quantity, :site_variation_percentage, :visit_variation_percentage,
                                      :green_quantity, :orange_quantity, :red_quantity)
 
+
           def initialize(filter, current_user)
             @model = HouseStatus
             filter ||= {}
             @current_user = current_user
-            @wedge_id = filter[:wedge_id]
+            @wedge_id =filter[:wedge_id]
             @team_id = filter[:team_id]
-            @neighborhood_id = filter[:neighborhood_id]
+            @neighborhood_id =filter[:neighborhood_id]
             @filter = filter
           end
 
@@ -34,8 +36,8 @@ module Api
 
           def fetch_data
             query = <<~SQL.squish
-              SELECT#{' '}
-                CASE#{' '}
+              SELECT 
+                CASE 
                   WHEN status = '0' THEN 'greenQuantity'
                   WHEN status = '1' THEN 'yellowQuantity'
                   WHEN status = '2' THEN 'redQuantity'
@@ -61,6 +63,7 @@ module Api
               result_hash[:redQuantity] || nil
             )
           end
+
         end
       end
     end

@@ -31,6 +31,7 @@ module Api
             @ctx[:data] = Api::V1::GetAddress::Decorators::AddressDecorator.call(result)
             Success({ ctx: @ctx, type: :success })
           end
+
         end
       end
     end

@@ -8,6 +8,7 @@ module Api
           set_type :user_account
 
           attributes :id, :first_name, :last_name
+
         end
       end
     end

@@ -25,7 +25,7 @@ module Api
             is_valid = @ctx['contract.default'].success?
             return Success({ ctx: @ctx, type: :success }) if is_valid
 
-            Failure({ ctx: @ctx, type: :invalid }) unless is_valid
+            return Failure({ ctx: @ctx, type: :invalid }) unless is_valid
           end
 
           def retrieve_post
@@ -33,21 +33,16 @@ module Api
           end
 
           def authorized_user?
-            if @current_user.has_role?(:admin) || @current_user.has_role?(:team_leader)
-              return Success({ ctx: @ctx,
-                               type: :success })
-            end
+            return Success({ ctx: @ctx, type: :success }) if @current_user.has_role?(:admin) || @current_user.has_role?(:team_leader)
             return Success({ ctx: @ctx, type: :success }) if @ctx[:model].user_account_id == @current_user.id
-
-            Failure({ ctx: @ctx, type: :invalid,
-                      errors: ErrorFormater.new_error(field: :base, msg: 'Only an admin/team leader or the owner can update this post', custom_predicate: :without_permissions) })
+            Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'Only an admin/team leader or the owner can update this post', custom_predicate: :without_permissions )})
           end
 
           def delete_post
             begin
               @ctx[:model].discard!
               Success({ ctx: @ctx, type: :success })
-            rescue StandardError
+            rescue => error
               Failure({ ctx: @ctx, type: :invalid })
             end
           end
@@ -57,7 +52,7 @@ module Api
           def is_team_leader
             return false unless @current_user.has_role?(:team_leader)
 
-            @ctx[:model].team_id.in? @current_user.teams_under_leadership
+           @ctx[:model].team_id.in? @current_user.teams_under_leadership
           end
         end
       end

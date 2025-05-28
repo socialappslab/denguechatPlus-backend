@@ -6,6 +6,7 @@ module Api
       module Sessions
         module Contracts
           class Create < Dry::Validation::Contract
+
             def self.kall(...)
               new.call(...)
             end
@@ -17,23 +18,24 @@ module Api
               required(:type).filled(:string, included_in?: %w[phone username sms])
             end
 
-            rule(:phone) do |_type, _phone|
+            rule(:phone) do |type, phone|
               if (values[:type].eql?('phone') || values[:type].eql?('sms')) && values[:phone].nil?
                 key(:type).failure(text: :user_credential_requirement, predicate: :filled?)
               end
             end
 
-            rule(:password) do |_type, _password|
+            rule(:password) do |type, password|
               if (values[:type].eql?('phone') || values[:type].eql?('username')) && values[:password].nil?
                 key(:type).failure(text: :user_credential_requirement, predicate: :filled?)
               end
             end
 
-            rule(:username) do |_type, _username|
+            rule( :username) do |type, username|
               if values[:type].eql?('username') && values[:username].nil?
                 key(:username).failure(text: :user_credential_requirement?, predicate: :filled?)
               end
             end
+
           end
         end
       end

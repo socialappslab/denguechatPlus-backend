@@ -13,4 +13,5 @@
 #  user_code_recovery_id :string
 #
 class UserToken < ApplicationRecord
+
 end

@@ -19,7 +19,7 @@ module Services
       [cursor, items[0..pagy.items - 1]]
     end
 
-    private
+  private
 
     attr_reader :collection, :options
 
@@ -31,8 +31,8 @@ module Services
       @cursor ||= PagyCompositeCursor::Cursor.new(cursor_options)
     end
 
-    # Has more without querying again
-    # https://github.com/Uysim/pagy-cursor/pull/19
+  # Has more without querying again
+  # https://github.com/Uysim/pagy-cursor/pull/19
     def pagy_cursor_has_more?(items, pagy)
       return false if items.empty?
 

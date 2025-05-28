@@ -36,9 +36,8 @@ module Api
                 @ctx[:model] = HouseBlock.create!(@data)
                 update_houses!(@house_ids)
                 Success({ ctx: @ctx, type: :created })
-              rescue ActiveRecord::RecordInvalid => error
-                errors = ErrorFormater.new_error(field: :base, msg: error.message,
-                                                 custom_predicate: :user_account_without_confirmation?)
+              rescue ActiveRecord::RecordInvalid => e
+                errors = ErrorFormater.new_error(field: :base, msg: e.message, custom_predicate: :user_account_without_confirmation?)
                 Failure({ ctx: @ctx, type: :invalid, errors: errors })
               end
             end
@@ -49,7 +48,7 @@ module Api
           def update_houses!(house_ids)
             House.where(id: house_ids)
                  .where(house_block_id: nil)
-                 .update_all(house_block_id: @ctx[:model].id, assignment_status: :assigned)
+                 .update_all(house_block_id:  @ctx[:model].id, assignment_status: :assigned)
           end
         end
       end

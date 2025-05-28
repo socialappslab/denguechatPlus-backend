@@ -5,6 +5,7 @@ module Api
     module GetLastParams
       module Queries
         class Index
+
           VersionParamStruct = Struct.new(:id, :version, :resource_name, :resource_data)
 
           include Api::V1::Lib::Queries::QueryHelper
@@ -26,17 +27,17 @@ module Api
 
           private
 
-          def create_data_hash(visit_param_versions, ignored_columns = %w[created_at discarded_at])
+          def create_data_hash(visit_param_versions, ignored_columns= %w[created_at discarded_at])
             visit_param_versions += [OpenStruct.new(
               id: 1,
               version: 1,
-              name: 'AppConfigParam'
+              name: "AppConfigParam"
             )]
             visit_param_versions.map do |param_version|
               model = get_model(param_version)
               allowed_columns = get_allowed_columns(model, ignored_columns)
               data = get_data(model, allowed_columns)
-              create_version_param(param_version, data)
+                create_version_param(param_version, data)
             end
           end
 
@@ -51,9 +52,9 @@ module Api
           def get_data(model, allowed_columns)
             records = model.kept.select(*allowed_columns)
             records.map do |record|
-              data = allowed_columns.index_with { |column| record.send(column) }
+              data = allowed_columns.map { |column| [column, record.send(column)] }.to_h
               if record.respond_to?(:photo) && record.photo.attached?
-                data['photo_url'] = Rails.application.routes.url_helpers.url_for(record.photo)
+                data["photo_url"] = Rails.application.routes.url_helpers.url_for(record.photo)
               end
               data
             end
@@ -62,6 +63,7 @@ module Api
           def create_version_param(param_version, data)
             VersionParamStruct.new(param_version.id, param_version.version, param_version.name, data)
           end
+
         end
       end
     end

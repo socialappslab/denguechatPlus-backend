@@ -5,4 +5,5 @@ class AddWedgeToHouseBlock < ActiveRecord::Migration[7.1]
     first_wedge_id = Wedge.first&.id
     HouseBlock.update_all(wedge_id: first_wedge_id) if first_wedge_id
   end
+
 end

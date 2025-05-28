@@ -26,11 +26,10 @@ module Api
 
           attribute :wedge do |house_block|
             next if house_block.wedges.blank?
-
             wedges = house_block.wedges.sort_by(&:external_id)
             {
-              id: wedges&.first&.id,
-              name: wedges&.pluck(:name)&.join(', ')
+              id: wedges&.first.id,
+              name: wedges&.pluck(:name)&.join(", ")
             }
           end
 
@@ -44,7 +43,7 @@ module Api
             house_block.houses.map do |house|
               {
                 id: house.id,
-                reference_code: house.reference_code
+                reference_code: house.reference_code,
               }
             end
           end

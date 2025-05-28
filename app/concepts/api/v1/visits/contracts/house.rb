@@ -26,7 +26,7 @@ module Api
             if values[:special_place_id] && !SpecialPlace.exists?(id: value)
               key(:special_place_id_on_house).failure(text: "The Special Place with id: #{value} does not exist",
                                                       predicate: :not_exists?)
-            end
+              end
           end
         end
       end

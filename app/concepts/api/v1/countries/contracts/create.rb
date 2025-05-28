@@ -15,6 +15,7 @@ module Api
               optional(:name).filled(:string)
             end
           end
+
         end
       end
     end

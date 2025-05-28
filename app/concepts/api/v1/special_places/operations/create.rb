@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 #  def self.policy(options, action, authorize: [], model: nil, with: nil)
 module Api
   module V1
@@ -28,12 +27,11 @@ module Api
           def create_special_place
             begin
               @ctx[:model] = SpecialPlace.create(@ctx['contract.default'].values.data)
-              Success({ ctx: @ctx, type: :created })
-            rescue StandardError => error
-              errors = ErrorFormater.new_error(field: :base, msg: error,
-                                               custom_predicate: :user_account_without_confirmation?)
+              return Success({ ctx: @ctx, type: :created })
+            rescue => error
+              errors = ErrorFormater.new_error(field: :base, msg: error, custom_predicate: :user_account_without_confirmation? )
 
-              Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
+              return Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
             end
           end
         end

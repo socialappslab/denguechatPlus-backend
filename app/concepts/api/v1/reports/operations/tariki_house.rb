@@ -26,9 +26,9 @@ module Api
             Failure({ ctx: @ctx, type: :invalid }) unless is_valid
           end
 
+
           def gather_information
-            @ctx[:data] =
-              Api::V1::Reports::Queries::TarikiHouse.call(@ctx['contract.default']['filter'], @current_user)
+            @ctx[:data] =  Api::V1::Reports::Queries::TarikiHouse.call(@ctx['contract.default']['filter'], @current_user)
 
             Success({ ctx: @ctx, type: :success })
           end

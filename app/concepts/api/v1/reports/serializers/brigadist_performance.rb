@@ -8,7 +8,8 @@ module Api
           include Alba::Resource
           transform_keys :lower_camel
 
-          attributes :visit_rank, :green_house_rank
+
+           attributes :visit_rank, :green_house_rank
 
           attribute :visit_rank do |resource|
             resource.visit_rank.map do |visit_rank|
@@ -29,6 +30,7 @@ module Api
               }
             end
           end
+
         end
       end
     end

@@ -5,6 +5,7 @@ module Api
     module Lib
       module Paginates
         class Paginate
+
           def self.kall(...)
             new(...).call
           end
@@ -46,13 +47,11 @@ module Api
 
           def number_per_page
             return 1 unless @ctx['contract.paginate'].success?
-
             @ctx['contract.paginate']['page'][:number]
           end
 
           def size_per_page
             return 20 unless @ctx['contract.paginate'].success?
-
             @ctx['contract.paginate']['page'][:size]
           end
         end

@@ -38,7 +38,7 @@ module Api
 
             relation.where(
               'visibility = ? OR (visibility = ? AND team_id = ?)',
-              'public', 'team', @current_user.teams&.first&.id || 0
+              'public', 'team', (@current_user.teams&.first&.id || 0)
             )
           end
 
@@ -55,7 +55,7 @@ module Api
             return relation if @current_user.nil?
 
             relation.joins(
-              "LEFT OUTER JOIN likes ON likes.likeable_type = 'Post' AND likes.likeable_id = posts.id AND likes.user_account_id = #{@current_user.id}"
+              "LEFT OUTER JOIN likes ON likes.likeable_type = \'Post\' AND likes.likeable_id = posts.id AND likes.user_account_id = #{@current_user.id}"
             ).select("posts.*, CASE WHEN likes.user_account_id = #{@current_user.id} THEN true ELSE false END AS like_by_me")
           end
 
@@ -70,6 +70,7 @@ module Api
                 ELSE false
                 END AS can_delete_by_me")
           end
+
 
           def sector_id_clause(relation)
             return relation if @source == 'mobile'

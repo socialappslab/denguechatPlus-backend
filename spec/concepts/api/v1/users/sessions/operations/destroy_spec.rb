@@ -42,7 +42,7 @@ RSpec.describe Api::V1::Users::Sessions::Operations::Destroy do
     context 'when current user not found' do
       let(:current_user) { nil }
 
-      it_behaves_like 'not refreshes session auth token'
+      include_examples 'not refreshes session auth token'
     end
   end
 end

@@ -1,7 +1,7 @@
 inherit_from:
   - .rubocop-refactor.yml
 
-plugins:
+require:
   - rubocop-rspec
   - rubocop-rails
   - rubocop-performance
@@ -33,12 +33,13 @@ Layout/LineLength:
 
 Lint/AmbiguousBlockAssociation:
   Exclude:
-    - "spec/**/*"
+    - 'spec/**/*'
+
 
 # Naming ----------------------------------------------------------------------
 
 Naming/VariableNumber:
-  EnforcedStyle: "snake_case"
+  EnforcedStyle: 'snake_case'
 
 Naming/RescuedExceptionsVariableName:
   PreferredName: error
@@ -84,6 +85,12 @@ Rails/BulkChangeTable:
 RSpec/AnyInstance:
   Enabled: false
 
+RSpec/FactoryBot/CreateList:
+  Enabled: false
+
+RSpec/Rails/HttpStatus:
+  Enabled: false
+
 RSpec/RepeatedExampleGroupBody:
   Enabled: false
 
@@ -105,7 +112,7 @@ RSpec/StubbedMock:
 
 RSpec/ImplicitSubject:
   Exclude:
-    - "spec/models/**/*"
+    - 'spec/models/**/*'
 
 # RSpec ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -131,4 +138,5 @@ Style/OpenStructUse:
 
 Style/RedundantBegin:
   Enabled: false
+
 # Style ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

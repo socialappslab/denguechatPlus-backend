@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 require 'ostruct'
 
 module Api
@@ -7,6 +6,7 @@ module Api
     module Comments
       module Contracts
         class Destroy < Dry::Validation::Contract
+
           def self.kall(...)
             new.call(...)
           end
@@ -16,8 +16,11 @@ module Api
           end
 
           rule(:id) do
-            key(:id).failure(text: 'Comment not found', predicate: :not_found?) unless Comment.find_by(id: values[:id])
+            unless Comment.find_by(id: values[:id])
+              key(:id).failure(text: 'Comment not found', predicate: :not_found?)
+            end
           end
+
         end
       end
     end

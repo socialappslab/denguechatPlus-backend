@@ -40,7 +40,7 @@ RSpec.describe 'ApiDoc::V1::Users::Account::Api', :dox do
           post "#{base_path}/users/accounts", params:, headers:
         end
 
-        it_behaves_like 'renders errors'
+        include_examples 'renders errors'
       end
 
       context 'when empty params' do
@@ -50,7 +50,7 @@ RSpec.describe 'ApiDoc::V1::Users::Account::Api', :dox do
           post "#{base_path}/users/accounts", params:, headers:
         end
 
-        it_behaves_like 'renders errors'
+        include_examples 'renders errors'
       end
     end
   end

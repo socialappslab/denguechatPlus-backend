@@ -32,8 +32,8 @@ module Api
             return Success({ ctx: @ctx, type: :success }) if @ctx[:model]
 
             errors = ErrorFormater.new_error(field: :base, msg: @ctx['contract.default'].errors,
-                                             custom_predicate: :not_found?)
-            Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
+                                             custom_predicate: :not_found? )
+            Failure({ ctx: @ctx, type: :invalid, errors:  }) unless @ctx[:model]
           end
 
           def update_neighborhoods
@@ -53,11 +53,11 @@ module Api
                   end
                 end
                 @ctx[:model].update!(data)
-                update_neighborhoods if @ctx['contract.default'].values.data[:neighborhoods_attributes]
+                update_neighborhoods  if @ctx['contract.default'].values.data[:neighborhoods_attributes]
                 Success({ ctx: @ctx, type: :success })
-              rescue ActiveRecord::RecordInvalid
+              rescue ActiveRecord::RecordInvalid => invalid
                 errors = ErrorFormater.new_error(field: :base, msg: @ctx[:model].errors.full_messages,
-                                                 custom_predicate: :not_found?)
+                                                 custom_predicate: :not_found? )
                 Failure({ ctx: @ctx, type: :invalid, errors: })
               end
             end
@@ -66,6 +66,7 @@ module Api
           def includes
             @ctx[:include] = ['neighborhoods']
           end
+
         end
       end
     end

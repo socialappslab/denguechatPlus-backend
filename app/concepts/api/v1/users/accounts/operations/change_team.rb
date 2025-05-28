@@ -19,7 +19,6 @@ module Api
               @input = input[:params]
               @current_user = input[:current_user]
             end
-
             def validate_schema
               @ctx['contract.default'] = Api::V1::Users::Accounts::Contracts::ChangeTeam.kall(@params)
               is_valid = @ctx['contract.default'].success?

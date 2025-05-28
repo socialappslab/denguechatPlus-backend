@@ -27,53 +27,50 @@ module Api
           end
 
           rule(:id) do
-            key.failure(text: 'The House does not exist', predicate: :not_exists?) unless House.exists?(id: value)
+            key.failure(text: "The House does not exist", predicate: :not_exists?) unless House.exists?(id: value)
           end
 
           rule(:country_id) do
-            key.failure(text: 'The Country does not exist', predicate: :not_exists?) unless Country.exists?(id: value)
+            key.failure(text: "The Country does not exist", predicate: :not_exists?) unless Country.exists?(id: value)
           end
 
           rule(:state_id, :country_id) do
-            if values[:state_id] && values[:country_id] && !State.exists?(id: values[:state_id],
-                                                                          country_id: values[:country_id])
-              key.failure(text: 'The State does not belong to the Country')
+            if values[:state_id] && values[:country_id]
+              key.failure(text: "The State does not belong to the Country") unless
+                State.exists?(id: values[:state_id], country_id: values[:country_id])
             end
           end
 
           rule(:city_id, :state_id) do
-            if values[:city_id] && values[:state_id] && !City.exists?(id: values[:city_id], state_id: values[:state_id])
-              key.failure(text: 'The City does not belong to the State')
+            if values[:city_id] && values[:state_id]
+              key.failure(text: "The City does not belong to the State") unless
+                City.exists?(id: values[:city_id], state_id: values[:state_id])
             end
           end
 
           rule(:neighborhood_id, :city_id) do
-            if values[:neighborhood_id] && values[:city_id] && !Neighborhood.exists?(id: values[:neighborhood_id],
-                                                                                     city_id: values[:city_id])
-              key.failure(text: 'The Neighborhood does not belong to the City')
+            if values[:neighborhood_id] && values[:city_id]
+              key.failure(text: "The Neighborhood does not belong to the City") unless
+                Neighborhood.exists?(id: values[:neighborhood_id], city_id: values[:city_id])
             end
           end
 
           rule(:wedge_id, :neighborhood_id) do
-            if values[:wedge_id] && values[:neighborhood_id] && !NeighborhoodWedge.exists?(wedge_id: values[:wedge_id],
-                                                                                           neighborhood_id: values[:neighborhood_id])
-              key.failure(text: 'The Wedge does not belong to the Neighborhood')
+            if values[:wedge_id] && values[:neighborhood_id]
+              key.failure(text: "The Wedge does not belong to the Neighborhood") unless
+                NeighborhoodWedge.exists?(wedge_id: values[:wedge_id], neighborhood_id: values[:neighborhood_id])
             end
           end
 
           rule(:house_block_id, :wedge_id) do
-            if values[:house_block_id] && values[:wedge_id] && !HouseBlockWedge.exists?(
-              house_block_id: values[:house_block_id], wedge_id: values[:wedge_id]
-            )
-              key.failure(text: 'The HouseBlock does not belong to the Wedge')
+            if values[:house_block_id] && values[:wedge_id]
+              key.failure(text: "The HouseBlock does not belong to the Wedge") unless
+               HouseBlockWedge.exists?(house_block_id:  values[:house_block_id], wedge_id: values[:wedge_id])
             end
           end
 
           rule(:special_place_id) do
-            if value && !SpecialPlace.exists?(id: value)
-              key.failure(text: 'The SpecialPlace does not exist',
-                          predicate: :not_exists?)
-            end
+            key.failure(text: "The SpecialPlace does not exist", predicate: :not_exists?) if value && !SpecialPlace.exists?(id: value)
           end
         end
       end

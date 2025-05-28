@@ -26,11 +26,12 @@ module Api
             Failure({ ctx: @ctx, type: :invalid }) unless is_valid
           end
 
+
           def gather_information
             @ctx[:data] = if @source == 'visits'
                             Api::V1::Reports::Queries::HouseStatusWeb.call(@ctx['contract.default']['filter'], @current_user)
-                          else
-                            Api::V1::Reports::Queries::HouseStatusMobile.call(@ctx['contract.default']['filter'], @current_user)
+            else
+              Api::V1::Reports::Queries::HouseStatusMobile.call(@ctx['contract.default']['filter'], @current_user)
 
                           end
 

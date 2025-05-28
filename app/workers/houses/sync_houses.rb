@@ -5,10 +5,11 @@ module Houses
     BATCH_SIZE = 1000
 
     def perform
+
       sector_result = Gis::Neighborhood.sync(neighborhoods_data_query.keys)
       neighborhoods_data_updated = neighborhoods_data_query
 
-      wedge_result = Gis::Wedge.sync(neighborhoods_data_updated)
+      wedge_result= Gis::Wedge.sync(neighborhoods_data_updated)
       wedges_data = wedges_data_query
 
       house_block_result = Gis::HouseBlock.sync(house_blocks_data_query.keys, wedges_data, neighborhoods_data_updated)
@@ -29,7 +30,6 @@ module Houses
     end
 
     private
-
     def neighborhoods_data_query
       Neighborhood.where.not(external_id: nil).pluck(:external_id, :id).to_h
     end

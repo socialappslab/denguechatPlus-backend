@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 require 'ostruct'
 
 module Api
@@ -7,6 +6,7 @@ module Api
     module HouseBlocks
       module Contracts
         class Create < Dry::Validation::Contract
+
           def self.kall(...)
             new.call(...)
           end
@@ -20,8 +20,7 @@ module Api
           rule(:house_ids) do
             assigned_houses = House.where(id: value, assignment_status: :assigned)
             if assigned_houses.exists?
-              key.failure(text: "the house/s #{assigned_houses.pluck(:id)} are already assigned",
-                          predicate: :house_already_assigned)
+              key.failure(text: "the house/s #{assigned_houses.pluck(:id)} are already assigned",  predicate: :house_already_assigned)
             end
 
             existing_house_ids = House.where(id: value).pluck(:id)
@@ -33,8 +32,11 @@ module Api
           end
 
           rule(:wedge_id) do
-            key.failure(text: 'wedge not found', predicate: :not_found?) unless Wedge.exists?(value)
+            unless Wedge.exists?(value)
+              key.failure(text: "wedge not found", predicate: :not_found?)
+            end
           end
+
         end
       end
     end

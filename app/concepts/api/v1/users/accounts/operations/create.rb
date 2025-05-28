@@ -18,7 +18,6 @@ module Api
               @ctx = {}
               @params = to_snake_case(input[:params])
             end
-
             def validate_schema
               @ctx['contract.default'] = Api::V1::Users::Accounts::Contracts::Create.kall(@params)
               is_valid = @ctx['contract.default'].success?
@@ -32,8 +31,9 @@ module Api
               return Success({ ctx: @ctx, type: :success }) if @ctx[:user_profile].persisted?
 
               errors = ErrorFormater.new_error(field: :base, msg: @ctx[:user_profile].errors.full_messages.join(' '),
-                                               custom_predicate: :format?)
+                                               custom_predicate: :format? )
               Failure({ ctx: @ctx, type: :invalid, errors: errors })
+
             end
 
             def create_account

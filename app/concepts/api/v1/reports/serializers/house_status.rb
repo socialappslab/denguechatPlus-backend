@@ -8,6 +8,7 @@ module Api
           include Alba::Resource
           transform_keys :lower_camel
 
+
           attributes :visit_quantity
 
           attribute :visit_variation_percentage do |resource|

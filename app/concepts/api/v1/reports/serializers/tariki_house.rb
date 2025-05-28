@@ -8,6 +8,7 @@ module Api
           include Alba::Resource
           transform_keys :lower_camel
 
+
           attributes :total_houses_qty, :tariki_houses_qty
 
           attribute :tariki_percentage do |report|
@@ -23,6 +24,8 @@ module Api
 
             (report.green_container_qty.to_f / report.total_container_qty.to_f) * 100
           end
+
+
         end
       end
     end

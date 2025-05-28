@@ -4,7 +4,7 @@ module Gis
       def sync(neighborhood_ids)
         new_changes = Gis::Connection.query(query_builder_update)
         new_data = Gis::Connection.query(query_builder)
-        { update: update_wedges(new_changes, neighborhood_ids), create: new_wedges(new_data, neighborhood_ids) }
+        {update: update_wedges(new_changes, neighborhood_ids), create: new_wedges(new_data, neighborhood_ids)}
       end
 
       private
@@ -18,14 +18,12 @@ module Gis
                 new_wedge.name = wedge[:name]
                 new_wedge.external_id = wedge[:external_id]
                 new_wedge.source = wedge[:source]
-                new_wedge.neighborhood_ids = wedge[:neighborhood_ids].split(',').map do |ext_id|
-                  neighborhood_ids[ext_id.to_i]
-                end
+                new_wedge.neighborhood_ids = wedge[:neighborhood_ids].split(',').map{|ext_id| neighborhood_ids[ext_id.to_i]}
               end
               qty += 1
             end
-          rescue StandardError => error
-            puts "Error with new_wedges: #{error}"
+          rescue => e
+            puts "Error with new_wedges: #{e}"
           end
         end
         qty
@@ -44,13 +42,12 @@ module Gis
               )
               qty += 1
             end
-          rescue StandardError => error
-            puts "Error with new_wedges: #{error}"
+          rescue => e
+            puts "Error with new_wedges: #{e}"
           end
         end
         qty
       end
-
       def query_builder
         current_wedges = ::Wedge.pluck(:external_id).join(',')
         <<~SQL

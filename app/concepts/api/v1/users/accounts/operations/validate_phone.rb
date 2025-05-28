@@ -19,7 +19,6 @@ module Api
               @ctx = {}
               @params = to_snake_case(input[:params])
             end
-
             def validate_schema
               @ctx['contract.default'] = Api::V1::Users::Accounts::Contracts::ValidatePhone.kall(@params)
               is_valid = @ctx['contract.default'].success?
@@ -29,8 +28,7 @@ module Api
             end
 
             def retrieve_user
-              @user_account = UserAccount.where('LOWER(username) = ? AND phone = ?',
-                                                @params[:username].downcase.gsub(/\s+/, ''), @params[:phone])&.first
+              @user_account = UserAccount.where("LOWER(username) = ? AND phone = ?", @params[:username].downcase.gsub(/\s+/, ''), @params[:phone])&.first
               return Success({ ctx: @user_account, type: :success }) if @user_account
 
               Failure({ ctx: @ctx, type: :invalid })
@@ -38,14 +36,10 @@ module Api
 
             def check_last_code_recovery_sent
               return Success({ ctx: @user_account, type: :success }) if @user_account.last_recovery_code_sent_at.nil?
+              return Success({ ctx: @user_account, type: :success }) if (DateTime.now - 1.minute) > @user_account.last_recovery_code_sent_at
 
-              if (DateTime.now - 1.minute) > @user_account.last_recovery_code_sent_at
-                return Success({ ctx: @user_account,
-                                 type: :success })
-              end
+              Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'You can only request a password recovery code once per minute. Please try again later.', custom_predicate: :code_recovery_in_a_short_time )})
 
-              Failure({ ctx: @ctx, type: :invalid,
-                        errors: ErrorFormater.new_error(field: :base, msg: 'You can only request a password recovery code once per minute. Please try again later.', custom_predicate: :code_recovery_in_a_short_time) })
             end
 
             def generate_code
@@ -55,10 +49,9 @@ module Api
             def send_sms
               begin
                 ::Twillio::UserMessage.send_recovery_code(@user_account.normalized_phone, @recovery_code.code)
-                Success({ ctx: @user_account, type: :success })
-              rescue StandardError
-                Failure({ ctx: @ctx, type: :invalid,
-                          errors: ErrorFormater.new_error(field: :base, msg: "There was a problem sending the message to the number #{@user_account.phone}", custom_predicate: :format?) })
+                 return Success({ ctx: @user_account, type: :success })
+              rescue => error
+                return Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: "There was a problem sending the message to the number #{@user_account.phone}", custom_predicate: :format? )})
               end
             end
           end

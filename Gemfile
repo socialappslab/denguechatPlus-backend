@@ -125,10 +125,10 @@ group :development, :test do
   gem 'rails_best_practices', require: false
   gem 'reek', '~> 6.1', require: false
   gem 'rspec-rails', '~> 6.0'
-  gem 'rubocop', '~> 1.75.5', require: false
-  gem 'rubocop-performance', '~> 1.25', require: false
-  gem 'rubocop-rails', '~> 2.31', require: false
-  gem 'rubocop-rspec', '~> 3.6', require: false
+  gem 'rubocop', '~> 1.36.0', require: false
+  gem 'rubocop-performance', '~> 1.15', require: false
+  gem 'rubocop-rails', '~> 2.17', require: false
+  gem 'rubocop-rspec', '~> 2.14', require: false
   gem 'shoulda-matchers', '~> 5.2'
   gem 'simplecov', '~> 0.21'
   gem 'simplecov-lcov', '~> 0.8'

@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 module Api
   module V1
     module Teams
@@ -22,11 +21,11 @@ module Api
               key(:member_ids).failure(text: 'member (user) does not exist', predicate: :not_found?)
             end
 
-            next unless values[:member_ids] &&
-                        UserProfile.where(id: values[:member_ids], team_id: nil).count != values[:member_ids].count
+            if values[:member_ids] &&
+               UserProfile.where(id: values[:member_ids], team_id: nil).count != values[:member_ids].count
+              key(:member_ids).failure(text: "user_profile with id: '#{value}' is already assigned to a brigade", predicate: :unique?)
+            end
 
-            key(:member_ids).failure(text: "user_profile with id: '#{value}' is already assigned to a brigade",
-                                     predicate: :unique?)
           end
 
           rule(:organization_id) do
@@ -52,6 +51,7 @@ module Api
               key(:name).failure(text: 'the team name is already in use', predicate: :unique?)
             end
           end
+
         end
       end
     end

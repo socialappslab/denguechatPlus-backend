@@ -3,6 +3,7 @@
 module Api
   module V1
     class PermissionsController < AuthorizedApiController
+
       def index
         endpoint operation: Api::V1::Permissions::Operations::Index,
                  renderer_options: {
@@ -18,6 +19,7 @@ module Api
                  },
                  options: { current_user: }
       end
+
     end
   end
 end

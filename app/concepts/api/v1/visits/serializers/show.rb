@@ -10,6 +10,7 @@ module Api
           attributes :id, :questionnaire_id, :visited_at, :brigadist, :team, :city, :sector, :wedge,
                      :visit_permission, :host, :answers, :notes
 
+
           attribute :visited_at do |object|
             @house = object.house
             @city = @house.city
@@ -21,35 +22,36 @@ module Api
           attribute :team do |object|
             {
               id: object.team_id,
-              name: object.team.name
+              name: object.team.name,
             }
           end
 
           attribute :brigadist do |object|
+
             if object.user_account
               {
                 id: object.user_account.id,
-                fullName: object.user_account.full_name
+                fullName: object.user_account.full_name,
               }
             else
               {
                 id: nil,
-                fullName: 'Usuario eliminado'
+                fullName: 'Usuario eliminado',
               }
             end
           end
 
-          attribute :city do |_object|
+          attribute :city do |object|
             {
               id: @city.id,
-              name: @city.name
+              name: @city.name,
             }
           end
 
-          attribute :sector do |_object|
+          attribute :sector do |object|
             {
               id: @sector.id,
-              name: @sector.name
+              name: @sector.name,
             }
           end
 
@@ -57,10 +59,10 @@ module Api
             object.status
           end
 
-          attribute :wedge do |_object|
+          attribute :wedge do |object|
             {
               id: @wedge.id,
-              name: @wedge.name
+              name: @wedge.name,
             }
           end
 
@@ -100,7 +102,7 @@ module Api
                 id: inspection.id,
                 breedingSiteType: {
                   breeding_site_type_id: inspection.breeding_site_type_id,
-                  breeding_site_type_name: inspection.breeding_site_type&.name
+                  breeding_site_type_name: inspection.breeding_site_type&.name,
                 },
                 eliminationMethodType: {
                   elimination_method_type_id: inspection.elimination_method_type_id,
@@ -134,6 +136,7 @@ module Api
               }
             end
           end
+
         end
       end
     end

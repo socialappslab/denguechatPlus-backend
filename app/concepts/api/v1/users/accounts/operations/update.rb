@@ -22,7 +22,6 @@ module Api
               @current_user = input[:current_user]
               @source = input[:source]
             end
-
             def validate_schema
               @ctx['contract.default'] = Api::V1::Users::Accounts::Contracts::Update.kall(@params)
               is_valid = @ctx['contract.default'].success?
@@ -36,8 +35,7 @@ module Api
               @ctx[:model] = user_profile.user_account
               return Success({ ctx: @ctx, type: :success }) if @ctx[:model]
 
-              errors = ErrorFormater.new_error(field: :base, msg: I18n.t('errors.users.not_found'),
-                                               custom_predicate: :not_found?)
+              errors = ErrorFormater.new_error(field: :base, msg: I18n.t('errors.users.not_found'), custom_predicate: :not_found? )
               Failure({ ctx: @ctx, type: :invalid, errors: errors }) if @ctx[:model].nil?
             end
 
@@ -45,12 +43,11 @@ module Api
               res = Success({ ctx: @ctx, type: :success })
 
               if @source != 'web'
-                if @current_user.id == @ctx['contract.default']['id']&.to_i
-                  res = Success({ ctx: @ctx, type: :success })
-                else
-                  errors = ErrorFormater.new_error(field: :base, msg: I18n.t('errors.users.not_found'),
-                                                   custom_predicate: :not_found?)
+                if @current_user.id != @ctx['contract.default']['id']&.to_i
+                  errors = ErrorFormater.new_error(field: :base, msg: I18n.t('errors.users.not_found'), custom_predicate: :not_found? )
                   res = Failure({ ctx: @ctx, type: :invalid, errors: errors })
+                else
+                  res = Success({ ctx: @ctx, type: :success })
                 end
               end
               res
@@ -63,8 +60,12 @@ module Api
                   attrs[:user_profile_attributes].delete(:house_block_id)
               end
               attrs.delete(:id)
-              attrs['password'] = @input[:password].downcase if @input['password']
-              return Failure({ ctx: @ctx, type: :invalid }) unless @ctx[:model].update(attrs)
+              if @input['password']
+                attrs['password'] = @input[:password].downcase
+              end
+              unless @ctx[:model].update(attrs)
+                return Failure({ ctx: @ctx, type: :invalid })
+              end
 
               Success({ ctx: @ctx, type: :success })
             end

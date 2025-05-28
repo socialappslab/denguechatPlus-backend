@@ -40,6 +40,7 @@ module Api
           attribute :special_place do |house|
             { id: house.special_place.id, name: house.special_place.name } if house.special_place
           end
+
         end
       end
     end

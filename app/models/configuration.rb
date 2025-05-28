@@ -11,6 +11,7 @@
 class Configuration < ApplicationRecord
   include Discard::Model
 
+
   def self.attempts_number
     Rails.cache.fetch('attempts_number', expires_in: 12.hours) do
       Configuration.find_by(field_name: 'attempts_number')&.value&.to_i || 10
@@ -22,4 +23,5 @@ class Configuration < ApplicationRecord
       Configuration.find_by(field_name: 'time_locked')&.value&.to_i || 10
     end
   end
+
 end

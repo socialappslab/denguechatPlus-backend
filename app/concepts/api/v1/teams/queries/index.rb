@@ -61,6 +61,7 @@ module Api
             relation.joins(:wedge).where('wedges.name ILIKE ?', "%#{@filter[:wedge]}%")
           end
 
+
           def sort_clause(relation)
             return relation if @sort.nil? || @sort.blank?
 

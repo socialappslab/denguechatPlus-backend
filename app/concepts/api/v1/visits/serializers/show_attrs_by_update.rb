@@ -8,31 +8,31 @@ module Api
           sanitize_answers = ->(answers) {
             return nil if answers.blank?
 
-            result = answers.each_with_object({}) do |obj, merged|
+            result = answers.reduce({}) do |merged, obj|
               obj.each do |key, value|
                 new_key = key.split('_')[1].to_i
                 merged[new_key] = value
               end
+              merged
             end
             result
           }
 
-          build_options_with_answers = ->(answer_id, question) {
+          build_options_with_answers = lambda { |answer_id, question|
             return [] unless %w[list multiple].include?(question.type_field)
-
             question.options.map do |option|
               {
                 id: option.id,
                 description: option.name_es,
-                selected: answer_id.nil? ? false : option.id == answer_id
+                selected: answer_id.nil? ? false : option.id == answer_id,
               }
             end
           }
 
-          build_dynamic_fields = proc do |visit|
+          build_dynamic_fields = Proc.new do |visit|
             questionnaire = visit.questionnaire
             questions = questionnaire.questions
-            answers = sanitize_answers.call(visit.answers)
+            answers= sanitize_answers.call(visit.answers)
 
             questions.where(id: answers.keys, resource_type: 'attribute')
                      .where.not(type_field: 'splash')
@@ -56,13 +56,13 @@ module Api
                 host: visit.host.split(', '),
                 brigadist: {
                   id: visit.user_account.id,
-                  fullName: visit.user_account.full_name
+                  fullName: visit.user_account.full_name,
                 },
                 house: {
                   id: visit.house_id,
-                  referenceCode: visit.house.reference_code
+                  referenceCode: visit.house.reference_code,
                 },
-                notes: visit.notes
+                notes: visit.notes,
               },
               dynamicFields: build_dynamic_fields.call(visit)
             }

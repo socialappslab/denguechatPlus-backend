@@ -10,8 +10,8 @@ module Api
 
             attributes :id, :username, :phone, :status
 
-            has_one :user_profile, record_type: :user_profile,
-                                   serializer: Api::V1::Users::Accounts::Serializers::UserProfile
+
+            has_one :user_profile, record_type: :user_profile, serializer: Api::V1::Users::Accounts::Serializers::UserProfile
 
             attribute :roles do |user_account|
               next unless user_account.roles.any?
@@ -24,6 +24,7 @@ module Api
 
               user_account.permissions.map { |permission| "#{permission.resource}-#{permission.name}" }
             end
+
           end
         end
       end

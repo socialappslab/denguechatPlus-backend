@@ -33,8 +33,7 @@ module Api
           end
 
           def house_blocks_list
-            @ctx[:data] =
-              Api::V1::Wedges::Queries::HouseBlockList.call(@ctx['contract.default']['filter'], @ctx[:sort], @params)
+            @ctx[:data] = Api::V1::Wedges::Queries::HouseBlockList.call(@ctx['contract.default']['filter'], @ctx[:sort], @params)
             Success({ ctx: @ctx, type: :success })
           end
 
@@ -43,7 +42,7 @@ module Api
           end
 
           def paginate
-            @pagy = Api::V1::Lib::Paginates::Paginate.kall(ctx: @ctx, model: @ctx[:data], params: @params.slice('page'))
+            @pagy = Api::V1::Lib::Paginates::Paginate.kall(ctx: @ctx, model: @ctx[:data], params: @params.slice("page"))
             Success({ ctx: @ctx, type: :success })
           end
 

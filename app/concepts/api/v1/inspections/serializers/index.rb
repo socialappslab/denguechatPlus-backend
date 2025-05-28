@@ -9,7 +9,7 @@ module Api
 
           attributes :id
 
-          get_image_obj = ->(record) do
+          get_image_obj = lambda do |record|
             return '' unless record&.photo&.attached?
 
             {
@@ -77,6 +77,7 @@ module Api
           attribute :photo_url do |container|
             get_image_obj.call(container)
           end
+
         end
       end
     end

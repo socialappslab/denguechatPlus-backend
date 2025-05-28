@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 require 'ostruct'
 
 module Api
@@ -7,6 +6,7 @@ module Api
     module Points
       module Contracts
         class Ranking < Dry::Validation::Contract
+
           def self.kall(...)
             new.call(...)
           end
@@ -21,6 +21,7 @@ module Api
             optional(:sort).maybe(:string)
             optional(:order).maybe(:string, included_in?: %w[asc desc])
           end
+
         end
       end
     end

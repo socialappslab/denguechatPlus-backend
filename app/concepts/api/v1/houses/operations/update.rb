@@ -39,11 +39,13 @@ module Api
               house.update!(@params)
               @ctx[:model] = house
               Success({ ctx: @ctx, type: :updated })
-            rescue StandardError => error
+            rescue => error
               errors = ErrorFormater.new_error(field: :base, msg: error, custom_predicate: :unexpected_key)
               Failure({ ctx: @ctx, type: :invalid, errors: errors })
             end
           end
+
+
         end
       end
     end

@@ -23,6 +23,7 @@ module Api
               key(:city_id).failure('city already exists in this state')
             end
           end
+
         end
       end
     end

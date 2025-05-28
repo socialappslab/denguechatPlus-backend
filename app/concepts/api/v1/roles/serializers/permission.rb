@@ -8,6 +8,7 @@ module Api
           set_type :permission
 
           attributes :id, :name, :resource
+
         end
       end
     end

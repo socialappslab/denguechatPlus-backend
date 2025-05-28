@@ -30,6 +30,7 @@ module Api
               key(:comment_id).failure(text: 'the comment not exist', predicate: :not_found?)
             end
           end
+
         end
       end
     end

@@ -28,6 +28,7 @@ module Api
               @ctx[:data].instance_variable_set(:@is_team_leader, is_team_leader)
               Success({ ctx: @ctx, type: :success })
             end
+
           end
         end
       end

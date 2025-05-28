@@ -10,7 +10,7 @@ module Api
           attributes :id, :visited_at, :city, :sector, :wedge, :house, :visit_status, :brigadist, :team
 
           attribute :visited_at do |visit|
-            visit.visited_at.presence
+            visit.visited_at if visit.visited_at.present?
           end
 
           attribute :city do |visit|
@@ -38,6 +38,7 @@ module Api
           attribute :visit_status, &:status
 
           attribute :brigadist do |visit|
+            'usuario eliminado'
             next if visit.user_account.nil?
 
             visit.user_account.user_profile.full_name
@@ -52,7 +53,7 @@ module Api
             next unless versions
             next unless versions.last
 
-            modify_by = JSON.parse(visit.versions.last.whodunnit)['full_name'] if visit.versions&.last&.whodunnit
+            modify_by = JSON.parse(visit.versions.last.whodunnit)['full_name'] if visit.versions&.last.whodunnit
             {
               lastModified: visit.updated_at,
               modifiedBy: modify_by

@@ -1,5 +1,6 @@
 class AddManyContainerProtectionsToInspections < ActiveRecord::Migration[7.1]
   def up
+
     execute <<-SQL
       INSERT INTO inspection_container_protections (inspection_id, container_protection_id, created_at, updated_at)
       SELECT id, container_protection_id, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP

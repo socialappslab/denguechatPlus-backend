@@ -9,6 +9,7 @@ module Api
             set_type :organization
 
             attributes :name
+
           end
         end
       end

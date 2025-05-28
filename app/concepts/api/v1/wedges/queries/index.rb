@@ -33,7 +33,6 @@ module Api
 
           def name_clause(relation)
             return relation if @filter.nil? || @filter[:name].blank?
-
             word_searched = CGI.unescape(@filter[:name])
 
             relation.where('wedges.name ilike :query', query: "%#{word_searched}%")
@@ -59,7 +58,6 @@ module Api
 
           def neighborhood_clause(relation)
             return relation if @params['neighborhood_id'].nil? || @params['neighborhood_id'].blank?
-
             relation.joins(:neighborhoods).where(neighborhoods: { id: @params['neighborhood_id'] })
           end
 
@@ -71,7 +69,6 @@ module Api
 
           def sector_name(relation)
             return relation if @filter.nil? || @filter[:sector_name].blank?
-
             word_searched = CGI.unescape(@filter[:sector_name])
 
             relation.joins(:neighborhoods).where('neighborhoods.name ilike :query', query: "%#{word_searched}%")

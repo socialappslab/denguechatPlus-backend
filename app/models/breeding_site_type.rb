@@ -14,21 +14,24 @@ class BreedingSiteType < ApplicationRecord
 
   has_many :additional_information, class_name: 'BreedingSiteTypeAditionalInformation', dependent: :destroy
 
+
   def serialized_additional_info
     host = Rails.env.production? ? 'https://miaplicacion.com' : 'http://localhost:3000'
 
     additional_information.map do |info|
+
       if info.only_image
         only_images(info, host)
       else
         only_text(info)
       end
     end
+
   end
 
   private
-
   def only_images(info, host)
+
     {
       description: info.description,
       url: Rails.application.routes.url_helpers.rails_blob_url(info.image, host: host),

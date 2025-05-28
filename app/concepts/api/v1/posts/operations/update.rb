@@ -36,22 +36,14 @@ module Api
           end
 
           def check_if_can_be_updated
-            if @current_user.has_role?(:admin) || @current_user.has_role?(:team_leader)
-              return Success({ ctx: @ctx,
-                               type: :success })
-            end
-            if Post.find_by(id: @data[:id]).user_account_id == @current_user.id
-              return Success({ ctx: @ctx,
-                               type: :success })
-            end
-
-            Failure({ ctx: @ctx, type: :invalid,
-                      errors: ErrorFormater.new_error(field: :base, msg: 'Only an admin/team leader or the owner can update this post', custom_predicate: :without_permissions) })
+            return Success({ ctx: @ctx, type: :success }) if @current_user.has_role?(:admin) || @current_user.has_role?(:team_leader)
+            return Success({ ctx: @ctx, type: :success }) if Post.find_by(id: @data[:id]).user_account_id == @current_user.id
+            Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'Only an admin/team leader or the owner can update this post', custom_predicate: :without_permissions )})
           end
 
           def check_if_has_photo
             @delete_photo = @data[:photos].nil? && @data[:delete_photo]
-            @photo = @data[:photos] if @data[:photos].present?
+            @photo  = @data[:photos] if !@data[:photos].blank?
             @data.delete(:delete_photo)
             @data.delete(:photos)
             @data.delete(:user_account_id)
@@ -65,18 +57,21 @@ module Api
               post.update(@data)
               @ctx[:model] = post
               @ctx[:model].instance_variable_set(:@current_user_id, @current_user.id)
-              Success({ ctx: @ctx, type: :created })
-            rescue StandardError => error
-              errors = ErrorFormater.new_error(field: :base, msg: error,
-                                               custom_predicate: :user_account_without_confirmation?)
+              return Success({ ctx: @ctx, type: :created })
+            rescue => error
+              errors = ErrorFormater.new_error(field: :base, msg: error, custom_predicate: :user_account_without_confirmation? )
 
-              Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
+              return Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
             end
           end
 
           def manage_photos(post)
-            post.photos = @photo if @photo && !@delete_photo
-            post.photos.purge if @delete_photo && !@has_photo
+            if @photo && !@delete_photo
+              post.photos = @photo
+            end
+            if @delete_photo && !@has_photo
+              post.photos.purge
+            end
             post
           end
 
@@ -87,6 +82,7 @@ module Api
 
             Post.find_by(id: @data[:id]).team_id.in? @current_user.teams_under_leadership
           end
+
         end
       end
     end

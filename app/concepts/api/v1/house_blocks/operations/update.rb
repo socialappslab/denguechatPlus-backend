@@ -39,9 +39,8 @@ module Api
                 update_houses!(@house_ids) if @house_ids.present?
                 @ctx[:model].update!(@ctx['contract.default'].values.data)
                 Success({ ctx: @ctx, type: :created })
-              rescue ActiveRecord::RecordInvalid => error
-                errors = ErrorFormater.new_error(field: :base, msg: error.message,
-                                                 custom_predicate: :user_account_without_confirmation?)
+              rescue ActiveRecord::RecordInvalid => e
+                errors = ErrorFormater.new_error(field: :base, msg: e.message, custom_predicate: :user_account_without_confirmation?)
                 Failure({ ctx: @ctx, type: :invalid, errors: errors })
               end
             end
@@ -55,7 +54,7 @@ module Api
                         .update_all(
                           house_block_id: nil,
                           assignment_status: :orphaned
-                        )
+                       )
 
             House.where(id: new_house_ids)
                  .update_all(house_block_id: @ctx[:model].id, assignment_status: :assigned)

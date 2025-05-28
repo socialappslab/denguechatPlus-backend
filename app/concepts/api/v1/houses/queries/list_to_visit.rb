@@ -47,6 +47,7 @@ module Api
             return relation if @filter.nil? || @filter[:reference_code].blank?
 
             relation.where('reference_code ilike :query', query: "%#{@filter[:reference_code]}%")
+
           end
         end
       end

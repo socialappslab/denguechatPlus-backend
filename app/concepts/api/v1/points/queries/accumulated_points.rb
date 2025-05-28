@@ -4,7 +4,7 @@ module Api
   module V1
     module Points
       module Queries
-        class AccumulatedPoints
+        class   AccumulatedPoints
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort)
@@ -31,21 +31,22 @@ module Api
           def by_user(relation)
             return relation if @filter.nil? || @filter[:user_account_id].blank?
 
-            relation.joins('INNER JOIN user_accounts ON user_accounts.id = points.pointable_id')
-                    .joins('INNER JOIN user_profiles ON user_profiles.id = user_accounts.user_profile_id')
+            relation.joins("INNER JOIN user_accounts ON user_accounts.id = points.pointable_id")
+                    .joins("INNER JOIN user_profiles ON user_profiles.id = user_accounts.user_profile_id")
                     .where(pointable_type: 'UserAccount', pointable_id: @filter[:user_account_id])
-                    .group('user_accounts.id, user_profiles.first_name, user_profiles.last_name')
+                    .group("user_accounts.id, user_profiles.first_name, user_profiles.last_name")
                     .select("user_accounts.id,
                   user_profiles.first_name || ' ' || user_profiles.last_name AS full_name,
                   SUM(points.value) AS total_points")
           end
 
+
           def by_team(relation)
             return relation if @filter.nil? || @filter[:team_id].blank?
 
             relation.where(pointable_id: @filter[:team_id])
-                    .joins('INNER JOIN teams ON teams.id = points.pointable_id')
-                    .group('teams.id, teams.name')
+                    .joins("INNER JOIN teams ON teams.id = points.pointable_id")
+                    .group("teams.id, teams.name")
                     .select("teams.id,
                 teams.name AS name,
                 SUM(points.value) as total_points")

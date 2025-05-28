@@ -23,6 +23,7 @@ module Api
               key(:post_id).failure(text: 'the post not exist', predicate: :not_found?)
             end
           end
+
         end
       end
     end

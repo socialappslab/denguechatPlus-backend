@@ -34,7 +34,9 @@ Dry::Validation.register_macro(:pagination_direction?) do
 end
 
 Dry::Validation.register_macro(:username_exists?) do
-  key.failure(:user_credential_requirement?) if values[:type].eql?('username') && values[:username].nil?
+  if values[:type].eql?('username') && values[:username].nil?
+    key.failure(:user_credential_requirement?)
+  end
 end
 
 Dry::Validation.register_macro(:email_regex?) do
@@ -44,6 +46,7 @@ end
 module Dry
   module Validation
     class Contract
+
       attr_reader :data_entry
 
       def call(input, context = EMPTY_HASH)
@@ -52,16 +55,17 @@ module Dry
           default_context.each { |key, value| map[key] = value }
           context.each { |key, value| map[key] = value }
         end
-        Result.new(schema.call(input), context_map) do |result|
+        Result.new(schema.(input), context_map) do |result|
           rules.each do |rule|
             next if rule.keys.any? { |key| error?(result, key) }
 
-            rule_result = rule.call(self, result)
+            rule_result = rule.(self, result)
 
             rule_result.failures.each do |failure|
-              result.add_error(message_resolver.call(**failure))
+              result.add_error(message_resolver.(**failure))
             end
           end
+
         end
       end
 

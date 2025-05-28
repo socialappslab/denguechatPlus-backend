@@ -51,7 +51,9 @@ module Api
 
             key(:name).failure(text: 'Neighborhood already exists in this city',
                                predicate: :unique?)
+
           end
+
         end
       end
     end

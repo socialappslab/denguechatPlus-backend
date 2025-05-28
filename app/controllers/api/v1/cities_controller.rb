@@ -3,10 +3,8 @@
 module Api
   module V1
     class CitiesController < AuthorizedApiController
-      skip_before_action :check_permissions!,
-                         only: %i[show_by_country_and_state_assumption list_by_country_and_state_assumption]
-      skip_before_action :authorize_access_request!,
-                         only: %i[show_by_country_and_state_assumption list_by_country_and_state_assumption]
+      skip_before_action :check_permissions!, only: %i[show_by_country_and_state_assumption list_by_country_and_state_assumption]
+      skip_before_action :authorize_access_request!, only: %i[show_by_country_and_state_assumption list_by_country_and_state_assumption]
       def index
         endpoint operation: Api::V1::Cities::Operations::Index,
                  renderer_options: { serializer: Api::V1::Cities::Serializers::Index },
@@ -47,6 +45,7 @@ module Api
         endpoint operation: Api::V1::Cities::Operations::Destroy,
                  options: { current_user: }
       end
+
     end
   end
 end

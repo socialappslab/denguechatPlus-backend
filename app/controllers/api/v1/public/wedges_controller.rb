@@ -4,6 +4,7 @@ module Api
   module V1
     module Public
       class WedgesController < ApiController
+
         def index
           endpoint operation: Api::V1::Wedges::Operations::Index,
                    renderer_options: { serializer: Api::V1::Wedges::Serializers::Index }
@@ -13,6 +14,7 @@ module Api
           endpoint operation: Api::V1::Wedges::Operations::Show,
                    renderer_options: { serializer: Api::V1::Wedges::Serializers::Show }
         end
+
       end
     end
   end

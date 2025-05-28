@@ -9,6 +9,7 @@ module Api
 
           attributes :total_points
 
+
           attribute :total_points do |object|
             next unless object.respond_to?(:total_points)
 

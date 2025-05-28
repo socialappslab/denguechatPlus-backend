@@ -28,11 +28,11 @@ module Api
           tee :set_language
           tee :manage_points
 
+
           def check_request_attrs(input)
             unless input.dig(:params, :json_params)
               ctx = {}
-              ctx['errors'] =
-                ErrorFormater.new_error(field: :base, msg: 'json_params not found', custom_predicate: :not_found?)
+              ctx['errors'] = ErrorFormater.new_error(field: :base, msg: 'json_params not found', custom_predicate: :not_found? )
 
               return Failure({ ctx: ctx, type: :invalid })
             end
@@ -43,7 +43,9 @@ module Api
           def params(input)
             @ctx = {}
             input = input[:ctx]
-            @photos = input[:params][:photos] if input[:params][:photos]
+            if input[:params][:photos]
+              @photos = input[:params][:photos]
+            end
             params = input[:params][:json_params]
             params_json = JSON.parse(params)
             @params = to_snake_case(params_json)
@@ -62,6 +64,8 @@ module Api
             @params.delete('inspections') if @params.key?('inspections') && @params['inspections']&.empty?
           end
 
+
+
           def validate_schema
             @ctx['contract.default'] = Api::V1::Visits::Contracts::Create.kall(@params)
             is_valid = @ctx['contract.default'].success?
@@ -78,7 +82,6 @@ module Api
             @house_info = @params.delete(:house)&.deep_symbolize_keys unless @params.key?(:house_id)
             @inspections = @params.delete(:inspections)&.map(&:deep_symbolize_keys) if @params.key?(:inspections)
           end
-
           def create_house_if_necessary
             return existing_house_result if params_include_house?
 
@@ -96,15 +99,17 @@ module Api
 
           def create_visit
             hosts = @params.delete(:host)
-            @params[:host] = hosts.join(', ') if hosts
+            if hosts
+              @params[:host] = hosts.join(', ')
+            end
             begin
               @ctx[:model] = Visit.create!(@params)
               Success({ ctx: @ctx, type: :created })
-            rescue StandardError => error
+            rescue => error
               errors = ErrorFormater.new_error(field: :base, msg: error,
                                                custom_predicate: :user_account_without_confirmation?)
 
-              Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
+              return Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
             end
           end
 
@@ -124,32 +129,21 @@ module Api
             @photo_ids = []
             visit_id = @ctx[:model].id
             @inspections&.each do |inspection|
-              if inspection[:photo_id].present?
-                @photo_ids << { code_reference: inspection[:code_reference],
-                                photo_id: inspection[:photo_id] }
-              end
-              next unless inspection[:quantity_founded]
-
-              inspection[:quantity_founded] = inspection[:quantity_founded].to_i
-              inspection[:quantity_founded].times do
-                inspection[:visit_id] = visit_id
-                inspections_clean_format_object = Container.new(inspection.slice(*container_attrs)).to_h
-                if inspections_clean_format_object[:container_protection_ids].nil?
-                  inspections_clean_format_object.delete(:container_protection_ids)
+              @photo_ids << {code_reference: inspection[:code_reference], photo_id: inspection[:photo_id]} if inspection[:photo_id].present?
+              if inspection[:quantity_founded]
+                inspection[:quantity_founded] = inspection[:quantity_founded].to_i
+                inspection[:quantity_founded].times do
+                  inspection[:visit_id] = visit_id
+                  inspections_clean_format_object = Container.new(inspection.slice(*container_attrs)).to_h
+                  inspections_clean_format_object.delete(:container_protection_ids) if inspections_clean_format_object[:container_protection_ids].nil?
+                  if inspections_clean_format_object[:water_source_type_id].present?
+                    inspections_clean_format_object[:water_source_type_ids] ||=  []
+                    inspections_clean_format_object[:water_source_type_ids] << [inspections_clean_format_object[:water_source_type_id]]
+                  end
+                  inspections_clean_format_object[:water_source_type_ids]&.flatten!
+                  inspections_clean_format << inspections_clean_format_object
                 end
-                if inspections_clean_format_object[:water_source_type_id].present?
-                  inspections_clean_format_object[:water_source_type_ids] ||= []
-                  inspections_clean_format_object[:water_source_type_ids] << [inspections_clean_format_object[:water_source_type_id]]
-                end
-                inspections_clean_format_object[:water_source_type_ids]&.flatten!
-                inspections_clean_format << inspections_clean_format_object
               end
-              if inspections_clean_format_object[:water_source_type_id].present?
-                inspections_clean_format_object[:water_source_type_ids] ||= []
-                inspections_clean_format_object[:water_source_type_ids] << [inspections_clean_format_object[:water_source_type_id]]
-              end
-              inspections_clean_format_object[:water_source_type_ids].flatten!
-              inspections_clean_format << inspections_clean_format_object
             end
             if inspections_clean_format.any?
               inspections_clean_format.each do |inspection_data|
@@ -159,8 +153,8 @@ module Api
 
                 begin
                   inspection = Inspection.create!(inspection_data)
-                rescue StandardError
-                  p 'hola'
+                rescue => error
+                  p "hola"
                 end
 
                 if type_content_id
@@ -173,6 +167,8 @@ module Api
             Success({ ctx: @ctx, type: :created })
           end
 
+
+
           def add_photos
             return true if  @photo_ids.nil? || @photo_ids.blank? || @photos.nil? || @photos.blank?
 
@@ -180,25 +176,23 @@ module Api
               inspection = Inspection.find_by(code_reference: obj[:code_reference])
               next unless inspection
 
-              photo = @photos.select do |file|
-                File.basename(file.original_filename,
-                              File.extname(file.original_filename)) == "#{inspection.code_reference}"
-              end
+              photo = @photos.select { |file| File.basename(file.original_filename, File.extname(file.original_filename)) == "#{inspection.code_reference}" }
               next if photo.blank?
 
               inspection.photo.attach(photo.first)
             end
           end
 
+
           private
 
           def generate_code(country, state, city, wedge, block)
-            country.name[0..1]
-            state.name[0..1]
-            city.name[0..1]
-            wedge.name.last(4).delete(' ')
-            block.name.last(4).delete(' ')
-            Time.now.to_i.to_s
+            country_name = country.name[0..1]
+            state_name = state.name[0..1]
+            city_name = city.name[0..1]
+            wedge_name = wedge.name.last(4).delete(' ')
+            block_name = block.name.last(4).delete(' ')
+            rand_number = Time.now.to_i.to_s
             last_id = House.last&.id || 1
             last_id + 1
           end
@@ -220,7 +214,7 @@ module Api
             #                                                                                          longitude: @house_info[:longitude],
             #                                                                                          house_block_id: @house_info[:house_block_id])
 
-            @house = create_and_get_house_id
+            @house =  create_and_get_house_id
 
             @house.id
           end
@@ -249,6 +243,7 @@ module Api
             @house_info[:user_profile_id] = user_profile.id
             @house_info[:reference_code] = reference_code
             @house_info[:location_status] = location_status
+
 
             @house = House.create!(@house_info)
           end
@@ -318,13 +313,13 @@ module Api
             return 'green' unless inspection[:has_water]
 
             results = Option.joins(:question)
-                            .where(
-                              "(questions.resource_name = 'type_content_id' AND options.resource_id IN (?))
+                  .where(
+                    "(questions.resource_name = 'type_content_id' AND options.resource_id IN (?))
                      OR (questions.resource_name = 'container_protection_ids' AND options.resource_id IN (?))",
-                              type_content_id, inspection[:container_protection_ids]
-                            )
-                            .group(:status_color)
-                            .sum(:weighted_points)
+                    type_content_id, inspection[:container_protection_ids]
+                  )
+                  .group(:status_color)
+                  .sum(:weighted_points)
 
             results.key(results.values.max)&.downcase || 'green'
           end
@@ -340,23 +335,18 @@ module Api
             @ctx[:model].define_singleton_method(:language) { @language }
             @ctx[:model].define_singleton_method(:language=) { |value| @language = value }
             @ctx[:model].language = if @params.key?(:language) && @params[:language].in?(%w[en es pt])
-                                      @params[:language]
-                                    else
-                                      'es'
-                                    end
+                                     @params[:language]
+                                   else
+                                     'es'
+                                   end
             Success({ ctx: @ctx, type: :success })
           end
 
           def manage_points
-            if @house.tariki_status
-              Api::V1::Points::Services::Transactions.assign_point(earner: @current_user, house_id: @house.id,
-                                                                   visit_id: @ctx[:model].id)
-            end
-            return if @house.tariki_status
-
-            Api::V1::Points::Services::Transactions.remove_point(earner: @current_user, house_id: @house.id,
-                                                                 visit_id: @ctx[:model].id)
+            Api::V1::Points::Services::Transactions.assign_point(earner: @current_user, house_id: @house.id, visit_id: @ctx[:model].id) if @house.tariki_status
+            Api::V1::Points::Services::Transactions.remove_point(earner: @current_user, house_id: @house.id, visit_id: @ctx[:model].id) unless @house.tariki_status
           end
+
         end
       end
     end

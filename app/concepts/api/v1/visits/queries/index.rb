@@ -51,7 +51,7 @@ module Api
           def visited_at_clause(relation)
             return relation if @filter[:visited_at].blank?
 
-            relation.where('DATE(visited_at) = ?', @filter[:visited_at])
+            relation.where("DATE(visited_at) = ?", @filter[:visited_at])
           end
 
           def city_id_clause(relation)
@@ -75,8 +75,7 @@ module Api
           def sector_name_clause(relation)
             return relation if @filter[:sector_name].blank?
 
-            relation.joins(house: :neighborhood).where('LOWER(neighborhoods.name) ILIKE ?',
-                                                       "%#{@filter[:sector_name].downcase}%")
+            relation.joins(house: :neighborhood).where('LOWER(neighborhoods.name) ILIKE ?', "%#{@filter[:sector_name].downcase}%")
           end
 
           def wedge_id_clause(relation)
@@ -98,6 +97,7 @@ module Api
                     .where('LOWER(user_profiles.first_name) ILIKE ? OR LOWER(user_profiles.last_name) ILIKE ?',
                            "%#{@filter[:brigadist].downcase}%", "%#{@filter[:brigadist].downcase}%")
           end
+
 
           def brigadist_id_clause(relation)
             return relation if @filter[:brigadist_id].blank?

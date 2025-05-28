@@ -3,6 +3,7 @@
 module Api
   module V1
     class StatesController < AuthorizedApiController
+
       def index
         endpoint operation: Api::V1::States::Operations::Index,
                  renderer_options: { serializer: Api::V1::States::Serializers::Index },
@@ -31,6 +32,7 @@ module Api
         endpoint operation: Api::V1::States::Operations::Destroy,
                  options: { current_user: }
       end
+
     end
   end
 end

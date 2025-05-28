@@ -37,8 +37,8 @@ module Api
 
           def latest_statuses_query
             <<-SQL
-              SELECT#{' '}
-                house_id,#{' '}
+              SELECT 
+                house_id, 
                 MAX(visits.visited_at) AS latest_date
               FROM visits
               GROUP BY house_id

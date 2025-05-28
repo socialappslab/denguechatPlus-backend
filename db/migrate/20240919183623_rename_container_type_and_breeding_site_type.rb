@@ -1,6 +1,6 @@
 class RenameContainerTypeAndBreedingSiteType < ActiveRecord::Migration[7.1]
   def change
-    remove_index :container_types, name: 'index_container_types_on_breeding_site_type_id'
+    remove_index :container_types, name: "index_container_types_on_breeding_site_type_id"
     remove_foreign_key :inspections, column: :breeding_site_type_id
     remove_column :container_types, :breeding_site_type_id
     rename_table :container_types, :temporary_container_types

@@ -18,6 +18,7 @@ module Api
           end
 
           def call
+            #
             @model.yield_self(&method(:name))
                   .yield_self(&method(:sort_clause))
           end

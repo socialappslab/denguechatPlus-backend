@@ -52,6 +52,7 @@ module Api
                 house_ids: Api::V1::Houses::Queries::ListToVisit.call(user_profile.user_account, nil)&.pluck(:id)
               }
             end
+
           end
         end
       end

@@ -27,7 +27,7 @@ module Api
             is_valid = @ctx['contract.default'].success?
             return Success({ ctx: @ctx, type: :success }) if is_valid
 
-            Failure({ ctx: @ctx, type: :invalid }) unless is_valid
+            return Failure({ ctx: @ctx, type: :invalid }) unless is_valid
           end
 
           def retrieve_visit
@@ -35,20 +35,16 @@ module Api
           end
 
           def authorized_user?
-            if @current_user.has_role?(:admin) || @current_user.has_role?(:team_leader)
-              return Success({ ctx: @ctx,
-                               type: :success })
-            end
+            return Success({ ctx: @ctx, type: :success }) if @current_user.has_role?(:admin) || @current_user.has_role?(:team_leader)
 
-            Failure({ ctx: @ctx, type: :invalid,
-                      errors: ErrorFormater.new_error(field: :base, msg: 'Only an admin/team leader or the owner can update this post', custom_predicate: :without_permissions) })
+            Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'Only an admin/team leader or the owner can update this post', custom_predicate: :without_permissions )})
           end
 
           def delete_visit
             begin
               @ctx[:model].discard!
               Success({ ctx: @ctx, type: :success })
-            rescue StandardError
+            rescue => error
               Failure({ ctx: @ctx, type: :invalid })
             end
           end
@@ -56,34 +52,34 @@ module Api
           def update_house_status_table
             HouseStatus.find_by(last_visit: @ctx[:model].visited_at).destroy!
             visit = last_visit
-            return unless visit
-
-            team_id = visit.team_id
-            house = house.find_by(id: visit.house_id)
-            house_status = HouseStatus.find_or_initialize_by(house_id: house.id, date: visit.visited_at)
-            house_status.date = visit.visited_at
-            infected_containers = visit.last.inspections
-                                       .where(color: ['yellow'])
-                                       .count
-            non_infected_containers = visit.last.inspections
-                                           .where(color: ['green'])
-                                           .count
-            potential_containers = visit.last.inspections
-                                        .where.not(color: ['yellow'])
-                                        .count
-            house_status.infected_containers = infected_containers
-            house_status.non_infected_containers = non_infected_containers
-            house_status.potential_containers = potential_containers
-            house_status.city_id = house.city_id
-            house_status.country_id = house.country_id
-            house_status.house_block_id = house.house_block_id
-            house_status.neighborhood_id = house.neighborhood_id
-            house_status.team_id = team_id
-            house_status.wedge_id = house.wedge_id
-            house_status.last_visit = house.last_visit
-            house_status.house_id = house.id
-            house_status.status = house_status(house_status)
-            house_status.save
+            if visit
+              team_id = visit.team_id
+              house = house.find_by(id: visit.house_id)
+              house_status = HouseStatus.find_or_initialize_by(house_id: house.id, date: visit.visited_at)
+              house_status.date = visit.visited_at
+              infected_containers = visit.last.inspections
+                                         .where(color: ['yellow'])
+                                         .count
+              non_infected_containers = visit.last.inspections
+                                             .where(color: ['green'])
+                                             .count
+              potential_containers = visit.last.inspections
+                                             .where.not(color: ['yellow'])
+                                             .count
+              house_status.infected_containers = infected_containers
+              house_status.non_infected_containers = non_infected_containers
+              house_status.potential_containers = potential_containers
+              house_status.city_id = house.city_id
+              house_status.country_id = house.country_id
+              house_status.house_block_id = house.house_block_id
+              house_status.neighborhood_id = house.neighborhood_id
+              house_status.team_id = team_id
+              house_status.wedge_id = house.wedge_id
+              house_status.last_visit = house.last_visit
+              house_status.house_id = house.id
+              house_status.status = house_status(house_status)
+              house_status.save
+            end
           end
 
           def update_house_status
@@ -93,7 +89,7 @@ module Api
             house.status = HouseStatus.find_by(last_visit: house.last_visit).status
             house.save
 
-            true
+            return true
           end
 
           private
@@ -110,15 +106,13 @@ module Api
               visited_at: @ctx[:model].visited_at.to_date.all_day
             )
 
-            visit if visit
+            return visit if visit
           end
 
           def house_status(house_status)
-            res = 'red' if house_status&.infected_containers.to_i >= 0
-            res = 'yellow' if house_status.potential_containers.to_i >= 0 && house_status.infected_containers.to_i < 0
-            if house_status.non_infected_containers.to_i >= 0 && house_status.infected_containers.to_i < 0 && house_status.infected_containers.to_i < 0
-              res = 'green'
-            end
+            res = "red" if house_status&.infected_containers.to_i >= 0
+            res = "yellow" if house_status.potential_containers.to_i >= 0 && house_status.infected_containers.to_i < 0
+            res = "green" if house_status.non_infected_containers.to_i >= 0 && house_status.infected_containers.to_i < 0 && house_status.infected_containers.to_i < 0
 
             res
           end

@@ -7,6 +7,7 @@ module ApiDoc
 
       ENDPOINT = '/organizations'
 
+
       document :api do
         resource 'Organizations' do
           endpoint ENDPOINT

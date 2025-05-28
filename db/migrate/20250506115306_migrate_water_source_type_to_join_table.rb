@@ -7,4 +7,5 @@ class MigrateWaterSourceTypeToJoinTable < ActiveRecord::Migration[7.1]
       WHERE water_source_type_id IS NOT NULL
     SQL
   end
+
 end

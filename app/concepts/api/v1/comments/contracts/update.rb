@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 require 'ostruct'
 
 module Api
@@ -7,6 +6,7 @@ module Api
     module Comments
       module Contracts
         class Update < Dry::Validation::Contract
+
           def self.kall(...)
             new.call(...)
           end
@@ -40,7 +40,9 @@ module Api
 
           rule(:photo) do
             if values && !values[:photo].nil? && !values[:photo].is_a?(ActionDispatch::Http::UploadedFile)
-              key(:photo).failure(text: 'must be an image') unless values[:photo].content_type.start_with?('image/')
+              unless values[:photo].content_type.start_with?('image/')
+                key(:photo).failure(text: 'must be an image')
+              end
 
               if values[:photo].size > 5_242_880
                 key(:photo).failure(text: 'is too big, must be less than 5MB',

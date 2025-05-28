@@ -8,6 +8,7 @@ module Api
           class ChangeStatus < ApplicationOperation
             include Dry::Transaction
 
+
             tee :params
             step :validate_schema
             step :retrieve_user
@@ -32,28 +33,30 @@ module Api
               @ctx[:model] = UserAccount.find_by(id: @ctx['contract.default']['id'])
               return Success({ ctx: @ctx, type: :success }) if @ctx[:model]
 
-              errors = ErrorFormater.new_error(field: :base, msg: I18n.t('errors.users.not_found'),
-                                               custom_predicate: :not_found?)
-              Failure({ ctx: @ctx, type: :invalid, errors: errors }) if @ctx[:model].nil?
+              errors = ErrorFormater.new_error(field: :base, msg: I18n.t('errors.users.not_found'), custom_predicate: :not_found? )
+              return Failure({ ctx: @ctx, type: :invalid, errors: errors }) if @ctx[:model].nil?
+
             end
 
             def change_user_status
+
               return Success({ ctx: @ctx, type: :success }) if @ctx[:model].update(@ctx['contract.default'].values.data)
 
               Failure({ ctx: @ctx, type: :invalid })
             end
 
             def restart_login_attemps_counter
-              return unless @ctx[:model].previous_changes[:status] == %w[locked active]
-
-              Api::V1::Users::Lib::LoginAttempt.call(@ctx[:model]).reset_attempts_count!
+              if  @ctx[:model].previous_changes[:status]  == ['locked', 'active']
+                Api::V1::Users::Lib::LoginAttempt.call(@ctx[:model]).reset_attempts_count!
+              end
             end
 
             def send_sms_notification
-              return unless @ctx[:model].previous_changes[:status] == %w[pending active]
-
-              ::Users::ApprovalAccountWorker.perform_async(@ctx[:model].id)
+              if @ctx[:model].previous_changes[:status]  == ['pending', 'active']
+                ::Users::ApprovalAccountWorker.perform_async(@ctx[:model].id)
+              end
             end
+
           end
         end
       end

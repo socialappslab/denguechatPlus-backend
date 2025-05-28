@@ -37,8 +37,7 @@ module Api
             end
 
             def list
-              @ctx[:data] =
-                Api::V1::Users::Accounts::Queries::Index.call(@ctx['contract.default']['filter'], @ctx[:sort])
+              @ctx[:data] = Api::V1::Users::Accounts::Queries::Index.call(@ctx['contract.default']['filter'], @ctx[:sort])
               Success({ ctx: @ctx, type: :success })
             end
 
@@ -47,8 +46,7 @@ module Api
             end
 
             def paginate
-              @pagy = Api::V1::Lib::Paginates::Paginate.kall(ctx: @ctx, model: @ctx[:data],
-                                                             params: @params.slice('page'))
+              @pagy = Api::V1::Lib::Paginates::Paginate.kall(ctx: @ctx, model: @ctx[:data], params: @params.slice("page"))
               Success({ ctx: @ctx, type: :success })
             end
 

@@ -1,6 +1,6 @@
 module Web
   class AssignHousesController < ApplicationWebController
-    skip_before_action :verify_authenticity_token, only: %i[list houses house_blocks sectors brigadists]
+    skip_before_action :verify_authenticity_token, only: [:list, :houses, :house_blocks, :sectors, :brigadists]
     before_action :http_authenticate
 
     # Retorna brigadistas en función al equipo (team)
@@ -10,7 +10,7 @@ module Web
         @brigadists = UserProfile.joins(:team).where(team_id: team_id)
         render json: @brigadists.select(:id, :first_name, :last_name)
       else
-        render json: { error: 'Team ID is required' }, status: :bad_request
+        render json: { error: "Team ID is required" }, status: :bad_request
       end
     end
 
@@ -21,7 +21,7 @@ module Web
         @sectors = Neighborhood.where(city_id: city_id)
         render json: @sectors.select(:id, :name)
       else
-        render json: { error: 'City ID is required' }, status: :bad_request
+        render json: { error: "City ID is required" }, status: :bad_request
       end
     end
 
@@ -32,7 +32,7 @@ module Web
         @house_blocks = HouseBlock.joins(:team).where(teams: { neighborhood_id: neighborhood_id })
         render json: @house_blocks.select(:id, :name)
       else
-        render json: { error: 'Neighborhood ID is required' }, status: :bad_request
+        render json: { error: "Neighborhood ID is required" }, status: :bad_request
       end
     end
 
@@ -43,7 +43,7 @@ module Web
         @houses = House.where(house_block_id: house_block_id)
         render json: @houses.select(:id, :name, :address)
       else
-        render json: { error: 'House Block ID is required' }, status: :bad_request
+        render json: { error: "House Block ID is required" }, status: :bad_request
       end
     end
 
@@ -51,7 +51,7 @@ module Web
     def list
       @teams = Team.all
       @cities = City.all
-      render 'assign_houses/list'
+      render "assign_houses/list"
     end
   end
 end

@@ -6,6 +6,7 @@ module Api
       skip_before_action :check_permissions!, only: %i[validate_phone validate_code new_password]
       skip_before_action :authorize_access_request!, only: %i[validate_phone validate_code new_password]
 
+
       def validate_phone
         endpoint operation: Api::V1::Users::Accounts::Operations::ValidatePhone
       end

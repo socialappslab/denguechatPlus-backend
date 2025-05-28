@@ -14,6 +14,7 @@ module Api
               required(:id).filled(:integer)
               required(:status).maybe(:string, included_in?: %w[pending active inactive locked])
             end
+
           end
         end
       end

@@ -3,9 +3,9 @@ class DeleteLastQuestionAndChangeQuestionnaireLastIndexQuestion < ActiveRecord::
     question = Question.find_by(question_text_es: '¿Registrar otro contenedor?')
     question&.destroy!
     questionnaire = Questionnaire.last
-    return unless questionnaire
-
-    questionnaire.final_question = 19
-    questionnaire.save!
+    if questionnaire
+      questionnaire.final_question = 19
+      questionnaire.save!
+    end
   end
 end

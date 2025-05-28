@@ -1,5 +1,6 @@
 module Services
   class FastJson
+
     def self.call(**opts)
       new(**opts).response_hash
     end

@@ -45,7 +45,7 @@ module Api
           end
 
           def paginate
-            @pagy = Api::V1::Lib::Paginates::Paginate.kall(ctx: @ctx, model: @ctx[:data], params: @params.slice('page'))
+            @pagy = Api::V1::Lib::Paginates::Paginate.kall(ctx: @ctx, model: @ctx[:data], params: @params.slice("page"))
             Success({ ctx: @ctx, type: :success })
           end
 

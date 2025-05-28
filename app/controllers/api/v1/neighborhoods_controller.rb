@@ -17,6 +17,7 @@ module Api
                  options: { current_user: }
       end
 
+
       def show
         endpoint operation: Api::V1::Neighborhoods::Operations::Show,
                  renderer_options: { serializer: Api::V1::Neighborhoods::Serializers::Show },
@@ -39,6 +40,7 @@ module Api
         endpoint operation: Api::V1::Neighborhoods::Operations::Destroy,
                  options: { current_user: }
       end
+
     end
   end
 end

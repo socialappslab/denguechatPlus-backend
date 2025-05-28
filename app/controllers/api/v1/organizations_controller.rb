@@ -7,6 +7,7 @@ module Api
       skip_before_action :check_permissions!, only: [:index]
       skip_before_action :authorize_access_request!, only: [:index]
 
+
       def index
         endpoint operation: Api::V1::Organizations::Operations::Index,
                  renderer_options: { serializer: Api::V1::Organizations::Serializers::Index },

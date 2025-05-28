@@ -8,6 +8,7 @@ module Api
           class ChangeHouseBlock < ApplicationOperation
             include Dry::Transaction
 
+
             tee :params
             step :validate_schema
             step :change_user_house_block
@@ -36,6 +37,7 @@ module Api
 
               Failure({ ctx: @ctx, type: :invalid })
             end
+
           end
         end
       end

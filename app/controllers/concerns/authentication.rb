@@ -26,7 +26,7 @@ module Authentication
       end
 
       rescue_from ActiveRecord::RecordNotFound do
-        exception_response(I18n.t('errors.not_found'), :unauthorized, :not_found)
+        exception_response( I18n.t('errors.not_found'), :unauthorized, :not_found)
       end
     end
   end
@@ -38,9 +38,9 @@ module Authentication
   def check_permissions!
     return false unless current_user
 
-    return if current_user.can?(action_name, controller_name)
-
-    exception_response(I18n.t('errors.unauthorized'), :unauthorized, "#{controller_name}_#{action_name}")
+    unless current_user.can?(action_name, controller_name)
+      exception_response(I18n.t('errors.unauthorized'), :unauthorized,"#{controller_name}_#{action_name}")
+    end
   end
 
   private

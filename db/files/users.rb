@@ -18,7 +18,7 @@ def create_default_users
 
       account.roles << Role.where(name: user)
       account.teams << Team.find_by(id: Team.pluck(:id).sample)
-    rescue StandardError => error
+    rescue => error
       Rails.logger.debug { "error: #{error.message}" }
     end
   end

@@ -22,6 +22,7 @@ module Api
                 key(:house_block_id).failure(text: "The house_block_id isn't correct", predicate: :not_exists?)
               end
             end
+
           end
         end
       end

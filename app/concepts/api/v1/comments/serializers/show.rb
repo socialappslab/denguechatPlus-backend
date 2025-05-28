@@ -37,13 +37,12 @@ module Api
 
           attribute :created_by do |comment|
             next if comment.user_account_id.blank?
-
             user_account = UserAccount.with_discarded.find(comment.user_account_id)
 
             {
               accountId: comment.user_account_id,
               userName: user_account.first_name,
-              lastName: user_account.last_name
+              lastName: user_account.last_name,
             }
           end
 

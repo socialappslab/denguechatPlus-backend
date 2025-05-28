@@ -7,7 +7,8 @@ module Api
         class City < ApplicationSerializer
           set_type :city
 
-          attributes :name
+          attributes  :name
+
         end
       end
     end

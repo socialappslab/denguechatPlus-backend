@@ -3,6 +3,7 @@
 module Api
   module V1
     class HousesController < AuthorizedApiController
+
       def index
         endpoint operation: Api::V1::Houses::Operations::Index,
                  renderer_options: {
@@ -34,6 +35,7 @@ module Api
                  },
                  options: { current_user: }
       end
+
     end
   end
 end

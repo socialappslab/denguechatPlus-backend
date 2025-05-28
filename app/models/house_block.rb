@@ -32,4 +32,5 @@ class HouseBlock < ApplicationRecord
   belongs_to :neighborhood, optional: true
 
   default_scope { where(discarded_at: nil) }
+
 end

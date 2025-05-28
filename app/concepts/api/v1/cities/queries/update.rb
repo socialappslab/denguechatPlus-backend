@@ -7,7 +7,7 @@ module Api
         class Update
           include Api::V1::Lib::Queries::QueryHelper
 
-          def initialize(_filter, _sort)
+          def initialize(filter, sort)
             @model = City
           end
 

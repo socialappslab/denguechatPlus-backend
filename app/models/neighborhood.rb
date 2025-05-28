@@ -40,4 +40,5 @@ class Neighborhood < ApplicationRecord
   has_many :user_profiles
   has_many :neighborhood_wedges, dependent: :destroy
   has_many :wedges, through: :neighborhood_wedges
+
 end

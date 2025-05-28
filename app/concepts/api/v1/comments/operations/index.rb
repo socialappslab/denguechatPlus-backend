@@ -31,7 +31,7 @@ module Api
           def cursor_and_paginate
             @ctx[:sort] = { field: 'comments.created_at', direction: 'desc' } if @params['sort'].nil?
             direction = @params['order'].nil? ? 'asc' : @params['order']
-            @ctx[:sort] = { field: @params['sort'], direction: } if @params['sort']
+            @ctx[:sort] = {field: @params['sort'], direction: } if @params['sort']
           end
 
           def list
@@ -44,7 +44,7 @@ module Api
           end
 
           def paginate
-            @pagy = Api::V1::Lib::Paginates::Paginate.kall(ctx: @ctx, model: @ctx[:data], params: @params.slice('page'))
+            @pagy = Api::V1::Lib::Paginates::Paginate.kall(ctx: @ctx, model: @ctx[:data], params: @params.slice("page"))
             Success({ ctx: @ctx, type: :success })
           end
 

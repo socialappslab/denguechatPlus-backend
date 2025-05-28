@@ -1,3 +1,4 @@
+
 # frozen_string_literal: true
 
 module Api
@@ -7,6 +8,8 @@ module Api
         class IndexSerializer
           include Alba::Resource
           transform_keys :lower_camel
+
+
 
           attributes :name
 
