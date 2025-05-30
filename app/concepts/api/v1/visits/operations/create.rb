@@ -129,6 +129,7 @@ module Api
             @photo_ids = []
             visit_id = @ctx[:model].id
             @inspections&.each do |inspection|
+              inspection[:has_water] = true
               @photo_ids << {code_reference: inspection[:code_reference], photo_id: inspection[:photo_id]} if inspection[:photo_id].present?
               if inspection[:quantity_founded]
                 inspection[:quantity_founded] = inspection[:quantity_founded].to_i
