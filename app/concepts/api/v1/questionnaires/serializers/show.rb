@@ -7,7 +7,7 @@ module Api
         class Show < ApplicationSerializer
           set_type :questionnaire
 
-          attributes :initial_question, :final_question
+          attributes :id, :initial_question, :final_question
 
           attribute :questions do |questionnaire|
             get_image_obj = lambda do |record|
@@ -62,7 +62,7 @@ module Api
             end
 
             questionnaire.questions
-                         .where(parent_id: nil)
+                         .where(parent_id: nil, visible: true)
                          .map { |question| serialize_question.call(question) }
           end
         end
