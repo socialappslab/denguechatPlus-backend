@@ -285,8 +285,8 @@ module Api
             else
               @house.update!(infected_containers: 0, potential_containers: 0,
                              non_infected_containers: 0, last_visit:  @params[:visited_at] || Time.now.utc,
-                             status: 'red')
-              @ctx[:model].update!(status: 'Rojo')
+                             status: 'yellow')
+              @ctx[:model].update!(status: 'Amarillo')
             end
           end
 
