@@ -3,7 +3,7 @@
 # Table name: questions
 #
 #  id               :bigint           not null, primary key
-#  additional_data  :jsonb            not null
+#  additional_data  :jsonb
 #  description_en   :string
 #  description_es   :string
 #  description_pt   :string
