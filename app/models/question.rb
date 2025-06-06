@@ -3,6 +3,7 @@
 # Table name: questions
 #
 #  id               :bigint           not null, primary key
+#  additional_data  :jsonb            not null
 #  description_en   :string
 #  description_es   :string
 #  description_pt   :string
@@ -21,12 +22,10 @@
 #  visible          :boolean          default(TRUE), not null
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
-#  parent_id        :integer
 #  questionnaire_id :bigint           not null
 #
 # Indexes
 #
-#  index_questions_on_parent_id         (parent_id)
 #  index_questions_on_questionnaire_id  (questionnaire_id)
 #
 # Foreign Keys
@@ -44,4 +43,9 @@ class Question < ApplicationRecord
   has_many :children, class_name: 'Question', foreign_key: 'parent_id', dependent: :destroy, inverse_of: :parent
 
   alias_attribute :question, :question_text
+
+  def format_service_url
+    url = URI(self.image.attachment.key)
+    "#{url.scheme}://#{url.host}/#{self.file.attachment.key}"
+  end
 end
