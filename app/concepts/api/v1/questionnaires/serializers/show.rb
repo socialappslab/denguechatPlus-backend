@@ -35,7 +35,7 @@ module Api
                   resourceType: question.resource_type,
                   image: get_image_obj.call(question),
                   required: question.required,
-                  additionalData: question.additional_data,
+                  additionalData: question.send("additional_data_#{questionnaire.language}"),
                   options: question.options
                                    .sort_by(&:position)
                                    .map do |option|
