@@ -2,27 +2,29 @@
 #
 # Table name: questions
 #
-#  id               :bigint           not null, primary key
-#  additional_data  :jsonb
-#  description_en   :string
-#  description_es   :string
-#  description_pt   :string
-#  discarded_at     :datetime
-#  next             :integer
-#  notes_en         :string
-#  notes_es         :string
-#  notes_pt         :string
-#  question_text_en :string
-#  question_text_es :string
-#  question_text_pt :string
-#  required         :boolean          default(TRUE)
-#  resource_name    :string
-#  resource_type    :string
-#  type_field       :string
-#  visible          :boolean          default(TRUE), not null
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  questionnaire_id :bigint           not null
+#  id                 :bigint           not null, primary key
+#  additional_data_en :jsonb
+#  additional_data_es :jsonb
+#  additional_data_pt :jsonb
+#  description_en     :string
+#  description_es     :string
+#  description_pt     :string
+#  discarded_at       :datetime
+#  next               :integer
+#  notes_en           :string
+#  notes_es           :string
+#  notes_pt           :string
+#  question_text_en   :string
+#  question_text_es   :string
+#  question_text_pt   :string
+#  required           :boolean          default(TRUE)
+#  resource_name      :string
+#  resource_type      :string
+#  type_field         :string
+#  visible            :boolean          default(TRUE), not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  questionnaire_id   :bigint           not null
 #
 # Indexes
 #
