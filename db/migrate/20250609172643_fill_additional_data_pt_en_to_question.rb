@@ -9,7 +9,7 @@ class FillAdditionalDataPtEnToQuestion < ActiveRecord::Migration[7.1]
     question.additional_data_pt = {"image": url, "title": "Vamos visitar a casa", "description": "Vamos chegar à casa com muito respeito."}
     question.save!
 
-    Question.where(additional_data_es: [{}], additional_data_en: [{}], additional_data_pt: [{}])
+    Question.where(additional_data_es: {}, additional_data_en: {}, additional_data_pt: {})
             .update_all(additional_data_es: nil,
                         additional_data_en: nil,
                         additional_data_pt: nil)
