@@ -30,13 +30,13 @@ module Api
 
             def delete_user
               begin
-                @current_user.update_columns(phone: "deleted_#{@ctx[:model].id}", username: "deleted_#{@ctx[:model].id}")
-                @current_user_id = @current_user.id
                 user_profile = @current_user.user_profile
                 user_profile.update_columns(first_name: "user_deleted_#{@ctx[:model].id}}",
                                             last_name: "user_deleted_#{@ctx[:model].id}",
                                             email: "deleted_#{@ctx[:model].id}@denguechatplus.com")
-                return  Success({ ctx: @ctx, type: :destroyed }) if @ctx[:model].discarded?
+                return  Success({ ctx: @ctx, type: :destroyed })
+                @current_user.update_columns(phone: "deleted_#{@ctx[:model].id}", username: "deleted_#{@ctx[:model].id}")
+                @current_user_id = @current_user.id
                 @ctx[:model].discard!
                 flush_session_by_token.call(@found_token, @current_user)
                 Success({ ctx: @ctx, type: :destroyed, model: @ctx[:model], success: true })
