@@ -55,8 +55,6 @@ module Api
 
             def remove_from_teams
               @current_user.user_profile.update(team_id: nil)
-              team = Team.find_by(leader_id: @current_user_id)
-              team.leader = nil
               team.save
             end
 
