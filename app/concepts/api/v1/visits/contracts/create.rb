@@ -19,6 +19,7 @@ module Api
             required(:questionnaire_id).filled(:integer)
             optional(:team_id).filled(:integer)
             optional(:user_account_id).filled(:integer)
+            optional(:family_education_topics)
             optional(:notes)
 
             optional(:inspections).filled(:array)

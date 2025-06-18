@@ -8,7 +8,7 @@ module Api
           set_type :visit
 
           attributes :id, :questionnaire_id, :visited_at, :brigadist, :team, :city, :sector, :wedge,
-                     :visit_permission, :host, :answers, :notes
+                     :visit_permission, :host, :answers, :notes, :family_education_topics
 
 
           attribute :visited_at do |object|

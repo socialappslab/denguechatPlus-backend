@@ -7,7 +7,7 @@ module Api
         class Index < ApplicationSerializer
           set_type :visit
 
-          attributes :id, :visited_at, :city, :sector, :wedge, :house, :visit_status, :brigadist, :team
+          attributes :id, :visited_at, :city, :sector, :wedge, :house, :visit_status, :brigadist, :team, :family_education_topics
 
           attribute :visited_at do |visit|
             visit.visited_at if visit.visited_at.present?

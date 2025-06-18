@@ -18,6 +18,7 @@ module Api
             optional(:user_account_id).filled(:integer)
             optional(:host)
             optional(:notes).maybe(:string)
+            optional(:family_education_topics)
             optional(:visit_permission).filled(:bool)
 
             optional(:answers).array(:hash)

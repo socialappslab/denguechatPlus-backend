@@ -52,6 +52,7 @@ module Api
               hardFields: {
                 visitedAt: visit.visited_at,
                 brigade: visit.team.name,
+                familyEducationTopics: visit.family_education_topics,
 
                 host: visit.host.split(', '),
                 brigadist: {
