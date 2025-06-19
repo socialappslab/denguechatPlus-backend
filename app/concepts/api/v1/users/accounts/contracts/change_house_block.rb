@@ -16,8 +16,16 @@ module Api
             end
 
             rule(:house_block_id) do
-              neighborhood_id = Team.find_by(id: values[:team_id])&.neighborhood_id || 0
-              available_house_blocks = HouseBlock.where(neighborhood_id: neighborhood_id).pluck(:id)
+              unless values[:team_id]
+                key(:house_block_id).failure(text: "The house_block_id isn't correct", predicate: :not_exists?)
+              end
+              team = Team.find_by(id: values[:team_id])
+              unless team
+                key(:house_block_id).failure(text: "The house_block_id isn't correct", predicate: :not_exists?)
+              end
+              available_house_blocks = HouseBlock.joins(:wedges)
+                        .where(wedges: { id: team&.wedge_id })
+                        .distinct.pluck(:id)
               if values[:house_block_id] && available_house_blocks.exclude?(values[:house_block_id])
                 key(:house_block_id).failure(text: "The house_block_id isn't correct", predicate: :not_exists?)
               end
