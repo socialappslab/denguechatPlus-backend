@@ -37,6 +37,6 @@ test:
 
 production:
   <<: *default
-  database: denguechat_plus_production
+  database: <%= ENV["DATABASE_NAME"] %>
   username: <%= ENV["DENGUECHAT_PLUS_DATABASE_USER"] %>
   password: <%= ENV["DENGUECHAT_PLUS_DATABASE_PASSWORD"] %>
