@@ -1,27 +1,30 @@
-<% if @options.any? %>
-  <ul>
-    <% @options.each do |option| %>
-      <% if option.image.attached? %>
-        <li>
-          <strong>Option id:</strong> <%=option.id %> <br>
-          <strong>Description</strong><%= option.name_es %>
+<div class="container mx-auto py-12 antialiased">
+    <% if @options.any? %>
+    <div class="flex flex-wrap space-y-12">
+      <% @options.each do |option| %>
+          <div class="w-1/2 space-y-4">
+            <h1 class="text-lg font-semibold"><%=option.name_es %> (id: <%= option.id %>)</h1>
 
-          <p>Imagen actual:</p>
-          <%= image_tag option.image, size: "200x200" %>
+            <% if option.image.attached? %>
+              <p>Imagen actual:</p>
+              <%= image_tag option.image, size: "200x200", class: "rounded-md" %>
+            <% else %>
+              <div class="bg-green-50 p-4 rounded-md h-[200px] w-[200px] flex items-center justify-center">
+                <p>Sin imagen</p>
+              </div>
+            <% end %>
 
-          <%= form_with model: option, url: update_image_question_web_change_image_path(option), method: :put, local: true, html: { multipart: true } do |f| %>
-            <div>
-              <%= f.label :image, "Subir nueva imagen" %>
-              <%= f.file_field :image, accept: "image/*" %>
-            </div>
-            <%= f.submit "Actualizar Imagen" %>
-          <% end %>
-        </li>
-        <hr  style="margin-bottom: 45px">
+            <%= form_with model: option, url: update_image_question_web_change_image_path(option), method: :put, local: true, html: { multipart: true }, class: "space-y-4" do |f| %>
+              <div class="space-y-2">
+                <%= f.label :image, "Subir nueva imagen", for: "image", class: "block text-sm font-medium" %>
+                <%= f.file_field :image, accept: "image/*", id: "image", class: "block py-2 px-4 text-sm border border-green-100 rounded-md cursor-pointer bg-green-50 focus:outline-none file:font-semibold file:mr-2" %>
+              </div>
+              <%= f.submit "Actualizar Imagen", class: "bg-green-700 hover:bg-green-800 transition-colors text-white px-4 py-2 rounded-md cursor-pointer" %>
+            <% end %>
+          </div>
       <% end %>
-
-    <% end %>
-  </ul>
-<% else %>
-  <p>No hay preguntas en este cuestionario.</p>
-<% end %>
+    </div>
+  <% else %>
+    <p class="text-center text-lg font-semibold">No hay preguntas en este cuestionario.</p>
+  <% end %>
+</div>
