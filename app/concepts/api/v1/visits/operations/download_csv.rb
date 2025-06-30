@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "csv"
+require 'csv'
 
 module Api
   module V1
@@ -11,6 +11,7 @@ module Api
 
           tee :params
           step :validate_params!
+          tee :set_language
           step :generate_csv
 
           def params(input)
@@ -25,6 +26,10 @@ module Api
             Failure({ ctx: @ctx, type: :invalid })
           end
 
+          def set_language
+            @language = @params[:language].in?(%w[en es pt]) || 'es'
+          end
+
           def generate_csv(_input = nil)
             visit = Visit
                       .includes(
@@ -37,18 +42,18 @@ module Api
                           :container_protections,
                           :type_contents,
                           :elimination_method_type,
-                          :photo_attachment, :photo_blob # para evitar N+1 de ActiveStorage
+                          :photo_attachment, :photo_blob
                         ]
                       ).find(@params[:id])
 
             csv_data = CSV.generate(headers: true) do |csv|
-              csv << visit_headers
+              csv << Constants::DownloadCsvConstants.const_get("VISIT_HEADERS_#{@language.upcase}")
               csv << visit_row(visit)
 
               csv << []
               csv << []
 
-              csv << inspection_headers
+              csv << Constants::DownloadCsvConstants.const_get("INSPECTION_HEADERS_#{@language.upcase}")
               visit.inspections.each { |inspection| csv << inspection_row(inspection) }
             end
 
@@ -56,7 +61,7 @@ module Api
               send_data: {
                 data: csv_data,
                 filename: "visita_#{visit.id}.csv",
-                type: "text/csv"
+                type: 'text/csv'
               },
               type: :send_data
             )
@@ -64,53 +69,34 @@ module Api
 
           private
 
-          def visit_headers
-            [
-              "codigo de referencia",
-              "fecha_visita",
-              "brigadista",
-              "brigada",
-              "permiso para visitar la casa",
-              "notas"
-            ]
-          end
-
           def visit_row(visit)
             [
               visit.house&.reference_code,
-              visit.visited_at.strftime("%d/%m/%Y %H:%M"),
+              visit.visited_at.strftime('%d/%m/%Y %H:%M'),
               visit.user_account&.full_name,
               visit.team&.name,
-              visit.visit_permission ? "Sí" : "No",
-              visit.notes
+              Constants::DownloadCsvConstants::BOOLEAN_TRANSLATIONS[@language][visit.visit_permission],
+              visit.notes,
+              translate_multilang_values(Constants::DownloadCsvConstants::QUESTION_TALK_ABOUT_TOPICS,
+                                         @language,
+                                         visit.family_education_topics)&.join('-')
             ]
-          end
-
-          def inspection_headers
-            %w[tipo_de_recipiente
-              hay_agua_en_el_recipiente
-              origen_del_agua
-              otro_origen_del_agua
-              tipo_de_protección
-              otro_tipo_de_protección
-              fue_tratado_por_el_ministerio_de_salud
-              en_reste_recipiente/envase_hay
-              acción_realizada_sobre_el_recipiente
-              otra_acción
-              foto_del_recipiente/envase]
           end
 
           def inspection_row(inspection)
             [
-              inspection.breeding_site_type.name&.gsub(',', '-'),
-              inspection.has_water ? 'Sí' : 'No',
-              inspection&.water_source_types&.name&.gsub(',', '-'),
+              inspection.id,
+              inspection.breeding_site_type.send(:"name_#{@language}"),
+              Constants::DownloadCsvConstants::BOOLEAN_TRANSLATIONS[@language][inspection.has_water],
+              inspection&.water_source_types&.pluck(:"name_#{@language}")&.join('-'),
               inspection.water_source_other,
-              inspection.container_protections&.pluck(:name_es)&.join("-"),
+              inspection.container_protections&.pluck(:"name_#{@language}")&.join('-'),
               inspection.other_protection,
-              inspection.was_chemically_treated,
-              inspection.type_contents&.pluck(:name_es)&.join("-"),
-              inspection.elimination_method_type&.name_es&.gsub(',', '-'),
+              translate_multilang_values(Constants::DownloadCsvConstants::WAS_CHEMICALLY_TRANSLATIONS,
+                                         @language,
+                                         inspection.was_chemically_treated)&.join('-'),
+              inspection.type_contents&.pluck(:"name_#{@language}")&.join('-'),
+              inspection.elimination_method_type&.send(:"name_#{@language}")&.gsub(',', '-'),
               inspection.other_elimination_method,
               inspection.photo.present? ? Rails.application.routes.url_helpers.url_for(inspection.photo) : ''
 
@@ -118,8 +104,27 @@ module Api
           end
 
           def bool(value)
-            value ? "Sí" : "No"
+            value ? 'Sí' : 'No'
           end
+
+          def translate_multilang_values(collection, language = 'es', current_value = nil)
+            return '' unless current_value
+
+            values = Array(current_value)
+
+            values.map do |val|
+              match = collection.find do |q|
+                q[:name_en] == val || q[:name_es] == val || q[:name_pt] == val
+              end
+
+              if match
+                match[:"name_#{language}"]
+              else
+                val
+              end
+            end
+          end
+
         end
       end
     end

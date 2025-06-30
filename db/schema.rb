@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_18_115031) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_29_234133) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -73,6 +73,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_18_115031) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "container_type"
+    t.string "name_en"
+    t.string "name_pt"
   end
 
   create_table "cities", force: :cascade do |t|
@@ -664,6 +666,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_18_115031) do
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "name_en"
+    t.string "name_pt"
   end
 
   create_table "wedges", force: :cascade do |t|
