@@ -6,6 +6,8 @@
 #  container_type :string
 #  discarded_at   :datetime
 #  name           :string
+#  name_en        :string
+#  name_pt        :string
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #
@@ -13,6 +15,7 @@ class BreedingSiteType < ApplicationRecord
   include Discard::Model
 
   has_many :additional_information, class_name: 'BreedingSiteTypeAditionalInformation', dependent: :destroy
+  alias_attribute :name_es, :name
 
 
   def serialized_additional_info
@@ -26,7 +29,6 @@ class BreedingSiteType < ApplicationRecord
         only_text(info)
       end
     end
-
   end
 
   private

@@ -4,11 +4,29 @@ module Api
   module V1
     module Visits
       module Serializers
-        class Show < ApplicationSerializer # rubocop:disable Metrics/ClassLength
+        class Show < ApplicationSerializer
           set_type :visit
 
           attributes :id, :questionnaire_id, :visited_at, :brigadist, :team, :city, :sector, :wedge,
-                     :visit_permission, :host, :answers, :notes, :family_education_topics
+                     :visit_permission, :host, :answers, :notes
+
+          translate_multilang_values = ->(collection, language = 'es', current_value = nil) {
+            return '' unless current_value
+
+            values = Array(current_value)
+
+            values.map do |val|
+              match = collection.find do |q|
+                q[:name_en] == val || q[:name_es] == val || q[:name_pt] == val
+              end
+
+              if match
+                match[:"name_#{language}"]
+              else
+                val
+              end
+            end
+          }
 
           attribute :visited_at do |object|
             @house = object.house
@@ -21,35 +39,36 @@ module Api
           attribute :team do |object|
             {
               id: object.team_id,
-              name: object.team.name
+              name: object.team.name,
             }
           end
 
           attribute :brigadist do |object|
+
             if object.user_account
               {
                 id: object.user_account.id,
-                fullName: object.user_account.full_name
+                fullName: object.user_account.full_name,
               }
             else
               {
                 id: nil,
-                fullName: 'Usuario eliminado'
+                fullName: 'Usuario eliminado',
               }
             end
           end
 
-          attribute :city do |_object|
+          attribute :city do |object|
             {
               id: @city.id,
-              name: @city.name
+              name: @city.name,
             }
           end
 
-          attribute :sector do |_object|
+          attribute :sector do |object|
             {
               id: @sector.id,
-              name: @sector.name
+              name: @sector.name,
             }
           end
 
@@ -57,10 +76,10 @@ module Api
             object.status
           end
 
-          attribute :wedge do |_object|
+          attribute :wedge do |object|
             {
               id: @wedge.id,
-              name: @wedge.name
+              name: @wedge.name,
             }
           end
 
@@ -74,10 +93,10 @@ module Api
             }
           end
 
-          attribute :host do |object|
-            next unless object.host
+          attribute :host do |visit|
+            next unless visit.host
 
-            object.host.split(', ')
+            translate_multilang_values.call(Constants::VisitConstants::HOST, visit.language, visit.host.split(', '))
           end
 
           attribute :modification_history do |visit|
@@ -92,6 +111,15 @@ module Api
             }
           end
 
+          attribute :family_education_topics do |visit|
+            Constants::DownloadCsvConstants::QUESTION_TALK_ABOUT_TOPICS.map do |item|
+              {
+                name: item[:"name_#{visit.language}"],
+                checked: item[:"name_#{visit.language}"].in?(visit.family_education_topics)
+              }
+            end
+          end
+
           attribute :inspections do |visit|
             next unless visit.inspections.any?
 
@@ -100,7 +128,7 @@ module Api
                 id: inspection.id,
                 breedingSiteType: {
                   breeding_site_type_id: inspection.breeding_site_type_id,
-                  breeding_site_type_name: inspection.breeding_site_type&.name
+                  breeding_site_type_name: inspection.breeding_site_type&.send("name_#{visit.language}"),
                 },
                 eliminationMethodTypes: inspection.elimination_method_types.map do |elimination_method_type|
                   {
@@ -111,7 +139,7 @@ module Api
                 waterSourceType: inspection.water_source_types.map do |wst|
                   {
                     id: wst.id,
-                    name: wst.name
+                    name: wst&.send("name_#{visit.language}")
                   }
                 end,
                 container_protections: inspection.container_protections.map do |protection|
@@ -130,8 +158,13 @@ module Api
                   end
                 ],
                 has_water: inspection.has_water,
-                was_chemically_treated: inspection.was_chemically_treated,
-                container_test_result: inspection.container_test_result
+                was_chemically_treated: Constants::DownloadCsvConstants::WAS_CHEMICALLY_TRANSLATIONS.map do |item|
+                  {
+                    name: item[:"name_#{visit.language}"],
+                    checked: item[:"name_#{visit.language}"] == inspection.was_chemically_treated
+                  }
+                end,
+              container_test_result: inspection.container_test_result
               }
             end
           end
