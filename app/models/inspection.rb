@@ -141,7 +141,4 @@ class Inspection < ApplicationRecord
       ]
     end
   end
-
-
-
 end
