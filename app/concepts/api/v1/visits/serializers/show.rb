@@ -4,12 +4,11 @@ module Api
   module V1
     module Visits
       module Serializers
-        class Show < ApplicationSerializer
+        class Show < ApplicationSerializer # rubocop:disable Metrics/ClassLength
           set_type :visit
 
           attributes :id, :questionnaire_id, :visited_at, :brigadist, :team, :city, :sector, :wedge,
                      :visit_permission, :host, :answers, :notes, :family_education_topics
-
 
           attribute :visited_at do |object|
             @house = object.house
@@ -22,36 +21,35 @@ module Api
           attribute :team do |object|
             {
               id: object.team_id,
-              name: object.team.name,
+              name: object.team.name
             }
           end
 
           attribute :brigadist do |object|
-
             if object.user_account
               {
                 id: object.user_account.id,
-                fullName: object.user_account.full_name,
+                fullName: object.user_account.full_name
               }
             else
               {
                 id: nil,
-                fullName: 'Usuario eliminado',
+                fullName: 'Usuario eliminado'
               }
             end
           end
 
-          attribute :city do |object|
+          attribute :city do |_object|
             {
               id: @city.id,
-              name: @city.name,
+              name: @city.name
             }
           end
 
-          attribute :sector do |object|
+          attribute :sector do |_object|
             {
               id: @sector.id,
-              name: @sector.name,
+              name: @sector.name
             }
           end
 
@@ -59,10 +57,10 @@ module Api
             object.status
           end
 
-          attribute :wedge do |object|
+          attribute :wedge do |_object|
             {
               id: @wedge.id,
-              name: @wedge.name,
+              name: @wedge.name
             }
           end
 
@@ -102,13 +100,14 @@ module Api
                 id: inspection.id,
                 breedingSiteType: {
                   breeding_site_type_id: inspection.breeding_site_type_id,
-                  breeding_site_type_name: inspection.breeding_site_type&.name,
+                  breeding_site_type_name: inspection.breeding_site_type&.name
                 },
-                eliminationMethodType: {
-                  elimination_method_type_id: inspection.elimination_method_type_id,
-                  elimination_method_type_name: inspection.elimination_method_type&.send("name_#{visit.language}"),
-                  elimination_method_type_other: inspection.other_elimination_method
-                },
+                eliminationMethodTypes: inspection.elimination_method_types.map do |elimination_method_type|
+                  {
+                    id: elimination_method_type.id,
+                    name: elimination_method_type.send("name_#{visit.language}")
+                  }
+                end,
                 waterSourceType: inspection.water_source_types.map do |wst|
                   {
                     id: wst.id,
@@ -136,7 +135,6 @@ module Api
               }
             end
           end
-
         end
       end
     end

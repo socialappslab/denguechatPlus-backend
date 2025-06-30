@@ -9,7 +9,7 @@ module Api
 
           attributes :id
 
-          get_image_obj = lambda do |record|
+          get_image_obj = ->(record) do
             return '' unless record&.photo&.attached?
 
             {
@@ -24,10 +24,10 @@ module Api
             container.breeding_site_type.name
           end
 
-          attribute :elimination_method_type do |container|
-            next unless container.elimination_method_type
+          attribute :elimination_method_types do |container|
+            next if container.elimination_method_types.blank?
 
-            container.elimination_method_type.name_es
+            container.elimination_method_types.map(&:name_es).join(', ')
           end
 
           attribute :elimination_method_type_other, &:other_elimination_method
@@ -51,7 +51,6 @@ module Api
           attribute :has_water, &:has_water
 
           attribute :location, &:location
-
 
           attribute :container_protection_other, &:other_protection
 

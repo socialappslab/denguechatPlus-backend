@@ -12,4 +12,6 @@
 #
 class EliminationMethodType < ApplicationRecord
   include Discard::Model
+  has_many :inspection_elimination_method_types
+  has_many :inspections, through: :inspection_elimination_method_types
 end
