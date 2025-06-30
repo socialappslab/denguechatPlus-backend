@@ -8,8 +8,25 @@ module Api
           set_type :visit
 
           attributes :id, :questionnaire_id, :visited_at, :brigadist, :team, :city, :sector, :wedge,
-                     :visit_permission, :host, :answers, :notes, :family_education_topics
+                     :visit_permission, :host, :answers, :notes
 
+          translate_multilang_values = ->(collection, language = 'es', current_value = nil) {
+            return '' unless current_value
+
+            values = Array(current_value)
+
+            values.map do |val|
+              match = collection.find do |q|
+                q[:name_en] == val || q[:name_es] == val || q[:name_pt] == val
+              end
+
+              if match
+                match[:"name_#{language}"]
+              else
+                val
+              end
+            end
+          }
 
           attribute :visited_at do |object|
             @house = object.house
@@ -94,6 +111,15 @@ module Api
             }
           end
 
+          attribute :family_education_topics do |visit|
+            Constants::DownloadCsvConstants::QUESTION_TALK_ABOUT_TOPICS.map do |item|
+              {
+                name: item[:"name_#{visit.language}"],
+                checked: item[:"name_#{visit.language}"].in?(visit.family_education_topics)
+              }
+            end
+          end
+
           attribute :inspections do |visit|
             next unless visit.inspections.any?
 
@@ -131,14 +157,20 @@ module Api
                   end
                 ],
                 has_water: inspection.has_water,
-                was_chemically_treated: inspection.was_chemically_treated,
-                container_test_result: inspection.container_test_result
+                was_chemically_treated: Constants::DownloadCsvConstants::WAS_CHEMICALLY_TRANSLATIONS.map do |item|
+                  {
+                    name: item[:"name_#{visit.language}"],
+                    checked: item[:"name_#{visit.language}"] == inspection.was_chemically_treated
+                  }
+                end,
+              container_test_result: inspection.container_test_result
               }
             end
           end
-
         end
       end
     end
   end
 end
+
+
