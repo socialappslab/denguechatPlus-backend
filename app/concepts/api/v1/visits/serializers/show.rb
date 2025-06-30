@@ -93,10 +93,10 @@ module Api
             }
           end
 
-          attribute :host do |object|
-            next unless object.host
+          attribute :host do |visit|
+            next unless visit.host
 
-            object.host.split(', ')
+            translate_multilang_values.call(Constants::VisitConstants::HOST, visit.language, visit.host.split(', '))
           end
 
           attribute :modification_history do |visit|
@@ -128,7 +128,7 @@ module Api
                 id: inspection.id,
                 breedingSiteType: {
                   breeding_site_type_id: inspection.breeding_site_type_id,
-                  breeding_site_type_name: inspection.breeding_site_type&.name,
+                  breeding_site_type_name: inspection.breeding_site_type&.send("name_#{visit.language}"),
                 },
                 eliminationMethodType: {
                   elimination_method_type_id: inspection.elimination_method_type_id,
@@ -138,7 +138,7 @@ module Api
                 waterSourceType: inspection.water_source_types.map do |wst|
                   {
                     id: wst.id,
-                    name: wst.name
+                    name: wst&.send("name_#{visit.language}")
                   }
                 end,
                 container_protections: inspection.container_protections.map do |protection|
@@ -172,5 +172,4 @@ module Api
     end
   end
 end
-
 
