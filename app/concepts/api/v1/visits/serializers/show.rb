@@ -115,7 +115,7 @@ module Api
             Constants::DownloadCsvConstants::QUESTION_TALK_ABOUT_TOPICS.map do |item|
               {
                 name: item[:"name_#{visit.language}"],
-                checked: item[:"name_#{visit.language}"].in?(visit.family_education_topics)
+                checked: (item.values & visit.family_education_topics).any?
               }
             end
           end
@@ -130,11 +130,12 @@ module Api
                   breeding_site_type_id: inspection.breeding_site_type_id,
                   breeding_site_type_name: inspection.breeding_site_type&.send("name_#{visit.language}"),
                 },
-                eliminationMethodType: {
-                  elimination_method_type_id: inspection.elimination_method_type_id,
-                  elimination_method_type_name: inspection.elimination_method_type&.send("name_#{visit.language}"),
-                  elimination_method_type_other: inspection.other_elimination_method
-                },
+                eliminationMethodTypes: inspection.elimination_method_types.map do |elimination_method_type|
+                  {
+                    id: elimination_method_type.id,
+                    name: elimination_method_type.send("name_#{visit.language}")
+                  }
+                end,
                 waterSourceType: inspection.water_source_types.map do |wst|
                   {
                     id: wst.id,
@@ -160,7 +161,7 @@ module Api
                 was_chemically_treated: Constants::DownloadCsvConstants::WAS_CHEMICALLY_TRANSLATIONS.map do |item|
                   {
                     name: item[:"name_#{visit.language}"],
-                    checked: item[:"name_#{visit.language}"] == inspection.was_chemically_treated
+                    checked: item.values.include?(inspection.was_chemically_treated)
                   }
                 end,
               container_test_result: inspection.container_test_result
@@ -172,4 +173,3 @@ module Api
     end
   end
 end
-

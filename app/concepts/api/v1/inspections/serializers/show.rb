@@ -4,11 +4,10 @@ module Api
   module V1
     module Inspections
       module Serializers
-        class Show < ApplicationSerializer
+        class Show < ApplicationSerializer # rubocop:disable Metrics/ClassLength
           set_type :inspection
 
-
-          build_breading_site_type = lambda { |container|
+          build_breading_site_type = ->(container) {
             BreedingSiteType.all.map do |bst|
               {
                 id: bst.id,
@@ -19,53 +18,52 @@ module Api
             end
           }
 
-          build_elimination_method_type = lambda { |container|
-            EliminationMethodType.all.map do |bst|
+          build_elimination_method_types = ->(container) {
+            EliminationMethodType.all.map do |elimination_method_type|
               res = {
-                id: bst.id,
-                name: bst.name_es,
-                value: bst.id,
-                selected: bst.id == container.elimination_method_type_id
+                id: elimination_method_type.id,
+                name: elimination_method_type.name_es,
+                value: elimination_method_type.id,
+                selected: elimination_method_type.id.in?(container.elimination_method_type_ids)
               }
 
-              if bst.name_es.downcase.in?(['otro', 'other', 'outro'])
+              if elimination_method_type.name_es.downcase.in?(%w[otro other outro])
                 res[:is_text_area] = true
-                res[:other_resource_name]= 'eliminationMethodTypeOther'
+                res[:other_resource_name] = 'eliminationMethodTypeOther'
               end
               res
             end
           }
 
-          build_type_contents = lambda { |container|
+          build_type_contents = ->(container) {
             TypeContent.all.map do |bst|
               {
                 id: bst.id,
                 name: bst.name_es,
                 value: bst.id,
                 selected: bst.id.in?(container.type_contents.pluck(:id)),
-                is_text_area: bst.name_es.downcase.in?(['otro', 'other', 'outro'])
+                is_text_area: bst.name_es.downcase.in?(%w[otro other outro])
               }
             end
           }
 
-          build_water_source_type = lambda { |container|
-            water_source_types = container.water_source_type_ids
+          build_water_source_types = ->(container) {
             WaterSourceType.all.map do |wst|
               res = {
                 id: wst.id,
                 name: wst.name,
                 value: wst.id,
-                selected: wst.id.in?(water_source_types)
+                selected: wst.id.in?(container.water_source_type_ids)
               }
-              if wst.name.downcase.in?(['otro', 'other', 'outro'])
+              if wst.name.downcase.in?(%w[otro other outro])
                 res[:is_text_area] = true
-                res[:other_resource_name]= 'waterSourceOther'
+                res[:other_resource_name] = 'waterSourceOther'
               end
               res
             end
           }
 
-          build_container_protection = lambda { |container|
+          build_container_protection = ->(container) {
             container_protections = container.container_protection_ids
             ContainerProtection.all.map do |bst|
               res = {
@@ -74,15 +72,15 @@ module Api
                 value: bst.id,
                 selected: bst.id.in?(container_protections)
               }
-              if bst.name_es.downcase.in?(['otro', 'other', 'outro'])
+              if bst.name_es.downcase.in?(%w[otro other outro])
                 res[:is_text_area] = true
-                res[:other_resource_name]= 'containerProtectionOther'
+                res[:other_resource_name] = 'containerProtectionOther'
               end
               res
             end
           }
 
-          build_was_chemically_treated = lambda { |container|
+          build_was_chemically_treated = ->(container) {
             [
               {
                 name: 'Sí, fue tratado (revise el registro detrás de la puerta)',
@@ -102,7 +100,7 @@ module Api
             ]
           }
 
-          get_image_obj = lambda do |record|
+          get_image_obj = ->(record) do
             return '' unless record&.photo&.attached?
 
             {
@@ -115,8 +113,8 @@ module Api
             build_breading_site_type.call(container)
           end
 
-          attribute :elimination_method_type do |container|
-            build_elimination_method_type.call(container)
+          attribute :elimination_method_types do |container|
+            build_elimination_method_types.call(container)
           end
 
           attribute :elimination_method_type_other, &:other_elimination_method
@@ -129,9 +127,8 @@ module Api
             container.status_i18n(container.color)
           end
 
-          attribute :water_source_type do |container|
-            build_water_source_type.call(container)
-
+          attribute :water_source_types do |container|
+            build_water_source_types.call(container)
           end
 
           attribute :water_source_other, &:water_source_other

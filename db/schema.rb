@@ -73,8 +73,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_30_020244) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "container_type"
-    t.string "name_en"
-    t.string "name_pt"
   end
 
   create_table "cities", force: :cascade do |t|
@@ -238,6 +236,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_30_020244) do
     t.index ["inspection_id"], name: "index_inspection_container_protections_on_inspection_id"
   end
 
+  create_table "inspection_elimination_method_types", force: :cascade do |t|
+    t.bigint "inspection_id", null: false
+    t.bigint "elimination_method_type_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["elimination_method_type_id"], name: "idx_on_elimination_method_type_id_a7873ece3f"
+    t.index ["inspection_id", "elimination_method_type_id"], name: "idx_on_inspection_id_elimination_method_type_id_42c6e6636a", unique: true
+    t.index ["inspection_id"], name: "index_inspection_elimination_method_types_on_inspection_id"
+  end
+
   create_table "inspection_water_source_types", force: :cascade do |t|
     t.bigint "inspection_id", null: false
     t.bigint "water_source_type_id", null: false
@@ -251,7 +259,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_30_020244) do
   create_table "inspections", force: :cascade do |t|
     t.bigint "visit_id", null: false
     t.bigint "breeding_site_type_id", null: false
-    t.bigint "elimination_method_type_id"
     t.bigint "created_by_id", null: false
     t.bigint "treated_by_id", null: false
     t.string "code_reference"
@@ -272,7 +279,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_30_020244) do
     t.index ["breeding_site_type_id"], name: "index_inspections_on_breeding_site_type_id"
     t.index ["created_by_id"], name: "index_inspections_on_created_by_id"
     t.index ["discarded_at"], name: "index_inspections_on_discarded_at"
-    t.index ["elimination_method_type_id"], name: "index_inspections_on_elimination_method_type_id"
     t.index ["treated_by_id"], name: "index_inspections_on_treated_by_id"
     t.index ["visit_id"], name: "index_inspections_on_visit_id"
   end
@@ -666,8 +672,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_30_020244) do
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "name_en"
-    t.string "name_pt"
   end
 
   create_table "wedges", force: :cascade do |t|
@@ -708,10 +712,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_30_020244) do
   add_foreign_key "houses", "wedges"
   add_foreign_key "inspection_container_protections", "container_protections"
   add_foreign_key "inspection_container_protections", "inspections"
+  add_foreign_key "inspection_elimination_method_types", "elimination_method_types"
+  add_foreign_key "inspection_elimination_method_types", "inspections"
   add_foreign_key "inspection_water_source_types", "inspections"
   add_foreign_key "inspection_water_source_types", "water_source_types"
   add_foreign_key "inspections", "breeding_site_types"
-  add_foreign_key "inspections", "elimination_method_types"
   add_foreign_key "inspections", "user_accounts", column: "created_by_id"
   add_foreign_key "inspections", "user_accounts", column: "treated_by_id"
   add_foreign_key "inspections", "visits"

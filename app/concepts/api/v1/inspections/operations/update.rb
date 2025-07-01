@@ -10,7 +10,6 @@ module Api
           tee :params
           step :validate_schema
           tee :check_if_has_photo
-          tee :change_water_source_id_type_by_water_source_type_ids
           step :update_inspection
           tee :update_house_and_visit_status
           tee :update_house_status_daily
@@ -39,16 +38,9 @@ module Api
 
           def check_if_has_photo
             @delete_photo = @params[:photo].nil? && @params[:delete_photo]
-            @photo = @params[:photo] unless @params[:photo].blank?
+            @photo = @params[:photo] if @params[:photo].present?
             @params.delete(:delete_photo)
             @params.delete(:photo)
-          end
-
-          def change_water_source_id_type_by_water_source_type_ids
-            if @params.key?(:water_source_type_id)
-              @params[:water_source_type_ids] = [@params[:water_source_type_id]]
-              @params.delete(:water_source_type_id)
-            end
           end
 
           def update_inspection
@@ -59,8 +51,8 @@ module Api
               inspection.update(@params)
               @ctx[:model] = inspection
               Success({ ctx: @ctx, type: :created })
-            rescue => error
-              errors = ErrorFormater.new_error(field: :base, msg: error, custom_predicate: :unexpected_key )
+            rescue StandardError => error
+              errors = ErrorFormater.new_error(field: :base, msg: error, custom_predicate: :unexpected_key)
 
               return Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
             end
@@ -68,9 +60,9 @@ module Api
 
           def update_house_and_visit_status
             colors = {
-              'red' => "Rojo",
-              'yellow' => "Amarillo",
-              'green' => "Verde"
+              'red' => 'Rojo',
+              'yellow' => 'Amarillo',
+              'green' => 'Verde'
             }
             @visit = @ctx[:model].visit
             @house = @visit.house
@@ -78,18 +70,18 @@ module Api
             if !@inspections.empty?
               counts = @inspections.group(:color).count
               result = {
-                infected_containers: counts["red"] || 0,
-                potential_containers: counts["yellow"] || 0,
-                non_infected_containers: counts["green"] || 0,
+                infected_containers: counts['red'] || 0,
+                potential_containers: counts['yellow'] || 0,
+                non_infected_containers: counts['green'] || 0,
                 last_visit: @params[:visited_at] || Time.now.utc,
-                status: if (counts["red"] || 0) > 0
-                          "red"
-                        elsif (counts["yellow"] || 0) > 0
-                          "yellow"
-                        elsif (counts["green"] || 0) > 0
-                          "green"
+                status: if (counts['red'] || 0) > 0
+                          'red'
+                        elsif (counts['yellow'] || 0) > 0
+                          'yellow'
+                        elsif (counts['green'] || 0) > 0
+                          'green'
                         else
-                          "green"
+                          'green'
                         end
               }
               result[:tariki_status] = @house.is_tariki?(result[:status])
@@ -122,9 +114,14 @@ module Api
           def assign_points
             user_account = @visit.user_account
 
-            Api::V1::Points::Services::Transactions.assign_point(earner: user_account, house_id: @house.id, visit_id: @visit.id) if @house.tariki_status
-            Api::V1::Points::Services::Transactions.remove_point(earner: user_account, house_id: @house.id, visit_id: @visit.id) unless @house.tariki_status
+            if @house.tariki_status
+              Api::V1::Points::Services::Transactions.assign_point(earner: user_account, house_id: @house.id,
+                                                                   visit_id: @visit.id)
+            end
+            return if @house.tariki_status
 
+            Api::V1::Points::Services::Transactions.remove_point(earner: user_account, house_id: @house.id,
+                                                                 visit_id: @visit.id)
           end
 
           private
@@ -133,25 +130,20 @@ module Api
             @ctx[:model].define_singleton_method(:language) { @language }
             @ctx[:model].define_singleton_method(:language=) { |value| @language = value }
             @ctx[:model].language = if @params.key?(:language) && @params[:language].in?(%w[en es pt])
-                                     @params[:language]
-                                   else
-                                     'es'
-                                   end
+                                      @params[:language]
+                                    else
+                                      'es'
+                                    end
             Success({ ctx: @ctx, type: :success })
           end
 
           def manage_photo(inspection)
-            if @photo && !@delete_photo
-              inspection.photo = @photo
-            end
-            if @delete_photo && !@has_photo
-              inspection.photo.purge
-            end
+            inspection.photo = @photo if @photo && !@delete_photo
+            inspection.photo.purge if @delete_photo && !@has_photo
             inspection
           end
 
-          def analyze_inspection_status( params = {})
-
+          def analyze_inspection_status(params = {})
             params[:type_content_ids] ||= {}
             type_content_id = params[:type_content_ids].map!(&:to_i)
 
