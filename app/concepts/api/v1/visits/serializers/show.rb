@@ -115,7 +115,7 @@ module Api
             Constants::DownloadCsvConstants::QUESTION_TALK_ABOUT_TOPICS.map do |item|
               {
                 name: item[:"name_#{visit.language}"],
-                checked: item[:"name_#{visit.language}"].in?(visit.family_education_topics)
+                checked: (item.values & visit.family_education_topics).any?
               }
             end
           end
@@ -161,7 +161,7 @@ module Api
                 was_chemically_treated: Constants::DownloadCsvConstants::WAS_CHEMICALLY_TRANSLATIONS.map do |item|
                   {
                     name: item[:"name_#{visit.language}"],
-                    checked: item[:"name_#{visit.language}"] == inspection.was_chemically_treated
+                    checked: item.values.include?(inspection.was_chemically_treated)
                   }
                 end,
               container_test_result: inspection.container_test_result
