@@ -41,7 +41,7 @@ module Api
                           :water_source_types,
                           :container_protections,
                           :type_contents,
-                          :elimination_method_type,
+                          :elimination_method_types,
                           :photo_attachment, :photo_blob
                         ]
                       ).find(@params[:id])
@@ -96,7 +96,7 @@ module Api
                                          @language,
                                          inspection.was_chemically_treated)&.join('-'),
               inspection.type_contents&.pluck(:"name_#{@language}")&.join('-'),
-              inspection.elimination_method_type&.send(:"name_#{@language}")&.gsub(',', '-'),
+              inspection.elimination_method_types&.pluck(:"name_#{@language}")&.join('-'),
               inspection.other_elimination_method,
               inspection.photo.present? ? Rails.application.routes.url_helpers.url_for(inspection.photo) : ''
 
@@ -124,7 +124,6 @@ module Api
               end
             end
           end
-
         end
       end
     end
