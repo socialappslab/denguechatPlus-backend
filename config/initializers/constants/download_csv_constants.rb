@@ -4,7 +4,7 @@ module Constants
   module DownloadCsvConstants
     VISIT_HEADERS_ES = [
         "codigo de referencia",
-        "fecha_visita",
+        "fecha visita",
         "brigadista",
         "brigada",
         "permiso para visitar la casa",
@@ -14,7 +14,7 @@ module Constants
 
     VISIT_HEADERS_PT = [
       "código de referência",
-      "data_visita",
+      "data visita",
       "brigadista",
       "brigada",
       "permissão para visitar a casa",
@@ -24,7 +24,7 @@ module Constants
 
     VISIT_HEADERS_EN = [
       "reference code",
-      "visit_date",
+      "visit date",
       "brigadist",
       "brigade",
       "permission to visit the house",
@@ -105,7 +105,7 @@ module Constants
         },
         {
           name_es: 'No lo sé',
-          name_en: "I don't know",
+          name_en: "I don’t know",
           name_pt: 'Eu não sei'
         }
       ].freeze
