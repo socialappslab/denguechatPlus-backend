@@ -48,7 +48,8 @@ module Api
             params_json = JSON.parse(params)
             @params = to_snake_case(params_json)
             @params[:questionnaire_id] ||= Questionnaire.last.id || 1
-            @current_user = input[:current_user]
+            user_account_id = Integer(@params['user_account_id'])
+            @current_user = user_account_id ? UserAccount.find(user_account_id) : input[:current_user]
           end
 
           def depurate_inspection_list
@@ -104,7 +105,7 @@ module Api
               errors = ErrorFormater.new_error(field: :base, msg: error,
                                                custom_predicate: :user_account_without_confirmation?)
 
-              return Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
+              Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
             end
           end
 
@@ -129,16 +130,16 @@ module Api
                 @photo_ids << { code_reference: inspection[:code_reference],
                                 photo_id: inspection[:photo_id] }
               end
-              if inspection[:quantity_founded]
-                inspection[:quantity_founded] = inspection[:quantity_founded].to_i
-                inspection[:quantity_founded].times do
-                  inspection[:visit_id] = visit_id
-                  inspections_clean_format_object = Container.new(inspection.slice(*container_attrs)).to_h
-                  if inspections_clean_format_object[:container_protection_ids].nil?
-                    inspections_clean_format_object.delete(:container_protection_ids)
-                  end
-                  inspections_clean_format << inspections_clean_format_object
+              next unless inspection[:quantity_founded]
+
+              inspection[:quantity_founded] = inspection[:quantity_founded].to_i
+              inspection[:quantity_founded].times do
+                inspection[:visit_id] = visit_id
+                inspections_clean_format_object = Container.new(inspection.slice(*container_attrs)).to_h
+                if inspections_clean_format_object[:container_protection_ids].nil?
+                  inspections_clean_format_object.delete(:container_protection_ids)
                 end
+                inspections_clean_format << inspections_clean_format_object
               end
             end
             if inspections_clean_format.any?
@@ -177,13 +178,7 @@ module Api
 
           private
 
-          def generate_code(country, state, city, wedge, block)
-            country_name = country.name[0..1]
-            state_name = state.name[0..1]
-            city_name = city.name[0..1]
-            wedge_name = wedge.name.last(4).delete(' ')
-            block_name = block.name.last(4).delete(' ')
-            rand_number = Time.now.to_i.to_s
+          def generate_code
             last_id = House.last&.id || 1
             last_id + 1
           end
@@ -201,10 +196,6 @@ module Api
             @house = House.find_by(reference_code: @house_info[:reference_code])
             return @house&.id if @house
 
-            # similar_house = Api::V1::Visits::Services::HouseFinderByCoordsService.find_similar_house(latitude: @house_info[:latitude],
-            #                                                                                          longitude: @house_info[:longitude],
-            #                                                                                          house_block_id: @house_info[:house_block_id])
-
             @house = create_and_get_house_id
 
             @house.id
@@ -219,7 +210,7 @@ module Api
             state = neighborhood.state
             country = neighborhood.country
             user_profile = @current_user.user_profile
-            reference_code = @house_info[:reference_code] || generate_code(country, state, city, wedge, house_block)
+            reference_code = @house_info[:reference_code] || generate_code
             location_status = @house_info[:latitude] && @house_info[:longitude] ? 'with_coordinates' : 'without_coordinates'
             @house_info[:latitude] = @house_info[:latitude] || -3.775520
             @house_info[:longitude] = @house_info[:longitude] || -73.450878
