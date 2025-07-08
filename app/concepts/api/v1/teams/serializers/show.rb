@@ -8,15 +8,6 @@ module Api
           set_type :team
 
           attributes :name
-          attribute :leader do |brigade|
-            next if brigade.leader.nil?
-
-            {
-              id: brigade.leader.id,
-              first_name: brigade.leader.first_name,
-              last_name: brigade.leader.last_name
-            }
-          end
 
           attribute :members do |brigade|
             brigade.members.map do |user|
