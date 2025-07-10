@@ -47,7 +47,7 @@ class Question < ApplicationRecord
   alias_attribute :question, :question_text
 
   def format_service_url
-    url = URI(self.image.attachment.key)
-    "#{url.scheme}://#{url.host}/#{self.file.attachment.key}"
+    url = URI(image.attachment.key)
+    "#{url.scheme}://#{url.host}/#{file.attachment.key}"
   end
 end

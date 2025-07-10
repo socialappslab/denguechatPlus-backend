@@ -11,7 +11,7 @@ unless SeedTask.find_by(task_name: 'add_container_protections_v1')
   SeedTask.create!(task_name: 'add_container_protections_v1')
 end
 
-#create elimination methods
+# create elimination methods
 unless SeedTask.find_by(task_name: 'create_method_elimination')
   EliminationMethodType.destroy_all
   EliminationMethodType.create!(
@@ -31,7 +31,7 @@ unless SeedTask.find_by(task_name: 'create_method_elimination')
   SeedTask.create!(task_name: 'create_method_elimination')
 end
 
-#create water sources types
+# create water sources types
 unless SeedTask.find_by(task_name: 'create_water_sources_types_v1')
   WaterSourceType.destroy_all
   WaterSourceType.create!(
@@ -40,11 +40,12 @@ unless SeedTask.find_by(task_name: 'create_water_sources_types_v1')
       { name: 'Agua activamente recogida. Ejemplo: canaleta, gotera, techo.' },
       { name: 'Agua pasivamente recogida. Ejemplo: la lluvia lo llenó.' },
       { name: 'Otro' }
-    ])
+    ]
+  )
   SeedTask.create!(task_name: 'create_water_sources_types_v1')
 end
 
-#create container types
+# create container types
 unless SeedTask.find_by(task_name: 'create_breeding_site_types_v3')
   BreedingSiteType.destroy_all
 
@@ -92,12 +93,18 @@ QUESTIONS_DATA = [
     resource_name: '',
     resource_type: 'attribute',
     options: [
-      { name_es: 'Sí, tengo permiso para esta visita', name_en: 'Yes, I have permission for this visit', name_pt: 'Sim, tenho permissão para esta visita', required: false, next: 2, type_option: 'boolean', value: 1 },
-      { name_es: 'No, no me dieron permiso para esta visita', name_en: 'No, I was not given permission for this visit', name_pt: 'Não, não me deram permissão para esta visita', required: false, next: -1, type_option: 'boolean', value: 0 },
-      { name_es: 'La casa está cerrada', name_en: 'The house is closed', name_pt: 'A casa está fechada', required: false, next: -1, type_option: 'boolean', value: 0 },
-      { name_es: 'La casa está deshabitada', name_en: 'The house is uninhabited', name_pt: 'A casa está desabitada', required: false, next: -1, type_option: 'boolean', value: 0 },
-      { name_es: 'Me pidieron regresar en otra ocasión', name_en: 'I was asked to return another time', name_pt: 'Pediram-me para voltar em outra ocasião', required: false, next: -1, type_option: 'boolean', value: 0 },
-      { name_es: 'Otra explicación', name_en: 'Another explanation', name_pt: 'Outra explicação', type_option: 'textArea', required: false, next: -1 }
+      { name_es: 'Sí, tengo permiso para esta visita', name_en: 'Yes, I have permission for this visit',
+        name_pt: 'Sim, tenho permissão para esta visita', required: false, next: 2, type_option: 'boolean', value: 1 },
+      { name_es: 'No, no me dieron permiso para esta visita', name_en: 'No, I was not given permission for this visit',
+        name_pt: 'Não, não me deram permissão para esta visita', required: false, next: -1, type_option: 'boolean', value: 0 },
+      { name_es: 'La casa está cerrada', name_en: 'The house is closed', name_pt: 'A casa está fechada',
+        required: false, next: -1, type_option: 'boolean', value: 0 },
+      { name_es: 'La casa está deshabitada', name_en: 'The house is uninhabited', name_pt: 'A casa está desabitada',
+        required: false, next: -1, type_option: 'boolean', value: 0 },
+      { name_es: 'Me pidieron regresar en otra ocasión', name_en: 'I was asked to return another time',
+        name_pt: 'Pediram-me para voltar em outra ocasião', required: false, next: -1, type_option: 'boolean', value: 0 },
+      { name_es: 'Otra explicación', name_en: 'Another explanation', name_pt: 'Outra explicação',
+        type_option: 'textArea', required: false, next: -1 }
     ]
   },
   {
@@ -129,7 +136,7 @@ QUESTIONS_DATA = [
       { name_es: 'Adulto mujer', name_en: 'Adult woman', name_pt: 'Mulher adulta', required: false },
       { name_es: 'Joven hombre', name_en: 'Young man', name_pt: 'Homem jovem', required: false },
       { name_es: 'Joven mujer', name_en: 'Young woman', name_pt: 'Mulher jovem', required: false },
-      { name_es: 'Niños\as', name_en: 'Children', name_pt: 'Crianças', required: false },
+      { name_es: 'Niños\as', name_en: 'Children', name_pt: 'Crianças', required: false }
     ]
   },
   {
@@ -213,7 +220,7 @@ QUESTIONS_DATA = [
     resource_type: 'attribute',
     options: [
       { name_es: 'Sí, encontré', name_en: 'Yes, I found', name_pt: 'Sim, eu encontrei', next: 10 },
-      { name_es: 'No, no encontré', name_en: 'No, I did not find', name_pt: 'Não, eu não encontrei',  next: -1 }
+      { name_es: 'No, no encontré', name_en: 'No, I did not find', name_pt: 'Não, eu não encontrei', next: -1 }
     ]
   },
   {
@@ -254,7 +261,7 @@ QUESTIONS_DATA = [
         name_pt: 'Estrutura da casa', resource_id: BreedingSiteType.find_by(name: 'Estructura de la casa').id },
 
       { group_es: 'Permanentes', group_en: 'Permanent', group_pt: 'Permanentes', name_es: 'Sumidero', name_en: 'Sump',
-        name_pt: 'Drenagem', resource_id: BreedingSiteType.find_by(name: 'Sumidero').id },
+        name_pt: 'Drenagem', resource_id: BreedingSiteType.find_by(name: 'Sumidero').id }
     ]
   },
   {
@@ -267,7 +274,7 @@ QUESTIONS_DATA = [
     resource_type: 'attribute',
     options: [
       { name_es: 'Sí, contiene agua', name_en: 'Yes, it holds water', name_pt: 'Sim, contém água', next: 12,
-        type_option: 'boolean', value: 1},
+        type_option: 'boolean', value: 1 },
       { name_es: 'No, no contiene agua', name_en: 'No, it does not hold water', name_pt: 'Não, não contém água',
         next: 19, type_option: 'boolean', value: 0 }
     ]
@@ -305,11 +312,11 @@ QUESTIONS_DATA = [
       { name_es: 'Sí, tiene una tapa hermética', name_en: 'Yes, it has a sealed lid',
         name_pt: 'Sim, tem uma tampa hermética', next: 14, group_es: 'Tapa', group_en: 'Lid',
         group_pt: 'Tampa', resource_id: ContainerProtection.find_by(name_es: 'Tapa hermética').id,
-        status_color: Constants::ContainerStatus::NOT_INFECTED},
+        status_color: Constants::ContainerStatus::NOT_INFECTED },
       { name_es: 'Sí, tiene una tapa no hermética', name_en: 'Yes, it has a non-sealed lid',
         name_pt: 'Sim, tem uma tampa não hermética', group_es: 'Tapa', group_en: 'Lid', group_pt: 'Tampa',
         next: 14, resource_id: ContainerProtection.find_by(name_es: 'Tapa no hermética').id,
-        status_color: Constants::ContainerStatus::POTENTIALLY_INFECTED},
+        status_color: Constants::ContainerStatus::POTENTIALLY_INFECTED },
       { name_es: 'Sí, está bajo techo', name_en: 'Yes, it is under a roof', name_pt: 'Sim, está sob um telhado',
         next: 14, group_es: 'Techo', group_en: 'Roof', group_pt: 'Telhado', resource_id: ContainerProtection.find_by(name_es: 'Techo').id,
         status_color: Constants::ContainerStatus::POTENTIALLY_INFECTED },
@@ -426,7 +433,7 @@ QUESTIONS_DATA = [
         resource_id: EliminationMethodType.find_by(name_es: 'Ninguna acción') },
 
       { name_es: 'Otro', name_en: 'Other', name_pt: 'Outro',
-        resource_id: EliminationMethodType.find_by(name_es: 'Otro'), type_option: 'textArea' },
+        resource_id: EliminationMethodType.find_by(name_es: 'Otro'), type_option: 'textArea' }
     ]
-  },
+  }
 ].freeze

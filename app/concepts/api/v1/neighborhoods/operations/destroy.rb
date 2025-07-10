@@ -34,10 +34,9 @@ module Api
               @ctx[:model].discard_all
               Success({ ctx: @ctx, type: :success })
             end
-          rescue StandardError => e
+          rescue StandardError
             Failure({ ctx: @ctx, type: :invalid })
           end
-
         end
       end
     end

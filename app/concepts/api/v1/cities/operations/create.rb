@@ -36,7 +36,8 @@ module Api
             @ctx[:model] = City.create(data)
             return Success({ ctx: @ctx, type: :created }) if @ctx[:model].persisted?
 
-            errors = ErrorFormater.new_error(field: :base, msg: @ctx[:model].errors.full_messages, custom_predicate: :not_found? )
+            errors = ErrorFormater.new_error(field: :base, msg: @ctx[:model].errors.full_messages,
+                                             custom_predicate: :not_found?)
             Failure({ ctx: @ctx, type: :invalid, errors: })
           end
 

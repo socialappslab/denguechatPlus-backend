@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'ostruct'
 
 module Api
@@ -6,7 +7,6 @@ module Api
     module Posts
       module Contracts
         class Create < Dry::Validation::Contract
-
           def self.kall(...)
             new.call(...)
           end
@@ -21,9 +21,7 @@ module Api
           rule(:user_account_id) do
             user = UserAccount.find_by(id: values[:user_account_id])
 
-            unless user
-              key(:user_account_id).failure(text: 'the user has not exist', predicate: :not_found?)
-            end
+            key(:user_account_id).failure(text: 'the user has not exist', predicate: :not_found?) unless user
 
             unless user&.teams&.any?
               key(:user_account_id).failure(text: 'the user has no team assigned', predicate: :not_found?)
@@ -40,12 +38,11 @@ module Api
             if Neighborhood.find_by(id: user&.neighborhood_id)&.country.nil?
               key(:user_account_id).failure(text: 'the user has no country assigned', predicate: :not_found?)
             end
-
           end
 
           rule(:photos) do
             if values[:photos]
-              unless values[:photos].all?{ |photo| photo.is_a?(ActionDispatch::Http::UploadedFile) }
+              unless values[:photos].all? { |photo| photo.is_a?(ActionDispatch::Http::UploadedFile) }
                 key(:photos).failure(text: 'must be an image', predicate: :format?)
                 next
               end

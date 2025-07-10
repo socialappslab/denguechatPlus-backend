@@ -1,8 +1,7 @@
 module Services
   class FastJson
-
-    def self.call(**opts)
-      new(**opts).response_hash
+    def self.call(**)
+      new(**).response_hash
     end
 
     def initialize(**opts)

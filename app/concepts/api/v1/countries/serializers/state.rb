@@ -7,8 +7,7 @@ module Api
         class State < ApplicationSerializer
           set_type :state
 
-          attributes  :name
-
+          attributes :name
         end
       end
     end

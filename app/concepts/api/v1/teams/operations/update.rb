@@ -38,7 +38,7 @@ module Api
               begin
                 @ctx[:model].update!(@ctx['contract.default'].values.data)
                 return Success({ ctx: @ctx, type: :success })
-              rescue ActiveRecord::RecordInvalid => invalid
+              rescue ActiveRecord::RecordInvalid
                 add_errors(@ctx['contract.default'].errors, nil, I18n.t('errors.users.not_found'),
                            custom_predicate: :not_found?)
                 Failure({ ctx: @ctx, type: :invalid, model: true })
@@ -46,7 +46,6 @@ module Api
               end
             end
           end
-
         end
       end
     end

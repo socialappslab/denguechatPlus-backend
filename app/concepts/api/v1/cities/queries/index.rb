@@ -48,7 +48,6 @@ module Api
             relation.where(cities: { state_id: @params['state_id'] })
           end
 
-
           def sort_clause(relation)
             return relation if @sort.nil? || @sort.blank?
 

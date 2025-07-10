@@ -39,36 +39,35 @@ module Api
           attribute :team do |object|
             {
               id: object.team_id,
-              name: object.team.name,
+              name: object.team.name
             }
           end
 
           attribute :brigadist do |object|
-
             if object.user_account
               {
                 id: object.user_account.id,
-                fullName: object.user_account.full_name,
+                fullName: object.user_account.full_name
               }
             else
               {
                 id: nil,
-                fullName: 'Usuario eliminado',
+                fullName: 'Usuario eliminado'
               }
             end
           end
 
-          attribute :city do |object|
+          attribute :city do |_object|
             {
               id: @city.id,
-              name: @city.name,
+              name: @city.name
             }
           end
 
-          attribute :sector do |object|
+          attribute :sector do |_object|
             {
               id: @sector.id,
-              name: @sector.name,
+              name: @sector.name
             }
           end
 
@@ -76,10 +75,10 @@ module Api
             object.status
           end
 
-          attribute :wedge do |object|
+          attribute :wedge do |_object|
             {
               id: @wedge.id,
-              name: @wedge.name,
+              name: @wedge.name
             }
           end
 
@@ -128,7 +127,7 @@ module Api
                 id: inspection.id,
                 breedingSiteType: {
                   breeding_site_type_id: inspection.breeding_site_type_id,
-                  breeding_site_type_name: inspection.breeding_site_type&.send("name_#{visit.language}"),
+                  breeding_site_type_name: inspection.breeding_site_type&.send("name_#{visit.language}")
                 },
                 eliminationMethodTypes: inspection.elimination_method_types.map do |elimination_method_type|
                   {
@@ -164,7 +163,7 @@ module Api
                     checked: item.values.include?(inspection.was_chemically_treated)
                   }
                 end,
-              container_test_result: inspection.container_test_result
+                container_test_result: inspection.container_test_result
               }
             end
           end

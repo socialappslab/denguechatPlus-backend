@@ -3,7 +3,6 @@
 module Api
   module V1
     class CountriesController < AuthorizedApiController
-
       def index
         endpoint operation: Api::V1::Countries::Operations::Index,
                  renderer_options: { serializer: Api::V1::Countries::Serializers::Index },
@@ -32,7 +31,6 @@ module Api
         endpoint operation: Api::V1::Countries::Operations::Destroy,
                  options: { current_user: }
       end
-
     end
   end
 end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'ostruct'
 
 module Api
@@ -6,7 +7,6 @@ module Api
     module Posts
       module Contracts
         class Index < Dry::Validation::Contract
-
           def self.kall(...)
             new.call(...)
           end
@@ -21,7 +21,7 @@ module Api
           end
 
           rule(:filter) do
-            if value && value[:team_id] && !value[:team_id].blank? && !Team.exists?(id: value[:team_id])
+            if value && value[:team_id] && value[:team_id].present? && !Team.exists?(id: value[:team_id])
               key(:team_id).failure(text: 'Team not found', predicate: :not_found?)
             end
           end

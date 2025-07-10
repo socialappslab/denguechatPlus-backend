@@ -19,7 +19,6 @@ module Api
         endpoint operation: Api::V1::Wedges::Operations::HouseBlocks,
                  renderer_options: { serializer: Api::V1::Wedges::Serializers::HouseBlockList }
       end
-
     end
   end
 end

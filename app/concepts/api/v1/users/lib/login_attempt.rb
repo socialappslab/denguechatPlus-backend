@@ -5,7 +5,6 @@ module Api
     module Users
       module Lib
         class LoginAttempt
-
           def initialize(user)
             @user = user
           end
@@ -27,10 +26,7 @@ module Api
           def reset_attempts_count!
             @user.update(failed_attempts: 0, status: 'active')
           end
-
-
         end
-
       end
     end
   end

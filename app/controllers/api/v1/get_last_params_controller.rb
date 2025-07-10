@@ -8,7 +8,6 @@ module Api
                  renderer_options: { serializer: Api::V1::GetLastParams::Serializers::Index },
                  options: { current_user: }
       end
-
     end
   end
 end

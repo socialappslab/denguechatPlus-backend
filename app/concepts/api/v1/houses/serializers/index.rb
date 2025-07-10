@@ -8,8 +8,8 @@ module Api
           set_type :house
 
           attributes :id, :discarded_at, :reference_code, :house_type, :address,
-                                   :latitude, :longitude, :notes, :status, :container_count,
-                                   :assignment_status, :created_at, :updated_at
+                     :latitude, :longitude, :notes, :status, :container_count,
+                     :assignment_status, :created_at, :updated_at
 
           attribute :country do |house|
             next unless house.country
@@ -45,7 +45,7 @@ module Api
               id: house.neighborhood.id,
               name: house.neighborhood.name
             }
-        end
+          end
 
           attribute :wedge do |house|
             next unless house.wedge

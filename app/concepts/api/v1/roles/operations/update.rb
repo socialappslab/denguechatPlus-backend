@@ -30,7 +30,8 @@ module Api
             return Success({ ctx: @ctx, type: :success }) if @ctx[:model]
 
             ErrorFormater.new_error(
-              custom_predicate: :not_found?)
+              custom_predicate: :not_found?
+            )
             Failure({ ctx: @ctx, type: :invalid, model: true }) unless @ctx[:model]
           end
 
@@ -40,14 +41,13 @@ module Api
                 data_processed = @ctx['contract.default'].values.data
                 @ctx[:model].update!(data_processed)
                 next Success({ ctx: @ctx, type: :success })
-              rescue ActiveRecord::RecordInvalid => invalid
-                errors = ErrorFormater.new_error(field: :base, msg: @ctx[:model].errors.full_messages.join(' '), custom_predicate: :credentials_wrong?)
+              rescue ActiveRecord::RecordInvalid
+                errors = ErrorFormater.new_error(field: :base, msg: @ctx[:model].errors.full_messages.join(' '),
+                                                 custom_predicate: :credentials_wrong?)
                 Failure({ ctx: @ctx, type: :invalid, errors: errors })
               end
             end
           end
-
-
         end
       end
     end

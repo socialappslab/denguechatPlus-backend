@@ -12,7 +12,6 @@ module Api
           attribute :status do |special_place|
             special_place.discarded_at.nil?
           end
-
         end
       end
     end

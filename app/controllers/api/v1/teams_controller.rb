@@ -33,7 +33,6 @@ module Api
         endpoint operation: Api::V1::Teams::Operations::Destroy,
                  options: { current_user: }
       end
-
     end
   end
 end

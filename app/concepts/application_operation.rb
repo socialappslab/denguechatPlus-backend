@@ -5,8 +5,8 @@ require 'dry/transaction'
 class ApplicationOperation
   include Dry::Transaction
 
-  def self.call(*args)
-    new.call(*args)
+  def self.call(*)
+    new.call(*)
   end
 
   def to_snake_case(params_to_convert = params)

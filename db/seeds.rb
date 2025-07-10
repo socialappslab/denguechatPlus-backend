@@ -198,7 +198,7 @@ end
 
 # assign team_leader to teams
 unless SeedTask.find_by(task_name: 'assign_team_leader_to_teams')
-  user_account = UserAccount.find_by(username: 'team_leader')
+  UserAccount.find_by(username: 'team_leader')
   team = Team.find_by(name: 'Dengue killers')
   team.save!
   SeedTask.create!(task_name: 'assign_team_leader_to_teams')
@@ -220,7 +220,7 @@ end
 unless SeedTask.find_by(task_name: 'create_houses_v2')
 
   house_blocks = HouseBlock.all
-  (1..10).each_with_index do |obj, index|
+  (1..10).each_with_index do |_obj, index|
     house_block = house_blocks.sample
     house = House.new
     house.country = Country.first

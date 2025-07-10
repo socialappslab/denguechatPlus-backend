@@ -10,7 +10,6 @@ module Api
 
             attributes :id, :username, :phone, :status
 
-
             has_one :user_profile, record_type: :user_profile, serializer: Api::V1::Users::Accounts::Serializers::UserProfile
 
             attribute :roles do |user_account|
@@ -24,7 +23,6 @@ module Api
 
               user_account.permissions.map { |permission| "#{permission.resource}-#{permission.name}" }
             end
-
           end
         end
       end

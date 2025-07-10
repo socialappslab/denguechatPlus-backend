@@ -4,8 +4,8 @@ class ErrorFormater
   class << self
     def new_error(**errors)
       field = errors[:field] || :base
-      msg= errors[:msg] || ''
-      meta= errors[:meta] || ''
+      msg = errors[:msg] || ''
+      meta = errors[:meta] || ''
       path = errors[:path] || []
       custom_predicate = errors[:custom_predicate] || nil
       resource = errors[:resource] || nil

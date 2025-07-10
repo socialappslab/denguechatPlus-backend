@@ -47,9 +47,8 @@ module Api
             state_id = State.find_by(name: 'Loreto')&.id || @params['state_id']
             return relation if state_id.nil?
 
-            relation.where(cities: { state_id: state_id  })
+            relation.where(cities: { state_id: state_id })
           end
-
 
           def sort_clause(relation)
             return relation if @sort.nil? || @sort.blank?
