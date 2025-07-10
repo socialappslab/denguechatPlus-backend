@@ -1,21 +1,19 @@
 module Web
   class ChangeImagesController < ApplicationWebController
-    skip_before_action :verify_authenticity_token, only: [:update_image, :update_image_question]
+    skip_before_action :verify_authenticity_token, only: %i[update_image update_image_question]
 
     before_action :http_authenticate
 
     def question_images
       @questionnaire = Questionnaire.last
       @questions = @questionnaire.questions
-      render "change_images/index"
-
+      render 'change_images/index'
     end
 
     def option_images
       @questionnaire = Questionnaire.last
       @options = Option.all
-      render "change_images/options"
-
+      render 'change_images/options'
     end
 
     def update_image
@@ -35,7 +33,6 @@ module Web
         redirect_to option_images_web_change_images_path
       end
     end
-
 
     private
 

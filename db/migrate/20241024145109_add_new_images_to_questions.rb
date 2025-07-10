@@ -2,28 +2,27 @@ class AddNewImagesToQuestions < ActiveRecord::Migration[7.1]
   def change
     question1 = Question.find_by(question_text_es: 'Visitemos la casa')
     if question1
-      #1
-      set_image(question1, "1")
+      # 1
+      set_image(question1, '1')
     end
 
     question2 = Question.find_by(question_text_es: 'Comencemos en la huerta')
     if question2
-      #8_1
-      set_image(question2, "8_1")
+      # 8_1
+      set_image(question2, '8_1')
     end
 
     question3 = Question.find_by(question_text_es: 'Revisemos dentro de la casa')
     if question3
-      #9
-      set_image(question3, "9")
+      # 9
+      set_image(question3, '9')
     end
 
     question5 = Question.find_by(question_text_es: 'Registremos acciones tomadas sobre el contenedor')
-    if question5
-      #4
-      set_image(question5, "4")
-    end
+    return unless question5
 
+    # 4
+    set_image(question5, '4')
 
     # question5 = Question.find_by(question_text_es: 'Comencemos la visita_____')
     # if question5
@@ -40,12 +39,10 @@ class AddNewImagesToQuestions < ActiveRecord::Migration[7.1]
     #   #5
     # end
 
-
     # question7 = Question.find_by(question_text_es: 'Visita concretada!')
     # if question7
     #   #7 o 6
     # end
-
   end
 
   def set_image(question, image_name)
@@ -54,7 +51,7 @@ class AddNewImagesToQuestions < ActiveRecord::Migration[7.1]
     if File.exist?(image_path)
       question.image.attach(io: File.open(image_path), filename: "#{image_name}.png")
       question.save!
-      puts "Image saved!"
+      puts 'Image saved!'
     else
       puts "problems with #{question.question_text_es}"
     end

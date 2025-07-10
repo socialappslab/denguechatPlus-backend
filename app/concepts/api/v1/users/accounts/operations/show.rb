@@ -19,7 +19,8 @@ module Api
             def find_user
               @ctx[:data] = UserProfile.find_by(id: @params[:id])
               if @ctx[:data].nil?
-                Failure({ ctx: @ctx, type: :not_found, errors: ErrorFormater.new_error(field: :base, msg: 'not found', custom_predicate: :not_found? )})
+                Failure({ ctx: @ctx, type: :not_found,
+                          errors: ErrorFormater.new_error(field: :base, msg: 'not found', custom_predicate: :not_found?) })
 
               else
                 Success({ ctx: @ctx, type: :success })

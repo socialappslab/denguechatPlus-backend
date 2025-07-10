@@ -10,7 +10,6 @@ module Api
 
             ValidateCodeStruct = Struct.new(:url)
 
-
             tee :params
             step :validate_schema
             step :retrieve_user
@@ -26,11 +25,11 @@ module Api
                          'https://develop.denguechatplus.org/new_password'
                        end
 
-
             def params(input)
               @ctx = {}
               @params = to_snake_case(input[:params])
             end
+
             def validate_schema
               @ctx['contract.default'] = Api::V1::Users::Accounts::Contracts::ValidateCode.kall(@params)
               is_valid = @ctx['contract.default'].success?
@@ -40,11 +39,12 @@ module Api
             end
 
             def retrieve_user
-              @user_account = UserAccount.where("LOWER(username) = ? AND phone = ?", @params[:username].downcase.gsub(/\s+/, ''), @params[:phone])&.first
+              @user_account = UserAccount.where('LOWER(username) = ? AND phone = ?',
+                                                @params[:username].downcase.gsub(/\s+/, ''), @params[:phone])&.first
               return Success({ ctx: @user_account, type: :success }) if @user_account
 
-              Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'Invalid code', custom_predicate: :not_found? )})
-
+              Failure({ ctx: @ctx, type: :invalid,
+                        errors: ErrorFormater.new_error(field: :base, msg: 'Invalid code', custom_predicate: :not_found?) })
             end
 
             def retrieve_all_codes
@@ -53,15 +53,16 @@ module Api
                                               expired_at: Time.current..Float::INFINITY)
               return Success({ ctx: @user_account, type: :success }) if @codes&.any?
 
-              Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'Invalid code', custom_predicate: :not_found? )})
-
+              Failure({ ctx: @ctx, type: :invalid,
+                        errors: ErrorFormater.new_error(field: :base, msg: 'Invalid code', custom_predicate: :not_found?) })
             end
 
             def validate_code_owner
-              @code = @codes.find { |code| code.code ==@params[:code] }
+              @code = @codes.find { |code| code.code == @params[:code] }
               return Success({ ctx: @user_account, type: :success }) if @code
 
-              Failure({ ctx: @ctx, type: :invalid, errors: ErrorFormater.new_error(field: :base, msg: 'Invalid code', custom_predicate: :not_found? )})
+              Failure({ ctx: @ctx, type: :invalid,
+                        errors: ErrorFormater.new_error(field: :base, msg: 'Invalid code', custom_predicate: :not_found?) })
             end
 
             def update_code_data
@@ -79,10 +80,9 @@ module Api
             end
 
             def generate_url
-              @ctx[:data] = ValidateCodeStruct.new(url= "#{ROOT_URL}/#{@user_token.token}")
+              @ctx[:data] = ValidateCodeStruct.new("#{ROOT_URL}/#{@user_token.token}")
               Success({ ctx: @ctx, type: :success })
             end
-
           end
         end
       end

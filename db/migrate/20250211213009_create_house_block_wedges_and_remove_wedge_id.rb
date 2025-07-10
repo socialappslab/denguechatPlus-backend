@@ -6,7 +6,7 @@ class CreateHouseBlockWedgesAndRemoveWedgeId < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    add_index :house_block_wedges, [:house_block_id, :wedge_id], unique: true
+    add_index :house_block_wedges, %i[house_block_id wedge_id], unique: true
 
     execute <<-SQL
       INSERT INTO house_block_wedges (house_block_id, wedge_id, created_at, updated_at)
@@ -24,9 +24,9 @@ class CreateHouseBlockWedgesAndRemoveWedgeId < ActiveRecord::Migration[7.1]
     execute <<-SQL
       UPDATE house_blocks
       SET wedge_id = (
-        SELECT wedge_id 
-        FROM house_block_wedges 
-        WHERE house_block_wedges.house_block_id = house_blocks.id 
+        SELECT wedge_id#{' '}
+        FROM house_block_wedges#{' '}
+        WHERE house_block_wedges.house_block_id = house_blocks.id#{' '}
         LIMIT 1
       )
     SQL

@@ -86,7 +86,6 @@ ACTION_AND_RESOURCES = [
   { name: 'destroy', resource: 'cities' }
 ].freeze
 
-
 ROLES_PERMISSIONS = {
   roles: [
     {
@@ -106,7 +105,7 @@ ROLES_PERMISSIONS = {
         { name: 'show', resource: 'house_blocks' },
         { name: 'index', resource: 'get_last_params' }
       ]
-  },
+    },
     {
       name: 'team_leader',
       permissions: [
@@ -135,7 +134,7 @@ ROLES_PERMISSIONS = {
         { name: 'change_status', resource: 'users' },
         { name: 'users_confirm_account', resource: 'users' },
         { name: 'index', resource: 'special_places' },
-        { name: 'show', resource: 'special_places' },
+        { name: 'show', resource: 'special_places' }
       ]
     },
     {

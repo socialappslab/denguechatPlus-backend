@@ -32,19 +32,19 @@ module Api
 
           def generate_csv(_input = nil)
             visit = Visit
-                      .includes(
-                        :house,
-                        :user_account,
-                        :team,
-                        inspections: [
-                          :breeding_site_type,
-                          :water_source_types,
-                          :container_protections,
-                          :type_contents,
-                          :elimination_method_types,
-                          :photo_attachment, :photo_blob
-                        ]
-                      ).find(@params[:id])
+                    .includes(
+                      :house,
+                      :user_account,
+                      :team,
+                      inspections: %i[
+                        breeding_site_type
+                        water_source_types
+                        container_protections
+                        type_contents
+                        elimination_method_types
+                        photo_attachment photo_blob
+                      ]
+                    ).find(@params[:id])
 
             csv_data = CSV.generate(headers: true) do |csv|
               csv << Constants::DownloadCsvConstants.const_get("VISIT_HEADERS_#{@language.upcase}")

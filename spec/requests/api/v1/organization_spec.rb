@@ -16,7 +16,6 @@ RSpec.describe 'ApiDoc::V1::Organization::Api', :dox do
   let(:params) {  {} }
   let(:organization_id) { organization1.id }
 
-
   describe 'GET /index' do
     include ApiDoc::V1::Organization::Index
 
@@ -27,7 +26,6 @@ RSpec.describe 'ApiDoc::V1::Organization::Api', :dox do
     end
 
     describe 'Success' do
-
       it 'renders organizations' do
         expect(response).to match_json_schema('organizations/index')
         expect(response).to match_resource_type('organization')
@@ -72,7 +70,6 @@ RSpec.describe 'ApiDoc::V1::Organization::Api', :dox do
         expect(response.body).to be_empty
       end
     end
-
   end
 
   describe 'POST /create' do
@@ -99,7 +96,6 @@ RSpec.describe 'ApiDoc::V1::Organization::Api', :dox do
         expect(response.code).to eq('422')
       end
     end
-
   end
 
   describe 'PUT /update' do
@@ -126,7 +122,6 @@ RSpec.describe 'ApiDoc::V1::Organization::Api', :dox do
         expect(response.code).to eq('422')
       end
     end
-
   end
 
   describe 'DELETE /delete' do
@@ -139,11 +134,9 @@ RSpec.describe 'ApiDoc::V1::Organization::Api', :dox do
     end
 
     describe 'Success' do
-
       it 'returns 204' do
         expect(response.code).to eq('204')
       end
     end
-
   end
 end

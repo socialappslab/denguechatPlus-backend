@@ -8,7 +8,6 @@ module Api
           set_type :member_team
 
           attributes :user_account_id, :first_name, :last_name
-
         end
       end
     end

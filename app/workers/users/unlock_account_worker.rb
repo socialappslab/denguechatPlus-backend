@@ -9,5 +9,4 @@ module Users
       Api::V1::Users::Lib::LoginAttempt.call(user).reset_attempts_count!
     end
   end
-
 end

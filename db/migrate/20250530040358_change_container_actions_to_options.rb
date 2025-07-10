@@ -133,9 +133,9 @@ class ChangeContainerActionsToOptions < ActiveRecord::Migration[7.1]
 
   def disable_records(elimination_method, option)
     elimination_method&.discard!
-    if option
-      option.update!(visible: false)
-      option.discard!
-    end
+    return unless option
+
+    option.update!(visible: false)
+    option.discard!
   end
 end

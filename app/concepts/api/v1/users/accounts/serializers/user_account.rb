@@ -10,7 +10,6 @@ module Api
 
             attributes :id, :username, :phone, :status, :first_name, :last_name
             belongs_to :user_profile, serializer: Api::V1::Users::Accounts::Serializers::UserProfile, include: true
-
           end
         end
       end

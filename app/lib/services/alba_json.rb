@@ -1,8 +1,7 @@
 module Services
   class AlbaJson
-
-    def self.call(**opts)
-      new(**opts).response_hash
+    def self.call(**)
+      new(**).response_hash
     end
 
     def initialize(**opts)
@@ -15,8 +14,6 @@ module Services
         status: @opts[:status]
       }
     end
-
-
 
     private
 

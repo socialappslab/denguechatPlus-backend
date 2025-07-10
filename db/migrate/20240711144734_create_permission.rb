@@ -11,7 +11,6 @@ class CreatePermission < ActiveRecord::Migration[7.1]
       t.references :role, null: false
       t.references :permission, null: false
     end
-    add_index(:roles_permissions, [ :permission_id, :role_id ], unique: true)
-
+    add_index(:roles_permissions, %i[permission_id role_id], unique: true)
   end
 end

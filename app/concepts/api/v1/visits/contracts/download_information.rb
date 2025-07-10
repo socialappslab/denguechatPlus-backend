@@ -5,7 +5,6 @@ module Api
     module Visits
       module Contracts
         class DownloadInformation < Dry::Validation::Contract
-
           def self.kall(...)
             new.call(...)
           end

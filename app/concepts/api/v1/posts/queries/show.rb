@@ -8,7 +8,8 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(current_user, source, params)
-            @model = @posts = Post.with_attached_photos.includes(:likes, user_account: :user_profile, comments: %i[user_account likes])
+            @model = @posts = Post.with_attached_photos.includes(:likes, user_account: :user_profile,
+                                                                         comments: %i[user_account likes])
             @current_user = current_user
             @source = source
             @params = params || {}
@@ -41,7 +42,7 @@ module Api
 
             relation.where(
               'visibility = ? OR (visibility = ? AND team_id = ?)',
-              'public', 'team', (@current_user.teams&.first&.id || 0)
+              'public', 'team', @current_user.teams&.first&.id || 0
             )
           end
 
@@ -53,10 +54,9 @@ module Api
 
           def can_delete_by_me(relation)
             return relation if @current_user.nil?
+
             team_ids = @current_user.teams_under_leadership
-            team_ids = team_ids.any? ? team_ids.join(', ') : '0'
-
-
+            team_ids.any? ? team_ids.join(', ') : '0'
 
             relation.select("posts.*,
                 CASE
@@ -65,7 +65,6 @@ module Api
                   WHEN #{@current_user.has_role?(:team_leader)} THEN true
                 ELSE false
                 END AS can_delete_by_me")
-
           end
 
           def current_user_id(relation)
@@ -73,7 +72,6 @@ module Api
 
             relation.select("posts.*, #{@current_user.id} AS current_user_id")
           end
-
         end
       end
     end

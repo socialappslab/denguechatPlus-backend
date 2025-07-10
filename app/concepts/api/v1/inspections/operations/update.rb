@@ -54,7 +54,7 @@ module Api
             rescue StandardError => error
               errors = ErrorFormater.new_error(field: :base, msg: error, custom_predicate: :unexpected_key)
 
-              return Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
+              Failure({ ctx: @ctx, type: :invalid, errors: }) unless @ctx[:model]
             end
           end
 

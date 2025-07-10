@@ -8,7 +8,6 @@ class ChangeQuestionInfo < ActiveRecord::Migration[7.1]
     question_revisemos_la_casa.visible = false
     question_revisemos_la_huerta.visible = false
 
-
     donde_comienza_la_visita_opts.each do |opt|
       if opt.name_es.include? 'casa'
         opt.image.attach(question_revisemos_la_casa.image.blob)

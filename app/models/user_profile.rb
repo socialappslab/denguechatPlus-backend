@@ -38,10 +38,9 @@ class UserProfile < ApplicationRecord
   belongs_to :city
   belongs_to :neighborhood
   belongs_to :organization
-  belongs_to :team, foreign_key: 'team_id', optional: true
+  belongs_to :team, optional: true
   has_many :user_profile_house_blocks
   has_many :house_blocks, through: :user_profile_house_blocks
-
 
   delegate :confirmed_at, :phone, :username, :status, to: :user_account, allow_nil: true
   delegate :name, to: :role, prefix: true, allow_nil: true
@@ -50,7 +49,6 @@ class UserProfile < ApplicationRecord
   delegate :name, to: :city, prefix: true, allow_nil: true
   delegate :name, to: :neighborhood, prefix: true, allow_nil: true
   delegate :roles, to: :user_account, allow_nil: true
-
 
   def full_name
     "#{first_name} #{last_name}"

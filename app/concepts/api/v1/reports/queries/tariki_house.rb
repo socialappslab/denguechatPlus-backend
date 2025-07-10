@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 module Api
   module V1
     module Reports
@@ -9,7 +8,6 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           ReportResult = Struct.new(:total_houses_qty, :tariki_houses_qty, :total_container_qty, :green_container_qty)
-
 
           def initialize(filter, current_user)
             @model = HouseStatus
@@ -77,7 +75,6 @@ module Api
               green_containers.first&.[]('green_container_qty')
             )
           end
-
         end
       end
     end

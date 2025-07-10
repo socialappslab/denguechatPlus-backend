@@ -1,6 +1,5 @@
 class ModifyTermRecipienteInDescritpionOptions < ActiveRecord::Migration[7.1]
   def up
-
     execute <<~SQL
       UPDATE questions
       SET description_es = REPLACE(description_es, 'recipientes/envases', 'envases')
@@ -24,8 +23,6 @@ class ModifyTermRecipienteInDescritpionOptions < ActiveRecord::Migration[7.1]
       SET description_es = REPLACE(description_es, 'recipiente', 'envase')
       WHERE description_es ILIKE '%recipiente%';
     SQL
-
-
 
     execute <<~SQL
       UPDATE options
@@ -51,5 +48,4 @@ class ModifyTermRecipienteInDescritpionOptions < ActiveRecord::Migration[7.1]
       WHERE name_es ILIKE '%recipientes%';
     SQL
   end
-
 end

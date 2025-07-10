@@ -92,7 +92,6 @@ module Api
             end
           }
 
-
           get_image_obj = ->(record) do
             return '' unless record&.photo&.attached?
 
@@ -102,17 +101,17 @@ module Api
             }
           end
 
-          attribute :breading_site_type do |container, language|
+          attribute :breading_site_type do |container, _language|
             build_breading_site_type.call(container, container.language)
           end
 
-          attribute :elimination_method_types do |container, language|
+          attribute :elimination_method_types do |container, _language|
             build_elimination_method_types.call(container, container.language)
           end
 
           attribute :elimination_method_type_other, &:other_elimination_method
 
-          attribute :type_contents do |container, language|
+          attribute :type_contents do |container, _language|
             build_type_contents.call(container, container.language)
           end
 
@@ -120,25 +119,25 @@ module Api
             container.status_i18n(container.color)
           end
 
-          attribute :water_source_types do |container, language|
+          attribute :water_source_types do |container, _language|
             build_water_source_types.call(container, container.language)
           end
 
           attribute :water_source_other, &:water_source_other
 
-          attribute :has_water do |container, language|
+          attribute :has_water do |container, _language|
             Constants::DownloadCsvConstants::BOOLEAN_TRANSLATIONS[container.language][container.has_water]
           end
 
           attribute :location, &:location
 
-          attribute :container_protections do |container, language|
+          attribute :container_protections do |container, _language|
             build_container_protection.call(container, container.language)
           end
 
           attribute :container_protection_other, &:other_protection
 
-          attribute :was_chemically_treated do |container, language|
+          attribute :was_chemically_treated do |container, _language|
             build_was_chemically_treated.call(container, container.language)
           end
 

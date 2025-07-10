@@ -16,7 +16,6 @@ class ReplaceRecipienteEnvaseInQuestions < ActiveRecord::Migration[7.1]
       WHERE question_text_es ILIKE '%recipiente/envase%';
     SQL
 
-
     execute <<~SQL
       UPDATE options
       SET name_es = REPLACE(name_es, 'recipientes/envases', 'envases')
@@ -43,7 +42,6 @@ class ReplaceRecipienteEnvaseInQuestions < ActiveRecord::Migration[7.1]
       WHERE question_text_es ILIKE '%envase%';
     SQL
 
-
     execute <<~SQL
       UPDATE options
       SET name_es = REPLACE(name_es, 'envases', 'recipientes/envases')
@@ -55,6 +53,5 @@ class ReplaceRecipienteEnvaseInQuestions < ActiveRecord::Migration[7.1]
       SET name_es = REPLACE(name_es, 'envase', 'recipiente/envase')
       WHERE name_es ILIKE '%envase%';
     SQL
-
   end
 end

@@ -24,7 +24,7 @@ module Api
           end
 
           attribute :members do |brigade|
-            brigade.members.map { |user| "#{user.first_name}, #{user.last_name}"  }
+            brigade.members.map { |user| "#{user.first_name}, #{user.last_name}" }
           end
 
           attribute :members do |brigade|
@@ -58,7 +58,6 @@ module Api
 
             brigade.wedge.name
           end
-
         end
       end
     end

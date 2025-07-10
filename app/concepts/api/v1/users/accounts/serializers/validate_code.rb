@@ -1,4 +1,3 @@
-
 # frozen_string_literal: true
 
 module Api
@@ -10,12 +9,9 @@ module Api
             include Alba::Resource
             transform_keys :lower_camel
 
-
-
             attributes :url do
-              "url.url"
+              'url.url'
             end
-
           end
         end
       end

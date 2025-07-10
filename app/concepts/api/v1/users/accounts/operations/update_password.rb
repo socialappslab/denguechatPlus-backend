@@ -13,7 +13,6 @@ module Api
             step :retrieve_user
             step :update_password
 
-
             def params(input)
               @ctx = {}
               @params = to_snake_case(input[:params])
@@ -29,15 +28,12 @@ module Api
               Failure({ ctx: @ctx, type: :invalid }) unless is_valid
             end
 
-
             def retrieve_user
               return Success({ ctx: @current_user, type: :success }) if @current_user
 
               Failure({ ctx: @ctx, type: :invalid,
                         errors: ErrorFormater.new_error(field: :base, msg: 'User not found', custom_predicate: :not_found?) })
-
             end
-
 
             def update_password
               @current_user.password = @params[:new_password].downcase

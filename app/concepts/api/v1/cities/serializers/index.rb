@@ -11,7 +11,6 @@ module Api
           has_many :neighborhoods, serializer: Neighborhood do |object|
             object.neighborhoods.kept
           end
-
         end
       end
     end

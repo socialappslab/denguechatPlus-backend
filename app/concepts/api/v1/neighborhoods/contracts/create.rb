@@ -46,7 +46,8 @@ module Api
           private
 
           def repeated_name?(name, values)
-            Neighborhood.exists?(name: name, country_id: values[:country_id], state_id: values[:state_id], city_id: values[:city_id])
+            Neighborhood.exists?(name: name, country_id: values[:country_id], state_id: values[:state_id],
+                                 city_id: values[:city_id])
           end
         end
       end

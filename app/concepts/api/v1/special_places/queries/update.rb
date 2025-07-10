@@ -7,7 +7,7 @@ module Api
         class Update
           include Api::V1::Lib::Queries::QueryHelper
 
-          def initialize(filter, sort)
+          def initialize(_filter, _sort)
             @model = SpecialPlace
           end
 

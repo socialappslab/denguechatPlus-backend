@@ -9,8 +9,8 @@ module Adapter
         ::JWT.encode(payload, SECRET_KEY)
       end
 
-      def decode(token, verify: true, **options)
-        ::JWT.decode(token, SECRET_KEY, verify, **options)
+      def decode(token, verify: true, **)
+        ::JWT.decode(token, SECRET_KEY, verify, **)
       end
     end
   end

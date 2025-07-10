@@ -18,7 +18,7 @@ module Api
 
           def call
             @model
-                 .yield_self(&method(:get_first_five))
+              .yield_self(&method(:get_first_five))
           end
 
           def get_first_five(relation)
@@ -28,7 +28,6 @@ module Api
                     .order('quantity DESC')
                     .limit(5)
           end
-
         end
       end
     end

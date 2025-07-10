@@ -5,7 +5,6 @@ module Api
     class RolesController < AuthorizedApiController
       skip_before_action :check_permissions!, only: [:index]
 
-
       def index
         endpoint operation: Api::V1::Roles::Operations::Index,
                  renderer_options: {
@@ -29,7 +28,6 @@ module Api
                  },
                  options: { current_user: }
       end
-
     end
   end
 end

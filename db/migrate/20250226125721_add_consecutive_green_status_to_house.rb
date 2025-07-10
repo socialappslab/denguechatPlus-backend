@@ -6,16 +6,14 @@ class AddConsecutiveGreenStatusToHouse < ActiveRecord::Migration[7.1]
       statuses = HouseStatus.where(house_id: house.id).order(created_at: :desc).pluck(:status)
 
       consecutive_count = 0
-      if statuses.first != "green"
-        consecutive_count = 0
-      else
+      if statuses.first == 'green'
         statuses.each do |status|
-          if status == "green"
-            consecutive_count += 1
-          else
-            break
-          end
+          break unless status == 'green'
+
+          consecutive_count += 1
         end
+      else
+        consecutive_count = 0
       end
 
       house.update_column(:consecutive_green_status, consecutive_count)

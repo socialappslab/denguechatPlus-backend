@@ -3,10 +3,10 @@ target_question = Question.find_by(question_text_es: '¿Me dieron permiso para v
 
 if splash_question&.image&.attached?
   ActiveStorage::Current.url_options = {
-    host: ENV["HOST_URL"]
+    host: ENV.fetch('HOST_URL', nil)
   }
   url = splash_question.image.url(expires_in: 2.years)
 
-  target_question.additional_data["image"] = url
+  target_question.additional_data['image'] = url
   target_question.save!
 end

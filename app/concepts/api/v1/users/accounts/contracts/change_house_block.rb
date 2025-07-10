@@ -24,13 +24,12 @@ module Api
                 key(:house_block_id).failure(text: "The house_block_id isn't correct", predicate: :not_exists?)
               end
               available_house_blocks = HouseBlock.joins(:wedges)
-                        .where(wedges: { id: team&.wedge_id })
-                        .distinct.pluck(:id)
+                                                 .where(wedges: { id: team&.wedge_id })
+                                                 .distinct.pluck(:id)
               if values[:house_block_id] && available_house_blocks.exclude?(values[:house_block_id])
                 key(:house_block_id).failure(text: "The house_block_id isn't correct", predicate: :not_exists?)
               end
             end
-
           end
         end
       end
