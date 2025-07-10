@@ -59,4 +59,86 @@ namespace :data_migration do
     puts '✅ Migration completed successfully'
     puts "Updated #{updated_count} question(s) with new translations"
   end
+
+  desc 'Add new options to the "¿Qué información compartiste?" question'
+  task add_information_shared_options: :environment do
+    puts 'Starting migration: add_information_shared_options'
+    puts "Environment: #{Rails.env}"
+
+    question = Question.find_by(question_text_es: '¿Qué información compartiste?')
+
+    if question.nil?
+      puts 'Question "¿Qué información compartiste?" not found.'
+      exit 0
+    end
+
+    puts "Found question ID: #{question.id}"
+    puts "Question: #{question.question_text_es}"
+
+    # Find the "Otro tema importante" option that should always be last
+    another_topic_option = question.options.find_by(name_es: 'Otro tema importante')
+
+    if another_topic_option
+      puts "Found 'Otro tema importante' option at position #{another_topic_option.position}"
+      # Insert new options before "Otro tema importante"
+      insert_position = another_topic_option.position
+    else
+      puts "No 'Otro tema importante' option found, adding to end"
+      insert_position = (question.options.maximum(:position) || 0) + 1
+    end
+
+    # New options to add
+    new_options = [
+      {
+        name_es: 'Explicación sobre cómo manejar los envases',
+        name_en: 'Explanation on how to handle containers',
+        name_pt: 'Explicação sobre como lidar com os recipientes',
+        next: -1,
+        position: insert_position
+      },
+      {
+        name_es: 'Explicación sobre la enfermedad del dengue',
+        name_en: 'Explanation about dengue disease',
+        name_pt: 'Explicação sobre a doença da dengue',
+        next: -1,
+        position: insert_position + 1
+      }
+    ]
+
+    # Check if options already exist
+    existing_options = question.options.where(name_es: new_options.pluck(:name_es))
+    if existing_options.any?
+      puts 'WARNING: Some options already exist:'
+      existing_options.each do |option|
+        puts "  - #{option.name_es} (ID: #{option.id})"
+      end
+      puts 'Skipping migration.'
+      exit 0
+    end
+
+    # Create new options
+    created_count = 0
+    new_options.each do |option_data|
+      option = question.options.create!(
+        name_es: option_data[:name_es],
+        name_en: option_data[:name_en],
+        name_pt: option_data[:name_pt],
+        next: option_data[:next],
+        position: option_data[:position]
+      )
+
+      created_count += 1
+      puts "✓ Created option ID #{option.id}: #{option.name_es}"
+    end
+
+    # Move "Otro tema importante" to the end if it exists
+    if another_topic_option
+      new_last_position = insert_position + new_options.length
+      another_topic_option.update!(position: new_last_position)
+      puts "✓ Moved 'Otro tema importante' to position #{new_last_position}"
+    end
+
+    puts '✅ Migration completed successfully'
+    puts "Created #{created_count} new option(s) for question ID #{question.id}"
+  end
 end
