@@ -78,11 +78,31 @@ module Constants
     ].freeze
 
     QUESTION_TALK_ABOUT_TOPICS = [
-      { name_es: 'Explicación de larvas y pupas', name_en: 'Explanation of larvae and pupae',
-        name_pt: 'Explicação de larvas e pupas' },
-      { name_es: 'Explicación sobre cómo se reproduce el zancudo',
-        name_en: 'Explanation of how the mosquito reproduces', name_pt: 'Explicação sobre como o mosquito se reproduz' },
-      { name_es: 'Otro tema importante', name_en: 'Another important topic', name_pt: 'Outro tópico importante' }
+      {
+        name_es: 'Explicación de larvas y pupas',
+        name_en: 'Explanation of larvae and pupae',
+        name_pt: 'Explicação de larvas e pupas'
+      },
+      {
+        name_es: 'Explicación sobre cómo se reproduce el zancudo',
+        name_en: 'Explanation of how the mosquito reproduces',
+        name_pt: 'Explicação sobre como o mosquito se reproduz'
+      },
+      {
+        name_es: 'Explicación sobre cómo manejar los envases',
+        name_en: 'Explanation on how to handle containers',
+        name_pt: 'Explicação sobre como lidar com os recipientes'
+      },
+      {
+        name_es: 'Explicación sobre la enfermedad del dengue',
+        name_en: 'Explanation about dengue disease',
+        name_pt: 'Explicação sobre a doença da dengue'
+      },
+      {
+        name_es: 'Otro tema importante',
+        name_en: 'Another important topic',
+        name_pt: 'Outro tópico importante'
+      }
     ].freeze
 
     BOOLEAN_TRANSLATIONS = {
