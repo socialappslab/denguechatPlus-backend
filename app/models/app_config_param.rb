@@ -19,5 +19,4 @@
 #
 class AppConfigParam < ApplicationRecord
   include Discard::Model
-
 end

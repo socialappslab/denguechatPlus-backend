@@ -36,11 +36,11 @@ module Api
           def update_organization
             begin
               @ctx[:model].update(@ctx['contract.default'].values.data)
-              return Success({ ctx: @ctx, type: :success })
-            rescue => error
-              add_errors(@ctx['contract.default'].errors,nil, I18n.t('errors.users.not_found'),
+              Success({ ctx: @ctx, type: :success })
+            rescue StandardError
+              add_errors(@ctx['contract.default'].errors, nil, I18n.t('errors.users.not_found'),
                          custom_predicate: :not_found?)
-              return Failure({ ctx: @ctx, type: :invalid, model: true })
+              Failure({ ctx: @ctx, type: :invalid, model: true })
             end
           end
         end

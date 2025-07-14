@@ -5,7 +5,6 @@ module Api
     module Organizations
       module Contracts
         class Create < Dry::Validation::Contract
-
           def self.kall(...)
             new.call(...)
           end

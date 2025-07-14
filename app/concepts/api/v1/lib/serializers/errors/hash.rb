@@ -24,11 +24,11 @@ module Api
             end
 
             def compose_arguments(error)
-              if error.respond_to?(:text) #if a dry error validation
-                [[error.text], error.path.last, nil, error.meta, set_code_error(error) ]
+              if error.respond_to?(:text) # if a dry error validation
+                [[error.text], error.path.last, nil, error.meta, set_code_error(error)]
               else # or is a custom error validator
-               [[error.messages], error.field, '', error.meta, set_code_error(error) ]
-             end
+                [[error.messages], error.field, '', error.meta, set_code_error(error)]
+              end
             end
 
             def set_code_error(error)

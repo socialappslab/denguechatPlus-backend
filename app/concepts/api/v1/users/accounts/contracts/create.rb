@@ -29,28 +29,20 @@ module Api
             end
 
             rule(:user_profile) do
-              if value[:email].present?
-                if UserProfile.exists?(['LOWER(email) = ?', value[:email].downcase])
-                  key(:email).failure(text: :user_email_unique?,  predicate: :user_email_unique?)
-                end
+              if value[:email].present? && UserProfile.exists?(['LOWER(email) = ?', value[:email].downcase])
+                key(:email).failure(text: :user_email_unique?, predicate: :user_email_unique?)
               end
 
-              if value[:neighborhood_id]
-                unless Neighborhood.exists?(id: value[:neighborhood_id])
-                  key(:neighborhood_id).failure(text: 'neighborhood not exists',  predicate: :not_exists?)
-                end
+              if value[:neighborhood_id] && !Neighborhood.exists?(id: value[:neighborhood_id])
+                key(:neighborhood_id).failure(text: 'neighborhood not exists',  predicate: :not_exists?)
               end
 
-              if value[:organization_id]
-                unless Organization.exists?(id: value[:organization_id])
-                  key(:organization_id).failure(text: 'organization not exists',  predicate: :not_exists?)
-                end
+              if value[:organization_id] && !Organization.exists?(id: value[:organization_id])
+                key(:organization_id).failure(text: 'organization not exists',  predicate: :not_exists?)
               end
 
-              if value[:city_id]
-                unless City.exists?(id: value[:city_id])
-                  key(:city_id).failure(text: 'city not exists',  predicate: :not_exists?)
-                end
+              if value[:city_id] && !City.exists?(id: value[:city_id])
+                key(:city_id).failure(text: 'city not exists', predicate: :not_exists?)
               end
             end
 
@@ -65,11 +57,11 @@ module Api
             rule(:username) do
               if values[:username].nil? && values[:phone].nil?
                 key(:username).failure(text: :user_credential_requirement, predicate: :credentials_wrong?)
-              elsif values[:username] && UserAccount.where("REPLACE(LOWER(username), ' ', '') = ?", values[:username].downcase.gsub(/\s+/, '')).any?
+              elsif values[:username] && UserAccount.where("REPLACE(LOWER(username), ' ', '') = ?",
+                                                           values[:username].downcase.gsub(/\s+/, '')).any?
                 key(:username).failure(text: :user_username_unique?, predicate: :user_username_unique?)
               end
             end
-
           end
         end
       end

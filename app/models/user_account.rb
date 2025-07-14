@@ -35,15 +35,14 @@ class UserAccount < ApplicationRecord
 
   belongs_to :user_profile, optional: true, dependent: :destroy
   has_many :teams, through: :user_profile
-  has_and_belongs_to_many :roles,  join_table: :user_accounts_roles
+  has_and_belongs_to_many :roles, join_table: :user_accounts_roles
   has_many :permissions, through: :roles
   has_many :user_code_recoveries
-  accepts_nested_attributes_for :user_profile,  update_only: true
+  accepts_nested_attributes_for :user_profile, update_only: true
   before_save :downcase_username_and_password!
   has_many :points, as: :pointable
 
   default_scope { where(discarded_at: nil) }
-
 
   delegate :first_name,
            :last_name,
@@ -58,11 +57,11 @@ class UserAccount < ApplicationRecord
 
   enum status: { pending: 0, active: 1, inactive: 2, locked: 3 }
 
-
   def normalized_phone
-    return "" unless phone
-    return  phone.prepend('+') unless phone.start_with?('+')
-    return phone
+    return '' unless phone
+    return phone.prepend('+') unless phone.start_with?('+')
+
+    phone
   end
 
   def can?(name, resource)
@@ -84,6 +83,7 @@ class UserAccount < ApplicationRecord
   end
 
   private
+
   def downcase_username_and_password!
     self.password = password.downcase.gsub(/\s+/, '') if password.present?
     self.username = username.downcase.gsub(/\s+/, '') if username.present?

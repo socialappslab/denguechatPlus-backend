@@ -15,7 +15,6 @@ module Api
               required(:password).filled(:string, min_size?: Constants::User::PASSWORD_MIN_LENGTH)
               required(:password_confirmation).filled(:string, min_size?: Constants::User::PASSWORD_MIN_LENGTH)
             end
-
           end
         end
       end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'json'
 require 'open-uri'
 require_relative '../db/files/permissions'
@@ -43,11 +44,11 @@ def get_images_for_questionnaire
     'Revisemos dentro de la casa': 'https://i.imghippo.com/files/hfv801724220367.png',
     'Tanques (cemento, polietileno, metal, otro material)': 'https://i.imghippo.com/files/owjeu1724220878.png',
     'Bidones/Cilindros (metal, plástico)': 'https://i.imghippo.com/files/ta0H31724220912.png',
-    'Pozos': 'https://i.imghippo.com/files/PXsOQ1724220823.png',
+    Pozos: 'https://i.imghippo.com/files/PXsOQ1724220823.png',
     'Estructura o partes de la casa': 'https://i.imghippo.com/files/z8Yex1724220962.png',
-    'Llanta': 'https://i.imghippo.com/files/hYKbi1724220688.png',
+    Llanta: 'https://i.imghippo.com/files/hYKbi1724220688.png',
     'Elementos naturales': 'https://i.imghippo.com/files/JjdHE1724220604.png',
-    'Otros': 'https://i.imghippo.com/files/hxNCm1724220325.png',
+    Otros: 'https://i.imghippo.com/files/hxNCm1724220325.png'
   }.freeze
 
   types.each do |key, url|
@@ -103,14 +104,13 @@ unless SeedTask.find_by(task_name: 'states_and_cities_v2')
   data.each do |state|
     state_persisted = State.create!(name: state['state_name'], country:)
 
-    #create cities
+    # create cities
     state['cities']&.each do |city|
       city_persisted = City.create!(name: city['name'], state: state_persisted, country:)
 
-
-      #create neighboorhoods
+      # create neighboorhoods
       city['neighborhoods']&.each do |neighborhood|
-        Neighborhood.create!(name: neighborhood['name'], state: state_persisted, country:, city:city_persisted)
+        Neighborhood.create!(name: neighborhood['name'], state: state_persisted, country:, city: city_persisted)
       end
     end
   end
@@ -118,7 +118,7 @@ unless SeedTask.find_by(task_name: 'states_and_cities_v2')
   SeedTask.create!(task_name: 'states_and_cities_v2') if State.count.positive? && City.count.positive?
 end
 
-#create default wedges
+# create default wedges
 unless SeedTask.find_by(task_name: 'create_wedges')
   Wedge.create!(name: 'Cuña 1', sector: Neighborhood.last)
   Wedge.create!(name: 'Cuña 2', sector: Neighborhood.last)
@@ -127,7 +127,7 @@ unless SeedTask.find_by(task_name: 'create_wedges')
   SeedTask.create!(task_name: 'create_wedges')
 end
 
-#create default special_places
+# create default special_places
 unless SeedTask.find_by(task_name: 'create_special_places_v1')
   SpecialPlace.destroy_all
   SpecialPlace.create!(name_es: 'Organizaciones', name_en: 'Organizations', name_pt: 'Organizações')
@@ -182,7 +182,7 @@ unless SeedTask.find_by(task_name: 'assign_permissions_to_roles_v2')
   SeedTask.create!(task_name: 'assign_permissions_to_roles_v2')
 end
 
-#teams
+# teams
 unless SeedTask.find_by(task_name: 'create_teams_v2')
   Team.create!(name: 'Dengue killers', organization: Organization.first, sector: Neighborhood.last, wedge: Wedge.last)
   Team.create!(name: 'Anti Aedes', organization: Organization.first, sector: Neighborhood.last, wedge: Wedge.last)
@@ -198,29 +198,29 @@ end
 
 # assign team_leader to teams
 unless SeedTask.find_by(task_name: 'assign_team_leader_to_teams')
-  user_account = UserAccount.find_by(username: 'team_leader')
+  UserAccount.find_by(username: 'team_leader')
   team = Team.find_by(name: 'Dengue killers')
-  team.leader_id = user_account.id
   team.save!
   SeedTask.create!(task_name: 'assign_team_leader_to_teams')
 end
 
-#create default_house_blocks
+# create default_house_blocks
 unless SeedTask.find_by(task_name: 'create_house_blocks_v2')
 
   team = Team.first
   team.members << UserAccount.find_by(username: 'brigadista').user_profile
-  team.members.each_with_index { |brigadist, index|
- HouseBlock.create!(name: "Bloque #{index}", team_id: team.id, wedge: Wedge.last, brigadist:) }
+  team.members.each_with_index do |brigadist, index|
+    HouseBlock.create!(name: "Bloque #{index}", team_id: team.id, wedge: Wedge.last, brigadist:)
+  end
 
   SeedTask.create!(task_name: 'create_house_blocks_v2')
 end
 
-#create houses
+# create houses
 unless SeedTask.find_by(task_name: 'create_houses_v2')
 
   house_blocks = HouseBlock.all
-  (1..10).each_with_index do |obj, index|
+  (1..10).each_with_index do |_obj, index|
     house_block = house_blocks.sample
     house = House.new
     house.country = Country.first
@@ -233,14 +233,13 @@ unless SeedTask.find_by(task_name: 'create_houses_v2')
     house.reference_code = index
     house.status = 'green'
     house.team = Team.first
-    house.longitude = rand(680000.0..681000.0).round(10)
-    house.latitude = rand(7471000.0..7472000.0).round(10)
+    house.longitude = rand(680_000.0..681_000.0).round(10)
+    house.latitude = rand(7_471_000.0..7_472_000.0).round(10)
     house.save!
   end
 
   SeedTask.create!(task_name: 'create_houses_v2')
 end
-
 
 # assign images to container types
 # unless SeedTask.find_by(task_name: 'assign_images_to_container_types')
@@ -252,18 +251,14 @@ end
 #   SeedTask.create!(task_name: 'assign_images_to_container_types')
 # end
 
-
-
-
-
-#create default versions params
+# create default versions params
 unless SeedTask.find_by(task_name: 'create_visit_params')
   data = Constants::VisitParams::RESOURCES
   data.each { |value_params| VisitParamVersion.find_or_create_by(name: value_params) }
   SeedTask.create!(task_name: 'create_visit_params')
 end
 
-#create questions
+# create questions
 unless SeedTask.find_by(task_name: 'create_questions_v6')
 
   Option.destroy_all
@@ -283,10 +278,10 @@ unless SeedTask.find_by(task_name: 'create_questions_v6')
     options_data = question_data.delete(:options)
     question = questionnaire.questions.create!(question_data)
 
-    if options_data&.any?
-      options_data&.each do |option_data|
-        question.options.create!(option_data)
-      end
+    next unless options_data&.any?
+
+    options_data&.each do |option_data|
+      question.options.create!(option_data)
     end
   end
 
@@ -303,11 +298,10 @@ unless SeedTask.find_by(task_name: 'create_questions_v6')
 
 end
 
-
 unless SeedTask.find_by(task_name: 'permissions_for_change_brigade')
   roles = Role.where(name: %w[admin brigadista])
   permission = Permission.create(name: 'change_team', resource: 'users')
-  roles.each {|rol| rol.permissions << permission}
+  roles.each { |rol| rol.permissions << permission }
   SeedTask.create(task_name: 'permissions_for_change_brigade')
 end
 
@@ -321,14 +315,14 @@ unless SeedTask.find_by(task_name: 'permissions_for_posts_likes_and_comments')
     permissions << Permission.create(name: action, resource:)
   end
 
-  roles.each {|rol| rol.permissions << permissions }
+  roles.each { |rol| rol.permissions << permissions }
   SeedTask.create(task_name: 'permissions_for_posts_likes_and_comments')
 end
 
 unless SeedTask.find_by(task_name: 'permission_for_find_address')
   roles = Role.where(name: %w[admin brigadista team_leader])
   permission = Permission.create(name: 'find_address', resource: 'get_address')
-  roles.each {|rol| rol.permissions << permission}
+  roles.each { |rol| rol.permissions << permission }
   SeedTask.create(task_name: 'permission_for_find_address')
 end
 
@@ -343,11 +337,10 @@ unless SeedTask.find_by(task_name: 'remove_content_type_from_params')
   SeedTask.create(task_name: 'container_types')
 end
 
-
 unless SeedTask.find_by(task_name: 'permissions_for_change_brigade_v2')
   roles = Role.where(name: %w[team_leader])
   permission = Permission.find_or_create_by(name: 'change_team', resource: 'users')
-  roles.each {|rol| rol.permissions << permission}
+  roles.each { |rol| rol.permissions << permission }
   SeedTask.create(task_name: 'permissions_for_change_brigade_v2')
 end
 
@@ -375,7 +368,6 @@ unless SeedTask.find_by(task_name: 'create_reports_house_status_ability')
   end
   SeedTask.create(task_name: 'create_reports_house_status_ability')
 end
-
 
 unless SeedTask.find_by(task_name: 'create_reports_brigadist_performance_ability')
   roles = Role.where(name: %w[brigadista team_leader admin])

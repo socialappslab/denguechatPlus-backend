@@ -28,7 +28,6 @@ module Api
             @ctx[:data] = Api::V1::GetLastParams::Queries::Index.call(@ctx['contract.default']['name'])
             Success({ ctx: @ctx, type: :success })
           end
-
         end
       end
     end

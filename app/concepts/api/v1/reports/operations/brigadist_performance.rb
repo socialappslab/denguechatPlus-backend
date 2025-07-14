@@ -27,15 +27,13 @@ module Api
             Failure({ ctx: @ctx, type: :invalid }) unless is_valid
           end
 
-
           def gather_information
-            #@ctx[:data][:visits_rank] = Api::V1::Reports::Queries::BrigadistPerformance.call(@ctx['contract.default']['filter'])
-            #@ctx[:data][:green_houses_rank] = Api::V1::Reports::Queries::BrigadistPerformanceGreenHouses.call(@ctx['contract.default']['filter'])
-            @ctx[:data] =  Result.new(Api::V1::Reports::Queries::BrigadistPerformance.call(@ctx['contract.default']['filter']),
-                       Api::V1::Reports::Queries::BrigadistPerformanceGreenHouses.call(@ctx['contract.default']['filter']))
+            # @ctx[:data][:visits_rank] = Api::V1::Reports::Queries::BrigadistPerformance.call(@ctx['contract.default']['filter'])
+            # @ctx[:data][:green_houses_rank] = Api::V1::Reports::Queries::BrigadistPerformanceGreenHouses.call(@ctx['contract.default']['filter'])
+            @ctx[:data] = Result.new(Api::V1::Reports::Queries::BrigadistPerformance.call(@ctx['contract.default']['filter']),
+                                     Api::V1::Reports::Queries::BrigadistPerformanceGreenHouses.call(@ctx['contract.default']['filter']))
 
             Success({ ctx: @ctx, type: :success })
-
           end
         end
       end

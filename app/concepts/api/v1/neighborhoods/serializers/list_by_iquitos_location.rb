@@ -8,7 +8,6 @@ module Api
           set_type :city
 
           attributes :name
-
         end
       end
     end

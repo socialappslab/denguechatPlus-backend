@@ -15,7 +15,6 @@ module Api
             optional(:country_id).filled(:integer)
             optional(:state_id).filled(:integer)
             optional(:city_id).filled(:integer)
-
           end
 
           rule :country_id do
@@ -50,9 +49,9 @@ module Api
           private
 
           def repeated_name?(name, values)
-            Neighborhood.where.not(id: values[:id]).exists?(name: name, country_id: values[:country_id], state_id: values[:state_id], city_id: values[:city_id])
+            Neighborhood.where.not(id: values[:id]).exists?(name: name, country_id: values[:country_id],
+                                                            state_id: values[:state_id], city_id: values[:city_id])
           end
-
         end
       end
     end

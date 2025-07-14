@@ -4,105 +4,95 @@ module Api
   module V1
     module Inspections
       module Serializers
-        class Show < ApplicationSerializer
+        class Show < ApplicationSerializer # rubocop:disable Metrics/ClassLength
           set_type :inspection
 
-
-          build_breading_site_type = lambda { |container|
+          build_breading_site_type = ->(container, language) {
             BreedingSiteType.all.map do |bst|
               {
                 id: bst.id,
-                name: bst.name,
+                name: bst.send("name_#{language}"),
                 value: bst.id,
                 selected: bst.id == container.breeding_site_type_id
               }
             end
           }
 
-          build_elimination_method_type = lambda { |container|
-            EliminationMethodType.all.map do |bst|
+          build_elimination_method_types = ->(container, language) {
+            EliminationMethodType.all.map do |elimination_method_type|
               res = {
-                id: bst.id,
-                name: bst.name_es,
-                value: bst.id,
-                selected: bst.id == container.elimination_method_type_id
+                id: elimination_method_type.id,
+                name: elimination_method_type.send("name_#{language}"),
+                value: elimination_method_type.id,
+                selected: elimination_method_type.id.in?(container.elimination_method_type_ids)
               }
 
-              if bst.name_es.downcase.in?(['otro', 'other', 'outro'])
+              if elimination_method_type.name_es.downcase.in?(%w[otro other outro])
                 res[:is_text_area] = true
-                res[:other_resource_name]= 'eliminationMethodTypeOther'
+                res[:other_resource_name] = 'eliminationMethodTypeOther'
               end
               res
             end
           }
 
-          build_type_contents = lambda { |container|
+          build_type_contents = ->(container, language) {
             TypeContent.all.map do |bst|
               {
                 id: bst.id,
-                name: bst.name_es,
+                name: bst.send("name_#{language}"),
                 value: bst.id,
                 selected: bst.id.in?(container.type_contents.pluck(:id)),
-                is_text_area: bst.name_es.downcase.in?(['otro', 'other', 'outro'])
+                is_text_area: bst.name_es.downcase.in?(%w[otro other outro])
               }
             end
           }
 
-          build_water_source_type = lambda { |container|
-            water_source_types = container.water_source_type_ids
+          build_water_source_types = ->(container, language) {
             WaterSourceType.all.map do |wst|
               res = {
                 id: wst.id,
-                name: wst.name,
+                name: wst.send("name_#{language}"),
                 value: wst.id,
-                selected: wst.id.in?(water_source_types)
+                selected: wst.id.in?(container.water_source_type_ids)
               }
-              if wst.name.downcase.in?(['otro', 'other', 'outro'])
+              if wst.name.downcase.in?(%w[otro other outro])
                 res[:is_text_area] = true
-                res[:other_resource_name]= 'waterSourceOther'
+                res[:other_resource_name] = 'waterSourceOther'
               end
               res
             end
           }
 
-          build_container_protection = lambda { |container|
+          build_container_protection = ->(container, language) {
             container_protections = container.container_protection_ids
             ContainerProtection.all.map do |bst|
               res = {
                 id: bst.id,
-                name: bst.name_es,
+                name: bst.send("name_#{language}"),
                 value: bst.id,
                 selected: bst.id.in?(container_protections)
               }
-              if bst.name_es.downcase.in?(['otro', 'other', 'outro'])
+              if bst.name_es.downcase.in?(%w[otro other outro])
                 res[:is_text_area] = true
-                res[:other_resource_name]= 'containerProtectionOther'
+                res[:other_resource_name] = 'containerProtectionOther'
               end
               res
             end
           }
 
-          build_was_chemically_treated = lambda { |container|
-            [
+          build_was_chemically_treated = ->(container, language) {
+            Constants::DownloadCsvConstants::WAS_CHEMICALLY_TRANSLATIONS.map do |item|
+              translated_name = item[:"name_#{language}"]
+
               {
-                name: 'Sí, fue tratado (revise el registro detrás de la puerta)',
-                value: 'Sí, fue tratado (revise el registro detrás de la puerta)',
-                selected: container.was_chemically_treated == 'Sí, fue tratado (revise el registro detrás de la puerta)'
-              },
-              {
-                name: 'No, no fue tratado',
-                value: 'No, no fue tratado',
-                selected: container.was_chemically_treated == 'No, no fue tratado'
-              },
-              {
-                name: 'No lo sé',
-                value: 'No lo sé',
-                selected: container.was_chemically_treated == 'No lo sé'
+                name: translated_name,
+                value: translated_name,
+                selected: item.values.include?(container.was_chemically_treated)
               }
-            ]
+            end
           }
 
-          get_image_obj = lambda do |record|
+          get_image_obj = ->(record) do
             return '' unless record&.photo&.attached?
 
             {
@@ -111,43 +101,44 @@ module Api
             }
           end
 
-          attribute :breading_site_type do |container|
-            build_breading_site_type.call(container)
+          attribute :breading_site_type do |container, _language|
+            build_breading_site_type.call(container, container.language)
           end
 
-          attribute :elimination_method_type do |container|
-            build_elimination_method_type.call(container)
+          attribute :elimination_method_types do |container, _language|
+            build_elimination_method_types.call(container, container.language)
           end
 
           attribute :elimination_method_type_other, &:other_elimination_method
 
-          attribute :type_contents do |container|
-            build_type_contents.call(container)
+          attribute :type_contents do |container, _language|
+            build_type_contents.call(container, container.language)
           end
 
           attribute :status do |container|
             container.status_i18n(container.color)
           end
 
-          attribute :water_source_type do |container|
-            build_water_source_type.call(container)
-
+          attribute :water_source_types do |container, _language|
+            build_water_source_types.call(container, container.language)
           end
 
           attribute :water_source_other, &:water_source_other
 
-          attribute :has_water, &:has_water
+          attribute :has_water do |container, _language|
+            Constants::DownloadCsvConstants::BOOLEAN_TRANSLATIONS[container.language][container.has_water]
+          end
 
           attribute :location, &:location
 
-          attribute :container_protections do |container|
-            build_container_protection.call(container)
+          attribute :container_protections do |container, _language|
+            build_container_protection.call(container, container.language)
           end
 
           attribute :container_protection_other, &:other_protection
 
-          attribute :was_chemically_treated do |container|
-            build_was_chemically_treated.call(container)
+          attribute :was_chemically_treated do |container, _language|
+            build_was_chemically_treated.call(container, container.language)
           end
 
           attribute :photo_url do |container|

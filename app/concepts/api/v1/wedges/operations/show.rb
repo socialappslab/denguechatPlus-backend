@@ -17,14 +17,13 @@ module Api
 
           def find_wedge
             @ctx[:data] =
-              Wedge.find_by(id: @params[:id],  discarded_at: nil)
+              Wedge.find_by(id: @params[:id], discarded_at: nil)
             if @ctx[:data].nil?
               Failure({ ctx: @ctx, type: :not_found })
             else
               Success({ ctx: @ctx, type: :success })
             end
           end
-
         end
       end
     end

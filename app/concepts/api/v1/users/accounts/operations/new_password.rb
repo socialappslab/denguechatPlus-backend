@@ -15,7 +15,6 @@ module Api
             step :validate_password
             step :update_password
 
-
             def params(input)
               @ctx = {}
               @params = to_snake_case(input[:params])
@@ -44,11 +43,13 @@ module Api
 
               Failure({ ctx: @ctx, type: :invalid,
                         errors: ErrorFormater.new_error(field: :base, msg: 'User not found', custom_predicate: :not_found?) })
-
             end
 
             def validate_password
-              return Success({ ctx: @user_account, type: :success }) if @params[:password].downcase == @params[:password_confirmation].downcase
+              if @params[:password].downcase == @params[:password_confirmation].downcase
+                return Success({ ctx: @user_account,
+                                 type: :success })
+              end
 
               Failure({ ctx: @ctx, type: :invalid,
                         errors: ErrorFormater.new_error(field: :base, msg: 'Passwords do not match', custom_predicate: :format?) })

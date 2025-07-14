@@ -33,7 +33,6 @@ module Api
 
           attr_reader :houses, :filter, :sort
 
-
           def active_houses(relation)
             relation.where(discarded_at: nil)
           end

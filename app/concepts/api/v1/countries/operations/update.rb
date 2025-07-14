@@ -30,7 +30,7 @@ module Api
             @ctx[:model] = Country.kept.find_by(id: @params[:id])
             return Success({ ctx: @ctx, type: :success }) if @ctx[:model]
 
-            add_errors(@ctx['contract.default'].errors,nil, I18n.t('errors.users.not_found'),
+            add_errors(@ctx['contract.default'].errors, nil, I18n.t('errors.users.not_found'),
                        custom_predicate: :not_found?)
             Failure({ ctx: @ctx, type: :invalid, model: true }) unless @ctx[:model]
           end
@@ -47,8 +47,8 @@ module Api
                 @ctx[:model].update!(@ctx['contract.default'].values.data)
                 update_states
                 return Success({ ctx: @ctx, type: :success })
-              rescue ActiveRecord::RecordInvalid => invalid
-                add_errors(@ctx['contract.default'].errors,nil, I18n.t('errors.users.not_found'),
+              rescue ActiveRecord::RecordInvalid
+                add_errors(@ctx['contract.default'].errors, nil, I18n.t('errors.users.not_found'),
                            custom_predicate: :not_found?)
                 Failure({ ctx: @ctx, type: :invalid, model: true })
                 raise ActiveRecord::Rollback
@@ -59,7 +59,6 @@ module Api
           def includes
             @ctx[:include] = ['states']
           end
-
         end
       end
     end

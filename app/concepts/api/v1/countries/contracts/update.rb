@@ -23,7 +23,6 @@ module Api
               key(:state_id).failure('state already exists in this country')
             end
           end
-
         end
       end
     end

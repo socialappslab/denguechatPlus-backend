@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="47e3b86a-4272-4478-813f-9251f5023842" name="Changes" comment="add database_name as variable">
+    <list default="true" id="47e3b86a-4272-4478-813f-9251f5023842" name="Changes" comment="fix languague inspections edit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/concepts/api/v1/visits/operations/download_csv.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/concepts/api/v1/visits/operations/download_csv.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/concepts/api/v1/visits/services/visit_csv_generator.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/concepts/api/v1/visits/services/visit_csv_generator.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,7 +20,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="fix/912/Fix-query-on-house-block" />
+        <entry key="$PROJECT_DIR$" value="feat/923/elimination-method-type-multiple-values" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -33,23 +31,10 @@
     &quot;assignee&quot;: &quot;fego-dev&quot;
   }
 }</component>
-  <component name="GithubDefaultAccount">
-    <option name="defaultAccountId" value="a6cac30b-3564-4e50-be2e-0381f76992af" />
-  </component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/socialappslab/denguechatPlus-backend.git&quot;,
     &quot;accountId&quot;: &quot;a6cac30b-3564-4e50-be2e-0381f76992af&quot;
-  },
-  &quot;recentNewPullRequestHead&quot;: {
-    &quot;server&quot;: {
-      &quot;useHttp&quot;: false,
-      &quot;host&quot;: &quot;github.com&quot;,
-      &quot;port&quot;: null,
-      &quot;suffix&quot;: null
-    },
-    &quot;owner&quot;: &quot;socialappslab&quot;,
-    &quot;repository&quot;: &quot;denguechatPlus-backend&quot;
   }
 }</component>
   <component name="LogFilters">
@@ -128,7 +113,7 @@
       <RACK_CONFIG_SETTINGS_ID NAME="LAUNCH_JS" VALUE="false" />
       <method v="2" />
     </configuration>
-    <configuration name="Unnamed" type="RailsRunConfigurationType" factoryName="Rails" nameIsGenerated="true">
+    <configuration name="Unnamed" type="RailsRunConfigurationType" factoryName="Rails">
       <module name="denguechatPlus-backend" />
       <predefined_log_file enabled="true" id="RUBY_RAILS_SERVER" />
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="" />
@@ -144,7 +129,7 @@
       </EXTENSION>
       <EXTENSION ID="org.jetbrains.plugins.ruby.rails.run.RailsRunConfigurationExtension" SCRATCH_USE_RAILS_RUNNER="false" />
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="SCRIPT_ARGS" VALUE="" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="PORT" VALUE="3300" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="PORT" VALUE="3000" />
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="IP" VALUE="0.0.0.0" />
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="DUMMY_APP" VALUE="test/dummy" />
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="RAILS_SERVER_TYPE" VALUE="default" />
@@ -216,32 +201,40 @@
       <workItem from="1740427184179" duration="56781000" />
       <workItem from="1741266140104" duration="7462000" />
       <workItem from="1741357444633" duration="4229000" />
-      <workItem from="1748575155903" duration="10770000" />
-      <workItem from="1748620205459" duration="7069000" />
-      <workItem from="1748980432338" duration="1445000" />
-      <workItem from="1749173002759" duration="12228000" />
-      <workItem from="1749221524656" duration="958000" />
-      <workItem from="1749474513490" duration="1314000" />
-      <workItem from="1749488472320" duration="2573000" />
-      <workItem from="1749556753975" duration="1073000" />
-      <workItem from="1749585610283" duration="4548000" />
-      <workItem from="1749645829757" duration="642000" />
-      <workItem from="1749662822414" duration="674000" />
-      <workItem from="1750105729475" duration="58000" />
-      <workItem from="1750246783835" duration="3695000" />
-      <workItem from="1750259753953" duration="1357000" />
-      <workItem from="1750273554858" duration="1502000" />
-      <workItem from="1750328376159" duration="6420000" />
-      <workItem from="1750381190355" duration="1282000" />
-      <workItem from="1750430128622" duration="2604000" />
-      <workItem from="1750528996400" duration="567000" />
-      <workItem from="1750677492668" duration="2659000" />
-      <workItem from="1750690337349" duration="3360000" />
-      <workItem from="1750707289964" duration="11000" />
-      <workItem from="1750769172244" duration="591000" />
-      <workItem from="1750798838034" duration="822000" />
-      <workItem from="1750961714483" duration="38000" />
-      <workItem from="1750963148047" duration="108000" />
+      <workItem from="1751296874522" duration="3796000" />
+      <workItem from="1751367612201" duration="1251000" />
+      <workItem from="1751392239658" duration="224000" />
+      <workItem from="1751397386567" duration="1942000" />
+      <workItem from="1751468800776" duration="1557000" />
+      <workItem from="1751543599590" duration="2248000" />
+      <workItem from="1751558658472" duration="2629000" />
+      <workItem from="1751649723325" duration="9483000" />
+      <workItem from="1751894000968" duration="13000" />
+      <workItem from="1751910054953" duration="2194000" />
+    </task>
+    <task id="LOCAL-00001" summary="fix: fix typo">
+      <option name="closed" value="true" />
+      <created>1739503860642</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1739503860643</updated>
+    </task>
+    <task id="LOCAL-00002" summary="fix: fix color when container hasn't lid">
+      <option name="closed" value="true" />
+      <created>1739561001170</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1739561001170</updated>
+    </task>
+    <task id="LOCAL-00003" summary="fix: fix color when container hasn't lid">
+      <option name="closed" value="true" />
+      <created>1739561057998</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1739561057998</updated>
     </task>
     <task id="LOCAL-00004" summary="fix: fix color when container hasn't lid">
       <option name="closed" value="true" />
@@ -435,216 +428,82 @@
       <option name="project" value="LOCAL" />
       <updated>1741357578275</updated>
     </task>
-    <task id="LOCAL-00028" summary="    Update the questionnaire structure to remove the screen/question related to &quot;Actions taken on the container&quot;.&#10;&#10;    Ensure the question is no longer included in the JSON sent to the mobile application.">
+    <task id="LOCAL-00028" summary="fix the csv">
       <option name="closed" value="true" />
-      <created>1748576738462</created>
+      <created>1751243116857</created>
       <option name="number" value="00028" />
       <option name="presentableId" value="LOCAL-00028" />
       <option name="project" value="LOCAL" />
-      <updated>1748576738462</updated>
+      <updated>1751243116857</updated>
     </task>
-    <task id="LOCAL-00029" summary="The first option of the water source question is updated to:&#10;&#10;    Spanish: &quot;Del grifo o de otro recipiente&quot;&#10;&#10;    English: &quot;From the faucet or from another container&quot;">
+    <task id="LOCAL-00029" summary="fix options in visit edit">
       <option name="closed" value="true" />
-      <created>1748577070221</created>
+      <created>1751248515301</created>
       <option name="number" value="00029" />
       <option name="presentableId" value="LOCAL-00029" />
       <option name="project" value="LOCAL" />
-      <updated>1748577070221</updated>
+      <updated>1751248515301</updated>
     </task>
-    <task id="LOCAL-00030" summary="change  all existing options for the &quot;What actions were taken on the container?&quot;">
+    <task id="LOCAL-00030" summary="change &quot;No tiene tapa&quot; disable_other_fields attr by false">
       <option name="closed" value="true" />
-      <created>1748579984618</created>
+      <created>1751249033694</created>
       <option name="number" value="00030" />
       <option name="presentableId" value="LOCAL-00030" />
       <option name="project" value="LOCAL" />
-      <updated>1748579984618</updated>
+      <updated>1751249033694</updated>
     </task>
-    <task id="LOCAL-00031" summary="    Migration executed and verified in staging&#10;&#10;    All newly registered containers store has_water = true automatically&#10;&#10;    No question for water presence remains in the questionnaire flow&#10;&#10;    Endpoint change tested with mobile client">
+    <task id="LOCAL-00031" summary="add translation edit visit">
       <option name="closed" value="true" />
-      <created>1748580848115</created>
+      <created>1751252903496</created>
       <option name="number" value="00031" />
       <option name="presentableId" value="LOCAL-00031" />
       <option name="project" value="LOCAL" />
-      <updated>1748580848115</updated>
+      <updated>1751252903496</updated>
     </task>
-    <task id="LOCAL-00032" summary="    Add new response option “No, terminar la visita” in the target question&#10;&#10;    Ensure it links to the “Informemos a la familia sobre…” question&#10;&#10;    Ensure it behaves as a single-select option">
+    <task id="LOCAL-00032" summary="fix checked">
       <option name="closed" value="true" />
-      <created>1748581597420</created>
+      <created>1751368256365</created>
       <option name="number" value="00032" />
       <option name="presentableId" value="LOCAL-00032" />
       <option name="project" value="LOCAL" />
-      <updated>1748581597420</updated>
+      <updated>1751368256365</updated>
     </task>
-    <task id="LOCAL-00033" summary="    Add a new option called &quot;Uso Diario del agua&quot; under the category &quot;Otros&quot;.&#10;&#10;    Update the label of the option &quot;Si, bajo techo&quot; to &quot;Está bajo techo&quot; within the &quot;Techo&quot; category.&#10;&#10;    Update the label of the option &quot;No tiene protección&quot; to &quot;No tiene tapa&quot; within the &quot;Tapa&quot; category.&#10;&#10;    Assign the new option &quot;Uso Diario del agua&quot; a score of 9 points (green), same as “Tapa bien cerrada”.">
+    <task id="LOCAL-00033" summary="fix csv">
       <option name="closed" value="true" />
-      <created>1748583617255</created>
+      <created>1751888001023</created>
       <option name="number" value="00033" />
       <option name="presentableId" value="LOCAL-00033" />
       <option name="project" value="LOCAL" />
-      <updated>1748583617255</updated>
+      <updated>1751888001023</updated>
     </task>
-    <task id="LOCAL-00034" summary="The term “recipiente/envase” is currently used across multiple views in the application. This phrasing is inconsistent and should be standardized to simply “envase” for clarity. Additionally, the English and Portuguese translations must be updated accordingly">
+    <task id="LOCAL-00034" summary="fix languague inspections edit">
       <option name="closed" value="true" />
-      <created>1748584926774</created>
+      <created>1751890884889</created>
       <option name="number" value="00034" />
       <option name="presentableId" value="LOCAL-00034" />
       <option name="project" value="LOCAL" />
-      <updated>1748584926774</updated>
+      <updated>1751890884889</updated>
     </task>
-    <task id="LOCAL-00035" summary="The term “recipiente/envase” is currently used across multiple views in the application. This phrasing is inconsistent and should be standardized to simply “envase” for clarity. Additionally, the English and Portuguese translations must be updated accordingly">
-      <option name="closed" value="true" />
-      <created>1748586056415</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1748586056415</updated>
-    </task>
-    <task id="LOCAL-00036" summary="this commit add changes related to the ticket https://denguechat.atlassian.net/jira/software/projects/DNG/boards/1?selectedIssue=DNG-848 and some changes base on a meeting that we had 2 days ago about the questionnaire structure.">
-      <option name="closed" value="true" />
-      <created>1749204930458</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1749204930458</updated>
-    </task>
-    <task id="LOCAL-00037" summary="I created a new migration, within I fix the options related to &quot;Acciones realizadas al envase&quot;">
-      <option name="closed" value="true" />
-      <created>1749205952662</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1749205952662</updated>
-    </task>
-    <task id="LOCAL-00038" summary="Currently, when a house cannot be visited due to lack of permission, the system assigns a Red status by default. This does not reflect the actual condition of the site, as no data could be collected. The correct behavior should be to assign Yellow in such cases.">
-      <option name="closed" value="true" />
-      <created>1749206247909</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1749206247909</updated>
-    </task>
-    <task id="LOCAL-00039" summary="In the visit flow, when a user lays on the El envase esta protegido? view, please make 2 changes&#10;&#10;    Put the option “Otro tipo de proteccion“ as last option, and&#10;&#10;    Change to lower case the word “Diario“">
-      <option name="closed" value="true" />
-      <created>1749208113618</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1749208113618</updated>
-    </task>
-    <task id="LOCAL-00040" summary="Update the questionnaire to add a new option under the question &quot;En este recipiente hay&quot;:&#10;&quot;No pude revisar el envase.&quot; (to appear below the &quot;Nada&quot; option)">
-      <option name="closed" value="true" />
-      <created>1749209140689</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1749209140689</updated>
-    </task>
-    <task id="LOCAL-00041" summary="Update the questionnaire to add a new option under the question &quot;En este recipiente hay&quot;:&#10;&quot;No pude revisar el envase.&quot; (to appear below the &quot;Nada&quot; option)">
-      <option name="closed" value="true" />
-      <created>1749210749779</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1749210749779</updated>
-    </task>
-    <task id="LOCAL-00042" summary="Update the questionnaire to add a new option under the question &quot;En este recipiente hay&quot;:&#10;&quot;No pude revisar el envase.&quot; (to appear below the &quot;Nada&quot; option)">
-      <option name="closed" value="true" />
-      <created>1749221874461</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1749221874461</updated>
-    </task>
-    <task id="LOCAL-00043" summary="fix extra dot">
-      <option name="closed" value="true" />
-      <created>1749488693471</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1749488693471</updated>
-    </task>
-    <task id="LOCAL-00044" summary="fix translations">
-      <option name="closed" value="true" />
-      <created>1749491033297</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1749491033297</updated>
-    </task>
-    <task id="LOCAL-00045" summary="fix migrations">
-      <option name="closed" value="true" />
-      <created>1749586242679</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1749586242679</updated>
-    </task>
-    <task id="LOCAL-00046" summary="Add support for storing multiple answers to &quot;Informemos a la familia sobre&quot; in visits">
-      <option name="closed" value="true" />
-      <created>1750247957872</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1750247957872</updated>
-    </task>
-    <task id="LOCAL-00047" summary="fix delete account endpoint">
-      <option name="closed" value="true" />
-      <created>1750273669977</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1750273669977</updated>
-    </task>
-    <task id="LOCAL-00048" summary="fix delete account endpoint">
-      <option name="closed" value="true" />
-      <created>1750274474017</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
-      <option name="project" value="LOCAL" />
-      <updated>1750274474017</updated>
-    </task>
-    <task id="LOCAL-00049" summary="fix delete account endpoint">
-      <option name="closed" value="true" />
-      <created>1750274785593</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
-      <option name="project" value="LOCAL" />
-      <updated>1750274785593</updated>
-    </task>
-    <task id="LOCAL-00050" summary="fix delete account endpoint">
-      <option name="closed" value="true" />
-      <created>1750274958964</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
-      <option name="project" value="LOCAL" />
-      <updated>1750274958965</updated>
-    </task>
-    <task id="LOCAL-00051" summary="fix contract change_house_block.rb">
-      <option name="closed" value="true" />
-      <created>1750333379253</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
-      <option name="project" value="LOCAL" />
-      <updated>1750333379253</updated>
-    </task>
-    <task id="LOCAL-00052" summary="add database_name as variable">
-      <option name="closed" value="true" />
-      <created>1750430248900</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
-      <option name="project" value="LOCAL" />
-      <updated>1750430248900</updated>
-    </task>
-    <option name="localTasksCounter" value="53" />
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="OPEN_GENERIC_TABS">
+      <map>
+        <entry key="dd269fc1-dc2f-44f3-bba9-9803204b252c" value="TOOL_WINDOW" />
+      </map>
+    </option>
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+        <entry key="dd269fc1-dc2f-44f3-bba9-9803204b252c">
           <value>
             <State />
           </value>
@@ -653,58 +512,43 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <MESSAGE value="fix: fix typo" />
+    <MESSAGE value="fix: fix color when container hasn't lid" />
+    <MESSAGE value="feature: accumulated points" />
+    <MESSAGE value="feature: ranking tariki houses by users and teams" />
+    <MESSAGE value="fix: login and create/update users with username in lowercase" />
+    <MESSAGE value="fix: add new attributes to sync log" />
+    <MESSAGE value="fix: username in recovery account" />
+    <MESSAGE value="fix: using polimorphic tables for points" />
+    <MESSAGE value="feature: manage consecutive green status for houses." />
+    <MESSAGE value="fix: change tariki status when the containers change their status" />
+    <MESSAGE value="fix: fix ranking endpoint" />
+    <MESSAGE value="fix: add weighted points to options" />
     <MESSAGE value="fix: add weighted points in questionnaire current" />
     <MESSAGE value="fix: change visits request in offline mode" />
     <MESSAGE value="fix: use the reference code from mobile" />
     <MESSAGE value="feature: check the mobile client version" />
     <MESSAGE value="fix: translate container colors" />
     <MESSAGE value="fix: Remove Location Validation for House Registration" />
-    <MESSAGE value="    Update the questionnaire structure to remove the screen/question related to &quot;Actions taken on the container&quot;.&#10;&#10;    Ensure the question is no longer included in the JSON sent to the mobile application." />
-    <MESSAGE value="The first option of the water source question is updated to:&#10;&#10;    Spanish: &quot;Del grifo o de otro recipiente&quot;&#10;&#10;    English: &quot;From the faucet or from another container&quot;" />
-    <MESSAGE value="change  all existing options for the &quot;What actions were taken on the container?&quot;" />
-    <MESSAGE value="    Migration executed and verified in staging&#10;&#10;    All newly registered containers store has_water = true automatically&#10;&#10;    No question for water presence remains in the questionnaire flow&#10;&#10;    Endpoint change tested with mobile client" />
-    <MESSAGE value="    Add new response option “No, terminar la visita” in the target question&#10;&#10;    Ensure it links to the “Informemos a la familia sobre…” question&#10;&#10;    Ensure it behaves as a single-select option" />
-    <MESSAGE value="    Add a new option called &quot;Uso Diario del agua&quot; under the category &quot;Otros&quot;.&#10;&#10;    Update the label of the option &quot;Si, bajo techo&quot; to &quot;Está bajo techo&quot; within the &quot;Techo&quot; category.&#10;&#10;    Update the label of the option &quot;No tiene protección&quot; to &quot;No tiene tapa&quot; within the &quot;Tapa&quot; category.&#10;&#10;    Assign the new option &quot;Uso Diario del agua&quot; a score of 9 points (green), same as “Tapa bien cerrada”." />
-    <MESSAGE value="The term “recipiente/envase” is currently used across multiple views in the application. This phrasing is inconsistent and should be standardized to simply “envase” for clarity. Additionally, the English and Portuguese translations must be updated accordingly" />
-    <MESSAGE value="this commit add changes related to the ticket https://denguechat.atlassian.net/jira/software/projects/DNG/boards/1?selectedIssue=DNG-848 and some changes base on a meeting that we had 2 days ago about the questionnaire structure." />
-    <MESSAGE value="I created a new migration, within I fix the options related to &quot;Acciones realizadas al envase&quot;" />
-    <MESSAGE value="Currently, when a house cannot be visited due to lack of permission, the system assigns a Red status by default. This does not reflect the actual condition of the site, as no data could be collected. The correct behavior should be to assign Yellow in such cases." />
-    <MESSAGE value="In the visit flow, when a user lays on the El envase esta protegido? view, please make 2 changes&#10;&#10;    Put the option “Otro tipo de proteccion“ as last option, and&#10;&#10;    Change to lower case the word “Diario“" />
-    <MESSAGE value="Update the questionnaire to add a new option under the question &quot;En este recipiente hay&quot;:&#10;&quot;No pude revisar el envase.&quot; (to appear below the &quot;Nada&quot; option)" />
-    <MESSAGE value="fix extra dot" />
-    <MESSAGE value="fix translations" />
-    <MESSAGE value="fix migrations" />
-    <MESSAGE value="Add support for storing multiple answers to &quot;Informemos a la familia sobre&quot; in visits" />
-    <MESSAGE value="fix delete account endpoint" />
-    <MESSAGE value="fix contract change_house_block.rb" />
-    <MESSAGE value="add database_name as variable" />
-    <option name="LAST_COMMIT_MESSAGE" value="add database_name as variable" />
+    <MESSAGE value="fix the csv" />
+    <MESSAGE value="fix options in visit edit" />
+    <MESSAGE value="change &quot;No tiene tapa&quot; disable_other_fields attr by false" />
+    <MESSAGE value="add translation edit visit" />
+    <MESSAGE value="fix checked" />
+    <MESSAGE value="fix csv" />
+    <MESSAGE value="fix languague inspections edit" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix languague inspections edit" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/concepts/api/v1/visits/services/visit_csv_generator.rb</url>
-          <line>30</line>
-          <properties myBlockOrdinal="-1">
-            <option name="block-ordinal" value="-1" />
-          </properties>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/concepts/api/v1/visits/services/visit_csv_generator.rb</url>
-          <line>28</line>
-          <properties myBlockOrdinal="-1">
-            <option name="block-ordinal" value="-1" />
-          </properties>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="RailsRunConfigurationType">
+        <watch expression="container.was_chemically_treated" language="ruby" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/denguechatPlus_backend@address_decorator.rcov" NAME="address_decorator Coverage Results" MODIFIED="1726747971784" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="denguechatPlus-backend" />
-    <SUITE FILE_PATH="coverage/denguechatPlus_backend@Unnamed.rcov" NAME="Unnamed Coverage Results" MODIFIED="1750678572286" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="denguechatPlus-backend" />
+    <SUITE FILE_PATH="coverage/denguechatPlus_backend@Unnamed.rcov" NAME="Unnamed Coverage Results" MODIFIED="1751889258210" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="denguechatPlus-backend" />
     <SUITE FILE_PATH="coverage/denguechatPlus_backend@denguechatPlus_backend.rcov" NAME="denguechatPlus-backend Coverage Results" MODIFIED="1732068097063" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="denguechatPlus-backend" />
     <SUITE FILE_PATH="coverage/denguechatPlus_backend@db_migrate.rcov" NAME="db:migrate Coverage Results" MODIFIED="1726690510914" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="denguechatPlus-backend" />
     <SUITE FILE_PATH="coverage/denguechatPlus_backend@posts_controller.rcov" NAME="posts_controller Coverage Results" MODIFIED="1725455951750" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="denguechatPlus-backend" />

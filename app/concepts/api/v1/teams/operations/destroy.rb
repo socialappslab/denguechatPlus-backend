@@ -4,7 +4,7 @@ module Api
   module V1
     module Teams
       module Operations
-        class Destroy <  ApplicationOperation
+        class Destroy < ApplicationOperation
           include Dry::Transaction
 
           tee :params
@@ -25,7 +25,6 @@ module Api
             Failure({ ctx: @ctx, type: :invalid }) unless is_valid
           end
 
-
           def model
             @ctx[:model] = Team.kept.where(id: @ctx['contract.default']['team_ids'])
           end
@@ -35,10 +34,9 @@ module Api
               @ctx[:model].discard_all
               Success({ ctx: @ctx, type: :success })
             end
-          rescue StandardError => e
+          rescue StandardError
             Failure({ ctx: @ctx, type: :invalid })
           end
-
         end
       end
     end

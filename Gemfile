@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-ruby '3.1.2'
+ruby '3.2.8'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem 'rails', '~> 7.1.3', '>= 7.1.3.4'
@@ -125,10 +125,10 @@ group :development, :test do
   gem 'rails_best_practices', require: false
   gem 'reek', '~> 6.1', require: false
   gem 'rspec-rails', '~> 6.0'
-  gem 'rubocop', '~> 1.36.0', require: false
-  gem 'rubocop-performance', '~> 1.15', require: false
-  gem 'rubocop-rails', '~> 2.17', require: false
-  gem 'rubocop-rspec', '~> 2.14', require: false
+  gem 'rubocop', '~> 1.77.0', require: false
+  gem 'rubocop-performance', '~> 1.19', require: false
+  gem 'rubocop-rails', '~> 2.25', require: false
+  gem 'rubocop-rspec', '~> 2.17', require: false
   gem 'shoulda-matchers', '~> 5.2'
   gem 'simplecov', '~> 0.21'
   gem 'simplecov-lcov', '~> 0.8'

@@ -8,8 +8,7 @@ module Api
           class Organization < ApplicationSerializer
             set_type :organization
 
-            attributes  :name
-
+            attributes :name
           end
         end
       end

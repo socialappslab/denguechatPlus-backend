@@ -33,11 +33,9 @@
 class Team < ApplicationRecord
   include Discard::Model
 
-
   has_many :members, class_name: 'UserProfile', dependent: :nullify
   has_many :house_blocks, dependent: :nullify
   has_many :houses, dependent: :nullify
-  belongs_to :leader, class_name: 'UserProfile', optional: true
   belongs_to :organization
   belongs_to :sector, class_name: 'Neighborhood', foreign_key: 'neighborhood_id'
   belongs_to :wedge, class_name: 'Wedge'
@@ -45,9 +43,7 @@ class Team < ApplicationRecord
   has_one :city, through: :sector
   has_many :points, as: :pointable
 
-
   def leaders
     members.joins(:user_account).merge(UserAccount.joins(:roles).where(roles: { name: 'team_leader' })).pluck(:id)
   end
-
 end

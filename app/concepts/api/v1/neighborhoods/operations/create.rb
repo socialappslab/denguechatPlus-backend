@@ -30,7 +30,6 @@ module Api
 
             Failure({ ctx: @ctx, type: :invalid, model: true })
           end
-
         end
       end
     end

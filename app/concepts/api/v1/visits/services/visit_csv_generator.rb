@@ -8,7 +8,7 @@ module Api
       module Services
         class VisitCsvGenerator
           FILENAME = 'visit_data.csv'
-          ATTRIBUTES = %w[house_id visited_at].freeze
+          ATTRIBUTES = %w[house_id visited_at family_education_topics].freeze
 
           def self.call(...)
             new(...).call

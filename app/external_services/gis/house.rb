@@ -6,7 +6,7 @@ module Gis
         total_processed = 0
         failed_records = []
         sync_log = SyncLog.create(start_date: Time.current)
-        res = {created: 0, updated: 0}
+        res = { created: 0, updated: 0 }
 
         loop do
           external_houses_batch = Gis::Connection.query(query_builder(offset, batch_size))
@@ -25,8 +25,9 @@ module Gis
                 )
               end
               total_processed += mini_batch.size
-            rescue => e
-              total_processed, failed_records = process_house_one_by_one!(mini_batch, total_processed, failed_records, sync_log)
+            rescue StandardError
+              total_processed, failed_records = process_house_one_by_one!(mini_batch, total_processed, failed_records,
+                                                                          sync_log)
             end
           end
 
@@ -38,7 +39,8 @@ module Gis
         today_end = Date.today.end_of_day
 
         res[:created] = ::House.where(created_at: today_start..today_end, updated_at: today_start..today_end).count
-        res[:updated] = ::House.where.not(created_at: today_start..today_end).where(updated_at: today_start..today_end).count
+        res[:updated] =
+          ::House.where.not(created_at: today_start..today_end).where(updated_at: today_start..today_end).count
         sync_log.update!(houses_created: res[:created], houses_updated: res[:updated])
         sync_log
       end
@@ -57,11 +59,11 @@ module Gis
               )
             end
             total_processed += 1
-          rescue => individual_error
+          rescue StandardError => error
             failed_records << {
               sync_log_id:,
               item_id: attrs[:reference_code],
-              message: individual_error.message
+              message: error.message
             }
           end
         end
@@ -108,7 +110,7 @@ module Gis
         external_houses_batch.map do |ext_house|
           reference_code = ext_house[:reference_code]
 
-          has_team = existing_house_teams.key?(reference_code) && existing_house_teams[reference_code].present?
+          existing_house_teams.key?(reference_code) && existing_house_teams[reference_code].present?
           status = ext_house[:house_block_id] ? 1 : 0
 
           {
@@ -124,7 +126,7 @@ module Gis
             state_id: ext_house[:state_id].to_i,
             city_id: ext_house[:city_id].to_i,
             last_sync_time: Time.zone.now,
-            external_id: ext_house[:external_id],
+            external_id: ext_house[:external_id]
           }
         end
       end
