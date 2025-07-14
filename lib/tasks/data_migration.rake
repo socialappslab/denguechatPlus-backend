@@ -141,4 +141,59 @@ namespace :data_migration do
     puts '✅ Migration completed successfully'
     puts "Created #{created_count} new option(s) for question ID #{question.id}"
   end
+
+  desc 'Replace "contenedor" and "recipiente/envase" with "envase" in elimination_method_types name_es column'
+  task update_elimination_method_types_terminology: :environment do
+    puts 'Starting migration: update_elimination_method_types_terminology'
+    puts "Environment: #{Rails.env}"
+
+    # Find all records containing "contenedor" or "recipiente/envase" in name_es
+    records_to_update = EliminationMethodType.where(
+      'name_es ILIKE ? OR name_es ILIKE ?',
+      '%contenedor%',
+      '%recipiente%'
+    )
+
+    puts "Found #{records_to_update.count} record(s) to update"
+
+    if records_to_update.empty?
+      puts 'No records found to update'
+      exit 0
+    end
+
+    # Show records that will be updated
+    puts "\nRecords that will be updated:"
+    records_to_update.each do |record|
+      puts "  ID #{record.id}: '#{record.name_es}'"
+    end
+
+    updated_count = 0
+    records_to_update.find_each do |record|
+      original_name = record.name_es
+
+      # Replace "contenedor" with "envase"
+      new_name = original_name.gsub(/contenedor/i, 'envase')
+
+      # Replace "recipiente/envase" with "envase"
+      new_name = new_name.gsub(/recipiente\/envase/i, 'envase')
+
+      # Also replace standalone "recipiente" with "envase"
+      new_name = new_name.gsub(/recipiente(?!\/)/i, 'envase')
+
+      if new_name == original_name
+        puts "Record ID #{record.id} already has correct terminology, skipping"
+      else
+        puts "Updating record ID #{record.id}:"
+        puts "  From: '#{original_name}'"
+        puts "  To:   '#{new_name}'"
+
+        record.update!(name_es: new_name)
+        updated_count += 1
+        puts '  ✓ Updated successfully'
+      end
+    end
+
+    puts "\n✅ Migration completed successfully"
+    puts "Updated #{updated_count} elimination method type(s) with new terminology"
+  end
 end
