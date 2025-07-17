@@ -56,13 +56,16 @@ module Api
             }
           end
 
-          attribute :house_block do |house|
-            next unless house.house_block
+          attribute :house_blocks do |house|
+            next unless house.house_blocks
 
-            {
-              id: house.house_block.id,
-              name: house.house_block.name
-            }
+            house.house_blocks.map do |block|
+              {
+                id: block.id,
+                name: block.name,
+                type: block.block_type
+              }
+            end
           end
 
           attribute :special_place do |house|
