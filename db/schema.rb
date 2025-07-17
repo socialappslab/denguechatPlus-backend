@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_30_020244) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_17_054753) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -73,6 +73,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_30_020244) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "container_type"
+    t.string "name_en"
+    t.string "name_pt"
   end
 
   create_table "cities", force: :cascade do |t|
@@ -136,6 +138,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_30_020244) do
     t.string "name_pt"
   end
 
+  create_table "house_block_houses", force: :cascade do |t|
+    t.bigint "house_id", null: false
+    t.bigint "house_block_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["house_block_id"], name: "index_house_block_houses_on_house_block_id"
+    t.index ["house_id", "house_block_id"], name: "index_house_block_houses_on_house_id_and_house_block_id", unique: true
+    t.index ["house_id"], name: "index_house_block_houses_on_house_id"
+  end
+
   create_table "house_block_wedges", force: :cascade do |t|
     t.bigint "house_block_id", null: false
     t.bigint "wedge_id", null: false
@@ -155,6 +167,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_30_020244) do
     t.string "source"
     t.datetime "last_sync_time"
     t.bigint "neighborhood_id"
+    t.string "block_type"
     t.index ["neighborhood_id"], name: "index_house_blocks_on_neighborhood_id"
   end
 
@@ -189,7 +202,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_30_020244) do
     t.bigint "city_id", null: false
     t.bigint "neighborhood_id", null: false
     t.bigint "wedge_id", null: false
-    t.bigint "house_block_id"
     t.bigint "special_place_id"
     t.bigint "team_id"
     t.bigint "user_profile_id"
@@ -217,7 +229,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_30_020244) do
     t.integer "consecutive_green_status", default: 0
     t.index ["city_id"], name: "index_houses_on_city_id"
     t.index ["country_id"], name: "index_houses_on_country_id"
-    t.index ["house_block_id"], name: "index_houses_on_house_block_id"
     t.index ["neighborhood_id"], name: "index_houses_on_neighborhood_id"
     t.index ["reference_code"], name: "index_houses_on_reference_code", unique: true
     t.index ["special_place_id"], name: "index_houses_on_special_place_id"
@@ -517,6 +528,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_30_020244) do
     t.integer "wedges_created"
     t.integer "sectors_updated"
     t.integer "sectors_created"
+    t.integer "house_blocks_created_by_block", default: 0
+    t.integer "house_blocks_updated_by_block", default: 0
   end
 
   create_table "teams", force: :cascade do |t|
@@ -672,6 +685,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_30_020244) do
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "name_en"
+    t.string "name_pt"
   end
 
   create_table "wedges", force: :cascade do |t|
@@ -691,6 +706,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_30_020244) do
   add_foreign_key "cities", "states"
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "user_accounts"
+  add_foreign_key "house_block_houses", "house_blocks"
+  add_foreign_key "house_block_houses", "houses"
   add_foreign_key "house_block_wedges", "house_blocks"
   add_foreign_key "house_block_wedges", "wedges"
   add_foreign_key "house_blocks", "neighborhoods"
@@ -703,7 +720,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_30_020244) do
   add_foreign_key "house_statuses", "wedges"
   add_foreign_key "houses", "cities"
   add_foreign_key "houses", "countries"
-  add_foreign_key "houses", "house_blocks"
   add_foreign_key "houses", "neighborhoods"
   add_foreign_key "houses", "special_places"
   add_foreign_key "houses", "states"
