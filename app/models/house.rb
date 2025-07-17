@@ -27,7 +27,6 @@
 #  city_id                  :bigint           not null
 #  country_id               :bigint           not null
 #  external_id              :string
-#  house_block_id           :bigint
 #  neighborhood_id          :bigint           not null
 #  special_place_id         :bigint
 #  state_id                 :bigint           not null
@@ -39,7 +38,6 @@
 #
 #  index_houses_on_city_id           (city_id)
 #  index_houses_on_country_id        (country_id)
-#  index_houses_on_house_block_id    (house_block_id)
 #  index_houses_on_neighborhood_id   (neighborhood_id)
 #  index_houses_on_reference_code    (reference_code) UNIQUE
 #  index_houses_on_special_place_id  (special_place_id)
@@ -52,7 +50,6 @@
 #
 #  fk_rails_...  (city_id => cities.id)
 #  fk_rails_...  (country_id => countries.id)
-#  fk_rails_...  (house_block_id => house_blocks.id)
 #  fk_rails_...  (neighborhood_id => neighborhoods.id)
 #  fk_rails_...  (special_place_id => special_places.id)
 #  fk_rails_...  (state_id => states.id)
@@ -66,7 +63,9 @@ class House < ApplicationRecord
   belongs_to :city
   belongs_to :neighborhood
   belongs_to :wedge
-  belongs_to :house_block, optional: true
+  has_many :house_block_houses
+  has_many :house_blocks, through: :house_block_houses
+
   has_many :house_statuses
   has_many :visits
   belongs_to :created_by, class_name: 'UserProfile', optional: true, foreign_key: 'user_profile_id'
