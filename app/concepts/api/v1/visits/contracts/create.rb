@@ -19,6 +19,7 @@ module Api
             optional(:team_id).filled(:integer)
             optional(:user_account_id).filled(:integer)
             optional(:family_education_topics)
+            optional(:other_family_education_topic).maybe(:string)
             optional(:notes)
 
             optional(:inspections).filled(:array)
