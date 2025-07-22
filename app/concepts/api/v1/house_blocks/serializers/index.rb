@@ -52,6 +52,8 @@ module Api
           attribute :brigadist do |house_block|
             "#{house_block.brigadist&.first_name}, #{house_block.brigadist&.last_name}"
           end
+
+          attribute :type, &:block_type
         end
       end
     end
