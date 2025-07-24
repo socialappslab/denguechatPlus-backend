@@ -64,7 +64,9 @@ module Api
           def house_block_clause(relation)
             return relation if @filter.nil? || @filter[:house_block_id].blank?
 
-            relation.where('houses.house_block_id = :query', query: @filter[:house_block_id])
+            relation
+              .joins(:house_block_houses)
+              .where(house_block_houses: { house_block_id: @filter[:house_block_id] })
           end
 
           def sort_clause(relation)

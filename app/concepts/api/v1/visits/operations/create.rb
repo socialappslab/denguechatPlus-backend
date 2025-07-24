@@ -280,7 +280,7 @@ module Api
             house_status.potential_containers = house.potential_containers
             house_status.city_id = house.city_id
             house_status.country_id = house.country_id
-            house_status.house_block_id = house.house_block_id
+            house_status.house_block_id = house.house_blocks.find_by(block_type: 'frente_a_frente')&.id
             house_status.neighborhood_id = house.neighborhood_id
             house_status.team_id = team_id
             house_status.wedge_id = house.wedge_id
