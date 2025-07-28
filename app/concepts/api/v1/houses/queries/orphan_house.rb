@@ -74,7 +74,7 @@ module Api
           def reference_code(relation)
             return relation if @filter.nil? || @filter[:reference_code].blank?
 
-            relation.where('houses.reference_code = :query', query: @filter[:reference_code])
+            relation.where(houses: { reference_code: @filter[:reference_code] })
           end
 
           def sort_clause(relation)
