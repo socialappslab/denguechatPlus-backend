@@ -25,7 +25,7 @@ module Api
             if @ctx[:data].nil?
               Failure({ ctx: @ctx, type: :not_found })
             else
-              questions = @ctx[:data].questions.where(visible: true)
+              questions = @ctx[:data].questions.includes(:image_attachment, options: {image_attachment: :blob}).where(visible: true)
               @ctx[:data] = OpenStruct.new(@ctx[:data].attributes)
               @ctx[:data].questions = questions
               @ctx[:data].language = @ctx[:language]
