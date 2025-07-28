@@ -9,7 +9,7 @@ module Api
 
           def initialize(params, sort)
             includes = %i[breeding_site_type elimination_method_types water_source_types container_protections
-                          inspection_type_contents]
+                          inspection_type_contents type_contents photo_attachment]
             @model = Inspection.includes(*includes)
             @params = params || {}
             @sort = sort
