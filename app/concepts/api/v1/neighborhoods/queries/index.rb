@@ -8,7 +8,7 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort, params)
-            @model = Neighborhood
+            @model = Neighborhood.includes(:wedges)
             @filter = filter || {}
             @sort = sort
             @params = params

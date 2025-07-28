@@ -8,7 +8,11 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort)
-            includes = %i[house team user_account]
+            includes = [
+              { house: [:wedge, :neighborhood, :city]},
+              :team,
+              { user_account: :user_profile }
+            ]
             if filter
               includes << { house: :city } if filter[:city] || filter[:city_id]
               includes << { house: :neighborhood } if filter[:sector_name] || filter[:sector_id]
@@ -16,7 +20,7 @@ module Api
             else
               filter = {}
             end
-            @model = Visit.includes(*includes.uniq).includes(user_account: :user_profile)
+            @model = Visit.includes(*includes.uniq)
             @filter = filter
             @sort = sort
           end

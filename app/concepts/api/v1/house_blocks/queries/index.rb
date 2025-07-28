@@ -8,7 +8,7 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort)
-            @model = HouseBlock.includes(:neighborhood, :wedges)
+            @model = HouseBlock.includes(:neighborhood, :wedges, :houses, :brigadist, :team)
             @filter = filter
             @sort = sort
           end
