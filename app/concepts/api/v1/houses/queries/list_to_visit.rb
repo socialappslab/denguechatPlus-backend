@@ -8,7 +8,7 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(user_account, filter)
-            @model = House
+            @model = House.includes(:state, :city, :neighborhood, :wedge, :house_blocks, :special_place, :house_statuses)
             @user_account = user_account
             @filter = filter
           end
@@ -18,8 +18,7 @@ module Api
           end
 
           def call
-            @model.includes(:visits, :house_statuses)
-                  .yield_self(&method(:houses_by_user))
+            @model.yield_self(&method(:houses_by_user))
                   .yield_self(&method(:reference_code_clause))
                   .order(:reference_code)
           end

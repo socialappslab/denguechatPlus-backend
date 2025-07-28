@@ -8,7 +8,7 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort)
-            @model = House
+            @model = House.includes(:country, :state, :city, :neighborhood, :wedge, :house_blocks, :special_place, :created_by)
             @filter = filter
             @sort = sort
           end

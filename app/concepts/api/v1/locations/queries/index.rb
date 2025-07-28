@@ -8,7 +8,7 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter)
-            @model = Country
+            @model = Country.includes(states: { cities: :neighborhoods })
             @filter = filter
           end
 

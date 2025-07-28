@@ -8,7 +8,8 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort)
-            @model = Team.joins(:city, :wedge, :organization)
+            @model = Team.joins(:city, :wedge, :organization).includes(:wedge, :sector, :organization, :members,
+                                                                       sector: :city)
             @filter = filter
             @sort = sort
           end
