@@ -50,15 +50,23 @@ module Api
           private
 
           def update_houses!(new_house_ids)
-            @ctx[:model].houses
-                        .where.not(id: new_house_ids)
-                        .update_all(
-                          house_block_id: nil,
-                          assignment_status: :orphaned
-                        )
+            @ctx[:model].house_block_houses
+                        .where.not(house_id: new_house_ids)
+                        .destroy_all
 
-            House.where(id: new_house_ids)
-                 .update_all(house_block_id: @ctx[:model].id, assignment_status: :assigned)
+            House.left_outer_joins(:house_block_houses)
+                 .where(id: @ctx[:model].houses.pluck(:id) - new_house_ids)
+                 .where(house_block_houses: { id: nil }) # sin asignaciones
+                 .update_all(assignment_status: :orphaned)
+
+            new_house_ids.each do |house_id|
+              HouseBlockHouse.find_or_create_by!(
+                house_id: house_id,
+                house_block_id: @ctx[:model].id
+              )
+            end
+
+            House.where(id: new_house_ids).update_all(assignment_status: :assigned)
           end
         end
       end

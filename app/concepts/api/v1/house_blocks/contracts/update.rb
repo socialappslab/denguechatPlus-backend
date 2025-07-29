@@ -24,10 +24,14 @@ module Api
             block_id = values[:id]
             next unless block_id
 
+            block_type = HouseBlock.find_by(id: block_id)&.block_type
+
             assigned_house_ids = HouseBlockHouse
-                                   .where.not(house_block_id: block_id)
-                                   .where(house_id: value)
                                    .joins(:house)
+                                   .joins(:house_block)
+                                   .where.not(house_block_id: block_id, house_id: value)
+                                   .where(house_id: value)
+                                   .where(house_blocks: {block_type: block_type})
                                    .merge(House.where(assignment_status: :assigned))
                                    .pluck(:house_id)
 
