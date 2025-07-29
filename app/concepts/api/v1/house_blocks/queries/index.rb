@@ -70,6 +70,12 @@ module Api
             relation.where(user_profile_id: @filter[:user_profile_id])
           end
 
+          def type_clause(relation)
+            return relation if @filter.nil? || @filter[:type].blank?
+
+            relation.where(block_type: @filter[:type])
+          end
+
           def sort_clause(relation)
             return relation if @sort.nil? || @sort.blank?
 
