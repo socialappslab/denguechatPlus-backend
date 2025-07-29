@@ -8,7 +8,7 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort)
-            @model = HouseBlock.includes(:neighborhood, :wedges, :houses, :brigadist, :team)
+            @model = HouseBlock.includes(:neighborhood, :wedges, :houses, :brigadists)
             @filter = filter
             @sort = sort
           end
@@ -40,12 +40,11 @@ module Api
             return relation if @filter.nil? || @filter[:team_id].blank?
 
             team = Team.find_by(id: @filter[:team_id])
-            return relation unless team
 
             relation.joins(:houses)
-                    .where(houses: { neighborhood_id: team.neighborhood_id })
+                    .where(houses: { neighborhood_id: team&.neighborhood_id })
                     .joins(:wedges)
-                    .where(wedges: { id: team.wedge_id })
+                    .where(wedges: { id: team&.wedge_id })
                     .distinct
           end
 
