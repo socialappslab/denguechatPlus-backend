@@ -18,12 +18,13 @@ module Api
           end
 
           def call
-            @model.yield_self(&method(:wedge_clause))
-                  .yield_self(&method(:wedge_name_clause))
-                  .yield_self(&method(:team_clause))
-                  .yield_self(&method(:name_clause))
-                  .yield_self(&method(:user_profile_clause))
-                  .yield_self(&method(:sort_clause))
+            @model.then { |relation| wedge_clause(relation) }
+                  .then { |relation| wedge_name_clause(relation) }
+                  .then { |relation| team_clause(relation) }
+                  .then { |relation| name_clause(relation) }
+                  .then { |relation| user_profile_clause(relation) }
+                  .then { |relation| type_clause(relation) }
+                  .then { |relation| sort_clause(relation) }
           end
 
           private
