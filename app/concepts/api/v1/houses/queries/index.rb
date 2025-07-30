@@ -8,7 +8,7 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort)
-            @model = House
+            @model = House.includes(:country, :state, :city, :neighborhood, :wedge, :house_blocks, :special_place, :created_by)
             @filter = filter
             @sort = sort
           end
@@ -64,7 +64,9 @@ module Api
           def house_block_clause(relation)
             return relation if @filter.nil? || @filter[:house_block_id].blank?
 
-            relation.where('houses.house_block_id = :query', query: @filter[:house_block_id])
+            relation
+              .joins(:house_block_houses)
+              .where(house_block_houses: { house_block_id: @filter[:house_block_id] })
           end
 
           def sort_clause(relation)

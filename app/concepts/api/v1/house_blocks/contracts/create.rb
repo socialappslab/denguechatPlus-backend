@@ -15,6 +15,7 @@ module Api
             required(:name).filled(:string)
             required(:wedge_id).filled(:integer)
             required(:house_ids).array(:integer)
+            required(:block_type).filled(:string, included_in?: Constants::HouseBlock::STATUS)
           end
 
           rule(:house_ids) do

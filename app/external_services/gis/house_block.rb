@@ -1,9 +1,9 @@
 module Gis
   class HouseBlock
     class << self
-      def sync(current_house_block_ids, wedge_ids, sector_ids)
+      def sync(current_house_block_ids, wedge_ids, sector_ids, type)
         res = { update: 0, create: 0 }
-        new_house_blocks = Gis::Connection.query(query_builder(current_house_block_ids))
+        new_house_blocks = Gis::Connection.query(query_builder(current_house_block_ids, type))
         if new_house_blocks.any?
           begin
             new_house_blocks.each do |house_block|
@@ -12,6 +12,7 @@ module Gis
 
               record.name = house_block[:name]
               record.source = house_block[:source]
+              record.block_type = type
               record.neighborhood_id = sector_ids[house_block[:sector_id].to_i]
               record.last_sync_time = Time.current
 
@@ -33,13 +34,12 @@ module Gis
         res
       end
 
-      private
-
-      def query_builder(_current_house_block_ids)
+      def query_builder(_current_house_block_ids, type='frente_a_frente')
+        block_type = type == 'frente_a_frente' ? 'TarikiC' : 'block_number'
         <<~SQL
               SELECT DISTINCT#{' '}
-              location."TarikiC" as external_id,
-              location."TarikiC" as name,
+              location."#{block_type}" as external_id,
+              location."#{block_type}" as name,
               location."Cuna" as wedge_id,
               location."SectorMOH24" as sector_id,
               'GIS' as source
@@ -49,7 +49,7 @@ module Gis
               AND location."deactive_date" is null
               AND location."SectorMOH24" is not null#{' '}
               AND location."Cuna" is not null
-          GROUP BY location."TarikiC", location."Cuna", location."SectorMOH24"
+          GROUP BY location."#{block_type}", location."Cuna", location."SectorMOH24"
         SQL
       end
     end

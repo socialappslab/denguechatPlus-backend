@@ -8,7 +8,7 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(user_account, filter)
-            @model = House
+            @model = House.includes(:state, :city, :neighborhood, :wedge, :house_blocks, :special_place, :house_statuses)
             @user_account = user_account
             @filter = filter
           end
@@ -18,8 +18,7 @@ module Api
           end
 
           def call
-            @model.includes(:visits, :house_statuses)
-                  .yield_self(&method(:houses_by_user))
+            @model.yield_self(&method(:houses_by_user))
                   .yield_self(&method(:reference_code_clause))
                   .order(:reference_code)
           end
@@ -40,7 +39,10 @@ module Api
             wedge_id = @user_account.teams&.first&.wedge_id
             return relation if wedge_id.nil?
 
-            relation.where(house_block_id: house_block_ids, neighborhood_id: neighborhood_id, wedge_id: wedge_id)
+            relation
+              .joins(:house_block_houses)
+              .where(house_block_houses: { house_block_id: house_block_ids })
+              .where(neighborhood_id: neighborhood_id, wedge_id: wedge_id)
           end
 
           def reference_code_clause(relation)

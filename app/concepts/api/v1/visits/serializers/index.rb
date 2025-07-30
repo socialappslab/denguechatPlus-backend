@@ -8,7 +8,7 @@ module Api
           set_type :visit
 
           attributes :id, :visited_at, :city, :sector, :wedge, :house, :visit_status, :brigadist, :team,
-                     :family_education_topics
+                     :family_education_topics, :other_family_education_topic
 
           attribute :visited_at do |visit|
             visit.visited_at.presence

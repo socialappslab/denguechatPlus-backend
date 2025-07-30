@@ -19,6 +19,7 @@ module Api
             optional(:host)
             optional(:notes).maybe(:string)
             optional(:family_education_topics)
+            optional(:other_family_education_topic).maybe(:string)
             optional(:visit_permission).filled(:bool)
 
             optional(:answers).array(:hash)

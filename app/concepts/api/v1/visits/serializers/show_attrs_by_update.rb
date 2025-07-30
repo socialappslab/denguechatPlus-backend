@@ -53,6 +53,7 @@ module Api
                 visitedAt: visit.visited_at,
                 brigade: visit.team.name,
                 familyEducationTopics: visit.family_education_topics,
+                otherFamilyEducationTopic: visit.other_family_education_topic,
 
                 host: visit.host.split(', '),
                 brigadist: {

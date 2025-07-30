@@ -3,6 +3,7 @@
 # Table name: house_blocks
 #
 #  id              :bigint           not null, primary key
+#  block_type      :string
 #  discarded_at    :datetime
 #  last_sync_time  :datetime
 #  name            :string
@@ -21,8 +22,9 @@
 #  fk_rails_...  (neighborhood_id => neighborhoods.id)
 #
 class HouseBlock < ApplicationRecord
-  has_many :houses, dependent: :nullify
-  belongs_to :team, optional: true
+  has_many :house_block_houses
+  has_many :houses, through: :house_block_houses
+
   belongs_to :brigadist, class_name: 'UserProfile', foreign_key: 'user_profile_id', optional: true
   has_many :house_block_wedges
   has_many :wedges, through: :house_block_wedges

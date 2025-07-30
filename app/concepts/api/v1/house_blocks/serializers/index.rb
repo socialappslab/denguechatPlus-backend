@@ -9,12 +9,6 @@ module Api
 
           attributes :id, :name
 
-          attribute :team do |house_block|
-            next unless house_block.team
-
-            house_block.team&.name
-          end
-
           attribute :neighborhood do |house_block|
             next unless house_block.neighborhood
 
@@ -52,6 +46,8 @@ module Api
           attribute :brigadist do |house_block|
             "#{house_block.brigadist&.first_name}, #{house_block.brigadist&.last_name}"
           end
+
+          attribute :type, &:block_type
         end
       end
     end

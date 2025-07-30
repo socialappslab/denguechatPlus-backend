@@ -29,7 +29,7 @@ module Api
           end
 
           def cursor_and_paginate
-            @ctx[:sort] = { field: 'house_blocks.external_id', direction: 'asc' } if @params['sort'].nil?
+            @ctx[:sort] = { field: 'house_blocks.name', direction: 'asc' } if @params['sort'].nil?
             direction = @params['order'].nil? ? 'asc' : @params['order']
             @ctx[:sort] = { field: @params['sort'], direction: } if @params['sort']
           end

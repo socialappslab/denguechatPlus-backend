@@ -8,7 +8,7 @@ module Api
           set_type :visit
 
           attributes :id, :questionnaire_id, :visited_at, :brigadist, :team, :city, :sector, :wedge,
-                     :visit_permission, :host, :answers, :notes
+                     :visit_permission, :host, :answers, :notes, :other_family_education_topic
 
           translate_multilang_values = ->(collection, language = 'es', current_value = nil) {
             return '' unless current_value
