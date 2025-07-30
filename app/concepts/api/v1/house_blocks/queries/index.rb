@@ -83,7 +83,6 @@ module Api
             @sort[:field] = 'cities.name' if @sort[:field] == 'city'
             @sort[:field] = 'wedges.id' if @sort[:field] == 'wedge'
             @sort[:field] = 'organizations.name' if @sort[:field] == 'organization'
-            @sort[:field] = 'teams.name' if @sort[:field] == 'name'
             @sort[:field] = "house_blocks.block_type" if @sort[:field] == 'type'
             @sort[:field] = "house_blocks.name" if @sort[:field] == 'name'
 
