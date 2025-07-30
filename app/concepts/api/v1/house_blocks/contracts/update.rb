@@ -16,6 +16,7 @@ module Api
             optional(:name).filled(:string)
             optional(:wedge_id).filled(:integer)
             optional(:house_ids).array(:integer)
+            optional(:block_type).filled(:string, included_in?: Constants::HouseBlock::STATUS)
           end
 
           rule(:house_ids) do
@@ -24,16 +25,16 @@ module Api
             block_id = values[:id]
             next unless block_id
 
-            block_type = HouseBlock.find_by(id: block_id)&.block_type
+            block_type = values[:block_type] || HouseBlock.find_by(id: block_id)&.block_type
 
             assigned_house_ids = HouseBlockHouse
-                                   .joins(:house)
-                                   .joins(:house_block)
-                                   .where.not(house_block_id: block_id, house_id: value)
-                                   .where(house_id: value)
-                                   .where(house_blocks: {block_type: block_type})
-                                   .merge(House.where(assignment_status: :assigned))
-                                   .pluck(:house_id)
+                                 .joins(:house)
+                                 .joins(:house_block)
+                                 .where.not(house_block_id: block_id, house_id: value)
+                                 .where(house_id: value)
+                                 .where(house_blocks: { block_type: block_type })
+                                 .merge(House.where(assignment_status: :assigned))
+                                 .pluck(:reference_code)
 
             if assigned_house_ids.any?
               key.failure(
