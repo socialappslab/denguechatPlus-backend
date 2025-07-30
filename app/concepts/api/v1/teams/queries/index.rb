@@ -63,12 +63,11 @@ module Api
           end
 
           def sort_clause(relation)
-            return relation if @sort.nil? || @sort.blank?
-
             @sort[:field] = 'neighborhood_id' if @sort[:field] == 'sector'
             @sort[:field] = 'cities.name' if @sort[:field] == 'city'
             @sort[:field] = 'wedges.id' if @sort[:field] == 'wedge'
             @sort[:field] = 'organizations.name' if @sort[:field] == 'organization'
+            @sort[:field] = 'teams.name' if @sort[:field] == 'name'
             sort_by_table_columns(relation) if @sort[:field]
           end
         end

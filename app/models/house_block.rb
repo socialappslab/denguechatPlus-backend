@@ -25,7 +25,6 @@ class HouseBlock < ApplicationRecord
   has_many :house_block_houses
   has_many :houses, through: :house_block_houses
 
-  belongs_to :team, optional: true
   belongs_to :brigadist, class_name: 'UserProfile', foreign_key: 'user_profile_id', optional: true
   has_many :house_block_wedges
   has_many :wedges, through: :house_block_wedges

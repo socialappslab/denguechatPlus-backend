@@ -15,6 +15,7 @@ module Api
               optional(:name).maybe(:string)
               optional(:team_id).maybe(:integer)
               optional(:user_profile_id).maybe(:integer)
+              optional(:type).maybe(:string, included_in?: Constants::HouseBlock::STATUS)
             end
 
             optional(:page).maybe(:hash) do

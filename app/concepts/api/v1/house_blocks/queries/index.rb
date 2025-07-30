@@ -8,7 +8,7 @@ module Api
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort)
-            @model = HouseBlock.includes(:neighborhood, :wedges, :houses, :brigadist, :team)
+            @model = HouseBlock.includes(:neighborhood, :wedges, :houses, :brigadists)
             @filter = filter
             @sort = sort
           end
@@ -18,12 +18,13 @@ module Api
           end
 
           def call
-            @model.yield_self(&method(:wedge_clause))
-                  .yield_self(&method(:wedge_name_clause))
-                  .yield_self(&method(:team_clause))
-                  .yield_self(&method(:name_clause))
-                  .yield_self(&method(:user_profile_clause))
-                  .yield_self(&method(:sort_clause))
+            @model.then { |relation| wedge_clause(relation) }
+                  .then { |relation| wedge_name_clause(relation) }
+                  .then { |relation| team_clause(relation) }
+                  .then { |relation| name_clause(relation) }
+                  .then { |relation| user_profile_clause(relation) }
+                  .then { |relation| type_clause(relation) }
+                  .then { |relation| sort_clause(relation) }
           end
 
           private
@@ -40,12 +41,11 @@ module Api
             return relation if @filter.nil? || @filter[:team_id].blank?
 
             team = Team.find_by(id: @filter[:team_id])
-            return relation unless team
 
             relation.joins(:houses)
-                    .where(houses: { neighborhood_id: team.neighborhood_id })
+                    .where(houses: { neighborhood_id: team&.neighborhood_id })
                     .joins(:wedges)
-                    .where(wedges: { id: team.wedge_id })
+                    .where(wedges: { id: team&.wedge_id })
                     .distinct
           end
 
@@ -68,6 +68,12 @@ module Api
             return relation if @filter.nil? || @filter[:user_profile_id].blank?
 
             relation.where(user_profile_id: @filter[:user_profile_id])
+          end
+
+          def type_clause(relation)
+            return relation if @filter.nil? || @filter[:type].blank?
+
+            relation.where(block_type: @filter[:type])
           end
 
           def sort_clause(relation)
