@@ -56,7 +56,6 @@ module Api
                                 orchard].include?(option.show_in_case) ? { showInCase: option.show_in_case } : {})
                       .merge(%w[house
                                 orchard].include?(option.selected_case) ? { selectedCase: option.selected_case } : {})
-                      .merge(question.resource_name == 'breeding_site_type_id' ? { additionalInformation: BreedingSiteType.find_by(id: option.resource_id).serialized_additional_info } : {})
                   end
                 }
               rescue StandardError => error

@@ -56,17 +56,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_20_162855) do
     t.index ["param_source", "name"], name: "index_app_config_params_on_param_source_and_name"
   end
 
-  create_table "breeding_site_type_aditional_informations", force: :cascade do |t|
-    t.string "description"
-    t.boolean "only_image"
-    t.string "title"
-    t.string "subtitle"
-    t.bigint "breeding_site_type_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["breeding_site_type_id"], name: "idx_on_breeding_site_type_id_a588ef2362"
-  end
-
   create_table "breeding_site_types", force: :cascade do |t|
     t.string "name"
     t.datetime "discarded_at"
@@ -702,7 +691,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_20_162855) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "breeding_site_type_aditional_informations", "breeding_site_types"
   add_foreign_key "cities", "countries"
   add_foreign_key "cities", "states"
   add_foreign_key "comments", "posts"
