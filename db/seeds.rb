@@ -241,16 +241,6 @@ unless SeedTask.find_by(task_name: 'create_houses_v2')
   SeedTask.create!(task_name: 'create_houses_v2')
 end
 
-# assign images to container types
-# unless SeedTask.find_by(task_name: 'assign_images_to_container_types')
-#   images = get_all_images_for_containers
-#   ContainerType.all.zip(images).each do |container, image_hash|
-#     container.photo.attach(image_hash)
-#     image_hash[:io].unlink
-#   end
-#   SeedTask.create!(task_name: 'assign_images_to_container_types')
-# end
-
 # create default versions params
 unless SeedTask.find_by(task_name: 'create_visit_params')
   data = Constants::VisitParams::RESOURCES
