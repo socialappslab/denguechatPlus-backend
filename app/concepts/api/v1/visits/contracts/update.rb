@@ -25,16 +25,8 @@ module Api
             optional(:answers).array(:hash)
 
             optional(:delete_inspection_ids).array(:integer)
+            optional(:was_offline).filled(:bool)
           end
-
-          # TODO: review with Gonza.
-          # rule(:house_id) do
-          #   house_exists = ::House.find_by(id: value).present?
-          #   if !house_exists && !values[:house]
-          #     key.failure(text: 'The house not exists, you need to send a house obj with the new house data',
-          #                 predicate: :not_exists?)
-          #   end
-          # end
 
           rule(:user_account_id) do
             unless UserAccount.kept.exists?(id: value)
@@ -46,7 +38,7 @@ module Api
           rule(:answers) do
             if value.present?
               value.each_with_index do |answer_hash, index|
-                answer_hash.keys.each do |key|
+                answer_hash.each_key do |key|
                   unless key.to_s.match?(QUESTION_KEY_FORMAT)
                     key([:answers, index]).failure(
                       text: "Invalid question key format for '#{key}'. Expected format: question_NUMBER_NUMBER",

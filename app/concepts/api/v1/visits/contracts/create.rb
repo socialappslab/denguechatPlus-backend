@@ -25,6 +25,7 @@ module Api
             optional(:inspections).filled(:array)
 
             optional(:house).filled(:hash)
+            optional(:was_offline).filled(:bool)
           end
 
           rule(:inspections) do
