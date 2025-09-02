@@ -20,4 +20,29 @@ namespace :data_migration do
 
     puts '✅ Data migration was successful!'
   end
+
+  desc 'Fixes inconsistencies between the visit permission answers and the visit_permission column'
+  task fix_visit_permissions: :environment do
+    question = Question.find_by(question_text_es: '¿Me dieron permiso para visitar la casa?')
+    options = Option.where(question_id: question.id)
+
+    yes_option = options.find { |option| option.name_es == 'Sí, tengo permiso para esta visita' }
+    negative_options = options.filter { |option| ['0', nil].include?(option.value) }
+
+    visits = Visit.all
+
+    visits.each do |visit|
+      permission_id = visit.answers[0]["question_#{question.id}_0"]
+
+      if permission_id == yes_option.id
+        visit.visit_permission = true
+      elsif negative_options.include?(permission_id)
+        visit.visit_permission = false
+      end
+
+      visit.save!
+    end
+
+    puts '✅ Data migration was successful!'
+  end
 end
