@@ -44,8 +44,6 @@
 class Visit < ApplicationRecord
   include Discard::Model
 
-  attribute :was_offline, :boolean, default: false
-
   belongs_to :house
   belongs_to :user_account
   belongs_to :team
