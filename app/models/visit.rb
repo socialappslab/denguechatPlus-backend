@@ -18,6 +18,7 @@
 #  visit_permission             :boolean          default(FALSE)
 #  visit_status                 :integer
 #  visited_at                   :datetime
+#  was_offline                  :boolean
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  house_id                     :bigint           not null

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_20_162855) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_02_121600) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -674,6 +674,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_20_162855) do
     t.datetime "discarded_at"
     t.string "family_education_topics", default: [], array: true
     t.string "other_family_education_topic"
+    t.boolean "was_offline"
     t.index ["discarded_at"], name: "index_visits_on_discarded_at"
     t.index ["house_id"], name: "index_visits_on_house_id"
     t.index ["questionnaire_id"], name: "index_visits_on_questionnaire_id"
