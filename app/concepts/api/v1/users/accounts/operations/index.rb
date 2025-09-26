@@ -14,7 +14,6 @@ module Api
             step :list
             tee :page_pagination?
             tee :paginate
-            #  tee :includes
             tee :meta
 
             def params(input)
@@ -50,10 +49,6 @@ module Api
               @pagy = Api::V1::Lib::Paginates::Paginate.kall(ctx: @ctx, model: @ctx[:data],
                                                              params: @params.slice('page'))
               Success({ ctx: @ctx, type: :success })
-            end
-
-            def includes
-              @ctx[:include] = ['user_profile']
             end
 
             def meta
