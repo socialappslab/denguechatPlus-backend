@@ -33,6 +33,17 @@ module Api
               }
             end
 
+            attribute :house_blocks do |user|
+              next unless user.house_blocks&.any?
+
+              user.house_blocks.map do |house_block|
+                {
+                  id: house_block.id,
+                  name: house_block.name
+                }
+              end
+            end
+
             attribute :roles do |user|
               next unless user.roles
 

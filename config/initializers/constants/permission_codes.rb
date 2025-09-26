@@ -92,6 +92,7 @@ module Constants
       neighborhoods_update: :neighborhoods_update,
       neighborhoods_destroy: :neighborhoods_destroy,
       users_change_team: :users_change_team,
+      users_change_assignment: :users_change_assignment,
       reports_house_status: :reports_house_status,
       reports_brigadists_performance: :reports_brigadists_performance,
       users_delete_account: :users_delete_account,

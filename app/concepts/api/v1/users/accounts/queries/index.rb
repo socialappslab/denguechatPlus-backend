@@ -9,7 +9,7 @@ module Api
             include Api::V1::Lib::Queries::QueryHelper
 
             def initialize(filter, sort)
-              @model = UserProfile.includes(:city, :neighborhood, :organization, :team,
+              @model = UserProfile.includes(:city, :neighborhood, :organization, :team, :house_blocks,
                                             user_account: { roles: [:permissions] })
               @filter = filter
               @sort = sort_to_snake_case(sort)

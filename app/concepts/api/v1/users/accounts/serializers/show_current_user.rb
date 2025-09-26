@@ -15,7 +15,7 @@ module Api
             attribute :roles do |user_account|
               next unless user_account.roles.any?
 
-              user_account.roles.map { |rol| rol.name }
+              user_account.roles.map(&:name)
             end
 
             attribute :permissions do |user_account|
