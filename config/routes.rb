@@ -16,6 +16,7 @@ Rails.application.routes.draw do
         put 'change_team/', on: :collection, action: :change_team
         put 'update_password/', on: :collection, action: :update_password
         put 'change_house_block', on: :collection, action: :change_house_blocks
+        put 'change_assignment', on: :collection, action: :change_assignment
 
         member do
           put 'change_status'
