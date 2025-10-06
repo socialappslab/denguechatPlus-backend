@@ -9,7 +9,6 @@ module Api
 
           tee :params
           step :find_team
-          # tee :includes
 
           def params(input)
             @ctx = {}
@@ -23,10 +22,6 @@ module Api
             else
               Success({ ctx: @ctx, type: :success })
             end
-          end
-
-          def includes
-            @ctx[:include] = ['user_profiles']
           end
         end
       end

@@ -9,7 +9,7 @@ module Api
             include Api::V1::Lib::Queries::QueryHelper
 
             def initialize(filter, sort)
-              @model = UserProfile.includes(:city, :neighborhood, :organization, :team,
+              @model = UserProfile.includes(:city, :neighborhood, :organization, :team, :house_blocks,
                                             user_account: { roles: [:permissions] })
               @filter = filter
               @sort = sort_to_snake_case(sort)
@@ -20,18 +20,18 @@ module Api
             end
 
             def call
-              @model.yield_self(&method(:active_records))
-                    .yield_self(&method(:full_name_clause))
-                    .yield_self(&method(:first_name_clause))
-                    .yield_self(&method(:last_name_clause))
-                    .yield_self(&method(:phone_clause))
-                    .yield_self(&method(:email_clause))
-                    .yield_self(&method(:username_clause))
-                    .yield_self(&method(:team_id))
-                    .yield_self(&method(:status_clause))
-                    .yield_self(&method(:role_name_clause))
-                    .yield_self(&method(:without_team))
-                    .yield_self(&method(:sort_clause))
+              @model.then { |relation| active_records(relation) }
+                    .then { |relation| full_name_clause(relation) }
+                    .then { |relation| first_name_clause(relation) }
+                    .then { |relation| last_name_clause(relation) }
+                    .then { |relation| phone_clause(relation) }
+                    .then { |relation| email_clause(relation) }
+                    .then { |relation| username_clause(relation) }
+                    .then { |relation| team_id(relation) }
+                    .then { |relation| status_clause(relation) }
+                    .then { |relation| role_name_clause(relation) }
+                    .then { |relation| without_team(relation) }
+                    .then { |relation| sort_clause(relation) }
             end
 
             private
