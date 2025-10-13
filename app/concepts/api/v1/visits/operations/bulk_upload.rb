@@ -167,6 +167,7 @@ module Api
             visit_attributes = input[:visit_attributes]
             upload = input[:upload]
             upload_data = input[:upload_data]
+            containers = input[:containers] || []
 
             created_visits = Visit.transaction do
               visit_attributes.map do |attributes|
@@ -176,8 +177,27 @@ module Api
               end
             end
 
-            visit_ids = created_visits.map(&:id)
-            response_ctx = { model: { visit_ids: visit_ids } }
+            containers_by_code = containers.group_by do |container|
+              normalize_code(container[:site_code])
+            end
+
+            visit_summaries = created_visits.map do |visit|
+              house = visit.house
+              site_code = normalize_code(house&.reference_code)
+
+              {
+                id: visit.id,
+                houseId: house&.id,
+                houseName: house&.reference_code,
+                containerCount: containers_by_code.fetch(site_code, []).size
+              }
+            end
+
+            response_ctx = {
+              model: {
+                visit_summaries: visit_summaries
+              }
+            }
 
             Success({ ctx: response_ctx, type: :success })
           end

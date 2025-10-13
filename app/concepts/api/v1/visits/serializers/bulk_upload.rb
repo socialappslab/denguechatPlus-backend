@@ -8,8 +8,8 @@ module Api
           set_type :bulk_upload
           set_id { 'bulk_upload' }
 
-          attribute :visit_ids do |object|
-            object[:visit_ids]
+          attribute :visit_summaries do |object|
+            object[:visit_summaries]
           end
         end
       end
