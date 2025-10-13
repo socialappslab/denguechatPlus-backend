@@ -85,7 +85,7 @@ gem 'activerecord-import', '~> 1.4'
 # Upload files to AWS S3
 gem 'aws-sdk-s3', require: false
 
-# dry gems
+# Dry gems
 gem 'dry-monads'
 gem 'dry-validation'
 gem 'dry-auto_inject'
@@ -94,20 +94,23 @@ gem 'simple_endpoint', '~> 2.0'
 gem 'dry-container'
 gem 'ffaker'
 
-# error login and tracking
+# Error login and tracking
 gem "stackprof"
 gem "sentry-ruby"
 gem "sentry-rails"
 
 
-# sms gem with twilio
+# SMS with twilio
 gem 'twilio-ruby', '~> 7.3.6'
 
-# detect client devices
+# Detect client devices
 gem 'browser'
 
-# rack attack
+# Rack attack
 gem 'rack-attack'
+
+# Read spreadsheets
+gem "roo", "~> 3.0.0"
 
 group :development, :test do
   gem 'annotate'

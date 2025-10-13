@@ -10,4 +10,14 @@ namespace :data_migration do
 
     puts '✅ Change assignment permission created and assigned!'
   end
+
+  desc 'Add permission for bulk_upload endpoint'
+  task add_permission: :environment do
+    permission = Permission.find_or_create_by(name: 'bulk_upload', resource: 'visits')
+
+    roles = Role.where(name: %w[admin team_leader])
+    roles.each { |role| role.permissions << permission unless role.permissions.include?(permission) }
+
+    puts '✅ Bulk upload permission for visits created and assigned!'
+  end
 end

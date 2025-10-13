@@ -50,6 +50,7 @@ class Visit < ApplicationRecord
   belongs_to :questionnaire
   has_many :inspections, dependent: :destroy
   accepts_nested_attributes_for :inspections
+  has_one_attached :upload_file
 
   default_scope -> { kept }
   has_paper_trail on: [:update]
