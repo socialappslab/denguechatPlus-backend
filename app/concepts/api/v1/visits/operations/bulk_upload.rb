@@ -179,6 +179,10 @@ module Api
                   site_code = normalize_code(visit.house&.reference_code)
                   visit_containers = containers_by_code.delete(site_code)
                   create_inspections_for_visit(visit: visit, containers: visit_containers)
+
+                  # Update aggregated statuses after creating inspections
+                  update_house_and_visit_status(visit)
+                  create_house_status_daily_record(visit)
                 end
               end
             end
@@ -456,7 +460,7 @@ module Api
               end
 
               companions_values = split_values(data[VISITS_HEADERS[:companions]])
-              companion_options, companion_errors = map_options(
+              _companion_options, companion_errors = map_options(
                 option_lookup: option_lookup,
                 question_text: VISIT_OPTION_QUESTION_MAP[:companions],
                 values: companions_values,
@@ -466,7 +470,7 @@ module Api
               )
 
               info_values = split_values(data[VISITS_HEADERS[:info_shared]])
-              info_options, info_errors = map_options(
+              _info_options, info_errors = map_options(
                 option_lookup: option_lookup,
                 question_text: VISIT_OPTION_QUESTION_MAP[:info_shared],
                 values: info_values,
@@ -777,6 +781,74 @@ module Api
                             .sum(:weighted_points)
 
             results.key(results.values.max)&.downcase || 'green'
+          end
+
+          def update_house_and_visit_status(visit)
+            house = visit.house
+            return unless house
+
+            colors = {
+              'red' => 'Rojo',
+              'yellow' => 'Amarillo',
+              'green' => 'Verde'
+            }
+
+            inspections_ids = visit.inspections.pluck(:id)
+            if inspections_ids.any?
+              counts = visit.inspections.group(:color).count
+              status_key = if (counts['red'] || 0) > 0
+                             'red'
+                           elsif (counts['yellow'] || 0) > 0
+                             'yellow'
+                           else
+                             'green'
+                           end
+
+              result = {
+                infected_containers: counts['red'] || 0,
+                potential_containers: counts['yellow'] || 0,
+                non_infected_containers: counts['green'] || 0,
+                last_visit: visit.visited_at || Time.now.utc,
+                status: status_key
+              }
+
+              result[:tariki_status] = house.is_tariki?(result[:status])
+              house.update!(result)
+              visit.update!(status: colors[status_key])
+            elsif inspections_ids.empty? && visit.visit_permission
+              tariki_status = house.is_tariki?('green')
+              house.update!(infected_containers: 0, potential_containers: 0,
+                            non_infected_containers: 0, last_visit: visit.visited_at || Time.now.utc,
+                            status: 'green', tariki_status: tariki_status)
+              visit.update!(status: 'Verde')
+            else
+              house.update!(infected_containers: 0, potential_containers: 0,
+                            non_infected_containers: 0, last_visit: visit.visited_at || Time.now.utc,
+                            status: 'yellow')
+              visit.update!(status: 'Amarillo')
+            end
+          end
+
+          def create_house_status_daily_record(visit)
+            house = visit.house
+            return unless house
+
+            team_id = visit.team_id || visit.user_account&.teams&.first&.id || Team.first&.id
+            house_status = HouseStatus.find_or_initialize_by(house_id: house.id, date: visit.visited_at)
+            house_status.date = visit.visited_at
+            house_status.infected_containers = house.infected_containers
+            house_status.non_infected_containers = house.non_infected_containers
+            house_status.potential_containers = house.potential_containers
+            house_status.city_id = house.city_id
+            house_status.country_id = house.country_id
+            house_status.house_block_id = house.house_blocks.find_by(block_type: 'frente_a_frente')&.id
+            house_status.neighborhood_id = house.neighborhood_id
+            house_status.team_id = team_id
+            house_status.wedge_id = house.wedge_id
+            house_status.last_visit = house.last_visit
+            house_status.house_id = house.id
+            house_status.status = house.status
+            house_status.save
           end
 
           def option_resource_id(option)
