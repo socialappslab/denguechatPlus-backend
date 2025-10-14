@@ -168,17 +168,19 @@ module Api
             upload = input[:upload]
             upload_data = input[:upload_data]
             containers = input[:containers] || []
+            containers_by_code = containers.group_by { |container| normalize_code(container[:site_code]) }
+            container_counts = containers_by_code.transform_values(&:size)
 
             created_visits = Visit.transaction do
               visit_attributes.map do |attributes|
                 Visit.create!(attributes).tap do |visit|
                   attach_upload(visit, upload, upload_data)
+
+                  site_code = normalize_code(visit.house&.reference_code)
+                  visit_containers = containers_by_code.delete(site_code)
+                  create_inspections_for_visit(visit: visit, containers: visit_containers)
                 end
               end
-            end
-
-            containers_by_code = containers.group_by do |container|
-              normalize_code(container[:site_code])
             end
 
             visit_summaries = created_visits.map do |visit|
@@ -187,9 +189,8 @@ module Api
 
               {
                 id: visit.id,
-                houseId: house&.id,
                 houseName: house&.reference_code,
-                containerCount: containers_by_code.fetch(site_code, []).size
+                containerCount: container_counts.fetch(site_code, 0)
               }
             end
 
@@ -717,6 +718,74 @@ module Api
               filename: upload.original_filename,
               content_type: upload.content_type
             )
+          end
+
+          def create_inspections_for_visit(visit:, containers:)
+            return if containers.blank?
+
+            containers.each do |container|
+              create_inspection_record(visit: visit, container: container)
+            end
+          end
+
+          def create_inspection_record(visit:, container:)
+            water_source_type_ids = Array(option_resource_id(container[:water_source])).compact
+            container_protection_ids = Array(option_resource_id(container[:protection])).compact
+            elimination_method_type_ids = Array(option_resource_id(container[:action])).compact
+            type_content_ids = Array(container[:contents]).filter_map { |option| option_resource_id(option) }.compact
+
+            inspection = Inspection.create!(
+              visit: visit,
+              breeding_site_type_id: option_resource_id(container[:container_type]),
+              location: container[:location],
+              has_water: true,
+              water_source_other: container[:water_source_other],
+              other_protection: container[:protection_other],
+              other_elimination_method: container[:action_other],
+              was_chemically_treated: option_text(container[:chemically_treated]),
+              created_by: visit.user_account,
+              treated_by: visit.user_account,
+              color: analyze_inspection_status(type_content_ids, container_protection_ids)
+            )
+
+            inspection.water_source_type_ids = water_source_type_ids if water_source_type_ids.any?
+            inspection.container_protection_ids = container_protection_ids if container_protection_ids.any?
+            inspection.elimination_method_type_ids = elimination_method_type_ids if elimination_method_type_ids.any?
+            inspection.type_content_ids = type_content_ids if type_content_ids.any?
+          end
+
+          def analyze_inspection_status(type_content_ids, container_protection_ids)
+            clauses = []
+            values = []
+
+            if type_content_ids.present?
+              clauses << "(questions.resource_name = 'type_content_id' AND options.resource_id IN (?))"
+              values << type_content_ids
+            end
+
+            if container_protection_ids.present?
+              clauses << "(questions.resource_name = 'container_protection_ids' AND options.resource_id IN (?))"
+              values << container_protection_ids
+            end
+
+            return 'green' if clauses.empty?
+
+            results = Option.joins(:question)
+                            .where(clauses.join(' OR '), *values)
+                            .group(:status_color)
+                            .sum(:weighted_points)
+
+            results.key(results.values.max)&.downcase || 'green'
+          end
+
+          def option_resource_id(option)
+            option&.resource_id
+          end
+
+          def option_text(option)
+            return if option.nil?
+
+            option.name_es.presence || option.name_en.presence || option.name_pt.presence || option.value
           end
         end
       end
