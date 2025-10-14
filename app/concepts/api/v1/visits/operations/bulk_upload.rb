@@ -499,6 +499,7 @@ module Api
                   notes: data[VISITS_HEADERS[:notes]],
                   visit_permission: permission_option&.value.to_s == '1',
                   was_offline: false,
+                  visited_at: visit_date,
                   created_at: visit_date,
                   updated_at: visit_date
                 }
