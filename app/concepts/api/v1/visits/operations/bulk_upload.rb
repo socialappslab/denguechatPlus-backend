@@ -873,13 +873,27 @@ module Api
 
           def create_visits(input)
             visits = input[:visits]
+            visit_summaries = []
 
             visits.each do |visit|
-              Api::V1::Visits::Operations::Create.call(
+              result = Api::V1::Visits::Operations::Create.call(
                 params: { json_params: visit.to_json },
                 current_user: input[:current_user]
               )
+
+              next unless result.success?
+
+              created_visit = result.value![:ctx][:model]
+              visit_summaries << {
+                id: created_visit.id,
+                houseName: House.find(created_visit.house_id).reference_code,
+                containerCount: visit[:inspections].length || 0
+              }
             end
+
+            ctx = { model: { visit_summaries: visit_summaries } }
+
+            Success({ ctx:, type: :success })
           end
 
           private
@@ -899,6 +913,14 @@ module Api
 
           def boolean?(value)
             value.is_a?(TrueClass) || value.is_a?(FalseClass)
+          end
+
+          def option_identifier(option)
+            option.resource_id || option.id
+          end
+
+          def option_identifiers(options)
+            options.map { |option| option_identifier(option) }
           end
         end
       end
