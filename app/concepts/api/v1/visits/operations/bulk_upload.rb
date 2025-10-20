@@ -884,10 +884,12 @@ module Api
               next unless result.success?
 
               created_visit = result.value![:ctx][:model]
+              register_duplicate_candidates(created_visit)
               visit_summaries << {
                 id: created_visit.id,
                 houseName: House.find(created_visit.house_id).reference_code,
-                containerCount: visit[:inspections].length || 0
+                containerCount: visit[:inspections].length || 0,
+                duplicateVisitIds: created_visit.possible_duplicate_visit_ids
               }
             end
 
@@ -921,6 +923,16 @@ module Api
 
           def option_identifiers(options)
             options.map { |option| option_identifier(option) }
+          end
+
+          def register_duplicate_candidates(visit)
+            return if visit.visited_at.blank?
+
+            Visit.where(house_id: visit.house_id, visited_at: visit.visited_at.all_day)
+                 .where.not(id: visit.id)
+                 .find_each do |duplicate_visit|
+              VisitDuplicateCandidate.find_or_create_by!(visit:, duplicate_visit:)
+            end
           end
         end
       end

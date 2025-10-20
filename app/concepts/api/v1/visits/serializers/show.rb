@@ -119,6 +119,10 @@ module Api
             end
           end
 
+          attribute :possible_duplicate_visit_ids do |visit|
+            visit.possible_duplicate_visit_ids
+          end
+
           attribute :inspections do |visit|
             next unless visit.inspections.any?
 

@@ -50,10 +50,21 @@ class Visit < ApplicationRecord
   belongs_to :questionnaire
   has_many :inspections, dependent: :destroy
   accepts_nested_attributes_for :inspections
+  has_many :duplicate_candidates, class_name: 'VisitDuplicateCandidate', dependent: :destroy, inverse_of: :visit
+  has_many :possible_duplicate_visits, through: :duplicate_candidates, source: :duplicate_visit
+  has_many :reverse_duplicate_candidates, class_name: 'VisitDuplicateCandidate', foreign_key: :duplicate_visit_id,
+                                          dependent: :destroy, inverse_of: :duplicate_visit
   has_one_attached :upload_file
 
   default_scope -> { kept }
   has_paper_trail on: [:update]
+
+  def possible_duplicate_visit_ids
+    direct_duplicates = duplicate_candidates.pluck(:duplicate_visit_id)
+    reverse_duplicates = reverse_duplicate_candidates.pluck(:visit_id)
+
+    (direct_duplicates + reverse_duplicates).uniq
+  end
 
   after_discard :discard_inspections
 
