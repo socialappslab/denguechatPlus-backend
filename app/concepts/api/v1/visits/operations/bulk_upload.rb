@@ -791,6 +791,11 @@ module Api
 
             questionnaire = input[:questionnaire]
             questions = questionnaire.questions
+            breeding_site_type_question = questions.find_by!(question_text_es: ContainersHeaderQuestion::BREEDING_SITE_TYPE)
+            container_protection_question = questions.find_by!(question_text_es: ContainersHeaderQuestion::CONTAINER_PROTECTION)
+            elimination_method_type_question = questions.find_by!(question_text_es: ContainersHeaderQuestion::ELIMINATION_METHOD_TYPE)
+            type_content_question = questions.find_by!(question_text_es: ContainersHeaderQuestion::TYPE_CONTENT)
+            water_source_type_question = questions.find_by!(question_text_es: ContainersHeaderQuestion::WATER_SOURCE_TYPE)
 
             errors = []
 
@@ -836,37 +841,22 @@ module Api
                                              .zip(r[:water_source_type])
                                              .select { |_, keep| keep }
                                              .map(&:first)
+                  breeding_site_type_option = breeding_site_type_question.options.find_by!(name_es: r[:breeding_site_type])
+                  container_protection_options = container_protection_question.options.where(name_es: container_protection_values)
+                  elimination_method_type_options = elimination_method_type_question.options.where(name_es: elimination_method_type_values)
+                  type_content_options = type_content_question.options.where(name_es: type_content_values)
+                  water_source_type_options = water_source_type_question.options.where(name_es: water_source_type_values)
 
                   {
-                    breeding_site_type_id: questions
-                      .find_by!(question_text_es: ContainersHeaderQuestion::BREEDING_SITE_TYPE)
-                      .options
-                      .find_by!(name_es: r[:breeding_site_type])
-                      .id,
-                    container_protection_ids: questions
-                      .find_by!(question_text_es: ContainersHeaderQuestion::CONTAINER_PROTECTION)
-                      .options
-                      .where(name_es: container_protection_values)
-                      .pluck(:id),
+                    breeding_site_type_id: option_identifier(breeding_site_type_option),
+                    container_protection_ids: option_identifiers(container_protection_options),
                     other_protection: r[:container_protection].last,
-                    elimination_method_type_ids: questions
-                      .find_by!(question_text_es: ContainersHeaderQuestion::ELIMINATION_METHOD_TYPE)
-                      .options
-                      .where(name_es: elimination_method_type_values)
-                      .pluck(:id),
+                    elimination_method_type_ids: option_identifiers(elimination_method_type_options),
                     other_elimination_method: r[:elimination_method_type].last,
                     quantity_founded: 1,
                     was_chemically_treated: r[:was_chemically_treated],
-                    type_content_id: questions
-                      .find_by!(question_text_es: ContainersHeaderQuestion::TYPE_CONTENT)
-                      .options
-                      .where(name_es: type_content_values)
-                      .pluck(:id),
-                    water_source_type_ids: questions
-                      .find_by!(question_text_es: ContainersHeaderQuestion::WATER_SOURCE_TYPE)
-                      .options
-                      .where(name_es: water_source_type_values)
-                      .pluck(:id),
+                    type_content_id: option_identifiers(type_content_options),
+                    water_source_type_ids: option_identifiers(water_source_type_options),
                     other_water_source: r[:water_source_type].last,
                     has_water: true
                   }
