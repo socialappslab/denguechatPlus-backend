@@ -7,858 +7,908 @@ module Api
   module V1
     module Visits
       module Operations
-        class BulkUpload < ApplicationOperation
-          VISITS_HEADERS = {
-            site_code: 'Código de sitio',
-            visit_date: 'Fecha',
-            brigadista: 'Brigadista',
-            permission: '¿Me dieron permiso para visitar la casa?',
-            permission_other: 'Otra explicación - ¿Me dieron permiso para visitar la casa?',
-            companions: '¿Quién te acompaña hoy en esta visita?',
-            visit_start: '¿Dónde comienza la visita?',
-            info_shared: '¿Qué información compartiste?',
-            info_other: 'Otro tema importante - ¿Qué información compartiste?',
-            notes: 'Agregar comentarios sobre la visita'
-          }.freeze
+        class BulkUpload < ApplicationOperation # rubocop:disable Metrics/ClassLength
+          include Dry::Transaction
 
-          VISITS_MULTI_SELECT_HEADERS = [
-            VISITS_HEADERS[:companions],
-            VISITS_HEADERS[:info_shared]
+          VISITS_SHEET_NAME = 'Visitas'
+          CONTAINERS_SHEET_NAME = 'Envases'
+
+          module VisitsHeaderQuestion
+            SITE_CODE = 'Código de sitio'
+            DATE = 'Fecha'
+            BRIGADIST = 'Brigadista'
+            START_SIDE = '¿Dónde comienza la visita?'
+            VISIT_PERMISSION = '¿Me dieron permiso para visitar la casa?'
+            OTHER_VISIT_PERMISSION = 'Otra explicación'
+            HOSTS = '¿Quién te acompaña hoy en esta visita?'
+            FAMILY_EDUCATION_TOPICS = '¿Qué información compartiste?'
+            NOTES = 'Agregar comentarios sobre la visita'
+          end
+
+          # NOTE: order of the options is important
+          module VisitsHeaderMultiselectOptions
+            HOSTS = ['Adulto mayor', 'Adulto hombre', 'Adulto mujer', 'Joven hombre', 'Joven mujer', 'Niños\as'].freeze
+            FAMILY_EDUCATION_TOPICS = [
+              'Explicación de larvas y pupas',
+              'Explicación sobre cómo se reproduce el zancudo',
+              'Explicación sobre cómo manejar los envases',
+              'Explicación sobre la enfermedad del dengue',
+              'Otro tema importante'
+            ].freeze
+          end
+
+          module ContainersHeaderQuestion
+            SITE_CODE = 'Código de sitio'
+            LOCATION_SIDE = 'Ubicación del contendor'
+            BREEDING_SITE_TYPE = '¿Qué tipo de envase encontraste?'
+            WATER_SOURCE_TYPE = '¿De dónde proviene el agua?'
+            CONTAINER_PROTECTION = '¿El envase está protegido?'
+            WAS_CHEMICALLY_TREATED = 'Pregunte si en los últimos 30 días: ¿fue el envase tratado por el Ministerio de Salud con piriproxifeno o abate?'
+            TYPE_CONTENT = 'En este envase hay..'
+            ELIMINATION_METHOD_TYPE = '¿Qué acción se realizó con el envase?'
+          end
+
+          # NOTE: order of the options is important
+          module ContainersHeaderMultiselectOptions
+            WATER_SOURCE_TYPE = [
+              'Del grifo o de otro envase',
+              'Agua activamente recogida. Ejemplo: canaleta, gotera, techo.',
+              'Agua pasivamente recogida. Ejemplo: la lluvia lo llenó.',
+              'Otro (tratamiento manual)'
+            ].freeze
+            CONTAINER_PROTECTION = [
+              'Si, tiene tapa y está bien cerrado',
+              'Si, tiene tapa pero no está bien cerrado',
+              'Está bajo techo',
+              'No tiene tapa',
+              'Uso diario del agua',
+              'Otro tipo de protección'
+            ].freeze
+            TYPE_CONTENT = ['Huevos', 'Pupas', 'Larvas', 'Nada', 'No pude revisar el envase'].freeze
+            ELIMINATION_METHOD_TYPE = [
+              'Tapamos el envase',
+              'Vaciamos el agua',
+              'Trasladamos el envase a un techo o a un lugar cerrado',
+              'Tiramos el envase',
+              'Limpiamos el envase',
+              'No fue necesario tomar ninguna acción',
+              'No se tomó ninguna acción',
+              'Otro'
+            ].freeze
+          end
+
+          VISITS_HEADER_STRUCTURE = [
+            # First row
+            [
+              VisitsHeaderQuestion::SITE_CODE,
+              VisitsHeaderQuestion::DATE,
+              VisitsHeaderQuestion::BRIGADIST,
+              VisitsHeaderQuestion::START_SIDE,
+              VisitsHeaderQuestion::VISIT_PERMISSION,
+              VisitsHeaderQuestion::OTHER_VISIT_PERMISSION,
+              VisitsHeaderQuestion::HOSTS,
+              nil,
+              nil,
+              nil,
+              nil,
+              nil,
+              VisitsHeaderQuestion::FAMILY_EDUCATION_TOPICS,
+              nil,
+              nil,
+              nil,
+              nil,
+              VisitsHeaderQuestion::NOTES
+            ],
+
+            # Second row
+            [
+              nil,
+              nil,
+              nil,
+              nil,
+              nil,
+              nil,
+              VisitsHeaderMultiselectOptions::HOSTS[0],
+              VisitsHeaderMultiselectOptions::HOSTS[1],
+              VisitsHeaderMultiselectOptions::HOSTS[2],
+              VisitsHeaderMultiselectOptions::HOSTS[3],
+              VisitsHeaderMultiselectOptions::HOSTS[4],
+              VisitsHeaderMultiselectOptions::HOSTS[5],
+              VisitsHeaderMultiselectOptions::FAMILY_EDUCATION_TOPICS[0],
+              VisitsHeaderMultiselectOptions::FAMILY_EDUCATION_TOPICS[1],
+              VisitsHeaderMultiselectOptions::FAMILY_EDUCATION_TOPICS[2],
+              VisitsHeaderMultiselectOptions::FAMILY_EDUCATION_TOPICS[3],
+              VisitsHeaderMultiselectOptions::FAMILY_EDUCATION_TOPICS[4],
+              nil
+            ]
           ].freeze
 
-          VISIT_OPTION_QUESTION_MAP = {
-            permission: '¿Me dieron permiso para visitar la casa?',
-            companions: '¿Quién te acompaña hoy en esta visita?',
-            visit_start: '¿Dónde comienza la visita?',
-            info_shared: 'Por favor informemos a la familia sobre'
-          }.freeze
+          CONTAINERS_HEADER_STRUCTURE = [
+            # First row
+            [
+              ContainersHeaderQuestion::SITE_CODE,
+              ContainersHeaderQuestion::LOCATION_SIDE,
+              ContainersHeaderQuestion::BREEDING_SITE_TYPE,
+              ContainersHeaderQuestion::WATER_SOURCE_TYPE,
+              nil,
+              nil,
+              nil,
+              ContainersHeaderQuestion::CONTAINER_PROTECTION,
+              nil,
+              nil,
+              nil,
+              nil,
+              nil,
+              ContainersHeaderQuestion::WAS_CHEMICALLY_TREATED,
+              ContainersHeaderQuestion::TYPE_CONTENT,
+              nil,
+              nil,
+              nil,
+              nil,
+              ContainersHeaderQuestion::ELIMINATION_METHOD_TYPE,
+              nil,
+              nil,
+              nil,
+              nil,
+              nil,
+              nil,
+              nil
+            ],
 
-          CONTAINER_HEADERS = {
-            site_code: 'Código de sitio',
-            location: 'Ubicación del contenedor',
-            container_type: '¿Qué tipo de envase encontraste?',
-            water_source: '¿De dónde proviene el agua?',
-            water_source_other: 'Otro (tratamiento manual) - ¿De dónde proviene el agua?',
-            protection: '¿El envase está protegido?',
-            protection_other: 'Otro tipo de protección - ¿El envase está protegido?',
-            chemically_treated: 'Pregunte si en los últimos 30 días: ¿fue el envase tratado por el Ministerio de Salud con piriproxifeno o abate?',
-            contents: 'En este envase hay..',
-            action: '¿Qué acción se realizó con el envase?',
-            action_other: 'Otro - ¿Qué acción se realizó con el envase?'
-          }.freeze
-
-          CONTAINER_MULTI_SELECT_HEADERS = [
-            CONTAINER_HEADERS[:contents]
+            # Second row
+            [
+              nil,
+              nil,
+              nil,
+              ContainersHeaderMultiselectOptions::WATER_SOURCE_TYPE[0],
+              ContainersHeaderMultiselectOptions::WATER_SOURCE_TYPE[1],
+              ContainersHeaderMultiselectOptions::WATER_SOURCE_TYPE[2],
+              ContainersHeaderMultiselectOptions::WATER_SOURCE_TYPE[3],
+              ContainersHeaderMultiselectOptions::CONTAINER_PROTECTION[0],
+              ContainersHeaderMultiselectOptions::CONTAINER_PROTECTION[1],
+              ContainersHeaderMultiselectOptions::CONTAINER_PROTECTION[2],
+              ContainersHeaderMultiselectOptions::CONTAINER_PROTECTION[3],
+              ContainersHeaderMultiselectOptions::CONTAINER_PROTECTION[4],
+              ContainersHeaderMultiselectOptions::CONTAINER_PROTECTION[5],
+              nil,
+              ContainersHeaderMultiselectOptions::TYPE_CONTENT[0],
+              ContainersHeaderMultiselectOptions::TYPE_CONTENT[1],
+              ContainersHeaderMultiselectOptions::TYPE_CONTENT[2],
+              ContainersHeaderMultiselectOptions::TYPE_CONTENT[3],
+              ContainersHeaderMultiselectOptions::TYPE_CONTENT[4],
+              ContainersHeaderMultiselectOptions::ELIMINATION_METHOD_TYPE[0],
+              ContainersHeaderMultiselectOptions::ELIMINATION_METHOD_TYPE[1],
+              ContainersHeaderMultiselectOptions::ELIMINATION_METHOD_TYPE[2],
+              ContainersHeaderMultiselectOptions::ELIMINATION_METHOD_TYPE[3],
+              ContainersHeaderMultiselectOptions::ELIMINATION_METHOD_TYPE[4],
+              ContainersHeaderMultiselectOptions::ELIMINATION_METHOD_TYPE[5],
+              ContainersHeaderMultiselectOptions::ELIMINATION_METHOD_TYPE[6],
+              ContainersHeaderMultiselectOptions::ELIMINATION_METHOD_TYPE[7]
+            ]
           ].freeze
 
-          CONTAINER_OPTION_QUESTION_MAP = {
-            container_type: '¿Qué tipo de contenedor encontraste?',
-            water_source: '¿De dónde proviene el agua?',
-            protection: '¿El contenedor está protegido?',
-            chemically_treated: 'Pregunte si en los últimos 30 días: ¿fue el contenedor tratado por el Ministerio de Salud con piriproxifeno o abate?',
-            contents: 'En este contenedor hay...',
-            action: '¿Qué acción se realizó con el contenedor?'
+          # NOTE: same as the second row of VISITS_HEADER_STRUCTURE but with the options grouped
+          VISIT_OPTIONS_HEADER_STRUCTURE = [
+            nil,
+            nil,
+            nil,
+            nil,
+            nil,
+            nil,
+            VisitsHeaderMultiselectOptions::HOSTS,
+            VisitsHeaderMultiselectOptions::FAMILY_EDUCATION_TOPICS,
+            nil
+          ].freeze
+
+          CONTAINER_OPTIONS_HEADER_STRUCTURE = [
+            nil,
+            nil,
+            nil,
+            ContainersHeaderMultiselectOptions::WATER_SOURCE_TYPE,
+            ContainersHeaderMultiselectOptions::CONTAINER_PROTECTION,
+            nil,
+            ContainersHeaderMultiselectOptions::TYPE_CONTENT,
+            ContainersHeaderMultiselectOptions::ELIMINATION_METHOD_TYPE
+          ].freeze
+
+          QUESTIONS_THAT_WE_DONT_WANT_TO_VALIDATE = {
+            visits: [
+              VisitsHeaderQuestion::SITE_CODE,
+              VisitsHeaderQuestion::DATE,
+              VisitsHeaderQuestion::BRIGADIST,
+              VisitsHeaderQuestion::OTHER_VISIT_PERMISSION,
+              VisitsHeaderQuestion::NOTES
+            ],
+            containers: [
+              ContainersHeaderQuestion::SITE_CODE,
+              ContainersHeaderQuestion::LOCATION_SIDE
+            ]
           }.freeze
 
-          step :validate_schema
+          step :validate_contract
+          step :open_workbook
+          step :load_questionnaire
           step :parse
-          step :transform
-          step :create
+          step :validate_sheets_and_rows
+          step :validate_rows
+          step :extract_values
+          step :create_visits
 
-          def validate_schema(input)
-            params = input[:params] || {}
-            contract = Api::V1::Visits::Contracts::BulkUpload.kall(params)
-            return Success(input.merge(contract: contract)) if contract.success?
+          def validate_contract(input)
+            result = Api::V1::Visits::Contracts::BulkUpload.new.call(input[:params])
 
-            errors = contract.errors.map do |error|
-              ErrorFormater.new_error(
-                field: error.path.last || :file,
-                msg: error.text,
-                path: error.path,
-                custom_predicate: error.predicate
-              )
-            end.flatten
+            if result.failure?
+              errors = result.errors.map do |e|
+                ErrorFormater.new_error(field: e.path.last || :file, msg: e.text)
+              end.flatten
+              return Failure({ errors:, type: :invalid })
+            end
 
-            Failure({ ctx: { 'contract.default' => contract }, type: :invalid, errors: errors })
+            Success(input.merge(contract: result))
+          end
+
+          def open_workbook(input)
+            file = input[:params][:file]
+            io = file.respond_to?(:tempfile) ? file.tempfile.path : file.path
+            Success(input.merge(xlsx_path: io, original_file: file))
+          end
+
+          def load_questionnaire(input)
+            questionnaire = Questionnaire.find_by!(current_form: true)
+            Success(input.merge(questionnaire:))
           end
 
           def parse(input)
-            params = input[:params]
-            upload = params[:file]
-            tempfile = upload.tempfile
+            xlsx = Roo::Excelx.new(input[:xlsx_path])
+
+            Success(input.merge(xlsx:))
+          end
+
+          def validate_sheets_and_rows(input) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
+            xlsx = input[:xlsx]
+            questionnaire = input[:questionnaire]
+            questions = questionnaire.questions
+
+            errors = []
 
             begin
-              xlsx = Roo::Excelx.new(tempfile.path)
-              upload_data = File.binread(tempfile.path)
-              Success({ file: xlsx, upload: upload, upload_data: upload_data })
-            rescue StandardError => error
-              errors = ErrorFormater.new_error(
-                field: :file,
-                msg: 'is not a readable Excel file',
-                custom_predicate: :format?,
-                meta: { detail: error.message }
+              visits_sheet = xlsx.sheet_for(VISITS_SHEET_NAME)
+            rescue RangeError
+              errors += ErrorFormater.new_error(
+                field: :base,
+                msg: "Hoja #{VISITS_SHEET_NAME} no existe",
+                custom_predicate: :not_found?
               )
-
-              Failure({ ctx: { 'contract.default' => nil }, type: :invalid, errors: errors })
-            end
-          end
-
-          def transform(input)
-            file = input[:file]
-            upload = input[:upload]
-            upload_data = input[:upload_data]
-
-            visits_rows = parse_sheet(
-              file.sheet('Visitas'),
-              VISITS_HEADERS.values,
-              multi_select_headers: VISITS_MULTI_SELECT_HEADERS
-            )
-            containers_rows = parse_sheet(
-              file.sheet('Envases'),
-              CONTAINER_HEADERS.values,
-              multi_select_headers: CONTAINER_MULTI_SELECT_HEADERS
-            )
-
-            questionnaire = Questionnaire.includes(questions: :options).find_by(current_form: true)
-            unless questionnaire
-              errors = ErrorFormater.new_error(field: :file,
-                                               msg: 'No se encontró un formulario activo para procesar las visitas',
-                                               custom_predicate: :not_found?)
-
-              return Failure({ ctx: { 'contract.default' => input[:contract] }, type: :invalid, errors: errors })
             end
 
-            houses = load_houses(visits_rows, containers_rows)
-            users = load_users(visits_rows)
-            option_lookup = build_option_lookup(questionnaire)
+            visits_questions_headers = visits_sheet.row(1)
+            visits_options_headers = visits_sheet.row(2)
+            visits_headers = [visits_questions_headers, visits_options_headers]
 
-            visit_result = build_visit_entries(
-              visits_rows: visits_rows,
-              houses: houses,
-              users: users,
-              questionnaire: questionnaire,
-              option_lookup: option_lookup
-            )
-
-            container_result = build_container_entries(
-              containers_rows: containers_rows,
-              houses: houses,
-              option_lookup: option_lookup
-            )
-
-            errors = visit_result[:errors] + container_result[:errors]
-            if errors.any?
-              return Failure({ ctx: { 'contract.default' => input[:contract] }, type: :invalid,
-                               errors: errors.flatten })
-            end
-
-            Success(
-              input.merge(
-                visit_attributes: visit_result[:entries],
-                containers: container_result[:entries],
-                upload: upload,
-                upload_data: upload_data,
-                questionnaire: questionnaire
+            unless visits_headers == VISITS_HEADER_STRUCTURE
+              errors += ErrorFormater.new_error(
+                field: :base,
+                msg: "#{VISITS_SHEET_NAME} - Encabezados son inválidos. Revise si cuenta con la última versión del archivo",
+                custom_predicate: :invalid_format?
               )
-            )
-          end
+            end
 
-          def create(input)
-            visit_attributes = input[:visit_attributes]
-            upload = input[:upload]
-            upload_data = input[:upload_data]
-            containers = input[:containers] || []
-            containers_by_code = containers.group_by { |container| normalize_code(container[:site_code]) }
-            container_counts = containers_by_code.transform_values(&:size)
+            begin
+              containers_sheet = xlsx.sheet_for(CONTAINERS_SHEET_NAME)
+            rescue RangeError
+              errors += ErrorFormater.new_error(
+                field: :base,
+                msg: "Hoja #{CONTAINERS_SHEET_NAME} no existe",
+                custom_predicate: :not_found?
+              )
+            end
 
-            created_visits = Visit.transaction do
-              visit_attributes.map do |attributes|
-                Visit.create!(attributes).tap do |visit|
-                  attach_upload(visit, upload, upload_data)
+            containers_questions_headers = containers_sheet.row(1)
+            containers_options_headers = containers_sheet.row(2)
+            containers_headers = [containers_questions_headers, containers_options_headers]
 
-                  site_code = normalize_code(visit.house&.reference_code)
-                  visit_containers = containers_by_code.delete(site_code)
-                  create_inspections_for_visit(visit: visit, containers: visit_containers)
+            unless containers_headers == CONTAINERS_HEADER_STRUCTURE
+              errors += ErrorFormater.new_error(
+                field: :base,
+                msg: "#{CONTAINERS_SHEET_NAME} - Encabezados son inválidos. Revise si cuenta con la última versión del archivo",
+                custom_predicate: :invalid_format?
+              )
+            end
 
-                  # Update aggregated statuses after creating inspections
-                  update_house_and_visit_status(visit)
-                  create_house_status_daily_record(visit)
+            visits_questions_headers.compact_blank.each_with_index do |question_header, index|
+              next if QUESTIONS_THAT_WE_DONT_WANT_TO_VALIDATE[:visits].include?(question_header)
+
+              question = questions.find_by(question_text_es: question_header)
+              if question.present?
+                options = VISIT_OPTIONS_HEADER_STRUCTURE[index]
+                next if options.blank?
+
+                options.each do |option_header|
+                  next if question.options.exists?(name_es: option_header)
+
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{VISITS_SHEET_NAME} - Encabezado (opción) \"#{option_header}\" es inválido. Revise si cuenta con la última versión del archivo",
+                    custom_predicate: :invalid_format?
+                  )
+
+                  next
                 end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{VISITS_SHEET_NAME} - Encabezado (pregunta) \"#{question_header}\" es inválido. Revise si cuenta con la última versión del archivo",
+                  custom_predicate: :invalid_format?
+                )
               end
             end
 
-            visit_summaries = created_visits.map do |visit|
-              house = visit.house
-              site_code = normalize_code(house&.reference_code)
+            containers_questions_headers.compact_blank.each_with_index do |question_header, index|
+              next if QUESTIONS_THAT_WE_DONT_WANT_TO_VALIDATE[:containers].include?(question_header)
 
+              question = questions.find_by(question_text_es: question_header)
+              if question.present?
+                options = CONTAINER_OPTIONS_HEADER_STRUCTURE[index]
+                next if options.blank?
+
+                options.each do |option_header|
+                  next if question.options.exists?(name_es: option_header)
+
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{CONTAINERS_SHEET_NAME} - Encabezado (opción) \"#{option_header}\" es inválido. Revise si cuenta con la última versión del archivo",
+                    custom_predicate: :invalid_format?
+                  )
+
+                  next
+                end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{CONTAINERS_SHEET_NAME} - Encabezado (pregunta) \"#{question_header}\" es inválido. Revise si cuenta con la última versión del archivo",
+                  custom_predicate: :invalid_format?
+                )
+              end
+            end
+
+            return Failure({ errors:, type: :invalid }) if errors.any?
+
+            Success(
+              input.merge(
+                sheets: [visits_sheet, containers_sheet],
+                headers: [visits_headers, containers_headers]
+              )
+            )
+          end
+
+          def validate_rows(input) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
+            visits_sheet, containers_sheet = input[:sheets]
+            visits_headers, containers_headers = input[:headers]
+            header_offsets = { visits: visits_headers.size, containers: containers_headers.size }
+            questionnaire = input[:questionnaire]
+            questions = questionnaire.questions
+
+            errors = []
+
+            visits_rows = get_rows(visits_sheet, header_offsets[:visits])
+
+            start_side_options = questions.find_by!(question_text_es: VisitsHeaderQuestion::START_SIDE).options.pluck(:name_es)
+
+            visit_permission_options_raw = questions.find_by!(question_text_es: VisitsHeaderQuestion::VISIT_PERMISSION).options
+            visit_permission_options = visit_permission_options_raw.pluck(:name_es)
+            visit_permission_other_option = visit_permission_options_raw.find_by!(type_option: 'textArea').name_es
+
+            structured_visits_rows = visits_rows.map do |row|
               {
-                id: visit.id,
-                houseName: house&.reference_code,
-                containerCount: container_counts.fetch(site_code, 0)
+                site_code: row[0],
+                date: row[1],
+                brigadist: row[2],
+                start_side: row[3],
+                visit_permission: row[4..5],
+                hosts: row[6..11],
+                family_education_topics: row[12..16],
+                notes: row[17]
               }
             end
 
-            response_ctx = {
-              model: {
-                visit_summaries: visit_summaries
-              }
-            }
+            structured_visits_rows.each_with_index do |row, index| # rubocop:disable Metrics/BlockLength
+              row_number = header_offsets[:visits] + 1 + index
 
-            Success({ ctx: response_ctx, type: :success })
+              if row[:site_code].present?
+                if row[:site_code].is_a?(String)
+                  house = House.find_by(reference_code: row[:site_code])
+                  if house.nil?
+                    errors += ErrorFormater.new_error(
+                      field: :base,
+                      msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::SITE_CODE} #{row[:site_code]} no existe",
+                      custom_predicate: :not_found?
+                    )
+                  end
+                else
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::SITE_CODE} no es una cadena de texto",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::SITE_CODE} es requerido",
+                  custom_predicate: :blank?
+                )
+              end
+
+              if row[:date].present?
+                unless row[:date].is_a?(Date)
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::DATE} no tiene una fecha válida",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::DATE} es requerida",
+                  custom_predicate: :blank?
+                )
+              end
+
+              if row[:brigadist].present?
+                if row[:brigadist].is_a?(String)
+                  user = UserAccount.find_by(username: row[:brigadist])
+                  if user.nil?
+                    errors += ErrorFormater.new_error(
+                      field: :base,
+                      msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::BRIGADIST} #{row[:brigadist]} no existe",
+                      custom_predicate: :not_found?
+                    )
+                  end
+                else
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::BRIGADIST} no es una cadena de texto",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::BRIGADIST} es requerido",
+                  custom_predicate: :blank?
+                )
+              end
+
+              if row[:start_side].present?
+                if row[:start_side].is_a?(String)
+                  unless start_side_options.include?(row[:start_side])
+                    errors += ErrorFormater.new_error(
+                      field: :base,
+                      msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::START_SIDE} no tiene una opción válida",
+                      custom_predicate: :not_found?
+                    )
+                  end
+                else
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::START_SIDE} no es una cadena de texto",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::START_SIDE} es requerido",
+                  custom_predicate: :blank?
+                )
+              end
+
+              visit_permission, other_visit_permission = row[:visit_permission]
+              if visit_permission.present?
+                if visit_permission.is_a?(String)
+                  unless visit_permission_options.include?(visit_permission)
+                    errors += ErrorFormater.new_error(
+                      field: :base,
+                      msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::VISIT_PERMISSION} no tiene una opción válida",
+                      custom_predicate: :not_found?
+                    )
+                  end
+
+                  if visit_permission == visit_permission_other_option && other_visit_permission.blank?
+                    errors += ErrorFormater.new_error(
+                      field: :base,
+                      msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::OTHER_VISIT_PERMISSION} es requerido",
+                      custom_predicate: :blank?
+                    )
+                  end
+                else
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::VISIT_PERMISSION} no es una cadena de texto",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::VISIT_PERMISSION} es requerido",
+                  custom_predicate: :blank?
+                )
+              end
+
+              if row[:hosts].compact_blank.present?
+                unless row[:hosts].all? { |item| boolean?(item) }
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::HOSTS} tiene valores que no son booleanos",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::HOSTS} es requerido",
+                  custom_predicate: :blank?
+                )
+              end
+
+              if row[:family_education_topics].compact_blank.present?
+                *rest, last = row[:family_education_topics]
+                unless rest.all? { |item| boolean?(item) }
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::FAMILY_EDUCATION_TOPICS} tiene valores que no son booleanos",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+                if last.present? && !last.is_a?(String)
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::FAMILY_EDUCATION_TOPICS} último valor no es una cadena de texto",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+              end
+
+              if row[:notes].present? && !row[:notes].is_a?(String) # rubocop:disable Style/Next
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::NOTES} no es una cadena de texto",
+                  custom_predicate: :invalid_format?
+                )
+              end
+            end
+
+            containers_rows = get_rows(containers_sheet, header_offsets[:containers])
+
+            breeding_site_type_options = questions.find_by!(question_text_es: ContainersHeaderQuestion::BREEDING_SITE_TYPE).options.pluck(:name_es)
+            was_chemically_treated_options = questions.find_by!(question_text_es: ContainersHeaderQuestion::WAS_CHEMICALLY_TREATED).options.pluck(:name_es)
+
+            structured_containers_rows = containers_rows.map do |row|
+              {
+                site_code: row[0],
+                location_side: row[1],
+                breeding_site_type: row[2],
+                water_source_type: row[3..6],
+                container_protection: row[7..12],
+                was_chemically_treated: row[13],
+                type_content: row[14..18],
+                elimination_method_type: row[19..26]
+              }
+            end
+
+            structured_containers_rows.each_with_index do |row, index| # rubocop:disable Metrics/BlockLength
+              row_number = header_offsets[:containers] + 1 + index
+
+              if row[:site_code].present?
+                if row[:site_code].is_a?(String)
+                  house = structured_visits_rows.find { |visit| visit[:site_code] == row[:site_code] }
+                  if house.nil?
+                    errors += ErrorFormater.new_error(
+                      field: :base,
+                      msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::SITE_CODE} #{row[:site_code]} no existe en #{VISITS_SHEET_NAME}",
+                      custom_predicate: :not_found?
+                    )
+                  end
+                else
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::SITE_CODE} no es una cadena de texto",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::SITE_CODE} es requerido",
+                  custom_predicate: :blank?
+                )
+              end
+
+              if row[:location_side].present?
+                if row[:location_side].is_a?(String)
+                  # TODO
+                else
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::LOCATION_SIDE} no es una cadena de texto",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::LOCATION_SIDE} es requerido",
+                  custom_predicate: :blank?
+                )
+              end
+
+              if row[:breeding_site_type].present?
+                if row[:breeding_site_type].is_a?(String)
+                  unless breeding_site_type_options.include?(row[:breeding_site_type])
+                    errors += ErrorFormater.new_error(
+                      field: :base,
+                      msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::BREEDING_SITE_TYPE} no tiene una opción válida",
+                      custom_predicate: :not_found?
+                    )
+                  end
+                else
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::BREEDING_SITE_TYPE} no es una cadena de texto",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::BREEDING_SITE_TYPE} es requerido",
+                  custom_predicate: :blank?
+                )
+              end
+
+              if row[:water_source_type].compact_blank.present?
+                *rest, last = row[:water_source_type]
+                unless rest.all? { |item| boolean?(item) }
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::WATER_SOURCE_TYPE} tiene valores que no son booleanos",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+                if last.present? && !last.is_a?(String)
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::WATER_SOURCE_TYPE} último valor no es una cadena de texto",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::WATER_SOURCE_TYPE} es requerido",
+                  custom_predicate: :blank?
+                )
+              end
+
+              if row[:container_protection].compact_blank.present?
+                *rest, last = row[:container_protection]
+                unless rest.all? { |item| boolean?(item) }
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::CONTAINER_PROTECTION} tiene valores que no son booleanos",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+                if last.present? && !last.is_a?(String)
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::CONTAINER_PROTECTION} último valor no es una cadena de texto",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::CONTAINER_PROTECTION} es requerido",
+                  custom_predicate: :blank?
+                )
+              end
+
+              if row[:was_chemically_treated].present?
+                if row[:was_chemically_treated].is_a?(String)
+                  unless was_chemically_treated_options.include?(row[:was_chemically_treated])
+                    errors += ErrorFormater.new_error(
+                      field: :base,
+                      msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::WAS_CHEMICALLY_TREATED} no tiene una opción válida",
+                      custom_predicate: :not_found?
+                    )
+                  end
+                else
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::WAS_CHEMICALLY_TREATED} no es una cadena de texto",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::WAS_CHEMICALLY_TREATED} es requerido",
+                  custom_predicate: :blank?
+                )
+              end
+
+              if row[:type_content].compact_blank.present?
+                unless row[:type_content].all? { |item| boolean?(item) }
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::TYPE_CONTENT} tiene valores que no son booleanos",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::TYPE_CONTENT} es requerido",
+                  custom_predicate: :blank?
+                )
+              end
+
+              if row[:elimination_method_type].compact_blank.present?
+                *rest, last = row[:elimination_method_type]
+                unless rest.all? { |item| boolean?(item) }
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::ELIMINATION_METHOD_TYPE} tiene valores que no son booleanos",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+                if last.present? && !last.is_a?(String)
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::ELIMINATION_METHOD_TYPE} último valor no es una cadena de texto",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::ELIMINATION_METHOD_TYPE} es requerido",
+                  custom_predicate: :blank?
+                )
+              end
+            end
+
+            return Failure({ errors:, type: :invalid }) if errors.any?
+
+            Success(input.merge(rows: [structured_visits_rows, structured_containers_rows]))
+          end
+
+          def extract_values(input) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity,Metrics/MethodLength
+            visits_rows, containers_rows = input[:rows]
+
+            questionnaire = input[:questionnaire]
+            questions = questionnaire.questions
+
+            errors = []
+
+            visits = visits_rows.map do |row| # rubocop:disable Metrics/BlockLength
+              visit_permission_value, _other_visit_permission_value = row[:visit_permission]
+              visit_permission_question = questions.find_by!(question_text_es: VisitsHeaderQuestion::VISIT_PERMISSION)
+              visit_permission_option = visit_permission_question.options.find_by!(name_es: visit_permission_value)
+              containers = containers_rows.filter { |r| row[:site_code] == r[:site_code] }
+              family_education_topics = VisitsHeaderMultiselectOptions::FAMILY_EDUCATION_TOPICS
+                                        .zip(row[:family_education_topics])
+                                        .select { |_, keep| keep }
+                                        .map(&:first)
+              *_, other_family_education_topic_value = row[:family_education_topics]
+
+              {
+                house_id: House.find_by!(reference_code: row[:site_code]).id,
+                visited_at: row[:date].iso8601,
+                user_account_id: UserAccount.find_by!(username: row[:brigadist]).id,
+                visit_permission: visit_permission_option.value == 1,
+                host: VisitsHeaderMultiselectOptions::HOSTS
+                  .zip(row[:hosts])
+                  .select { |_, keep| keep }
+                  .map(&:first),
+                family_education_topics:,
+                other_family_education_topic: family_education_topics.include?(VisitsHeaderMultiselectOptions::FAMILY_EDUCATION_TOPICS.last) ? other_family_education_topic_value : nil,
+                answers: [
+                  { "question_#{visit_permission_question.id}_0": visit_permission_option.id }
+                ],
+                inspections: containers.map do |r| # rubocop:disable Metrics/BlockLength
+                  container_protection_values = ContainersHeaderMultiselectOptions::CONTAINER_PROTECTION
+                                                .zip(r[:container_protection])
+                                                .select { |_, keep| keep }
+                                                .map(&:first)
+                  elimination_method_type_values = ContainersHeaderMultiselectOptions::ELIMINATION_METHOD_TYPE
+                                                   .zip(r[:elimination_method_type])
+                                                   .select { |_, keep| keep }
+                                                   .map(&:first)
+                  type_content_values = ContainersHeaderMultiselectOptions::TYPE_CONTENT
+                                        .zip(r[:type_content])
+                                        .select { |_, keep| keep }
+                                        .map(&:first)
+                  water_source_type_values = ContainersHeaderMultiselectOptions::WATER_SOURCE_TYPE
+                                             .zip(r[:water_source_type])
+                                             .select { |_, keep| keep }
+                                             .map(&:first)
+
+                  {
+                    breeding_site_type_id: questions
+                      .find_by!(question_text_es: ContainersHeaderQuestion::BREEDING_SITE_TYPE)
+                      .options
+                      .find_by!(name_es: r[:breeding_site_type])
+                      .id,
+                    container_protection_ids: questions
+                      .find_by!(question_text_es: ContainersHeaderQuestion::CONTAINER_PROTECTION)
+                      .options
+                      .where(name_es: container_protection_values)
+                      .pluck(:id),
+                    other_protection: r[:container_protection].last,
+                    elimination_method_type_ids: questions
+                      .find_by!(question_text_es: ContainersHeaderQuestion::ELIMINATION_METHOD_TYPE)
+                      .options
+                      .where(name_es: elimination_method_type_values)
+                      .pluck(:id),
+                    other_elimination_method: r[:elimination_method_type].last,
+                    quantity_founded: 1,
+                    was_chemically_treated: r[:was_chemically_treated],
+                    type_content_id: questions
+                      .find_by!(question_text_es: ContainersHeaderQuestion::TYPE_CONTENT)
+                      .options
+                      .where(name_es: type_content_values)
+                      .pluck(:id),
+                    water_source_type_ids: questions
+                      .find_by!(question_text_es: ContainersHeaderQuestion::WATER_SOURCE_TYPE)
+                      .options
+                      .where(name_es: water_source_type_values)
+                      .pluck(:id),
+                    other_water_source: r[:water_source_type].last,
+                    has_water: true
+                  }
+                end,
+                notes: row[:notes] || '',
+                was_offline: true
+              }
+            end
+
+            return Failure({ errors:, type: :invalid }) if errors.any?
+
+            Success(input.merge(visits:))
+          end
+
+          def create_visits(input)
+            visits = input[:visits]
+
+            visits.each do |visit|
+              Api::V1::Visits::Operations::Create.call(
+                params: { json_params: visit.to_json },
+                current_user: input[:current_user]
+              )
+            end
           end
 
           private
 
-          def parse_sheet(sheet, expected_headers, multi_select_headers: [])
-            multi_select_info = detect_multi_select_layout(sheet, expected_headers, multi_select_headers)
-            return parse_sheet_with_multi_select(sheet, multi_select_info) if multi_select_info
+          def get_rows(sheet, header_offset)
+            rows = []
 
-            parse_sheet_basic(sheet, expected_headers)
-          end
+            ((sheet.first_row + header_offset)..sheet.last_row).each do |r|
+              row = sheet.row(r)
+              next if row.compact_blank.empty?
 
-          def parse_sheet_basic(sheet, expected_headers)
-            sheet.parse(headers: true).each_with_index.filter_map do |row, index|
-              next if row.values.all?(&:blank?)
-              next if header_row?(row, expected_headers)
-
-              { row_number: index + 2, data: row }
-            end
-          end
-
-          def parse_sheet_with_multi_select(sheet, multi_select_info)
-            headers = multi_select_info[:headers]
-            data_start_row = multi_select_info[:data_start_row]
-            multi_select_header_names = headers.select { |info| info[:multi_select] }
-                                               .filter_map { |info| info[:header] }
-                                               .uniq
-            headers_with_options = headers.select { |info| info[:option].present? }
-                                          .filter_map { |info| info[:header] }
-                                          .uniq
-            last_row = sheet.last_row.to_i
-
-            return [] if last_row < data_start_row
-
-            (data_start_row..last_row).each_with_object([]) do |row_index, collection|
-              row_values = headers.each_index.map { |col_idx| sheet.cell(row_index, col_idx + 1) }
-              next if row_values.all?(&:blank?)
-
-              row_data = {}
-
-              headers.each_with_index do |header_info, col_idx|
-                header = header_info[:header]
-                next if header.blank?
-
-                cell_value = row_values[col_idx]
-
-                if header_info[:option].present?
-                  next unless checkbox_selected?(cell_value)
-
-                  row_data[header] ||= []
-                  row_data[header] << header_info[:option]
-                elsif header_info[:multi_select]
-                  next unless checkbox_selected?(cell_value)
-
-                  row_data[header] ||= []
-                  row_data[header] << cell_value
-                else
-                  row_data[header] = cell_value
-                end
-              end
-
-              headers_with_options.each do |header|
-                values = Array(row_data[header])
-                next if values.blank?
-
-                cleaned_values = values.map { |value| clean_cell(value) }
-                                       .compact_blank
-                                       .uniq
-
-                if cleaned_values.empty?
-                  row_data[header] = multi_select_header_names.include?(header) ? [] : nil
-                  next
-                end
-
-                row_data[header] = if multi_select_header_names.include?(header)
-                                     cleaned_values
-                                   else
-                                     cleaned_values.first
-                                   end
-              end
-
-              next if row_data.values.all?(&:blank?)
-
-              collection << { row_number: row_index, data: row_data }
-            end
-          end
-
-          def detect_multi_select_layout(sheet, expected_headers, multi_select_headers)
-            sanitized_multi_headers = Array(multi_select_headers).map { |header| sanitize_header(header) }.to_set
-            return nil if sanitized_multi_headers.empty?
-            return nil if sheet.last_row.to_i < 2
-
-            first_row = sheet.row(1)
-            second_row = sheet.row(2)
-            return nil if second_row.blank? || second_row.all?(&:blank?)
-
-            expected_map = expected_headers.index_by { |header| sanitize_header(header) }
-
-            column_count = [first_row.length, second_row.length].max
-            column_count = expected_headers.length if column_count.zero?
-
-            headers = []
-            current_header = nil
-            found_multi_select_column = false
-            non_multi_value_present = false
-
-            column_count.times do |index|
-              top_value = first_row[index]
-              current_header = top_value.presence || current_header
-              sanitized_header = sanitize_header(current_header)
-              sub_header_value = second_row[index]
-              sanitized_sub_header = sanitize_header(sub_header_value)
-
-              if sanitized_header.present? && sanitized_multi_headers.include?(sanitized_header) &&
-                 sanitized_sub_header.present?
-                found_multi_select_column = true
-                header_name = expected_map[sanitized_header] || current_header&.to_s&.strip
-
-                headers << {
-                  header: header_name,
-                  option: clean_cell(sub_header_value),
-                  multi_select: true
-                }
-              else
-                sanitized_top_value = sanitize_header(top_value)
-                header_name = expected_map[sanitized_header] || expected_map[sanitized_top_value] ||
-                              sanitized_header.presence || sanitized_top_value.presence
-                option_name = sanitized_sub_header.present? ? clean_cell(sub_header_value) : nil
-                headers << { header: header_name, option: option_name, multi_select: false }
-
-                non_multi_value_present ||= sanitized_sub_header.present? &&
-                                            sanitized_multi_headers.exclude?(sanitized_header)
-              end
+              rows << row
             end
 
-            found_multi_select_column ||= headers.any? { |info| info[:option].present? }
-
-            return nil if non_multi_value_present && !found_multi_select_column
-            return nil unless found_multi_select_column
-
-            { headers: headers, data_start_row: 3 }
+            rows
           end
 
-          def header_row?(row_hash, expected_headers)
-            values = row_hash.values.compact.filter_map { |value| sanitize_header(value) }
-            return false if values.empty?
-
-            expected_set = expected_headers.filter_map { |header| sanitize_header(header) }.to_set
-            values.all? { |value| expected_set.include?(value) }
-          end
-
-          def sanitize_header(value)
-            clean_cell(value).presence
-          end
-
-          def checkbox_selected?(value)
-            return true if value == true
-            return false if value == false || value.nil?
-
-            normalized = value.to_s.strip
-            return false if normalized.empty?
-
-            normalized_downcase = normalized.downcase
-            return false if %w[false 0 no].include?(normalized_downcase)
-
-            true
-          end
-
-          def load_houses(visits_rows, containers_rows)
-            visit_codes = visits_rows.filter_map { |row| normalize_code(row[:data][VISITS_HEADERS[:site_code]]) }
-            container_codes = containers_rows.filter_map do |row|
-              normalize_code(row[:data][CONTAINER_HEADERS[:site_code]])
-            end
-            codes = (visit_codes + container_codes).compact.uniq
-
-            House.where(reference_code: codes).index_by { |house| normalize_code(house.reference_code) }
-          end
-
-          def load_users(visits_rows)
-            usernames = visits_rows.filter_map do |row|
-              normalize_username(row[:data][VISITS_HEADERS[:brigadista]])
-            end.uniq
-            UserAccount.includes(user_profile: :team)
-                       .where(username: usernames)
-                       .index_by { |user| normalize_username(user.username) }
-          end
-
-          def build_option_lookup(questionnaire)
-            questionnaire.questions.each_with_object({}) do |question, memo|
-              memo[question.question_text_es] = question.options.each_with_object({}) do |option, collection|
-                [option.name_es, option.name_en, option.name_pt].compact.each do |name|
-                  collection[normalize_text(name)] = option
-                end
-              end
-            end
-          end
-
-          def build_visit_entries(visits_rows:, houses:, users:, questionnaire:, option_lookup:)
-            entries = []
-            errors = []
-
-            visits_rows.each do |row|
-              row_errors = []
-              data = row[:data]
-              row_number = row[:row_number]
-
-              site_code_raw = data[VISITS_HEADERS[:site_code]]
-              site_code = normalize_code(site_code_raw)
-              if site_code.blank?
-                row_errors << row_error(:visits, row_number, VISITS_HEADERS[:site_code],
-                                        'El código de sitio es obligatorio')
-              end
-
-              house = houses[site_code]
-              unless house
-                row_errors << row_error(:visits, row_number, VISITS_HEADERS[:site_code],
-                                        "La vivienda con código #{site_code_raw} no existe",
-                                        predicate: :not_found?)
-              end
-
-              username_raw = data[VISITS_HEADERS[:brigadista]]
-              username = normalize_username(username_raw)
-              if username.blank?
-                row_errors << row_error(:visits, row_number, VISITS_HEADERS[:brigadista],
-                                        'El brigadista es obligatorio')
-              end
-
-              user_account = users[username]
-              unless user_account
-                row_errors << row_error(:visits, row_number, VISITS_HEADERS[:brigadista],
-                                        "No existe un brigadista con usuario #{username_raw}",
-                                        predicate: :not_found?)
-              end
-
-              team = user_account&.user_profile&.team
-              unless team
-                row_errors << row_error(:visits, row_number, VISITS_HEADERS[:brigadista],
-                                        "El brigadista #{username_raw} no tiene un equipo asignado",
-                                        predicate: :not_found?)
-              end
-
-              permission_value = data[VISITS_HEADERS[:permission]]
-              if permission_value.blank?
-                row_errors << row_error(:visits, row_number, VISITS_HEADERS[:permission],
-                                        'Debe indicar si obtuvo permiso para la visita')
-              end
-
-              permission_option = find_option(option_lookup, VISIT_OPTION_QUESTION_MAP[:permission], permission_value,
-                                              VISITS_HEADERS[:permission])
-              unless permission_option
-                row_errors << row_error(:visits, row_number, VISITS_HEADERS[:permission],
-                                        "La opción '#{permission_value}' no es válida",
-                                        predicate: :not_exists?)
-              end
-
-              companions_values = split_values(data[VISITS_HEADERS[:companions]])
-              _companion_options, companion_errors = map_options(
-                option_lookup: option_lookup,
-                question_text: VISIT_OPTION_QUESTION_MAP[:companions],
-                values: companions_values,
-                header: VISITS_HEADERS[:companions],
-                row_number: row_number,
-                sheet: :visits
-              )
-
-              info_values = split_values(data[VISITS_HEADERS[:info_shared]])
-              _info_options, info_errors = map_options(
-                option_lookup: option_lookup,
-                question_text: VISIT_OPTION_QUESTION_MAP[:info_shared],
-                values: info_values,
-                header: VISITS_HEADERS[:info_shared],
-                row_number: row_number,
-                sheet: :visits
-              )
-
-              row_errors.concat(companion_errors)
-              row_errors.concat(info_errors)
-
-              visit_date = parse_visit_date(data[VISITS_HEADERS[:visit_date]])
-              unless visit_date
-                row_errors << row_error(:visits, row_number, VISITS_HEADERS[:visit_date],
-                                        "La fecha '#{data[VISITS_HEADERS[:visit_date]]}' no es válida",
-                                        predicate: :invalid?)
-              end
-
-              if row_errors.empty?
-                entries << {
-                  house: house,
-                  user_account: user_account,
-                  team: team,
-                  questionnaire: questionnaire,
-                  answers: [],
-                  family_education_topics: info_values,
-                  other_family_education_topic: data[VISITS_HEADERS[:info_other]],
-                  host: companions_values.any? ? companions_values.join(', ') : nil,
-                  status: '',
-                  notes: data[VISITS_HEADERS[:notes]],
-                  visit_permission: permission_option&.value.to_s == '1',
-                  was_offline: false,
-                  visited_at: visit_date,
-                  created_at: visit_date,
-                  updated_at: visit_date
-                }
-              else
-                errors.concat(row_errors)
-              end
-            end
-
-            { entries: entries, errors: errors }
-          end
-
-          def build_container_entries(containers_rows:, houses:, option_lookup:)
-            entries = []
-            errors = []
-
-            containers_rows.each do |row|
-              row_errors = []
-              data = row[:data]
-              row_number = row[:row_number]
-
-              site_code_raw = data[CONTAINER_HEADERS[:site_code]]
-              site_code = normalize_code(site_code_raw)
-              if site_code.blank?
-                row_errors << row_error(:containers, row_number, CONTAINER_HEADERS[:site_code],
-                                        'El código de sitio es obligatorio')
-              end
-
-              house = houses[site_code]
-              unless house
-                row_errors << row_error(:containers, row_number, CONTAINER_HEADERS[:site_code],
-                                        "La vivienda con código #{site_code_raw} no existe",
-                                        predicate: :not_found?)
-              end
-
-              type_value = data[CONTAINER_HEADERS[:container_type]]
-              type_option = find_option(option_lookup, CONTAINER_OPTION_QUESTION_MAP[:container_type], type_value,
-                                        CONTAINER_HEADERS[:container_type])
-              if type_value.blank?
-                row_errors << row_error(:containers, row_number, CONTAINER_HEADERS[:container_type],
-                                        'Debe indicar el tipo de envase encontrado')
-              elsif type_option.nil?
-                row_errors << row_error(:containers, row_number, CONTAINER_HEADERS[:container_type],
-                                        "La opción '#{type_value}' no es válida",
-                                        predicate: :not_exists?)
-              end
-
-              water_source_value = data[CONTAINER_HEADERS[:water_source]]
-              water_source_option = find_option(option_lookup, CONTAINER_OPTION_QUESTION_MAP[:water_source], water_source_value,
-                                                CONTAINER_HEADERS[:water_source])
-              if water_source_value.blank?
-                row_errors << row_error(:containers, row_number, CONTAINER_HEADERS[:water_source],
-                                        'Debe indicar de dónde proviene el agua')
-              elsif water_source_option.nil?
-                row_errors << row_error(:containers, row_number, CONTAINER_HEADERS[:water_source],
-                                        "La opción '#{water_source_value}' no es válida",
-                                        predicate: :not_exists?)
-              end
-
-              protection_value = data[CONTAINER_HEADERS[:protection]]
-              protection_option = find_option(option_lookup, CONTAINER_OPTION_QUESTION_MAP[:protection], protection_value,
-                                              CONTAINER_HEADERS[:protection])
-              if protection_value.blank?
-                row_errors << row_error(:containers, row_number, CONTAINER_HEADERS[:protection],
-                                        'Debe indicar cómo está protegido el envase')
-              elsif protection_option.nil?
-                row_errors << row_error(:containers, row_number, CONTAINER_HEADERS[:protection],
-                                        "La opción '#{protection_value}' no es válida",
-                                        predicate: :not_exists?)
-              end
-
-              treated_value = data[CONTAINER_HEADERS[:chemically_treated]]
-              treated_option = find_option(option_lookup, CONTAINER_OPTION_QUESTION_MAP[:chemically_treated], treated_value,
-                                           CONTAINER_HEADERS[:chemically_treated])
-              if treated_value.blank?
-                row_errors << row_error(:containers, row_number, CONTAINER_HEADERS[:chemically_treated],
-                                        'Debe indicar si el envase fue tratado químicamente')
-              elsif treated_option.nil?
-                row_errors << row_error(:containers, row_number, CONTAINER_HEADERS[:chemically_treated],
-                                        "La opción '#{treated_value}' no es válida",
-                                        predicate: :not_exists?)
-              end
-
-              contents_values = split_values(data[CONTAINER_HEADERS[:contents]])
-              if contents_values.empty?
-                row_errors << row_error(:containers, row_number, CONTAINER_HEADERS[:contents],
-                                        'Debe indicar qué se encontró en el envase')
-              end
-
-              content_options, content_errors = map_options(
-                option_lookup: option_lookup,
-                question_text: CONTAINER_OPTION_QUESTION_MAP[:contents],
-                values: contents_values,
-                header: CONTAINER_HEADERS[:contents],
-                row_number: row_number,
-                sheet: :containers
-              )
-
-              row_errors.concat(content_errors)
-
-              action_value = data[CONTAINER_HEADERS[:action]]
-              action_option = find_option(option_lookup, CONTAINER_OPTION_QUESTION_MAP[:action], action_value,
-                                          CONTAINER_HEADERS[:action])
-              if action_value.blank?
-                row_errors << row_error(:containers, row_number, CONTAINER_HEADERS[:action],
-                                        'Debe indicar qué acción se realizó con el envase')
-              elsif action_option.nil?
-                row_errors << row_error(:containers, row_number, CONTAINER_HEADERS[:action],
-                                        "La opción '#{action_value}' no es válida",
-                                        predicate: :not_exists?)
-              end
-
-              if row_errors.empty?
-                entries << {
-                  row_number: row_number,
-                  site_code: site_code_raw,
-                  location: data[CONTAINER_HEADERS[:location]],
-                  container_type: type_option,
-                  water_source: water_source_option,
-                  water_source_other: data[CONTAINER_HEADERS[:water_source_other]],
-                  protection: protection_option,
-                  protection_other: data[CONTAINER_HEADERS[:protection_other]],
-                  chemically_treated: treated_option,
-                  contents: content_options,
-                  action: action_option,
-                  action_other: data[CONTAINER_HEADERS[:action_other]]
-                }
-              else
-                errors.concat(row_errors)
-              end
-            end
-
-            { entries: entries, errors: errors }
-          end
-
-          def map_options(option_lookup:, question_text:, values:, header:, row_number:, sheet:)
-            options = []
-            errors = []
-            values.each do |value|
-              option = find_option(option_lookup, question_text, value, header)
-              if option.nil?
-                errors << row_error(sheet, row_number, header,
-                                    "La opción '#{value}' no es válida",
-                                    predicate: :not_exists?)
-              else
-                options << option
-              end
-            end
-            [options, errors]
-          end
-
-          def find_option(option_lookup, question_text, value, header = nil)
-            return nil if value.blank?
-
-            index = option_lookup[question_text] || option_lookup[header]
-            return nil unless index
-
-            index[normalize_text(value)]
-          end
-
-          def split_values(value)
-            return value.map { |part| clean_cell(part) }.compact_blank.uniq if value.is_a?(Array)
-            return [] if value.blank?
-
-            value.to_s.split(',').map { |part| clean_cell(part) }.compact_blank
-          end
-
-          def clean_cell(value)
-            value.to_s.tr('“”’‘', '"').gsub(/\A["']+|["']+\z/, '').strip
-          end
-
-          def parse_visit_date(value)
-            return value.in_time_zone if value.respond_to?(:in_time_zone)
-            return value.to_datetime.in_time_zone if value.is_a?(Date)
-            return value.in_time_zone if value.is_a?(Time)
-
-            string_value = value.to_s
-            return nil if string_value.blank?
-
-            Date.strptime(string_value, '%d/%m/%Y').in_time_zone
-          rescue ArgumentError, TypeError
-            begin
-              Time.zone.parse(string_value)
-            rescue ArgumentError, TypeError
-              nil
-            end
-          end
-
-          def row_error(sheet, row_number, column, message, predicate: :invalid?)
-            field_prefix = sheet == :visits ? 'visits' : 'containers'
-            field_column = column.to_s.parameterize(separator: '_')
-            field = "#{field_prefix}.row_#{row_number}.#{field_column}"
-
-            ErrorFormater.new_error(field: field, msg: message, custom_predicate: predicate)
-          end
-
-          def normalize_text(value)
-            sanitized = value.to_s.tr('“”’‘', '"')
-            sanitized = sanitized.strip
-            sanitized = sanitized.gsub(/\A["']+|["']+\z/, '').strip
-
-            ActiveSupport::Inflector.transliterate(sanitized).downcase.gsub(/\s+/, ' ')
-          end
-
-          def normalize_code(value)
-            value.to_s.strip.upcase.presence
-          end
-
-          def normalize_username(value)
-            value.to_s.strip.downcase.presence
-          end
-
-          def attach_upload(visit, upload, data)
-            return if upload.nil? || data.blank?
-
-            visit.upload_file.attach(
-              io: StringIO.new(data),
-              filename: upload.original_filename,
-              content_type: upload.content_type
-            )
-          end
-
-          def create_inspections_for_visit(visit:, containers:)
-            return if containers.blank?
-
-            containers.each do |container|
-              create_inspection_record(visit: visit, container: container)
-            end
-          end
-
-          def create_inspection_record(visit:, container:)
-            water_source_type_ids = Array(option_resource_id(container[:water_source])).compact
-            container_protection_ids = Array(option_resource_id(container[:protection])).compact
-            elimination_method_type_ids = Array(option_resource_id(container[:action])).compact
-            type_content_ids = Array(container[:contents]).filter_map { |option| option_resource_id(option) }.compact
-
-            inspection = Inspection.create!(
-              visit: visit,
-              breeding_site_type_id: option_resource_id(container[:container_type]),
-              location: container[:location],
-              has_water: true,
-              water_source_other: container[:water_source_other],
-              other_protection: container[:protection_other],
-              other_elimination_method: container[:action_other],
-              was_chemically_treated: option_text(container[:chemically_treated]),
-              created_by: visit.user_account,
-              treated_by: visit.user_account,
-              color: analyze_inspection_status(type_content_ids, container_protection_ids)
-            )
-
-            inspection.water_source_type_ids = water_source_type_ids if water_source_type_ids.any?
-            inspection.container_protection_ids = container_protection_ids if container_protection_ids.any?
-            inspection.elimination_method_type_ids = elimination_method_type_ids if elimination_method_type_ids.any?
-            inspection.type_content_ids = type_content_ids if type_content_ids.any?
-          end
-
-          def analyze_inspection_status(type_content_ids, container_protection_ids)
-            clauses = []
-            values = []
-
-            if type_content_ids.present?
-              clauses << "(questions.resource_name = 'type_content_id' AND options.resource_id IN (?))"
-              values << type_content_ids
-            end
-
-            if container_protection_ids.present?
-              clauses << "(questions.resource_name = 'container_protection_ids' AND options.resource_id IN (?))"
-              values << container_protection_ids
-            end
-
-            return 'green' if clauses.empty?
-
-            results = Option.joins(:question)
-                            .where(clauses.join(' OR '), *values)
-                            .group(:status_color)
-                            .sum(:weighted_points)
-
-            results.key(results.values.max)&.downcase || 'green'
-          end
-
-          def update_house_and_visit_status(visit)
-            house = visit.house
-            return unless house
-
-            colors = {
-              'red' => 'Rojo',
-              'yellow' => 'Amarillo',
-              'green' => 'Verde'
-            }
-
-            inspections_ids = visit.inspections.pluck(:id)
-            if inspections_ids.any?
-              counts = visit.inspections.group(:color).count
-              status_key = if (counts['red'] || 0) > 0
-                             'red'
-                           elsif (counts['yellow'] || 0) > 0
-                             'yellow'
-                           else
-                             'green'
-                           end
-
-              result = {
-                infected_containers: counts['red'] || 0,
-                potential_containers: counts['yellow'] || 0,
-                non_infected_containers: counts['green'] || 0,
-                last_visit: visit.visited_at || Time.now.utc,
-                status: status_key
-              }
-
-              result[:tariki_status] = house.is_tariki?(result[:status])
-              house.update!(result)
-              visit.update!(status: colors[status_key])
-            elsif inspections_ids.empty? && visit.visit_permission
-              tariki_status = house.is_tariki?('green')
-              house.update!(infected_containers: 0, potential_containers: 0,
-                            non_infected_containers: 0, last_visit: visit.visited_at || Time.now.utc,
-                            status: 'green', tariki_status: tariki_status)
-              visit.update!(status: 'Verde')
-            else
-              house.update!(infected_containers: 0, potential_containers: 0,
-                            non_infected_containers: 0, last_visit: visit.visited_at || Time.now.utc,
-                            status: 'yellow')
-              visit.update!(status: 'Amarillo')
-            end
-          end
-
-          def create_house_status_daily_record(visit)
-            house = visit.house
-            return unless house
-
-            team_id = visit.team_id || visit.user_account&.teams&.first&.id || Team.first&.id
-            house_status = HouseStatus.find_or_initialize_by(house_id: house.id, date: visit.visited_at)
-            house_status.date = visit.visited_at
-            house_status.infected_containers = house.infected_containers
-            house_status.non_infected_containers = house.non_infected_containers
-            house_status.potential_containers = house.potential_containers
-            house_status.city_id = house.city_id
-            house_status.country_id = house.country_id
-            house_status.house_block_id = house.house_blocks.find_by(block_type: 'frente_a_frente')&.id
-            house_status.neighborhood_id = house.neighborhood_id
-            house_status.team_id = team_id
-            house_status.wedge_id = house.wedge_id
-            house_status.last_visit = house.last_visit
-            house_status.house_id = house.id
-            house_status.status = house.status
-            house_status.save
-          end
-
-          def option_resource_id(option)
-            option&.resource_id
-          end
-
-          def option_text(option)
-            return if option.nil?
-
-            option.name_es.presence || option.name_en.presence || option.name_pt.presence || option.value
+          def boolean?(value)
+            value.is_a?(TrueClass) || value.is_a?(FalseClass)
           end
         end
       end
