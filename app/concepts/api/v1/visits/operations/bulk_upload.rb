@@ -391,6 +391,15 @@ module Api
             errors = []
 
             visits_rows = get_rows(visits_sheet, header_offsets[:visits])
+            containers_rows = get_rows(containers_sheet, header_offsets[:containers])
+
+            if visits_rows.empty? && containers_rows.empty?
+              errors += ErrorFormater.new_error(
+                field: :base,
+                msg: 'El archivo subido tiene una estructura válida pero no tiene datos para procesar',
+                custom_predicate: :empty?
+              )
+            end
 
             start_side_options = questions.find_by!(question_text_es: VisitsHeaderQuestion::START_SIDE).options.pluck(:name_es)
 
@@ -579,8 +588,6 @@ module Api
                 )
               end
             end
-
-            containers_rows = get_rows(containers_sheet, header_offsets[:containers])
 
             breeding_site_type_options = questions.find_by!(question_text_es: ContainersHeaderQuestion::BREEDING_SITE_TYPE).options.pluck(:name_es)
             was_chemically_treated_options = questions.find_by!(question_text_es: ContainersHeaderQuestion::WAS_CHEMICALLY_TREATED).options.pluck(:name_es)
