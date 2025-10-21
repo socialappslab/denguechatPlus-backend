@@ -276,9 +276,10 @@ module Api
             rescue RangeError
               errors += ErrorFormater.new_error(
                 field: :base,
-                msg: "Hoja #{VISITS_SHEET_NAME} no existe",
+                msg: "Hoja \"#{VISITS_SHEET_NAME}\" no existe",
                 custom_predicate: :not_found?
               )
+              return Failure({ errors:, type: :invalid })
             end
 
             visits_questions_headers = visits_sheet.row(1)
@@ -298,9 +299,10 @@ module Api
             rescue RangeError
               errors += ErrorFormater.new_error(
                 field: :base,
-                msg: "Hoja #{CONTAINERS_SHEET_NAME} no existe",
+                msg: "Hoja \"#{CONTAINERS_SHEET_NAME}\" no existe",
                 custom_predicate: :not_found?
               )
+              return Failure({ errors:, type: :invalid })
             end
 
             containers_questions_headers = containers_sheet.row(1)
@@ -429,7 +431,7 @@ module Api
                   if house.nil?
                     errors += ErrorFormater.new_error(
                       field: :base,
-                      msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::SITE_CODE} #{row[:site_code]} no existe",
+                      msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::SITE_CODE} \"#{row[:site_code]}\" no existe",
                       custom_predicate: :not_found?
                     )
                   end
@@ -470,7 +472,7 @@ module Api
                   if user.nil?
                     errors += ErrorFormater.new_error(
                       field: :base,
-                      msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::BRIGADIST} #{row[:brigadist]} no existe",
+                      msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::BRIGADIST} \"#{row[:brigadist]}\" no existe",
                       custom_predicate: :not_found?
                     )
                   end
@@ -527,7 +529,7 @@ module Api
                   if visit_permission == visit_permission_other_option && other_visit_permission.blank?
                     errors += ErrorFormater.new_error(
                       field: :base,
-                      msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::OTHER_VISIT_PERMISSION} es requerido",
+                      msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::OTHER_VISIT_PERMISSION} es requerido cuando #{VisitsHeaderQuestion::VISIT_PERMISSION} tiene la opción \"#{VisitsHeaderQuestion::OTHER_VISIT_PERMISSION}\" marcada",
                       custom_predicate: :blank?
                     )
                   end
@@ -614,7 +616,7 @@ module Api
                   if house.nil?
                     errors += ErrorFormater.new_error(
                       field: :base,
-                      msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::SITE_CODE} #{row[:site_code]} no existe en #{VISITS_SHEET_NAME}",
+                      msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::SITE_CODE} \"#{row[:site_code]}\" no existe en #{VISITS_SHEET_NAME}",
                       custom_predicate: :not_found?
                     )
                   end
