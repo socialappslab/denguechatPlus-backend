@@ -821,7 +821,7 @@ module Api
 
               {
                 house_id: House.find_by!(reference_code: row[:site_code]).id,
-                visited_at: row[:date].iso8601,
+                visited_at: row[:date].in_time_zone,
                 user_account_id: UserAccount.find_by!(username: row[:brigadist]).id,
                 visit_permission: visit_permission_option.value == 1,
                 host: VisitsHeaderMultiselectOptions::HOSTS
@@ -880,7 +880,7 @@ module Api
             Success(input.merge(visits:))
           end
 
-          def create_visits(input)
+          def create_visits(input) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
             visits = input[:visits]
             visit_summaries = []
 
