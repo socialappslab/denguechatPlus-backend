@@ -39,7 +39,6 @@ module Api
 
           module ContainersHeaderQuestion
             SITE_CODE = 'Código de sitio'
-            LOCATION_SIDE = 'Ubicación del contendor'
             BREEDING_SITE_TYPE = '¿Qué tipo de envase encontraste?'
             WATER_SOURCE_TYPE = '¿De dónde proviene el agua?'
             CONTAINER_PROTECTION = '¿El envase está protegido?'
@@ -127,7 +126,6 @@ module Api
             # First row
             [
               ContainersHeaderQuestion::SITE_CODE,
-              ContainersHeaderQuestion::LOCATION_SIDE,
               ContainersHeaderQuestion::BREEDING_SITE_TYPE,
               ContainersHeaderQuestion::WATER_SOURCE_TYPE,
               nil,
@@ -157,7 +155,6 @@ module Api
 
             # Second row
             [
-              nil,
               nil,
               nil,
               ContainersHeaderMultiselectOptions::WATER_SOURCE_TYPE[0],
@@ -203,7 +200,6 @@ module Api
           CONTAINER_OPTIONS_HEADER_STRUCTURE = [
             nil,
             nil,
-            nil,
             ContainersHeaderMultiselectOptions::WATER_SOURCE_TYPE,
             ContainersHeaderMultiselectOptions::CONTAINER_PROTECTION,
             nil,
@@ -220,8 +216,7 @@ module Api
               VisitsHeaderQuestion::NOTES
             ],
             containers: [
-              ContainersHeaderQuestion::SITE_CODE,
-              ContainersHeaderQuestion::LOCATION_SIDE
+              ContainersHeaderQuestion::SITE_CODE
             ]
           }.freeze
 
@@ -597,13 +592,12 @@ module Api
             structured_containers_rows = containers_rows.map do |row|
               {
                 site_code: row[0],
-                location_side: row[1],
-                breeding_site_type: row[2],
-                water_source_type: row[3..6],
-                container_protection: row[7..12],
-                was_chemically_treated: row[13],
-                type_content: row[14..18],
-                elimination_method_type: row[19..26]
+                breeding_site_type: row[1],
+                water_source_type: row[2..5],
+                container_protection: row[6..11],
+                was_chemically_treated: row[12],
+                type_content: row[13..17],
+                elimination_method_type: row[18..25]
               }
             end
 
@@ -631,24 +625,6 @@ module Api
                 errors += ErrorFormater.new_error(
                   field: :base,
                   msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::SITE_CODE} es requerido",
-                  custom_predicate: :blank?
-                )
-              end
-
-              if row[:location_side].present?
-                if row[:location_side].is_a?(String)
-                  # TODO
-                else
-                  errors += ErrorFormater.new_error(
-                    field: :base,
-                    msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::LOCATION_SIDE} no es una cadena de texto",
-                    custom_predicate: :invalid_format?
-                  )
-                end
-              else
-                errors += ErrorFormater.new_error(
-                  field: :base,
-                  msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::LOCATION_SIDE} es requerido",
                   custom_predicate: :blank?
                 )
               end
