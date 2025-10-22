@@ -403,6 +403,7 @@ module Api
             visit_permission_options_raw = questions.find_by!(question_text_es: VisitsHeaderQuestion::VISIT_PERMISSION).options
             visit_permission_options = visit_permission_options_raw.pluck(:name_es)
             visit_permission_other_option = visit_permission_options_raw.find_by!(type_option: 'textArea').name_es
+            visit_permission_yes_option = visit_permission_options_raw.find_by!(value: '1').name_es
 
             structured_visits_rows = visits_rows.map do |row|
               {
@@ -535,7 +536,7 @@ module Api
                     custom_predicate: :invalid_format?
                   )
                 end
-              else
+              elsif visit_permission == visit_permission_yes_option
                 errors += ErrorFormater.new_error(
                   field: :base,
                   msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::START_SIDE} es requerido",
@@ -551,7 +552,7 @@ module Api
                     custom_predicate: :invalid_format?
                   )
                 end
-              else
+              elsif visit_permission == visit_permission_yes_option
                 errors += ErrorFormater.new_error(
                   field: :base,
                   msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::HOSTS} es requerido",
@@ -816,11 +817,12 @@ module Api
                 house_id: House.find_by!(reference_code: row[:site_code]).id,
                 visited_at: row[:date].in_time_zone,
                 user_account_id: UserAccount.find_by!(username: row[:brigadist]).id,
-                visit_permission: visit_permission_option.value == 1,
+                visit_permission: visit_permission_option.value == '1',
                 host: VisitsHeaderMultiselectOptions::HOSTS
                   .zip(row[:hosts])
                   .select { |_, keep| keep }
-                  .map(&:first),
+                  .map(&:first)
+                  .presence,
                 family_education_topics:,
                 other_family_education_topic: family_education_topics.include?(VisitsHeaderMultiselectOptions::FAMILY_EDUCATION_TOPICS.last) ? other_family_education_topic_value : nil,
                 answers:,
@@ -863,7 +865,7 @@ module Api
                 end,
                 notes: row[:notes] || '',
                 was_offline: true
-              }
+              }.compact
             end
 
             return Failure({ errors:, type: :invalid }) if errors.any?
