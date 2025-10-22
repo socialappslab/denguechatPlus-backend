@@ -82,9 +82,9 @@ module Api
               VisitsHeaderQuestion::SITE_CODE,
               VisitsHeaderQuestion::DATE,
               VisitsHeaderQuestion::BRIGADIST,
-              VisitsHeaderQuestion::START_SIDE,
               VisitsHeaderQuestion::VISIT_PERMISSION,
               VisitsHeaderQuestion::OTHER_VISIT_PERMISSION,
+              VisitsHeaderQuestion::START_SIDE,
               VisitsHeaderQuestion::HOSTS,
               nil,
               nil,
@@ -409,8 +409,8 @@ module Api
                 site_code: row[0],
                 date: row[1],
                 brigadist: row[2],
-                start_side: row[3],
-                visit_permission: row[4..5],
+                visit_permission: row[3..4],
+                start_side: row[5],
                 hosts: row[6..11],
                 family_education_topics: row[12..16],
                 notes: row[17]
@@ -486,30 +486,6 @@ module Api
                 )
               end
 
-              if row[:start_side].present?
-                if row[:start_side].is_a?(String)
-                  unless start_side_options.include?(row[:start_side])
-                    errors += ErrorFormater.new_error(
-                      field: :base,
-                      msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::START_SIDE} no tiene una opción válida",
-                      custom_predicate: :not_found?
-                    )
-                  end
-                else
-                  errors += ErrorFormater.new_error(
-                    field: :base,
-                    msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::START_SIDE} no es una cadena de texto",
-                    custom_predicate: :invalid_format?
-                  )
-                end
-              else
-                errors += ErrorFormater.new_error(
-                  field: :base,
-                  msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::START_SIDE} es requerido",
-                  custom_predicate: :blank?
-                )
-              end
-
               visit_permission, other_visit_permission = row[:visit_permission]
               if visit_permission.present?
                 if visit_permission.is_a?(String)
@@ -539,6 +515,30 @@ module Api
                 errors += ErrorFormater.new_error(
                   field: :base,
                   msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::VISIT_PERMISSION} es requerido",
+                  custom_predicate: :blank?
+                )
+              end
+
+              if row[:start_side].present?
+                if row[:start_side].is_a?(String)
+                  unless start_side_options.include?(row[:start_side])
+                    errors += ErrorFormater.new_error(
+                      field: :base,
+                      msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::START_SIDE} no tiene una opción válida",
+                      custom_predicate: :not_found?
+                    )
+                  end
+                else
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::START_SIDE} no es una cadena de texto",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::START_SIDE} es requerido",
                   custom_predicate: :blank?
                 )
               end
