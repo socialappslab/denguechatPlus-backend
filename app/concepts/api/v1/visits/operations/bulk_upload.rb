@@ -809,6 +809,9 @@ module Api
             errors = []
 
             visits = visits_rows.map do |row| # rubocop:disable Metrics/BlockLength
+              # NOTE: the backend right now doesn't have a whay to store the
+              # `other_visit_permission_value` so we're ignoring it for now
+              # until we fix this
               visit_permission_value, _other_visit_permission_value = row[:visit_permission]
               visit_permission_question = questions.find_by!(question_text_es: VisitsHeaderQuestion::VISIT_PERMISSION)
               visit_permission_option = visit_permission_question.options.find_by!(name_es: visit_permission_value)
@@ -818,6 +821,20 @@ module Api
                                         .select { |_, keep| keep }
                                         .map(&:first)
               *_, other_family_education_topic_value = row[:family_education_topics]
+
+              answers = [
+                { "question_#{visit_permission_question.id}_0": visit_permission_option.id }
+              ]
+
+              if row[:start_side].present?
+                # NOTE: in this part we are guaranteed to have only 2 options, In
+                # the house and In the yard/patio. So the selected is index 0 and
+                # the opposite is index 1
+                start_side_question = questions.find_by!(question_text_es: VisitsHeaderQuestion::START_SIDE)
+                start_side_option = start_side_question.options.find_by!(name_es: row[:start_side])
+
+                answers[0]["question_#{start_side_question.id}_0"] = start_side_option.id
+              end
 
               {
                 house_id: House.find_by!(reference_code: row[:site_code]).id,
@@ -830,9 +847,7 @@ module Api
                   .map(&:first),
                 family_education_topics:,
                 other_family_education_topic: family_education_topics.include?(VisitsHeaderMultiselectOptions::FAMILY_EDUCATION_TOPICS.last) ? other_family_education_topic_value : nil,
-                answers: [
-                  { "question_#{visit_permission_question.id}_0": visit_permission_option.id }
-                ],
+                answers:,
                 inspections: containers.map do |r| # rubocop:disable Metrics/BlockLength
                   container_protection_values = ContainersHeaderMultiselectOptions::CONTAINER_PROTECTION
                                                 .zip(r[:container_protection])
