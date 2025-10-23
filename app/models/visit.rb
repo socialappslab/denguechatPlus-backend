@@ -60,10 +60,18 @@ class Visit < ApplicationRecord
   has_paper_trail on: [:update]
 
   def possible_duplicate_visit_ids
-    direct_duplicates = duplicate_candidates.pluck(:duplicate_visit_id)
-    reverse_duplicates = reverse_duplicate_candidates.pluck(:visit_id)
+    direct_duplicates = if duplicate_candidates.loaded?
+                          duplicate_candidates.map(&:duplicate_visit_id)
+                        else
+                          duplicate_candidates.pluck(:duplicate_visit_id)
+                        end
+    reverse_duplicates = if reverse_duplicate_candidates.loaded?
+                           reverse_duplicate_candidates.map(&:visit_id)
+                         else
+                           reverse_duplicate_candidates.pluck(:visit_id)
+                         end
 
-    (direct_duplicates + reverse_duplicates).uniq
+    (direct_duplicates + reverse_duplicates).compact.uniq
   end
 
   after_discard :discard_inspections

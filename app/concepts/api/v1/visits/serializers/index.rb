@@ -15,15 +15,15 @@ module Api
           end
 
           attribute :city do |visit|
-            visit.house.city.name if visit.house&.city
+            visit.house.city&.name
           end
 
           attribute :sector do |visit|
-            visit.house.neighborhood.name if visit.house&.neighborhood
+            visit.house.neighborhood&.name
           end
 
           attribute :wedge do |visit|
-            visit.house.wedge.name if visit.house&.wedge
+            visit.house.wedge&.name
           end
 
           attribute :house do |visit|
@@ -45,7 +45,7 @@ module Api
           end
 
           attribute :team do |visit|
-            visit.team.name if visit.team
+            visit.team&.name
           end
 
           attribute :modification_history do |visit|
@@ -58,6 +58,10 @@ module Api
               lastModified: visit.updated_at,
               modifiedBy: modify_by
             }
+          end
+
+          attribute :possible_duplicate_visit_ids do |visit|
+            visit.possible_duplicate_visit_ids
           end
         end
       end
