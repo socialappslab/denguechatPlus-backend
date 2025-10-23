@@ -171,6 +171,18 @@ module Api
               }
             end
           end
+
+          attribute :upload_file do |visit|
+            next unless visit.upload_file.attached?
+
+            blob = visit.upload_file.blob
+            {
+              url: Rails.application.routes.url_helpers.url_for(visit.upload_file),
+              filename: blob.filename.to_s,
+              byte_size: blob.byte_size,
+              content_type: blob.content_type
+            }
+          end
         end
       end
     end

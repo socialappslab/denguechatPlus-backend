@@ -876,6 +876,11 @@ module Api
           def create_visits(input) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
             visits = input[:visits]
             visit_summaries = []
+            original_file = input[:original_file]
+            xlsx_path = input[:xlsx_path]
+            attachment_filename = bulk_upload_filename(original_file, xlsx_path)
+            attachment_content_type = bulk_upload_content_type(original_file)
+            upload_blob = nil
 
             visits.each do |visit|
               result = Api::V1::Visits::Operations::Create.call(
@@ -886,6 +891,9 @@ module Api
               next unless result.success?
 
               created_visit = result.value![:ctx][:model]
+              upload_blob ||= create_bulk_upload_blob(original_file, xlsx_path, attachment_filename,
+                                                      attachment_content_type)
+              attach_upload_file_to_visit(created_visit, upload_blob)
               register_duplicate_candidates(created_visit)
               visit_summaries << {
                 id: created_visit.id,
@@ -934,6 +942,48 @@ module Api
                  .where.not(id: visit.id)
                  .find_each do |duplicate_visit|
               VisitDuplicateCandidate.find_or_create_by!(visit:, duplicate_visit:)
+            end
+          end
+
+          def attach_upload_file_to_visit(visit, blob)
+            return unless blob
+
+            visit.upload_file.attach(blob)
+          end
+
+          def bulk_upload_filename(file, path)
+            if file.respond_to?(:original_filename) && file.original_filename.present?
+              file.original_filename
+            elsif file.respond_to?(:path) && file.path.present?
+              File.basename(file.path)
+            elsif path.present?
+              File.basename(path)
+            else
+              'visits_bulk_upload.xlsx'
+            end
+          end
+
+          def bulk_upload_content_type(file)
+            if file.respond_to?(:content_type) && file.content_type.present?
+              file.content_type
+            else
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            end
+          end
+
+          def create_bulk_upload_blob(file, path, filename, content_type)
+            file_path = if file.respond_to?(:tempfile) && file.tempfile&.respond_to?(:path)
+                          file.tempfile.path
+                        elsif file.respond_to?(:path) && file.path.present?
+                          file.path
+                        else
+                          path
+                        end
+
+            return unless file_path && File.exist?(file_path)
+
+            File.open(file_path, 'rb') do |file_io|
+              ActiveStorage::Blob.create_and_upload!(io: file_io, filename:, content_type:)
             end
           end
         end
