@@ -56,8 +56,8 @@ module Api
               'Otro (tratamiento manual)'
             ].freeze
             CONTAINER_PROTECTION = [
-              'Si, tiene tapa y está bien cerrado',
-              'Si, tiene tapa pero no está bien cerrado',
+              'Sí, tiene tapa y está bien cerrado',
+              'Sí, tiene tapa pero no está bien cerrado',
               'Está bajo techo',
               'No tiene tapa',
               'Uso diario del agua',
