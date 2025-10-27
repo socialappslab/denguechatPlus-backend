@@ -412,8 +412,8 @@ module Api
                 brigadist: row[2],
                 visit_permission: row[3..4],
                 start_side: row[5],
-                hosts: row[6..11],
-                family_education_topics: row[12..16],
+                hosts: row[6..11].map { |i| to_boolean(i) },
+                family_education_topics: row[12..16].map { |i| to_boolean(i) },
                 notes: row[17]
               }
             end
@@ -447,10 +447,22 @@ module Api
               end
 
               if row[:date].present?
-                unless row[:date].is_a?(Date)
+                if row[:date].is_a?(String)
+                  begin
+                    # NOTE: they can use YYYY/MM/DD, DD/MM/YYYY, YYYY-MM-DD and DD-MM-YYYY
+                    date = Date.parse(row[:date])
+                    row[:date] = date
+                  rescue Date::Error
+                    errors += ErrorFormater.new_error(
+                      field: :base,
+                      msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::DATE} no tiene una formato válido",
+                      custom_predicate: :invalid_format?
+                    )
+                  end
+                elsif !row[:date].is_a?(Date)
                   errors += ErrorFormater.new_error(
                     field: :base,
-                    msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::DATE} no tiene una fecha válida",
+                    msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::DATE} no tiene una formato válido",
                     custom_predicate: :invalid_format?
                   )
                 end
@@ -594,11 +606,11 @@ module Api
               {
                 site_code: row[0],
                 breeding_site_type: row[1],
-                water_source_type: row[2..5],
-                container_protection: row[6..11],
+                water_source_type: row[2..5].map { |i| to_boolean(i) },
+                container_protection: row[6..11].map { |i| to_boolean(i) },
                 was_chemically_treated: row[12],
-                type_content: row[13..17],
-                elimination_method_type: row[18..25]
+                type_content: row[13..17].map { |i| to_boolean(i) },
+                elimination_method_type: row[18..25].map { |i| to_boolean(i) }
               }
             end
 
@@ -923,8 +935,14 @@ module Api
             rows
           end
 
+          def to_boolean(value)
+            mapping = { nil => false, 0 => false, 1 => true }
+            boolean = mapping[value]
+            [true, false].include?(boolean) ? boolean : value
+          end
+
           def boolean?(value)
-            value.is_a?(TrueClass) || value.is_a?(FalseClass)
+            [true, false].include?(value)
           end
 
           def option_identifier(option)
