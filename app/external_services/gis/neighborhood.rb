@@ -5,7 +5,7 @@ module Gis
         res = { update: 0, create: 0 }
         external_data = Gis::Connection.query(query_builder)
         external_data.each do |obj|
-          sector_instance = ::Neighborhood.find_or_initialize_by(external_id: obj[:external_id])
+          sector_instance = ::Neighborhood.find_or_initialize_by(obj)
           res[:update] += 1 if sector_instance.persisted?
           res[:create] += 1 unless sector_instance.persisted?
           sector_instance.save!
@@ -16,8 +16,8 @@ module Gis
       private
 
       def query_builder
-        <<~SQL
-          select  distinct location."SectorMOH24" external_id,
+        <<~SQL.squish
+          select distinct location."SectorMOH24" external_id,
           'Sector ' || location."SectorMOH24" as name,
           1 as country_id,
           4 as state_id,

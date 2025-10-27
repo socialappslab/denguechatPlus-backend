@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Houses
   class SyncHouses
     include Sidekiq::Worker
@@ -11,8 +13,10 @@ module Houses
       wedge_result = Gis::Wedge.sync(neighborhoods_data_updated)
       wedges_data = wedges_data_query
 
-      house_block_result_by_frente_a_frente = Gis::HouseBlock.sync(house_blocks_data_query.keys, wedges_data, neighborhoods_data_updated, 'frente_a_frente')
-      house_blocks_data_by_block = Gis::HouseBlock.sync(house_blocks_data_query.keys, wedges_data, neighborhoods_data_updated, 'block')
+      house_block_result_by_frente_a_frente = Gis::HouseBlock.sync(house_blocks_data_query.keys, wedges_data,
+                                                                   neighborhoods_data_updated, 'frente_a_frente')
+      house_blocks_data_by_block = Gis::HouseBlock.sync(house_blocks_data_query.keys, wedges_data,
+                                                        neighborhoods_data_updated, 'block')
       house_blocks_data = house_blocks_data_query
 
       mappings = {

@@ -34,9 +34,9 @@ module Gis
         res
       end
 
-      def query_builder(_current_house_block_ids, type='frente_a_frente')
+      def query_builder(_current_house_block_ids, type = 'frente_a_frente')
         block_type = type == 'frente_a_frente' ? 'TarikiC' : 'block_number'
-        <<~SQL
+        <<~SQL.squish
               SELECT DISTINCT#{' '}
               location."#{block_type}" as external_id,
               location."#{block_type}" as name,
