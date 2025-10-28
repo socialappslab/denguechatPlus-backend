@@ -45,6 +45,12 @@ module Api
                  options: { current_user: }
       end
 
+      def bulk_upload
+        endpoint operation: Api::V1::Visits::Operations::BulkUpload,
+                 renderer_options: { serializer: Api::V1::Visits::Serializers::BulkUpload },
+                 options: { current_user: }
+      end
+
       private
 
       def set_paper_trail_whodunnit

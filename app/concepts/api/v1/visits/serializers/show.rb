@@ -119,6 +119,10 @@ module Api
             end
           end
 
+          attribute :possible_duplicate_visit_ids do |visit|
+            visit.possible_duplicate_visit_ids
+          end
+
           attribute :inspections do |visit|
             next unless visit.inspections.any?
 
@@ -166,6 +170,18 @@ module Api
                 container_test_result: inspection.container_test_result
               }
             end
+          end
+
+          attribute :upload_file do |visit|
+            next unless visit.upload_file.attached?
+
+            blob = visit.upload_file.blob
+            {
+              url: Rails.application.routes.url_helpers.url_for(visit.upload_file),
+              filename: blob.filename.to_s,
+              byte_size: blob.byte_size,
+              content_type: blob.content_type
+            }
           end
         end
       end

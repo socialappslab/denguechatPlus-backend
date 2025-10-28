@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_02_121600) do
+ActiveRecord::Schema[7.1].define(version: 2025_10_15_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -645,6 +645,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_02_121600) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
+  create_table "visit_duplicate_candidates", force: :cascade do |t|
+    t.bigint "visit_id", null: false
+    t.bigint "duplicate_visit_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["duplicate_visit_id"], name: "index_visit_duplicate_candidates_on_duplicate_visit_id"
+    t.index ["visit_id", "duplicate_visit_id"], name: "idx_visit_duplicate_candidates_unique", unique: true
+    t.index ["visit_id"], name: "index_visit_duplicate_candidates_on_visit_id"
+  end
+
   create_table "visit_param_versions", force: :cascade do |t|
     t.string "name"
     t.integer "version", default: 1
@@ -767,6 +777,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_02_121600) do
   add_foreign_key "user_profiles", "neighborhoods"
   add_foreign_key "user_profiles", "organizations"
   add_foreign_key "user_profiles", "teams"
+  add_foreign_key "visit_duplicate_candidates", "visits"
+  add_foreign_key "visit_duplicate_candidates", "visits", column: "duplicate_visit_id"
   add_foreign_key "visits", "houses"
   add_foreign_key "visits", "questionnaires"
   add_foreign_key "visits", "teams"

@@ -9,9 +9,11 @@ module Api
 
           def initialize(filter, sort)
             includes = [
-              { house: [:wedge, :neighborhood, :city]},
+              { house: [:wedge, :neighborhood, :city] },
               :team,
-              { user_account: :user_profile }
+              { user_account: :user_profile },
+              :duplicate_candidates,
+              :reverse_duplicate_candidates
             ]
             if filter
               includes << { house: :city } if filter[:city] || filter[:city_id]

@@ -61,6 +61,9 @@ Rails.application.routes.draw do
       end
       resources :house_blocks, only: %i[index update create]
       resources :visits, only: %i[create index show update destroy] do
+        collection do
+          post :bulk_upload
+        end
         resources :inspections, only: %i[index show update]
         member do
           get :download_information
