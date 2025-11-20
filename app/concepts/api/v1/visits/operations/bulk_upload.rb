@@ -564,12 +564,14 @@ module Api
                     custom_predicate: :invalid_format?
                   )
                 end
-              elsif visit_permission == visit_permission_yes_option
-                errors += ErrorFormater.new_error(
-                  field: :base,
-                  msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::HOSTS} es requerido",
-                  custom_predicate: :blank?
-                )
+
+                if visit_permission != visit_permission_yes_option
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::HOSTS} no debe tener datos cuando no hay permiso de visita",
+                    custom_predicate: :invalid_format?
+                  )
+                end
               end
 
               if row[:family_education_topics].compact_blank.present?
