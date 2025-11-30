@@ -18,15 +18,15 @@ module Api
           end
 
           def call
-            @model.yield_self(&method(:active_houses))
-                  .yield_self(&method(:assignment_status))
-                  .yield_self(&method(:country_id))
-                  .yield_self(&method(:state_id))
-                  .yield_self(&method(:neighborhood_id))
-                  .yield_self(&method(:wedge_id))
-                  .yield_self(&method(:house_block_id))
-                  .yield_self(&method(:reference_code))
-                  .yield_self(&method(:sort_clause))
+            @model.then { |relation| active_houses(relation) }
+                  .then { |relation| assignment_status(relation) }
+                  .then { |relation| country_id(relation) }
+                  .then { |relation| state_id(relation) }
+                  .then { |relation| neighborhood_id(relation) }
+                  .then { |relation| wedge_id(relation) }
+                  .then { |relation| house_block_id(relation) }
+                  .then { |relation| reference_code(relation) }
+                  .then { |relation| sort_clause(relation) }
           end
 
           private
