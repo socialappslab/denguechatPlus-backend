@@ -7,16 +7,10 @@
 #  discarded_at                 :datetime
 #  family_education_topics      :string           default([]), is an Array
 #  host                         :string
-#  inspection_quantity          :integer
-#  inspection_with_eggs         :integer
-#  inspection_with_larvae       :integer
-#  inspection_with_pupae        :integer
 #  notes                        :string
 #  other_family_education_topic :string
-#  questions                    :jsonb
 #  status                       :string
 #  visit_permission             :boolean          default(FALSE)
-#  visit_status                 :integer
 #  visited_at                   :datetime
 #  was_offline                  :boolean
 #  created_at                   :datetime         not null
