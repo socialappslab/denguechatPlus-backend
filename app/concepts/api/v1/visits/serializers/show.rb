@@ -8,7 +8,19 @@ module Api
           set_type :visit
 
           attributes :id, :questionnaire_id, :visited_at, :brigadist, :team, :city, :sector, :wedge,
-                     :visit_permission, :host, :answers, :notes, :other_family_education_topic, :was_offline
+                     :host, :answers, :notes, :other_family_education_topic, :was_offline
+
+          attribute :visit_permission do |visit|
+            Option.where(question_id: 1).order(:id).map do |option|
+              {
+                optionId: option.id,
+                label: option.send("name_#{visit.language}"),
+                selected: visit.visit_permission_option_id == option.id,
+                typeOption: option.type_option,
+                other: visit.visit_permission_option_id == option.id ? visit.visit_permission_other : nil
+              }
+            end
+          end
 
           translate_multilang_values = ->(collection, language = 'es', current_value = nil) {
             return '' unless current_value
