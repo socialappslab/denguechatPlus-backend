@@ -800,10 +800,7 @@ module Api
             errors = []
 
             visits = visits_rows.map do |row| # rubocop:disable Metrics/BlockLength
-              # NOTE: the backend right now doesn't have a whay to store the
-              # `other_visit_permission_value` so we're ignoring it for now
-              # until we fix this
-              visit_permission_value, _other_visit_permission_value = row[:visit_permission]
+              visit_permission_value, other_visit_permission_value = row[:visit_permission]
               visit_permission_question = questions.find_by!(question_text_es: VisitsHeaderQuestion::VISIT_PERMISSION)
               visit_permission_option = visit_permission_question.options.find_by!(name_es: visit_permission_value)
               containers = containers_rows.filter { |r| row[:site_code] == r[:site_code] }
@@ -813,9 +810,7 @@ module Api
                                         .map(&:first)
               *_, other_family_education_topic_value = row[:family_education_topics]
 
-              answers = [
-                { "question_#{visit_permission_question.id}_0": visit_permission_option.id }
-              ]
+              answers = []
 
               if row[:start_side].present?
                 # NOTE: in this part we are guaranteed to have only 2 options, In
@@ -824,14 +819,15 @@ module Api
                 start_side_question = questions.find_by!(question_text_es: VisitsHeaderQuestion::START_SIDE)
                 start_side_option = start_side_question.options.find_by!(name_es: row[:start_side])
 
-                answers[0]["question_#{start_side_question.id}_0"] = start_side_option.id
+                answers << { "question_#{start_side_question.id}_0": start_side_option.id }
               end
 
               {
                 house_id: House.find_by!(reference_code: row[:site_code]).id,
                 visited_at: row[:date].in_time_zone,
                 user_account_id: UserAccount.find_by!(username: row[:brigadist]).id,
-                visit_permission: visit_permission_option.value == '1',
+                visit_permission_option_id: visit_permission_option.id,
+                visit_permission_other: other_visit_permission_value.presence,
                 host: VisitsHeaderMultiselectOptions::HOSTS
                   .zip(row[:hosts])
                   .select { |_, keep| keep }

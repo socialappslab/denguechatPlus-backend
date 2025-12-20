@@ -75,7 +75,7 @@ module Api
               visit.visited_at.strftime('%d/%m/%Y %H:%M'),
               visit.user_account&.full_name,
               visit.team&.name,
-              Constants::DownloadCsvConstants::BOOLEAN_TRANSLATIONS[@language][visit.visit_permission],
+              visit.visit_permission_option&.send("name_#{@language}"),
               visit.notes,
               translate_multilang_values(Constants::DownloadCsvConstants::QUESTION_TALK_ABOUT_TOPICS,
                                          @language,

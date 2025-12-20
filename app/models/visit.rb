@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: visits
@@ -7,16 +9,10 @@
 #  discarded_at                 :datetime
 #  family_education_topics      :string           default([]), is an Array
 #  host                         :string
-#  inspection_quantity          :integer
-#  inspection_with_eggs         :integer
-#  inspection_with_larvae       :integer
-#  inspection_with_pupae        :integer
 #  notes                        :string
 #  other_family_education_topic :string
-#  questions                    :jsonb
 #  status                       :string
-#  visit_permission             :boolean          default(FALSE)
-#  visit_status                 :integer
+#  visit_permission_other       :string
 #  visited_at                   :datetime
 #  was_offline                  :boolean
 #  created_at                   :datetime         not null
@@ -25,14 +21,16 @@
 #  questionnaire_id             :bigint           not null
 #  team_id                      :bigint           not null
 #  user_account_id              :bigint           not null
+#  visit_permission_option_id   :bigint
 #
 # Indexes
 #
-#  index_visits_on_discarded_at      (discarded_at)
-#  index_visits_on_house_id          (house_id)
-#  index_visits_on_questionnaire_id  (questionnaire_id)
-#  index_visits_on_team_id           (team_id)
-#  index_visits_on_user_account_id   (user_account_id)
+#  index_visits_on_discarded_at                (discarded_at)
+#  index_visits_on_house_id                    (house_id)
+#  index_visits_on_questionnaire_id            (questionnaire_id)
+#  index_visits_on_team_id                     (team_id)
+#  index_visits_on_user_account_id             (user_account_id)
+#  index_visits_on_visit_permission_option_id  (visit_permission_option_id)
 #
 # Foreign Keys
 #
@@ -40,6 +38,7 @@
 #  fk_rails_...  (questionnaire_id => questionnaires.id)
 #  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (user_account_id => user_accounts.id)
+#  fk_rails_...  (visit_permission_option_id => options.id)
 #
 class Visit < ApplicationRecord
   include Discard::Model
@@ -48,6 +47,7 @@ class Visit < ApplicationRecord
   belongs_to :user_account
   belongs_to :team
   belongs_to :questionnaire
+  belongs_to :visit_permission_option, class_name: 'Option', optional: true
   has_many :inspections, dependent: :destroy
   accepts_nested_attributes_for :inspections
   has_many :duplicate_candidates, class_name: 'VisitDuplicateCandidate', dependent: :destroy, inverse_of: :visit
@@ -72,6 +72,10 @@ class Visit < ApplicationRecord
                          end
 
     (direct_duplicates + reverse_duplicates).compact.uniq
+  end
+
+  def visit_permission_granted?
+    visit_permission_option&.value.to_i == 1
   end
 
   after_discard :discard_inspections

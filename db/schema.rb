@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_10_15_000001) do
+ActiveRecord::Schema[7.1].define(version: 2025_12_01_111959) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -667,29 +667,25 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_15_000001) do
     t.datetime "visited_at"
     t.bigint "user_account_id", null: false
     t.bigint "team_id", null: false
-    t.boolean "visit_permission", default: false
     t.string "notes"
     t.string "host"
-    t.jsonb "questions"
     t.bigint "questionnaire_id", null: false
     t.jsonb "answers"
-    t.integer "visit_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status"
-    t.integer "inspection_quantity"
-    t.integer "inspection_with_pupae"
-    t.integer "inspection_with_eggs"
-    t.integer "inspection_with_larvae"
     t.datetime "discarded_at"
     t.string "family_education_topics", default: [], array: true
     t.string "other_family_education_topic"
     t.boolean "was_offline"
+    t.bigint "visit_permission_option_id"
+    t.string "visit_permission_other"
     t.index ["discarded_at"], name: "index_visits_on_discarded_at"
     t.index ["house_id"], name: "index_visits_on_house_id"
     t.index ["questionnaire_id"], name: "index_visits_on_questionnaire_id"
     t.index ["team_id"], name: "index_visits_on_team_id"
     t.index ["user_account_id"], name: "index_visits_on_user_account_id"
+    t.index ["visit_permission_option_id"], name: "index_visits_on_visit_permission_option_id"
   end
 
   create_table "water_source_types", force: :cascade do |t|
@@ -780,6 +776,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_15_000001) do
   add_foreign_key "visit_duplicate_candidates", "visits"
   add_foreign_key "visit_duplicate_candidates", "visits", column: "duplicate_visit_id"
   add_foreign_key "visits", "houses"
+  add_foreign_key "visits", "options", column: "visit_permission_option_id"
   add_foreign_key "visits", "questionnaires"
   add_foreign_key "visits", "teams"
   add_foreign_key "visits", "user_accounts"
