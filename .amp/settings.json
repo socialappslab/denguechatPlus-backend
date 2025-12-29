@@ -1,0 +1,11 @@
+{
+  "amp.mcpServers": {
+    "postgres": {
+      "command": "uv",
+      "args": ["run", "postgres-mcp", "--access-mode=unrestricted"],
+      "env": {
+        "DATABASE_URI": "postgresql://postgres:@localhost:5432/denguechatplus"
+      }
+    }
+  }
+}

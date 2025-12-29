@@ -10,7 +10,7 @@ module Api
           Container = Struct.new(:has_water, :visit_id, :was_chemically_treated, :breeding_site_type_id,
                                  :elimination_method_type_ids, :water_source_type_ids, :lid_type, :code_reference, :container_test_result,
                                  :tracking_type_required, :created_by_id, :treated_by_id, :water_source_other, :lid_type_other,
-                                 :container_protection_ids, :other_protection, :other_elimination_method, :type_content_id, keyword_init: true)
+                                 :container_protection_ids, :other_protection, :other_elimination_method, :type_content_id, :location, keyword_init: true)
 
           step :check_request_attrs
           tee :params
@@ -256,7 +256,7 @@ module Api
               result[:tariki_status] = @house.is_tariki?(result[:status])
               @house.update!(result)
               @ctx[:model].update!(status: colors[result[:status]])
-            elsif inspections_ids.empty? && @params[:visit_permission]
+            elsif inspections_ids.empty? && visit_permission_granted?
               tariki_status = @house.is_tariki?('green')
               @house.update!(infected_containers: 0, potential_containers: 0,
                              non_infected_containers: 0, last_visit:  @params[:visited_at] || Time.now.utc,
@@ -310,6 +310,11 @@ module Api
             return Constants::ContainerStatus::INFECTED if inspection.infected?
 
             Constants::ContainerStatus::POTENTIALLY_INFECTED if inspection.potential?
+          end
+
+          def visit_permission_granted?
+            option = Option.find_by(id: @params[:visit_permission_option_id])
+            option&.value.to_i == 1
           end
 
           def set_language

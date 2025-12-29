@@ -6,7 +6,7 @@ module Api
           set_type :id
 
           sanitize_answers = ->(answers) {
-            return nil if answers.blank?
+            return {} if answers.blank?
 
             result = answers.each_with_object({}) do |obj, merged|
               obj.each do |key, value|

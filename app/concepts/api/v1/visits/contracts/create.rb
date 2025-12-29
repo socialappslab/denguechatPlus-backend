@@ -9,10 +9,13 @@ module Api
             new.call(...)
           end
 
+          VISIT_PERMISSION_QUESTION_TEXT = '¿Me dieron permiso para visitar la casa?'
+
           params do
             required(:answers).filled(:array).each(:hash)
             optional(:host).filled(:array)
-            required(:visit_permission).filled(:bool)
+            required(:visit_permission_option_id).filled(:integer)
+            optional(:visit_permission_other).maybe(:string)
             required(:visited_at).filled(:date_time)
             optional(:house_id).filled(:integer)
             required(:questionnaire_id).filled(:integer)
@@ -26,6 +29,22 @@ module Api
 
             optional(:house).filled(:hash)
             optional(:was_offline).filled(:bool)
+          end
+
+          rule(:visit_permission_option_id) do
+            question = Question.find_by(question_text_es: VISIT_PERMISSION_QUESTION_TEXT)
+            option = Option.find_by(id: value, question_id: question&.id)
+            key.failure(text: 'The visit permission option does not exist', predicate: :not_exists?) unless option
+          end
+
+          rule(:visit_permission_other) do
+            next unless values[:visit_permission_option_id]
+
+            option = Option.find_by(id: values[:visit_permission_option_id])
+            if option&.type_option == 'textArea' && value.blank?
+              key.failure(text: 'Other explanation is required when "Otra explicación" is selected',
+                          predicate: :filled?)
+            end
           end
 
           rule(:inspections) do

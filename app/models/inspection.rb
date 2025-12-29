@@ -52,6 +52,7 @@ class Inspection < ApplicationRecord
   has_many :inspection_water_source_types, dependent: :destroy
   has_many :water_source_types, through: :inspection_water_source_types
   has_one_attached :photo
+  enum :location, house: 'house', orchard: 'orchard'
 
   has_paper_trail on: [:update]
 
