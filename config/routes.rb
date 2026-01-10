@@ -97,6 +97,9 @@ Rails.application.routes.draw do
         collection do
           delete :destroy
         end
+        member do
+          get :stats
+        end
       end
       resources :countries do
         collection do

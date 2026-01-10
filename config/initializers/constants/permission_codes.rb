@@ -95,6 +95,7 @@ module Constants
       users_change_assignment: :users_change_assignment,
       reports_house_status: :reports_house_status,
       reports_brigadists_performance: :reports_brigadists_performance,
+      teams_stats: :teams_stats,
       users_delete_account: :users_delete_account,
       inspections_show: :inspections_show,
       inspections_update: :inspections_update,

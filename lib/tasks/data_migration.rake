@@ -64,4 +64,16 @@ namespace :data_migration do
     puts "   Skipped (no permission answer): #{skipped_count}"
     puts "   Errors: #{error_count}"
   end
+
+  desc 'Add teams stats permission to brigadista, team_leader, and admin roles'
+  task add_teams_stats_permission: :environment do
+    roles = Role.where(name: %w[brigadista team_leader admin])
+    permission = Permission.find_or_create_by(name: 'stats', resource: 'teams')
+
+    roles.find_each do |role|
+      role.permissions << permission unless role.permissions.exists?(permission.id)
+    end
+
+    puts "✅ Added teams stats permission to #{roles.count} roles."
+  end
 end
