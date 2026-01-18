@@ -12,7 +12,11 @@ module Api
             :coverage_percentage,
             :houses_with_aedes_percentage,
             :house_access_status,
+            :house_access_status_chart,
             :container_positives,
+            :container_positives_chart,
+            :container_types_inspected,
+            :container_types_inspected_chart,
             :risk_change,
             :house_color_distribution,
             keyword_init: true
@@ -36,7 +40,11 @@ module Api
               coverage_percentage: coverage_percentage,
               houses_with_aedes_percentage: houses_with_aedes_percentage,
               house_access_status: house_access_status,
+              house_access_status_chart: house_access_status_chart,
               container_positives: container_positives,
+              container_positives_chart: container_positives_chart,
+              container_types_inspected: container_types_inspected,
+              container_types_inspected_chart: container_types_inspected_chart,
               risk_change: risk_change,
               house_color_distribution: house_color_distribution
             )
@@ -105,6 +113,22 @@ module Api
 
           def house_color_distribution
             HouseColorDistribution.call(@team_id, from: @from, to: @to)
+          end
+
+          def house_access_status_chart
+            HouseAccessStatusChart.call(@team_id, from: @from, to: @to)
+          end
+
+          def container_positives_chart
+            ContainerPositivesChart.call(@team_id, from: @from, to: @to)
+          end
+
+          def container_types_inspected
+            ContainerTypesInspected.call(@team_id, from: @from, to: @to)
+          end
+
+          def container_types_inspected_chart
+            ContainerTypesInspectedChart.call(@team_id, from: @from, to: @to)
           end
         end
       end

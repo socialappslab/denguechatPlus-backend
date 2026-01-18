@@ -38,18 +38,16 @@ module Api
 
           def generate_periods
             result = []
-            current_start = @from.beginning_of_week
-            period_index = 1
+            current_start = @from.beginning_of_month
 
             while current_start <= @to
-              current_end = [current_start.end_of_week, @to].min
+              current_end = [current_start.end_of_month, @to].min
               result << {
-                label: "W#{period_index}",
+                label: current_start.strftime('%b'),
                 start_date: current_start,
                 end_date: current_end
               }
-              current_start += 1.week
-              period_index += 1
+              current_start += 1.month
             end
 
             result
