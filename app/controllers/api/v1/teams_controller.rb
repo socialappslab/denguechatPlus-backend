@@ -33,12 +33,6 @@ module Api
         endpoint operation: Api::V1::Teams::Operations::Destroy,
                  options: { current_user: }
       end
-
-      def stats
-        endpoint operation: Api::V1::Teams::Operations::Stats,
-                 renderer_options: { serializer: Api::V1::Teams::Serializers::Stats },
-                 options: { current_user: }
-      end
     end
   end
 end

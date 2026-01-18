@@ -2,11 +2,11 @@
 
 module Api
   module V1
-    module Teams
+    module Wedges
       module Queries
         class ContainerPositives
-          def initialize(team_id, from:, to:)
-            @team_id = team_id
+          def initialize(wedge_id, from:, to:)
+            @wedge_id = wedge_id
             @from = from
             @to = to || Date.current
           end
@@ -31,7 +31,7 @@ module Api
           private
 
           def inspection_scope
-            scope = Inspection.joins(:visit).where(visits: { team_id: @team_id })
+            scope = Inspection.joins(visit: :house).where(houses: { wedge_id: @wedge_id })
             scope = scope.where(inspections: { created_at: @from.beginning_of_day.. }) if @from
             scope.where(inspections: { created_at: ..@to.end_of_day })
           end

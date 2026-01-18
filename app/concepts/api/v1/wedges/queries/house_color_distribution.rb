@@ -2,13 +2,13 @@
 
 module Api
   module V1
-    module Teams
+    module Wedges
       module Queries
         class HouseColorDistribution
           COLORS = %w[green yellow red].freeze
 
-          def initialize(team_id, from:, to:)
-            @team_id = team_id
+          def initialize(wedge_id, from:, to:)
+            @wedge_id = wedge_id
             @from = from || 6.months.ago.to_date
             @to = to || Date.current
           end
@@ -55,7 +55,7 @@ module Api
 
           def count_houses_by_status(status, as_of_date)
             latest_statuses_sql = HouseStatus
-                                  .where(team_id: @team_id)
+                                  .where(wedge_id: @wedge_id)
                                   .where(date: ..as_of_date)
                                   .select('DISTINCT ON (house_id) house_id, status')
                                   .order(:house_id, date: :desc)

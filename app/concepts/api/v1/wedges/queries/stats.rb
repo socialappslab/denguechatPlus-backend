@@ -2,7 +2,7 @@
 
 module Api
   module V1
-    module Teams
+    module Wedges
       module Queries
         class Stats
           StatsResult = Struct.new(
@@ -22,8 +22,8 @@ module Api
             keyword_init: true
           )
 
-          def initialize(team_id, from:, to:)
-            @team_id = team_id
+          def initialize(wedge_id, from:, to:)
+            @wedge_id = wedge_id
             @from = from
             @to = to || Date.current
           end
@@ -34,7 +34,7 @@ module Api
 
           def call
             StatsResult.new(
-              id: @team_id,
+              id: @wedge_id,
               houses_visited: houses_visited,
               positive_containers: positive_containers,
               coverage_percentage: coverage_percentage,
@@ -53,19 +53,19 @@ module Api
           private
 
           def visit_scope
-            scope = Visit.where(team_id: @team_id)
+            scope = Visit.joins(:house).where(houses: { wedge_id: @wedge_id })
             scope = scope.where(visits: { visited_at: @from.beginning_of_day.. }) if @from
             scope.where(visits: { visited_at: ..@to.end_of_day })
           end
 
           def inspection_scope
-            scope = Inspection.joins(:visit).where(visits: { team_id: @team_id })
+            scope = Inspection.joins(visit: :house).where(houses: { wedge_id: @wedge_id })
             scope = scope.where(inspections: { created_at: @from.beginning_of_day.. }) if @from
             scope.where(inspections: { created_at: ..@to.end_of_day })
           end
 
           def house_status_scope
-            scope = HouseStatus.where(team_id: @team_id)
+            scope = HouseStatus.where(wedge_id: @wedge_id)
             scope = scope.where(house_statuses: { date: @from.. }) if @from
             scope.where(house_statuses: { date: ..@to })
           end
@@ -100,35 +100,35 @@ module Api
           end
 
           def house_access_status
-            HouseAccessStatus.call(@team_id, from: @from, to: @to)
+            HouseAccessStatus.call(@wedge_id, from: @from, to: @to)
           end
 
           def container_positives
-            ContainerPositives.call(@team_id, from: @from, to: @to)
+            ContainerPositives.call(@wedge_id, from: @from, to: @to)
           end
 
           def risk_change
-            RiskChange.call(@team_id, from: @from, to: @to)
+            RiskChange.call(@wedge_id, from: @from, to: @to)
           end
 
           def house_color_distribution
-            HouseColorDistribution.call(@team_id, from: @from, to: @to)
+            HouseColorDistribution.call(@wedge_id, from: @from, to: @to)
           end
 
           def house_access_status_chart
-            HouseAccessStatusChart.call(@team_id, from: @from, to: @to)
+            HouseAccessStatusChart.call(@wedge_id, from: @from, to: @to)
           end
 
           def container_positives_chart
-            ContainerPositivesChart.call(@team_id, from: @from, to: @to)
+            ContainerPositivesChart.call(@wedge_id, from: @from, to: @to)
           end
 
           def container_types_inspected
-            ContainerTypesInspected.call(@team_id, from: @from, to: @to)
+            ContainerTypesInspected.call(@wedge_id, from: @from, to: @to)
           end
 
           def container_types_inspected_chart
-            ContainerTypesInspectedChart.call(@team_id, from: @from, to: @to)
+            ContainerTypesInspectedChart.call(@wedge_id, from: @from, to: @to)
           end
         end
       end

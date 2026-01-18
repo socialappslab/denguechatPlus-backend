@@ -2,10 +2,10 @@
 
 module Api
   module V1
-    module Teams
+    module Wedges
       module Serializers
         class Stats < ApplicationSerializer
-          set_type :team_stats
+          set_type :wedge_stats
 
           attributes :houses_visited,
                      :positive_containers,

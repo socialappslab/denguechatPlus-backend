@@ -24,7 +24,7 @@ ACTION_AND_RESOURCES = [
   { name: 'create', resource: 'teams' },
   { name: 'update', resource: 'teams' },
   { name: 'destroy', resource: 'teams' },
-  { name: 'stats', resource: 'teams' },
+  { name: 'stats', resource: 'wedges' },
   { name: 'index', resource: 'states' },
   { name: 'show', resource: 'states' },
   { name: 'create', resource: 'states' },
@@ -105,7 +105,7 @@ ROLES_PERMISSIONS = {
         { name: 'index', resource: 'house_blocks' },
         { name: 'show', resource: 'house_blocks' },
         { name: 'index', resource: 'get_last_params' },
-        { name: 'stats', resource: 'teams' }
+        { name: 'stats', resource: 'wedges' }
       ]
     },
     {
@@ -130,7 +130,7 @@ ROLES_PERMISSIONS = {
         { name: 'create', resource: 'teams' },
         { name: 'update', resource: 'teams' },
         { name: 'destroy', resource: 'teams' },
-        { name: 'stats', resource: 'teams' },
+        { name: 'stats', resource: 'wedges' },
         { name: 'index', resource: 'users' },
         { name: 'show', resource: 'users' },
         { name: 'update', resource: 'users' },
@@ -164,7 +164,7 @@ ROLES_PERMISSIONS = {
         { name: 'create', resource: 'teams' },
         { name: 'update', resource: 'teams' },
         { name: 'destroy', resource: 'teams' },
-        { name: 'stats', resource: 'teams' },
+        { name: 'stats', resource: 'wedges' },
         { name: 'create', resource: 'states' },
         { name: 'index', resource: 'states' },
         { name: 'show', resource: 'states' },

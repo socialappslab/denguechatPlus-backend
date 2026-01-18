@@ -2,11 +2,11 @@
 
 module Api
   module V1
-    module Teams
+    module Wedges
       module Queries
-        class ContainerTypesInspectedChart
-          def initialize(team_id, from:, to:)
-            @team_id = team_id
+        class ContainerPositivesChart
+          def initialize(wedge_id, from:, to:)
+            @wedge_id = wedge_id
             @from = from
             @to = to || Date.current
           end
@@ -16,7 +16,7 @@ module Api
           end
 
           def call
-            raw_data = ContainerTypesInspected.call(@team_id, from: @from, to: @to)
+            raw_data = ContainerPositives.call(@wedge_id, from: @from, to: @to)
 
             raw_data.map do |item|
               {

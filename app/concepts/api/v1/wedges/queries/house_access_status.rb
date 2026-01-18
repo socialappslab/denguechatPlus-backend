@@ -2,13 +2,13 @@
 
 module Api
   module V1
-    module Teams
+    module Wedges
       module Queries
         class HouseAccessStatus
           VISIT_PERMISSION_QUESTION_TEXT = '¿Me dieron permiso para visitar la casa?'
 
-          def initialize(team_id, from:, to:)
-            @team_id = team_id
+          def initialize(wedge_id, from:, to:)
+            @wedge_id = wedge_id
             @from = from
             @to = to || Date.current
           end
@@ -32,7 +32,7 @@ module Api
           private
 
           def visit_scope
-            scope = Visit.where(team_id: @team_id)
+            scope = Visit.joins(:house).where(houses: { wedge_id: @wedge_id })
             scope = scope.where(visits: { visited_at: @from.beginning_of_day.. }) if @from
             scope.where(visits: { visited_at: ..@to.end_of_day })
           end

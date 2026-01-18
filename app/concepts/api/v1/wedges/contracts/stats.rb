@@ -2,7 +2,7 @@
 
 module Api
   module V1
-    module Teams
+    module Wedges
       module Contracts
         class Stats < Dry::Validation::Contract
           def self.kall(...)

@@ -2,11 +2,11 @@
 
 module Api
   module V1
-    module Teams
+    module Wedges
       module Queries
-        class ContainerPositivesChart
-          def initialize(team_id, from:, to:)
-            @team_id = team_id
+        class HouseAccessStatusChart
+          def initialize(wedge_id, from:, to:)
+            @wedge_id = wedge_id
             @from = from
             @to = to || Date.current
           end
@@ -16,7 +16,7 @@ module Api
           end
 
           def call
-            raw_data = ContainerPositives.call(@team_id, from: @from, to: @to)
+            raw_data = HouseAccessStatus.call(@wedge_id, from: @from, to: @to)
 
             raw_data.map do |item|
               {
@@ -24,7 +24,7 @@ module Api
                 name_es: item[:name_es],
                 name_en: item[:name_en],
                 name_pt: item[:name_pt],
-                breeding_site_type_id: item[:breeding_site_type_id]
+                option_id: item[:option_id]
               }
             end
           end
