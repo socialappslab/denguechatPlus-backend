@@ -19,6 +19,12 @@ module Api
         endpoint operation: Api::V1::Wedges::Operations::HouseBlocks,
                  renderer_options: { serializer: Api::V1::Wedges::Serializers::HouseBlockList }
       end
+
+      def stats
+        endpoint operation: Api::V1::Wedges::Operations::Stats,
+                 renderer_options: { serializer: Api::V1::Wedges::Serializers::Stats },
+                 options: { current_user: }
+      end
     end
   end
 end
