@@ -1,0 +1,137 @@
+# frozen_string_literal: true
+
+module Api
+  module V1
+    module Wedges
+      module Queries
+        class Stats
+          StatsResult = Struct.new(
+            :id,
+            :houses_visited,
+            :positive_containers,
+            :coverage_percentage,
+            :houses_with_aedes_percentage,
+            :house_access_status,
+            :house_access_status_chart,
+            :container_positives,
+            :container_positives_chart,
+            :container_types_inspected,
+            :container_types_inspected_chart,
+            :risk_change,
+            :house_color_distribution,
+            keyword_init: true
+          )
+
+          def initialize(wedge_id, from:, to:)
+            @wedge_id = wedge_id
+            @from = from
+            @to = to || Date.current
+          end
+
+          def self.call(...)
+            new(...).call
+          end
+
+          def call
+            StatsResult.new(
+              id: @wedge_id,
+              houses_visited: houses_visited,
+              positive_containers: positive_containers,
+              coverage_percentage: coverage_percentage,
+              houses_with_aedes_percentage: houses_with_aedes_percentage,
+              house_access_status: house_access_status,
+              house_access_status_chart: house_access_status_chart,
+              container_positives: container_positives,
+              container_positives_chart: container_positives_chart,
+              container_types_inspected: container_types_inspected,
+              container_types_inspected_chart: container_types_inspected_chart,
+              risk_change: risk_change,
+              house_color_distribution: house_color_distribution
+            )
+          end
+
+          private
+
+          def visit_scope
+            scope = Visit.joins(:house).where(houses: { wedge_id: @wedge_id })
+            scope = scope.where(visits: { visited_at: @from.beginning_of_day.. }) if @from
+            scope.where(visits: { visited_at: ..@to.end_of_day })
+          end
+
+          def inspection_scope
+            scope = Inspection.joins(visit: :house).where(houses: { wedge_id: @wedge_id })
+            scope = scope.where(inspections: { created_at: @from.beginning_of_day.. }) if @from
+            scope.where(inspections: { created_at: ..@to.end_of_day })
+          end
+
+          def house_status_scope
+            scope = HouseStatus.where(wedge_id: @wedge_id)
+            scope = scope.where(house_statuses: { date: @from.. }) if @from
+            scope.where(house_statuses: { date: ..@to })
+          end
+
+          def houses_visited
+            visit_scope.distinct.count(:house_id)
+          end
+
+          def positive_containers
+            inspection_scope.where(color: %w[yellow red]).count
+          end
+
+          def coverage_percentage
+            total_houses = houses_visited
+            return 0 if total_houses.zero?
+
+            accessible_houses = visit_scope.joins(:visit_permission_option)
+                                           .where(options: { value: '1' })
+                                           .distinct
+                                           .count(:house_id)
+
+            ((accessible_houses.to_f / total_houses) * 100).round(2)
+          end
+
+          def houses_with_aedes_percentage
+            total_houses = house_status_scope.distinct.count(:house_id)
+            return 0 if total_houses.zero?
+
+            red_houses = house_status_scope.where(status: 'red').distinct.count(:house_id)
+
+            ((red_houses.to_f / total_houses) * 100).round(2)
+          end
+
+          def house_access_status
+            HouseAccessStatus.call(@wedge_id, from: @from, to: @to)
+          end
+
+          def container_positives
+            ContainerPositives.call(@wedge_id, from: @from, to: @to)
+          end
+
+          def risk_change
+            RiskChange.call(@wedge_id, from: @from, to: @to)
+          end
+
+          def house_color_distribution
+            HouseColorDistribution.call(@wedge_id, from: @from, to: @to)
+          end
+
+          def house_access_status_chart
+            HouseAccessStatusChart.call(@wedge_id, from: @from, to: @to)
+          end
+
+          def container_positives_chart
+            ContainerPositivesChart.call(@wedge_id, from: @from, to: @to)
+          end
+
+          def container_types_inspected
+            ContainerTypesInspected.call(@wedge_id, from: @from, to: @to)
+          end
+
+          def container_types_inspected_chart
+            ContainerTypesInspectedChart.call(@wedge_id, from: @from, to: @to)
+          end
+        end
+      end
+    end
+  end
+end

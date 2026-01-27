@@ -39,6 +39,7 @@ module Api
 
           module ContainersHeaderQuestion
             SITE_CODE = 'Código de sitio'
+            LOCATION = '¿Dónde se encuentra el envase?'
             BREEDING_SITE_TYPE = '¿Qué tipo de envase encontraste?'
             WATER_SOURCE_TYPE = '¿De dónde proviene el agua?'
             CONTAINER_PROTECTION = '¿El envase está protegido?'
@@ -46,6 +47,8 @@ module Api
             TYPE_CONTENT = 'En este envase hay..'
             ELIMINATION_METHOD_TYPE = '¿Qué acción se realizó con el envase?'
           end
+
+          LOCATION_OPTIONS = ['En la casa', 'En la huerta'].freeze
 
           # NOTE: order of the options is important
           module ContainersHeaderMultiselectOptions
@@ -126,6 +129,7 @@ module Api
             # First row
             [
               ContainersHeaderQuestion::SITE_CODE,
+              ContainersHeaderQuestion::LOCATION,
               ContainersHeaderQuestion::BREEDING_SITE_TYPE,
               ContainersHeaderQuestion::WATER_SOURCE_TYPE,
               nil,
@@ -155,6 +159,7 @@ module Api
 
             # Second row
             [
+              nil,
               nil,
               nil,
               ContainersHeaderMultiselectOptions::WATER_SOURCE_TYPE[0],
@@ -200,6 +205,7 @@ module Api
           CONTAINER_OPTIONS_HEADER_STRUCTURE = [
             nil,
             nil,
+            nil,
             ContainersHeaderMultiselectOptions::WATER_SOURCE_TYPE,
             ContainersHeaderMultiselectOptions::CONTAINER_PROTECTION,
             nil,
@@ -216,7 +222,8 @@ module Api
               VisitsHeaderQuestion::NOTES
             ],
             containers: [
-              ContainersHeaderQuestion::SITE_CODE
+              ContainersHeaderQuestion::SITE_CODE,
+              ContainersHeaderQuestion::LOCATION
             ]
           }.freeze
 
@@ -607,12 +614,13 @@ module Api
             structured_containers_rows = containers_rows.map do |row|
               {
                 site_code: row[0],
-                breeding_site_type: row[1],
-                water_source_type: row[2..5].map { |i| to_boolean(i) },
-                container_protection: row[6..11].map { |i| to_boolean(i) },
-                was_chemically_treated: row[12],
-                type_content: row[13..17].map { |i| to_boolean(i) },
-                elimination_method_type: row[18..25].map { |i| to_boolean(i) }
+                location: row[1],
+                breeding_site_type: row[2],
+                water_source_type: row[3..6].map { |i| to_boolean(i) },
+                container_protection: row[7..12].map { |i| to_boolean(i) },
+                was_chemically_treated: row[13],
+                type_content: row[14..18].map { |i| to_boolean(i) },
+                elimination_method_type: row[19..26].map { |i| to_boolean(i) }
               }
             end
 
@@ -640,6 +648,30 @@ module Api
                 errors += ErrorFormater.new_error(
                   field: :base,
                   msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::SITE_CODE} es requerido",
+                  custom_predicate: :blank?
+                )
+              end
+
+              if row[:location].present?
+                if row[:location].is_a?(String)
+                  unless LOCATION_OPTIONS.include?(row[:location])
+                    errors += ErrorFormater.new_error(
+                      field: :base,
+                      msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::LOCATION} no tiene una opción válida",
+                      custom_predicate: :not_found?
+                    )
+                  end
+                else
+                  errors += ErrorFormater.new_error(
+                    field: :base,
+                    msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::LOCATION} no es una cadena de texto",
+                    custom_predicate: :invalid_format?
+                  )
+                end
+              else
+                errors += ErrorFormater.new_error(
+                  field: :base,
+                  msg: "#{CONTAINERS_SHEET_NAME} - Fila #{row_number}: #{ContainersHeaderQuestion::LOCATION} es requerido",
                   custom_predicate: :blank?
                 )
               end
@@ -870,7 +902,8 @@ module Api
                     type_content_id: option_identifiers(type_content_options),
                     water_source_type_ids: option_identifiers(water_source_type_options),
                     other_water_source: r[:water_source_type].last,
-                    has_water: true
+                    has_water: true,
+                    location: location_to_enum(r[:location])
                   }
                 end,
                 notes: row[:notes] || '',
@@ -949,6 +982,10 @@ module Api
 
           def option_identifiers(options)
             options.map { |option| option_identifier(option) }
+          end
+
+          def location_to_enum(location_text)
+            { 'En la casa' => 'house', 'En la huerta' => 'orchard' }[location_text]
           end
 
           def register_duplicate_candidates(visit)
