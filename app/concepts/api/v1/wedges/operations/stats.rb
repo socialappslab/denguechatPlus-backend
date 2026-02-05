@@ -39,7 +39,7 @@ module Api
           def check_authorization
             return Success({ ctx: @ctx, type: :success }) if @current_user.has_role?(:admin)
 
-            user_wedge_ids = @current_user.house_blocks.joins(:wedge).pluck('wedges.id').uniq
+            user_wedge_ids = @current_user.house_blocks.joins(:wedges).pluck('wedges.id').uniq
             return Success({ ctx: @ctx, type: :success }) if user_wedge_ids.include?(@wedge.id)
 
             errors = ErrorFormater.new_error(
