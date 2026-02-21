@@ -8,7 +8,10 @@ module Api
           set_type :visit
 
           attributes :id, :questionnaire_id, :visited_at, :brigadist, :team, :city, :sector, :wedge,
-                     :host, :answers, :notes, :other_family_education_topic, :was_offline
+                     :host, :answers, :start_side, :notes, :other_family_education_topic, :was_offline
+
+          START_SIDE_QUESTION_TEXT = '¿Dónde comienza la visita?'
+          QUESTION_KEY_FORMAT = /\Aquestion_(\d+)_\d+\z/
 
           attribute :visit_permission do |visit|
             Option.where(question_id: 1).order(:id).map do |option|
@@ -18,6 +21,34 @@ module Api
                 selected: visit.visit_permission_option_id == option.id,
                 typeOption: option.type_option,
                 other: visit.visit_permission_option_id == option.id ? visit.visit_permission_other : nil
+              }
+            end
+          end
+
+          selected_option_ids_by_question = ->(answers, question_id) do
+            return [] if answers.blank?
+
+            answers.flat_map do |answer|
+              answer.filter_map do |key, value|
+                match = key.to_s.match(QUESTION_KEY_FORMAT)
+                next unless match && match[1].to_i == question_id && value.present?
+
+                Array(value).map(&:to_i)
+              end
+            end.flatten.uniq
+          end
+
+          attribute :start_side do |visit|
+            question = Question.includes(:options).find_by(question_text_es: START_SIDE_QUESTION_TEXT)
+            next [] unless question
+
+            selected_option_ids = selected_option_ids_by_question.call(visit.answers, question.id)
+
+            question.options.order(:position, :id).map do |option|
+              {
+                optionId: option.id,
+                label: option.send("name_#{visit.language}"),
+                selected: selected_option_ids.include?(option.id)
               }
             end
           end
