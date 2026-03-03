@@ -49,6 +49,8 @@ module Api
           end
 
           rule(:user_account_id) do
+            next if value.blank?
+
             unless UserAccount.kept.exists?(id: value)
               key.failure(text: "The UserAccount with id: #{value} does not exist",
                           predicate: :not_exists?)
@@ -56,6 +58,8 @@ module Api
           end
 
           rule(:answers) do
+            next if value.nil?
+
             if value.is_a?(Array)
               value.each_with_index do |answer_hash, index|
                 answer_hash.each_key do |key|

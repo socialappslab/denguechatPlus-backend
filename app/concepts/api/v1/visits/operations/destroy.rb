@@ -9,9 +9,9 @@ module Api
 
           tee :params
           step :validate_schema
-          tee :retrieve_post
+          tee :retrieve_visit
           step :authorized_user?
-          step :delete_post
+          step :delete_visit
           tee :update_house_status_table
           tee :update_house_status
 
@@ -54,7 +54,7 @@ module Api
           end
 
           def update_house_status_table
-            HouseStatus.find_by(last_visit: @ctx[:model].visited_at).destroy!
+            HouseStatus.find_by(last_visit: @ctx[:model].visited_at)&.destroy!
             visit = last_visit
             return unless visit
 
@@ -90,8 +90,13 @@ module Api
             return true unless Visit.where(house_id: @ctx[:model].house_id).order(visited_at: :desc).first == last_visit
 
             house = House.find_by(id: @ctx[:model].house_id)
-            house.status = HouseStatus.find_by(last_visit: house.last_visit).status
-            house.save
+            return true unless house
+
+            latest_house_status = HouseStatus.find_by(house_id: house.id, last_visit: house.last_visit) ||
+                                 HouseStatus.where(house_id: house.id).order(date: :desc, created_at: :desc).first
+            return true unless latest_house_status
+
+            house.update(status: latest_house_status.status)
 
             true
           end

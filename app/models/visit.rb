@@ -79,14 +79,15 @@ class Visit < ApplicationRecord
   end
 
   after_discard :discard_inspections
+  after_undiscard :undiscard_inspections
 
   private
 
   def discard_inspections
-    inspections.kept.find_each(&:discard)
+    Inspection.kept.where(visit_id: id).find_each(&:discard)
   end
 
   def undiscard_inspections
-    inspections.discarded.find_each(&:undiscard)
+    Inspection.discarded.where(visit_id: id).find_each(&:undiscard)
   end
 end
