@@ -30,6 +30,12 @@ module Api
 
           def fetch_data
             sector_id = @current_user.teams&.first&.neighborhood_id || 0
+            month_range = Time.current.beginning_of_month...Time.current.next_month.beginning_of_month
+            monthly_inspections = Inspection.joins(visit: :house)
+                                            .merge(Visit.kept)
+                                            .where(houses: { neighborhood_id: sector_id })
+                                            .where(inspections: { created_at: month_range })
+
             query = <<~SQL.squish
               WITH last_4_statuses AS (
                 SELECT house_id, status, updated_at, neighborhood_id,
@@ -53,26 +59,13 @@ module Api
                 AND neighborhood_id = #{sector_id};
             SQL
 
-            query_green_containers = <<~SQL.squish
-              SELECT
-                  COUNT(*) FILTER (WHERE inspections.color = 'green') AS green_container_qty,
-                  COUNT(*) AS total_container_qty
-              FROM inspections
-              LEFT JOIN visits ON inspections.visit_id = visits.id
-              LEFT JOIN houses ON visits.house_id = houses.id
-              WHERE houses.neighborhood_id = #{sector_id}
-              AND inspections.created_at >= DATE_TRUNC('month', NOW())
-              AND inspections.created_at < DATE_TRUNC('month', NOW()) + INTERVAL '1 month';
-            SQL
-
             tariki_houses_qty = ActiveRecord::Base.connection.execute(query)
-            green_containers = ActiveRecord::Base.connection.execute(query_green_containers)
 
             ReportResult.new(
               House.where(neighborhood_id: sector_id).count,
               tariki_houses_qty.first&.[]('tariki_count'),
-              green_containers.first&.[]('total_container_qty'),
-              green_containers.first&.[]('green_container_qty')
+              monthly_inspections.count,
+              monthly_inspections.where(color: 'green').count
             )
           end
         end

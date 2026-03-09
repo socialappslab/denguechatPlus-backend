@@ -23,26 +23,32 @@ module Api
 
           def get_first_five(relation)
             latest_statuses = latest_statuses_query
+            latest_statuses_join = <<~SQL.squish
+              INNER JOIN (#{latest_statuses}) AS latest_statuses
+              ON visits.house_id = latest_statuses.house_id
+              AND visits.visited_at = latest_statuses.latest_date
+            SQL
+
             relation
-              .joins('INNER JOIN (' + latest_statuses + ') AS latest_statuses ON visits.house_id = latest_statuses.house_id AND visits.visited_at = latest_statuses.latest_date')
+              .joins(latest_statuses_join)
               .joins(user_account: :user_profile)
-              .select('user_accounts.id AS user_account_id, COUNT(visits.id) AS quantity, user_profiles.first_name, user_profiles.last_name')
-              .where('visits.status = ?', 'Verde')
+              .select(
+                'user_accounts.id AS user_account_id, COUNT(visits.id) AS quantity, ' \
+                'user_profiles.first_name, user_profiles.last_name'
+              )
+              .where(visits: { status: 'Verde' })
               .group('user_accounts.id, user_profiles.first_name, user_profiles.last_name')
-              .order('quantity DESC')
+              .order(quantity: :desc)
               .limit(5)
           end
 
           private
 
           def latest_statuses_query
-            <<-SQL
-              SELECT#{' '}
-                house_id,#{' '}
-                MAX(visits.visited_at) AS latest_date
-              FROM visits
-              GROUP BY house_id
-            SQL
+            Visit
+              .select('house_id, MAX(visits.visited_at) AS latest_date')
+              .group(:house_id)
+              .to_sql
           end
         end
       end
