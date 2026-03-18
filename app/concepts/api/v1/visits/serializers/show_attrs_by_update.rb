@@ -55,7 +55,7 @@ module Api
                 familyEducationTopics: visit.family_education_topics,
                 otherFamilyEducationTopic: visit.other_family_education_topic,
 
-                host: visit.host.split(', '),
+                host: visit.host&.split(', ') || [],
                 brigadist: {
                   id: visit.user_account.id,
                   fullName: visit.user_account.full_name

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: inspections
@@ -39,13 +41,15 @@
 #  fk_rails_...  (visit_id => visits.id)
 #
 class Inspection < ApplicationRecord
+  include Discard::Model
+
   belongs_to :visit
   belongs_to :breeding_site_type, optional: true
   belongs_to :created_by, class_name: 'UserAccount'
   belongs_to :treated_by, class_name: 'UserAccount'
   has_many :inspection_elimination_method_types, dependent: :destroy
   has_many :elimination_method_types, through: :inspection_elimination_method_types
-  has_many :inspection_container_protections
+  has_many :inspection_container_protections, dependent: :destroy
   has_many :container_protections, through: :inspection_container_protections
   has_many :inspection_type_contents, dependent: :nullify
   has_many :type_contents, through: :inspection_type_contents
@@ -54,6 +58,7 @@ class Inspection < ApplicationRecord
   has_one_attached :photo
   enum :location, house: 'house', orchard: 'orchard'
 
+  default_scope -> { kept }
   has_paper_trail on: [:update]
 
   def potential?

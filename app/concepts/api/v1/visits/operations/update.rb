@@ -61,7 +61,7 @@ module Api
           end
 
           def remove_inspections
-            Inspection.where(id: @inspections_to_delete_ids).destroy_all
+            Inspection.where(id: @inspections_to_delete_ids).find_each(&:discard)
           end
 
           def update_house_status

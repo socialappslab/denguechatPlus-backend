@@ -87,7 +87,24 @@ module Api
               {
                 name: translated_name,
                 value: translated_name,
-                selected: item.values.include?(container.was_chemically_treated)
+                selected: item.value?(container.was_chemically_treated)
+              }
+            end
+          }
+
+          build_locations = ->(container, language) {
+            location_names = {
+              'es' => { house: 'En la casa', orchard: 'En la huerta' },
+              'en' => { house: 'In the house', orchard: 'In the orchard' },
+              'pt' => { house: 'Na casa', orchard: 'No quintal' }
+            }.fetch(language, { house: 'En la casa', orchard: 'En la huerta' })
+
+            Inspection.locations.keys.map do |location|
+              {
+                id: location,
+                name: location_names[location.to_sym] || location.humanize,
+                value: location,
+                selected: location == container.location
               }
             end
           }
@@ -127,6 +144,10 @@ module Api
 
           attribute :has_water do |container, _language|
             Constants::DownloadCsvConstants::BOOLEAN_TRANSLATIONS[container.language][container.has_water]
+          end
+
+          attribute :locations do |container, _language|
+            build_locations.call(container, container.language)
           end
 
           attribute :location, &:location
