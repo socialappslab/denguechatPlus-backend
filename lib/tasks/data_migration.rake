@@ -1,15 +1,25 @@
 # frozen_string_literal: true
 
 namespace :data_migration do
-  desc 'Add wedges stats permission to brigadista, team_leader, and admin roles'
-  task add_wedges_stats_permission: :environment do
-    roles = Role.where(name: %w[brigadista team_leader admin])
-    permission = Permission.find_or_create_by(name: 'stats', resource: 'wedges')
+  desc "Reorders the options of the question about the container content to it's proper order"
+  task fix_container_content_options_order: :environment do
+    options = Question.find_by(question_text_es: 'En este envase hay..').options
 
-    roles.find_each do |role|
-      role.permissions << permission unless role.permissions.exists?(permission.id)
+    position_by_name = {
+      'Huevos' => 1,
+      'Larvas' => 2,
+      'Pupas' => 3,
+      'Nada' => 4,
+      'No pude revisar el envase' => 5
+    }
+
+    Option.transaction do
+      options.each do |option|
+        new_position = position_by_name[option.name_es]
+        next unless new_position
+
+        option.update!(position: new_position)
+      end
     end
-
-    puts "✅ Added wedges stats permission to #{roles.count} roles."
   end
 end

@@ -483,7 +483,8 @@ module Api
 
               if row[:brigadist].present?
                 if row[:brigadist].is_a?(String)
-                  user = UserAccount.find_by(username: row[:brigadist])
+                  normalized_username = row[:brigadist].downcase.gsub(/\s+/, '')
+                  user = UserAccount.find_by(username: normalized_username)
                   if user.nil?
                     errors += ErrorFormater.new_error(
                       field: :base,
@@ -854,10 +855,12 @@ module Api
                 answers << { "question_#{start_side_question.id}_0": start_side_option.id }
               end
 
+              brigadist_username = row[:brigadist].downcase.gsub(/\s+/, '')
+
               {
                 house_id: House.find_by!(reference_code: row[:site_code]).id,
                 visited_at: row[:date].in_time_zone,
-                user_account_id: UserAccount.find_by!(username: row[:brigadist]).id,
+                user_account_id: UserAccount.find_by!(username: brigadist_username).id,
                 visit_permission_option_id: visit_permission_option.id,
                 visit_permission_other: other_visit_permission_value.presence,
                 host: VisitsHeaderMultiselectOptions::HOSTS
