@@ -12,7 +12,7 @@ module Api
           VISIT_PERMISSION_QUESTION_TEXT = '¿Me dieron permiso para visitar la casa?'
 
           params do
-            required(:answers).filled(:array).each(:hash)
+            required(:answers).array(:hash)
             optional(:host).filled(:array)
             required(:visit_permission_option_id).filled(:integer)
             optional(:visit_permission_other).maybe(:string)
