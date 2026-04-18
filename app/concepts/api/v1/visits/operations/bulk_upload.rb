@@ -56,7 +56,7 @@ module Api
               'Del grifo o de otro envase',
               'Agua activamente recogida. Ejemplo: canaleta, gotera, techo.',
               'Agua pasivamente recogida. Ejemplo: la lluvia lo llenó.',
-              'Otro (tratamiento manual)'
+              'Otro'
             ].freeze
             CONTAINER_PROTECTION = [
               'Sí, tiene tapa y está bien cerrado',
@@ -78,6 +78,10 @@ module Api
               'Otro'
             ].freeze
           end
+
+          LEGACY_CONTAINERS_OPTION_HEADER_ALIASES = {
+            'Otro (tratamiento manual)' => 'Otro'
+          }.freeze
 
           VISITS_HEADER_STRUCTURE = [
             # First row
@@ -308,7 +312,9 @@ module Api
             end
 
             containers_questions_headers = containers_sheet.row(1)
-            containers_options_headers = containers_sheet.row(2)
+            containers_options_headers = containers_sheet.row(2).map do |cell|
+              LEGACY_CONTAINERS_OPTION_HEADER_ALIASES[cell] || cell
+            end
             containers_headers = [containers_questions_headers, containers_options_headers]
 
             unless containers_headers == CONTAINERS_HEADER_STRUCTURE
