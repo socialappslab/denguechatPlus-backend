@@ -53,31 +53,35 @@ module Api
           end
 
           rule(:elimination_method_type_ids) do
-            if key? && !EliminationMethodType.exists?(id: value)
+            if key? && !all_ids_exist?(EliminationMethodType, value)
               key.failure(text: 'The EliminationMethodType does not exist', predicate: :not_exists?)
             end
           end
 
           rule(:water_source_type_ids) do
-            if key? && !WaterSourceType.exists?(id: value)
+            if key? && !all_ids_exist?(WaterSourceType, value)
               key.failure(text: 'The WaterSourceType does not exist', predicate: :not_exists?)
             end
           end
 
           rule(:container_protection_ids) do
-            if key? && !ContainerProtection.exists?(id: value)
+            if key? && !all_ids_exist?(ContainerProtection, value)
               key.failure(text: 'The ContainerProtection does not exist', predicate: :not_exists?)
             end
           end
 
           rule(:type_content_ids) do
-            if key?
-              if value.nil?
-                key.failure(text: 'The TypeContent does not exist', predicate: :not_exists?)
-              elsif !value.all? { |id| TypeContent.exists?(id:) }
-                key.failure(text: 'The TypeContent does not exist', predicate: :not_exists?)
-              end
+            if key? && (value.nil? || !value.all? { |id| TypeContent.exists?(id:) })
+              key.failure(text: 'The TypeContent does not exist', predicate: :not_exists?)
             end
+          end
+
+          private
+
+          def all_ids_exist?(model, ids)
+            return true if ids.blank?
+
+            Array(ids).all? { |id| model.exists?(id:) }
           end
         end
       end

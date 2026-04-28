@@ -55,22 +55,25 @@ module Api
                                                       predicate: :not_exists?)
                 end
 
-                if inspection.has_key?('elimination_method_type_ids') && !EliminationMethodType.exists?(id: inspection['elimination_method_type_ids'])
+                if inspection.key?('elimination_method_type_ids') &&
+                   !all_ids_exist?(EliminationMethodType, inspection['elimination_method_type_ids'])
                   key(:elimination_method_type_id).failure(text: 'The EliminationMethodType does not exist',
                                                            predicate: :not_exists?)
                 end
 
-                if inspection.has_key?('water_source_type_ids') && !WaterSourceType.exists?(id: inspection['water_source_type_ids'])
+                if inspection.key?('water_source_type_ids') &&
+                   !all_ids_exist?(WaterSourceType, inspection['water_source_type_ids'])
                   key(:water_source_type_id).failure(text: 'The WaterSourceType does not exist',
                                                      predicate: :not_exists?)
                 end
 
-                if inspection.has_key?('container_protection_ids') && !ContainerProtection.exists?(id: inspection['container_protection_ids'])
+                if inspection.key?('container_protection_ids') &&
+                   !all_ids_exist?(ContainerProtection, inspection['container_protection_ids'])
                   key(:container_protection_ids).failure(text: 'The ContainerProtection does not exist',
                                                          predicate: :not_exists?)
                 end
 
-                if inspection.has_key?('type_content_id')
+                if inspection.key?('type_content_id')
                   unless inspection['type_content_id']
                     key(:type_content_id).failure(text: 'The TypeContent does not exist',
                                                   predicate: :not_exists?)
@@ -84,37 +87,39 @@ module Api
                   end
                 end
 
-                unless inspection.has_key?('has_water')
+                unless inspection.key?('has_water')
                   key(:has_water).failure(text: 'has_water is required',
                                           predicate: :filled?)
                 end
 
-                if inspection.has_key?('was_chemically_treated') && !inspection.has_key?('was_chemically_treated')
+                if inspection.key?('was_chemically_treated') && !inspection.key?('was_chemically_treated')
                   key(:was_chemically_treated).failure(text: 'was_chemically_treated is required',
                                                        predicate: :filled?)
                 end
 
-                if inspection.has_key?('quantity_founded') && !inspection['quantity_founded'].nil? && (inspection['quantity_founded'].to_i <= 0)
-                  key(:quantity_founded).failure(text: 'quantity_founded should be major than 0',
-                                                 predicate: :gteq?)
-                end
+                next unless inspection.key?('quantity_founded') &&
+                            !inspection['quantity_founded'].nil? &&
+                            (inspection['quantity_founded'].to_i <= 0)
+
+                key(:quantity_founded).failure(text: 'quantity_founded should be major than 0',
+                                               predicate: :gteq?)
               end
             end
           end
 
           rule(:house) do
             if value.present?
-              if !value.has_key?('address') || value['address']&.empty?
+              if !value.key?('address') || value['address']&.empty?
                 key(:address).failure(text: 'address is required',
                                       predicate: :filled?)
               end
 
-              if !value.has_key?('latitude') && value.has_key?('longitude')
+              if !value.key?('latitude') && value.key?('longitude')
                 key(:latitude).failure(text: 'latitude is required if you pass longitude',
                                        predicate: :filled?)
               end
 
-              if !value.has_key?('longitude') && value.has_key?('latitude')
+              if !value.key?('longitude') && value.key?('latitude')
                 key(:latitude).failure(text: 'longitude is required if you pass latitude',
                                        predicate: :filled?)
               end
@@ -124,7 +129,7 @@ module Api
                                              predicate: :not_exists?)
               end
 
-              if value.has_key?('special_place_id') && !SpecialPlace.exists?(id: value['special_place_id'])
+              if value.key?('special_place_id') && !SpecialPlace.exists?(id: value['special_place_id'])
                 key(:special_place_id).failure(text: 'The SpecialPlace does not exist', predicate: :not_exists?)
               end
             end
@@ -150,6 +155,14 @@ module Api
               key(:user_account_id).failure(text: "The UserAccount with id: #{value} does not exist",
                                             predicate: :not_exists?)
             end
+          end
+
+          private
+
+          def all_ids_exist?(model, ids)
+            return true if ids.blank?
+
+            Array(ids).all? { |id| model.exists?(id:) }
           end
         end
       end
