@@ -54,49 +54,44 @@ module Api
           end
 
           def update_house_status_table
-            HouseStatus.find_by(last_visit: @ctx[:model].visited_at)&.destroy!
+            HouseStatus.find_by(house_id: @ctx[:model].house_id, last_visit: @ctx[:model].visited_at)&.destroy!
             visit = last_visit
             return unless visit
 
-            team_id = visit.team_id
-            house = house.find_by(id: visit.house_id)
-            house_status = HouseStatus.find_or_initialize_by(house_id: house.id, date: visit.visited_at)
+            house = House.find_by(id: visit.house_id)
+            return unless house
+
+            counts = visit.inspections.group(:color).count
+            house_status = HouseStatus.find_or_initialize_by(house_id: house.id, date: visit.visited_at.to_date)
             house_status.date = visit.visited_at
-            infected_containers = visit.last.inspections
-                                       .where(color: ['yellow'])
-                                       .count
-            non_infected_containers = visit.last.inspections
-                                           .where(color: ['green'])
-                                           .count
-            potential_containers = visit.last.inspections
-                                        .where.not(color: ['yellow'])
-                                        .count
-            house_status.infected_containers = infected_containers
-            house_status.non_infected_containers = non_infected_containers
-            house_status.potential_containers = potential_containers
+            house_status.infected_containers = counts['red'] || 0
+            house_status.non_infected_containers = counts['green'] || 0
+            house_status.potential_containers = counts['yellow'] || 0
             house_status.city_id = house.city_id
             house_status.country_id = house.country_id
-            house_status.house_block_id = house.house_block_id
+            house_status.house_block_id = house.house_blocks.find_by(block_type: 'frente_a_frente')&.id
             house_status.neighborhood_id = house.neighborhood_id
-            house_status.team_id = team_id
+            house_status.team_id = visit.team_id
             house_status.wedge_id = house.wedge_id
-            house_status.last_visit = house.last_visit
+            house_status.last_visit = visit.visited_at
             house_status.house_id = house.id
-            house_status.status = house_status(house_status)
+            house_status.status = status_for_house_status(house_status)
             house_status.save
           end
 
           def update_house_status
-            return true unless Visit.where(house_id: @ctx[:model].house_id).order(visited_at: :desc).first == last_visit
-
             house = House.find_by(id: @ctx[:model].house_id)
             return true unless house
 
-            latest_house_status = HouseStatus.find_by(house_id: house.id, last_visit: house.last_visit) ||
-                                 HouseStatus.where(house_id: house.id).order(date: :desc, created_at: :desc).first
+            latest_house_status = HouseStatus.where(house_id: house.id).order(date: :desc, created_at: :desc).first
             return true unless latest_house_status
 
-            house.update(status: latest_house_status.status)
+            house.update(infected_containers: latest_house_status.infected_containers,
+                         non_infected_containers: latest_house_status.non_infected_containers,
+                         potential_containers: latest_house_status.potential_containers,
+                         last_visit: latest_house_status.last_visit,
+                         status: latest_house_status.status,
+                         tariki_status: house.is_tariki?(latest_house_status.status))
 
             true
           end
@@ -110,22 +105,19 @@ module Api
           end
 
           def last_visit
-            visit = Visit.find_by(
+            return unless @ctx[:model].visited_at
+
+            Visit.where(
               house_id: @ctx[:model].house_id,
               visited_at: @ctx[:model].visited_at.to_date.all_day
-            )
-
-            visit if visit
+            ).order(visited_at: :desc, created_at: :desc).first
           end
 
-          def house_status(house_status)
-            res = 'red' if house_status&.infected_containers.to_i >= 0
-            res = 'yellow' if house_status.potential_containers.to_i >= 0 && house_status.infected_containers.to_i < 0
-            if house_status.non_infected_containers.to_i >= 0 && house_status.infected_containers.to_i < 0 && house_status.infected_containers.to_i < 0
-              res = 'green'
-            end
+          def status_for_house_status(house_status)
+            return 'red' if house_status.infected_containers.to_i.positive?
+            return 'yellow' if house_status.potential_containers.to_i.positive?
 
-            res
+            'green'
           end
         end
       end

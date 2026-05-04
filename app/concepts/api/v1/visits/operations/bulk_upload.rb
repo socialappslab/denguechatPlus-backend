@@ -56,7 +56,7 @@ module Api
               'Del grifo o de otro envase',
               'Agua activamente recogida. Ejemplo: canaleta, gotera, techo.',
               'Agua pasivamente recogida. Ejemplo: la lluvia lo llenó.',
-              'Otro (tratamiento manual)'
+              'Otro'
             ].freeze
             CONTAINER_PROTECTION = [
               'Sí, tiene tapa y está bien cerrado',
@@ -78,6 +78,10 @@ module Api
               'Otro'
             ].freeze
           end
+
+          LEGACY_CONTAINERS_OPTION_HEADER_ALIASES = {
+            'Otro (tratamiento manual)' => 'Otro'
+          }.freeze
 
           VISITS_HEADER_STRUCTURE = [
             # First row
@@ -308,7 +312,9 @@ module Api
             end
 
             containers_questions_headers = containers_sheet.row(1)
-            containers_options_headers = containers_sheet.row(2)
+            containers_options_headers = containers_sheet.row(2).map do |cell|
+              LEGACY_CONTAINERS_OPTION_HEADER_ALIASES[cell] || cell
+            end
             containers_headers = [containers_questions_headers, containers_options_headers]
 
             unless containers_headers == CONTAINERS_HEADER_STRUCTURE
@@ -388,14 +394,13 @@ module Api
           def validate_rows(input) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
             visits_sheet, containers_sheet = input[:sheets]
             visits_headers, containers_headers = input[:headers]
-            header_offsets = { visits: visits_headers.size, containers: containers_headers.size }
             questionnaire = input[:questionnaire]
             questions = questionnaire.questions
 
             errors = []
 
-            visits_rows = get_rows(visits_sheet, header_offsets[:visits])
-            containers_rows = get_rows(containers_sheet, header_offsets[:containers])
+            visits_rows = get_rows(visits_sheet, visits_headers.size)
+            containers_rows = get_rows(containers_sheet, containers_headers.size)
 
             if visits_rows.empty? && containers_rows.empty?
               errors += ErrorFormater.new_error(
@@ -412,8 +417,9 @@ module Api
             visit_permission_other_option = visit_permission_options_raw.find_by!(type_option: 'textArea').name_es
             visit_permission_yes_option = visit_permission_options_raw.find_by!(value: '1').name_es
 
-            structured_visits_rows = visits_rows.map do |row|
+            structured_visits_rows = visits_rows.map do |row_number, row|
               {
+                row_number:,
                 site_code: row[0],
                 date: row[1],
                 brigadist: row[2],
@@ -425,8 +431,8 @@ module Api
               }
             end
 
-            structured_visits_rows.each_with_index do |row, index| # rubocop:disable Metrics/BlockLength
-              row_number = header_offsets[:visits] + 1 + index
+            structured_visits_rows.each do |row| # rubocop:disable Metrics/BlockLength
+              row_number = row[:row_number]
 
               if row[:site_code].present?
                 if row[:site_code].is_a?(String)
@@ -612,8 +618,9 @@ module Api
             breeding_site_type_options = questions.find_by!(question_text_es: ContainersHeaderQuestion::BREEDING_SITE_TYPE).options.pluck(:name_es)
             was_chemically_treated_options = questions.find_by!(question_text_es: ContainersHeaderQuestion::WAS_CHEMICALLY_TREATED).options.pluck(:name_es)
 
-            structured_containers_rows = containers_rows.map do |row|
+            structured_containers_rows = containers_rows.map do |row_number, row|
               {
+                row_number:,
                 site_code: row[0],
                 location: row[1],
                 breeding_site_type: row[2],
@@ -625,8 +632,8 @@ module Api
               }
             end
 
-            structured_containers_rows.each_with_index do |row, index| # rubocop:disable Metrics/BlockLength
-              row_number = header_offsets[:containers] + 1 + index
+            structured_containers_rows.each do |row| # rubocop:disable Metrics/BlockLength
+              row_number = row[:row_number]
 
               if row[:site_code].present?
                 if row[:site_code].is_a?(String)
@@ -963,7 +970,7 @@ module Api
               row = sheet.row(r)
               next if row.compact_blank.empty?
 
-              rows << row
+              rows << [r, row]
             end
 
             rows
