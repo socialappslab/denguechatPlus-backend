@@ -161,8 +161,11 @@ Rails.application.routes.draw do
       end
 
       namespace :admin do
-        resources :users do
-          put :change_status, controller: '/api/v1/users', method: 'change_status', on: :member
+        resources :users, only: [] do
+          member do
+            put :change_status, controller: '/api/v1/users', action: 'change_status'
+            delete :destroy, controller: '/api/v1/users', action: 'destroy'
+          end
         end
       end
 

@@ -30,6 +30,11 @@ module Api
 
       def delete_account
         endpoint operation: Api::V1::Users::Accounts::Operations::Destroy,
+                 options: { current_user:, found_token: }
+      end
+
+      def destroy
+        endpoint operation: Api::V1::Users::Accounts::Operations::AdminDestroy,
                  options: { current_user: }
       end
 
