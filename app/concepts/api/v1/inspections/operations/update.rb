@@ -84,7 +84,7 @@ module Api
                           'green'
                         end
               }
-              result[:tariki_status] = @house.is_tariki?(result[:status])
+              result[:tariki_status] = @house.tariki?(result[:status])
               @house.update!(result)
               @visit.update!(status: colors[result[:status]])
             elsif @inspections.empty? && @visit.visit_permission
@@ -157,13 +157,6 @@ module Api
                             .sum(:weighted_points)
 
             results.key(results.values.max)&.downcase || 'green'
-          end
-
-          def container_status_analyzer(inspection)
-            return Constants::ContainerStatus::NOT_INFECTED unless inspection.has_water
-            return Constants::ContainerStatus::INFECTED if inspection.infected?
-
-            Constants::ContainerStatus::POTENTIALLY_INFECTED if inspection.potential?
           end
         end
       end

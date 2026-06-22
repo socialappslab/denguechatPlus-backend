@@ -91,7 +91,7 @@ module Api
                          potential_containers: latest_house_status.potential_containers,
                          last_visit: latest_house_status.last_visit,
                          status: latest_house_status.status,
-                         tariki_status: house.is_tariki?(latest_house_status.status))
+                         tariki_status: house.tariki?(latest_house_status.status))
 
             true
           end

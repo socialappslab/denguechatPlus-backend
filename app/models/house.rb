@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: houses
@@ -72,12 +74,12 @@ class House < ApplicationRecord
   belongs_to :special_place, optional: true
   belongs_to :team, optional: true
 
-  enum status: { green: '0', yellow: '1', red: '2' }
-  enum assignment_status: { assigned: 1, orphaned: 0 }
+  enum status, { green: '0', yellow: '1', red: '2' }
+  enum assignment_status, { assigned: 1, orphaned: 0 }
 
   after_commit :update_consecutive_green_status
 
-  def is_tariki?(status_on_memory = nil)
+  def tariki?(status_on_memory = nil)
     status = status_on_memory || status
     return false unless status == 'green'
 

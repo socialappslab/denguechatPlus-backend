@@ -61,15 +61,6 @@ class Inspection < ApplicationRecord
   default_scope -> { kept }
   has_paper_trail on: [:update]
 
-  def potential?
-    container_protection.present? && ['Tapa no hermética', 'Sí, tiene tapa pero no está bien cerrado', 'Techo', 'Otro',
-                                      'No tiene'].include?(container_protection.name_es)
-  end
-
-  def infected?
-    type_contents.exists?(name_es: %w[Larva Pupas Huevos])
-  end
-
   def status_i18n(selected_value = 'verde', lang = 'es')
     case lang
     when 'en'
