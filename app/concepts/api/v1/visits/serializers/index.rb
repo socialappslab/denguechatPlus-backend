@@ -36,7 +36,9 @@ module Api
             }
           end
 
-          attribute :visit_status, &:status
+          attribute :visit_status do |visit|
+            Api::V1::Lib::Serializers::RiskColorPresenter.display(visit.status, locale: I18n.locale)
+          end
 
           attribute :brigadist do |visit|
             next if visit.user_account.nil?

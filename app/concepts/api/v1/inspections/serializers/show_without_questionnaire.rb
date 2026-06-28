@@ -38,7 +38,9 @@ module Api
             container.type_contents.map(&:name_es).join(', ')
           end
 
-          attribute :status, &:color
+          attribute :status do |container|
+            Api::V1::Lib::Serializers::RiskColorPresenter.display(container.color, locale: 'es')
+          end
 
           attribute :water_source_types do |container|
             next if container.water_source_types.blank?

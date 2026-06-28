@@ -66,38 +66,21 @@ module Api
 
           def update_house_status
             @house = @ctx[:model].house
-            colors = {
-              'red' => 'Rojo',
-              'yellow' => 'Amarillo',
-              'green' => 'Verde'
-            }
-            inspections_ids = @ctx[:model].inspections.pluck(:id)
-            if inspections_ids.empty?
-              tariki_status = @house.tariki?('green')
-              @house.update!(infected_containers: 0, potential_containers: 0,
-                             non_infected_containers: 0, last_visit:  @params[:visited_at] || Time.now.utc,
-                             status: 'green', tariki_status:)
-              @ctx[:model].update!(status: 'Verde')
+            last_visit_at = @params[:visited_at] || Time.now.utc
+
+            if @ctx[:model].inspections.none?
+              Services::VisitHouseStatusUpdater.apply!(
+                visit: @ctx[:model],
+                house: @house,
+                last_visit_at:,
+                denied_without_inspections: Constants::RiskColor::GREEN
+              )
             else
-              counts = @ctx[:model].inspections.group(:color).count
-              result = {
-                infected_containers: counts['red'] || 0,
-                potential_containers: counts['yellow'] || 0,
-                non_infected_containers: counts['green'] || 0,
-                last_visit: @params[:visited_at] || Time.now.utc,
-                status: if (counts['red'] || 0) > 0
-                          'red'
-                        elsif (counts['yellow'] || 0) > 0
-                          'yellow'
-                        elsif (counts['green'] || 0) > 0
-                          'green'
-                        else
-                          'green'
-                        end
-              }
-              result[:tariki_status] = @house.tariki?(result[:status])
-              @house.update!(result)
-              @ctx[:model].update!(status: colors[result[:status]])
+              Services::VisitHouseStatusUpdater.apply!(
+                visit: @ctx[:model],
+                house: @house,
+                last_visit_at:
+              )
             end
           end
 

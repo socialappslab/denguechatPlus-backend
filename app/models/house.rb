@@ -60,6 +60,8 @@
 #  fk_rails_...  (wedge_id => wedges.id)
 #
 class House < ApplicationRecord
+  include HasRiskColor
+
   belongs_to :country
   belongs_to :state
   belongs_to :city
@@ -74,14 +76,15 @@ class House < ApplicationRecord
   belongs_to :special_place, optional: true
   belongs_to :team, optional: true
 
-  enum status, { green: '0', yellow: '1', red: '2' }
-  enum assignment_status, { assigned: 1, orphaned: 0 }
+  risk_color_enum :status, allow_nil: true
+  enum :assignment_status, { assigned: 1, orphaned: 0 }
 
   after_commit :update_consecutive_green_status
 
   def tariki?(status_on_memory = nil)
-    status = status_on_memory || status
-    return false unless status == 'green'
+    status = status_on_memory || self.status
+    return false if status.blank?
+    return false unless status == Constants::RiskColor::GREEN
 
     min_consecutive_green = AppConfigParam.find_by(name: 'consecutive_green_statuses_for_tariki_house')&.value.to_i
     take_same_date_visit = AppConfigParam.find_by(name: 'tariki_point_same_date', value: 1)
@@ -93,9 +96,7 @@ class House < ApplicationRecord
     statuses = associated_model.where(house_id: id).order(created_at: :desc).limit(min_consecutive_green).pluck(:status)
     statuses&.shift
     statuses&.unshift(status)
-    statuses.all? do |status|
-      %w[green verde].include?(status&.downcase)
-    end && statuses.length >= min_consecutive_green
+    statuses.all?(Constants::RiskColor::GREEN) && statuses.length >= min_consecutive_green
   end
 
   def consecutive_green_status_calculation
@@ -110,7 +111,7 @@ class House < ApplicationRecord
                  house_statuses.sort_by(&:created_at).last(limit).reverse.map(&:status)
                end
 
-    statuses.take_while { |s| %w[verde green].include?(s&.downcase) }.count
+    statuses.take_while { |entry| entry == Constants::RiskColor::GREEN }.count
   end
 
   private
@@ -121,9 +122,9 @@ class House < ApplicationRecord
     statuses = associated_model.where(house_id: id).order(created_at: :desc).pluck(:status)
     statuses.unshift(status)
     consecutive_count = 0
-    if statuses.first == 'green'
-      statuses.each do |status|
-        break unless status == 'green'
+    if statuses.first == Constants::RiskColor::GREEN
+      statuses.each do |entry|
+        break unless entry == Constants::RiskColor::GREEN
 
         consecutive_count += 1
       end

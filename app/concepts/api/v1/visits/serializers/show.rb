@@ -115,7 +115,7 @@ module Api
           end
 
           attribute :visitStatus do |object|
-            object.status
+            Api::V1::Lib::Serializers::RiskColorPresenter.display(object.status, locale: object.language)
           end
 
           attribute :wedge do |_object|
