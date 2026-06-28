@@ -81,9 +81,9 @@ module Api
               counts[status.status] = status.house_count.to_i
             end
 
-            green_quantity = status_counts['0'] || 0
-            yellow_quantity = status_counts['1'] || 0
-            red_quantity = status_counts['2'] || 0
+            green_quantity = status_counts[Constants::RiskColor::GREEN] || 0
+            yellow_quantity = status_counts[Constants::RiskColor::YELLOW] || 0
+            red_quantity = status_counts[Constants::RiskColor::RED] || 0
 
             current_visits = current_data&.visits_this_week.to_i
             previous_visits = previous_data&.visits_previous_week.to_i

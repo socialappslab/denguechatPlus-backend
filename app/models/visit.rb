@@ -42,12 +42,14 @@
 #
 class Visit < ApplicationRecord
   include Discard::Model
+  include HasRiskColor
 
   belongs_to :house
   belongs_to :user_account
   belongs_to :team
   belongs_to :questionnaire
   belongs_to :visit_permission_option, class_name: 'Option', optional: true
+  risk_color_enum :status
   has_many :inspections, dependent: :destroy
   accepts_nested_attributes_for :inspections
   has_many :duplicate_candidates, class_name: 'VisitDuplicateCandidate', dependent: :destroy, inverse_of: :visit

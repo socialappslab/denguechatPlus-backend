@@ -44,7 +44,9 @@ module Api
           end
 
           attribute :status do |container, params|
-            container.color ? I18n.with_locale(params[:language]) { I18n.t("visits.colors.#{container.color}") } : nil
+            next if container.color.blank?
+
+            Api::V1::Lib::Serializers::RiskColorPresenter.display(container.color, locale: params[:language])
           end
 
           attribute :water_source_types do |container, params|

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: house_statuses
@@ -40,11 +42,14 @@
 #  fk_rails_...  (wedge_id => wedges.id)
 #
 class HouseStatus < ApplicationRecord
+  include HasRiskColor
+
   belongs_to :team, optional: true
-  belongs_to :house_block
+  belongs_to :house_block, optional: true
   belongs_to :wedge
   belongs_to :neighborhood
   belongs_to :city
   belongs_to :country
   belongs_to :house
+  risk_color_enum :status
 end

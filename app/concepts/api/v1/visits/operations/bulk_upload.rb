@@ -63,7 +63,7 @@ module Api
               'Sí, tiene tapa pero no está bien cerrado',
               'Está bajo techo',
               'No tiene tapa',
-              'Uso diario del agua',
+              'Recambio completo de agua diario',
               'Otro tipo de protección'
             ].freeze
             TYPE_CONTENT = ['Huevos', 'Pupas', 'Larvas', 'Nada', 'No pude revisar el envase'].freeze
@@ -80,6 +80,7 @@ module Api
           end
 
           LEGACY_CONTAINERS_OPTION_HEADER_ALIASES = {
+            'Uso diario del agua' => 'Recambio completo de agua diario',
             'Otro (tratamiento manual)' => 'Otro'
           }.freeze
 
