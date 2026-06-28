@@ -2,6 +2,12 @@
 
 module Services
   class RiskColorCalculator
+    RISK_PRIORITY = [
+      Constants::RiskColor::RED,
+      Constants::RiskColor::YELLOW,
+      Constants::RiskColor::GREEN
+    ].freeze
+
     def self.inspection_color(has_water:, type_content_ids:, container_protection_ids:)
       return Constants::RiskColor::GREEN unless has_water
 
@@ -27,7 +33,10 @@ module Services
                       .group(:status_color)
                       .sum(:weighted_points)
 
-      results.key(results.values.max) || Constants::RiskColor::GREEN
+      max_points = results.values.max
+      return Constants::RiskColor::GREEN unless max_points
+
+      RISK_PRIORITY.find { |color| results[color] == max_points } || Constants::RiskColor::GREEN
     end
 
     def self.aggregate_from_counts(counts)
@@ -46,7 +55,8 @@ module Services
     end
 
     def self.visit_status(visit, denied_without_inspections: Constants::RiskColor::YELLOW)
-      return aggregate_from_counts(visit.inspections.group(:color).count) if visit.inspections.any?
+      inspections = visit.inspections
+      return aggregate_from_counts(inspections.group(:color).count) if inspections.any?
       return Constants::RiskColor::GREEN if visit.visit_permission_granted?
 
       denied_without_inspections
