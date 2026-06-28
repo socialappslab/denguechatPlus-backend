@@ -359,7 +359,7 @@ QUESTIONS_DATA = [
       { name_es: 'Pupas', name_en: 'Pupae', name_pt: 'Pupas', next: 17, group_es: 'Estadios', group_en: 'Stages', group_pt: 'Estágios',
         resource_id: TypeContent.find_by(name_es: 'Pupas').id, status_color: Constants::RiskColor::RED },
       { name_es: 'Huevos', name_en: 'Eggs', name_pt: 'Ovos', next: 17, group_es: 'Estadios', group_en: 'Stages', group_pt: 'Estágios',
-        resource_id: TypeContent.find_by(name_es: 'Huevos').id, status_color: Constants::RiskColor::RED },
+        resource_id: TypeContent.find_by(name_es: 'Huevos').id, status_color: Constants::RiskColor::YELLOW },
       { name_es: 'Nada', name_en: 'Nothing', name_pt: 'Nada', next: 16, group_es: 'Nada', group_en: 'Nothing', group_pt: 'Nada',
         resource_id: TypeContent.find_by(name_es: 'Nada').id, disable_other_options: true }
     ]
