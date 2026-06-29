@@ -145,7 +145,11 @@ module Api
             if inspections_clean_format.any?
               inspections_clean_format.each do |inspection_data|
                 type_content_id = inspection_data.delete(:type_content_id) if inspection_data.key?(:type_content_id)
-                inspection_data[:color] = analyze_inspection_status(inspection_data, type_content_id)
+                inspection_data[:color] = Services::RiskColorCalculator.inspection_color(
+                  has_water: inspection_data[:has_water],
+                  type_content_ids: type_content_id,
+                  container_protection_ids: inspection_data[:container_protection_ids]
+                )
 
                 inspection = Inspection.create!(inspection_data)
 
@@ -230,43 +234,25 @@ module Api
           end
 
           def update_house_status
-            colors = {
-              'red' => 'Rojo',
-              'yellow' => 'Amarillo',
-              'green' => 'Verde'
-            }
             inspections_ids = @ctx[:model].inspections.pluck(:id)
-            if !inspections_ids.empty?
-              counts = @ctx[:model].inspections.group(:color).count
-              result = {
-                infected_containers: counts['red'] || 0,
-                potential_containers: counts['yellow'] || 0,
-                non_infected_containers: counts['green'] || 0,
-                last_visit: @params[:visited_at] || Time.now.utc,
-                status: if (counts['red'] || 0) > 0
-                          'red'
-                        elsif (counts['yellow'] || 0) > 0
-                          'yellow'
-                        elsif (counts['green'] || 0) > 0
-                          'green'
-                        else
-                          'green'
-                        end
-              }
-              result[:tariki_status] = @house.is_tariki?(result[:status])
-              @house.update!(result)
-              @ctx[:model].update!(status: colors[result[:status]])
-            elsif inspections_ids.empty? && visit_permission_granted?
-              tariki_status = @house.is_tariki?('green')
-              @house.update!(infected_containers: 0, potential_containers: 0,
-                             non_infected_containers: 0, last_visit:  @params[:visited_at] || Time.now.utc,
-                             status: 'green', tariki_status:)
-              @ctx[:model].update!(status: 'Verde')
+            last_visit_at = @params[:visited_at] || Time.now.utc
+
+            if inspections_ids.empty? && !visit_permission_granted?
+              @house.update!(
+                infected_containers: 0,
+                potential_containers: 0,
+                non_infected_containers: 0,
+                last_visit: last_visit_at,
+                status: Constants::RiskColor::YELLOW,
+                tariki_status: @house.tariki?(Constants::RiskColor::YELLOW)
+              )
+              @ctx[:model].update!(status: Constants::RiskColor::YELLOW)
             else
-              @house.update!(infected_containers: 0, potential_containers: 0,
-                             non_infected_containers: 0, last_visit:  @params[:visited_at] || Time.now.utc,
-                             status: 'yellow')
-              @ctx[:model].update!(status: 'Amarillo')
+              Services::VisitHouseStatusUpdater.apply!(
+                visit: @ctx[:model],
+                house: @house,
+                last_visit_at:
+              )
             end
           end
 
@@ -290,27 +276,6 @@ module Api
             house_status.save
           end
 
-          def analyze_inspection_status(inspection, type_content_id = [])
-            return 'green' unless inspection[:has_water]
-
-            results = Option.joins(:question)
-                            .where(
-                              "(questions.resource_name = 'type_content_id' AND options.resource_id IN (?))
-                     OR (questions.resource_name = 'container_protection_ids' AND options.resource_id IN (?))",
-                              type_content_id, inspection[:container_protection_ids]
-                            )
-                            .group(:status_color)
-                            .sum(:weighted_points)
-
-            results.key(results.values.max)&.downcase || 'green'
-          end
-
-          def container_status_analyzer(inspection)
-            return Constants::ContainerStatus::NOT_INFECTED unless inspection.has_water
-            return Constants::ContainerStatus::INFECTED if inspection.infected?
-
-            Constants::ContainerStatus::POTENTIALLY_INFECTED if inspection.potential?
-          end
 
           def visit_permission_granted?
             option = Option.find_by(id: @params[:visit_permission_option_id])

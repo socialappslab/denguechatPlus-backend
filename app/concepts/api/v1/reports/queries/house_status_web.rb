@@ -36,9 +36,9 @@ module Api
             query = <<~SQL.squish
               SELECT#{' '}
                 CASE#{' '}
-                  WHEN status = '0' THEN 'greenQuantity'
-                  WHEN status = '1' THEN 'yellowQuantity'
-                  WHEN status = '2' THEN 'redQuantity'
+                  WHEN status = 'green' THEN 'greenQuantity'
+                  WHEN status = 'yellow' THEN 'yellowQuantity'
+                  WHEN status = 'red' THEN 'redQuantity'
                 END AS category,
                 COUNT(*) AS cantidad
               FROM houses

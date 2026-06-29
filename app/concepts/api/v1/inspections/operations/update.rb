@@ -47,7 +47,11 @@ module Api
             begin
               inspection = Inspection.find_by(id: @params[:id])
               inspection = manage_photo(inspection)
-              @params[:color] = analyze_inspection_status(@params)
+              @params[:color] = Services::RiskColorCalculator.inspection_color(
+                has_water: @params.fetch(:has_water, inspection.has_water),
+                type_content_ids: @params[:type_content_ids] || inspection.type_contents.pluck(:id),
+                container_protection_ids: @params[:container_protection_ids] || inspection.container_protections.pluck(:id)
+              )
               inspection.update(@params)
               @ctx[:model] = inspection
               Success({ ctx: @ctx, type: :created })
@@ -59,45 +63,16 @@ module Api
           end
 
           def update_house_and_visit_status
-            colors = {
-              'red' => 'Rojo',
-              'yellow' => 'Amarillo',
-              'green' => 'Verde'
-            }
             @visit = @ctx[:model].visit
             @house = @visit.house
-            @inspections = @visit.inspections
-            if !@inspections.empty?
-              counts = @inspections.group(:color).count
-              result = {
-                infected_containers: counts['red'] || 0,
-                potential_containers: counts['yellow'] || 0,
-                non_infected_containers: counts['green'] || 0,
-                last_visit: @params[:visited_at] || Time.now.utc,
-                status: if (counts['red'] || 0) > 0
-                          'red'
-                        elsif (counts['yellow'] || 0) > 0
-                          'yellow'
-                        elsif (counts['green'] || 0) > 0
-                          'green'
-                        else
-                          'green'
-                        end
-              }
-              result[:tariki_status] = @house.is_tariki?(result[:status])
-              @house.update!(result)
-              @visit.update!(status: colors[result[:status]])
-            elsif @inspections.empty? && @visit.visit_permission
-              @house.update!(infected_containers: 0, potential_containers: 0,
-                             non_infected_containers: 0, last_visit:  @params[:visited_at] || Time.now.utc,
-                             status: 'green')
-              @visit.update!(status: 'Verde')
-            else
-              @house.update!(infected_containers: 0, potential_containers: 0,
-                             non_infected_containers: 0, last_visit:  @params[:visited_at] || Time.now.utc,
-                             status: 'red')
-              @visit.update!(status: 'Rojo')
-            end
+            last_visit_at = @params[:visited_at] || Time.now.utc
+
+            Services::VisitHouseStatusUpdater.apply!(
+              visit: @visit,
+              house: @house,
+              last_visit_at:,
+              denied_without_inspections: Constants::RiskColor::RED
+            )
           end
 
           def update_house_status_daily
@@ -141,29 +116,6 @@ module Api
             inspection.photo = @photo if @photo && !@delete_photo
             inspection.photo.purge if @delete_photo && !@has_photo
             inspection
-          end
-
-          def analyze_inspection_status(params = {})
-            params[:type_content_ids] ||= {}
-            type_content_id = params[:type_content_ids].map!(&:to_i)
-
-            results = Option.joins(:question)
-                            .where(
-                              "(questions.resource_name = 'type_content_id' AND options.resource_id IN (?))
-                     OR (questions.resource_name = 'container_protection_ids' AND options.resource_id IN (?))",
-                              type_content_id, params[:container_protection_ids].map(&:to_i)
-                            )
-                            .group(:status_color)
-                            .sum(:weighted_points)
-
-            results.key(results.values.max)&.downcase || 'green'
-          end
-
-          def container_status_analyzer(inspection)
-            return Constants::ContainerStatus::NOT_INFECTED unless inspection.has_water
-            return Constants::ContainerStatus::INFECTED if inspection.infected?
-
-            Constants::ContainerStatus::POTENTIALLY_INFECTED if inspection.potential?
           end
         end
       end

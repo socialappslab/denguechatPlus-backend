@@ -48,7 +48,7 @@ module Api
 
           attribute :visit do |visit|
             {
-              visitStatus: visit.status,
+              visitStatus: Api::V1::Lib::Serializers::RiskColorPresenter.display(visit.status, locale: I18n.locale),
               hardFields: {
                 visitedAt: visit.visited_at,
                 brigade: visit.team.name,

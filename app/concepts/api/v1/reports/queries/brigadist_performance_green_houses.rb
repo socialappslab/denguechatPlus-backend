@@ -36,7 +36,7 @@ module Api
                 'user_accounts.id AS user_account_id, COUNT(visits.id) AS quantity, ' \
                 'user_profiles.first_name, user_profiles.last_name'
               )
-              .where(visits: { status: 'Verde' })
+              .where(visits: { status: Constants::RiskColor::GREEN })
               .group('user_accounts.id, user_profiles.first_name, user_profiles.last_name')
               .order(quantity: :desc)
               .limit(5)

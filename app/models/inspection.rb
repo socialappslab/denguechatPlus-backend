@@ -42,6 +42,7 @@
 #
 class Inspection < ApplicationRecord
   include Discard::Model
+  include HasRiskColor
 
   belongs_to :visit
   belongs_to :breeding_site_type, optional: true
@@ -56,21 +57,13 @@ class Inspection < ApplicationRecord
   has_many :inspection_water_source_types, dependent: :destroy
   has_many :water_source_types, through: :inspection_water_source_types
   has_one_attached :photo
+  risk_color_enum :color
   enum :location, house: 'house', orchard: 'orchard'
 
   default_scope -> { kept }
   has_paper_trail on: [:update]
 
-  def potential?
-    container_protection.present? && ['Tapa no hermética', 'Sí, tiene tapa pero no está bien cerrado', 'Techo', 'Otro',
-                                      'No tiene'].include?(container_protection.name_es)
-  end
-
-  def infected?
-    type_contents.exists?(name_es: %w[Larva Pupas Huevos])
-  end
-
-  def status_i18n(selected_value = 'verde', lang = 'es')
+  def status_i18n(selected_value = Constants::RiskColor::GREEN, lang = 'es')
     case lang
     when 'en'
       [

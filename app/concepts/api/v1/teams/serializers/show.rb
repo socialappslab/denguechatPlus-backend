@@ -10,7 +10,9 @@ module Api
           attributes :name
 
           attribute :members do |brigade|
-            brigade.members.map do |user|
+            brigade.members
+                   .order(Arel.sql('LOWER(user_profiles.first_name), LOWER(user_profiles.last_name), user_profiles.id'))
+                   .map do |user|
               {
                 id: user.id,
                 fullName: "#{user.first_name} #{user.last_name}",

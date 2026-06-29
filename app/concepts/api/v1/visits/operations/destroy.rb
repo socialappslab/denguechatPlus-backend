@@ -61,12 +61,12 @@ module Api
             house = House.find_by(id: visit.house_id)
             return unless house
 
-            counts = visit.inspections.group(:color).count
+            counts = Services::RiskColorCalculator.inspection_counts(visit.inspections.group(:color).count)
             house_status = HouseStatus.find_or_initialize_by(house_id: house.id, date: visit.visited_at.to_date)
             house_status.date = visit.visited_at
-            house_status.infected_containers = counts['red'] || 0
-            house_status.non_infected_containers = counts['green'] || 0
-            house_status.potential_containers = counts['yellow'] || 0
+            house_status.infected_containers = counts[:infected_containers]
+            house_status.non_infected_containers = counts[:non_infected_containers]
+            house_status.potential_containers = counts[:potential_containers]
             house_status.city_id = house.city_id
             house_status.country_id = house.country_id
             house_status.house_block_id = house.house_blocks.find_by(block_type: 'frente_a_frente')&.id
@@ -75,7 +75,7 @@ module Api
             house_status.wedge_id = house.wedge_id
             house_status.last_visit = visit.visited_at
             house_status.house_id = house.id
-            house_status.status = status_for_house_status(house_status)
+            house_status.status = Services::RiskColorCalculator.visit_status(visit)
             house_status.save
           end
 
@@ -91,7 +91,7 @@ module Api
                          potential_containers: latest_house_status.potential_containers,
                          last_visit: latest_house_status.last_visit,
                          status: latest_house_status.status,
-                         tariki_status: house.is_tariki?(latest_house_status.status))
+                         tariki_status: house.tariki?(latest_house_status.status))
 
             true
           end
@@ -111,13 +111,6 @@ module Api
               house_id: @ctx[:model].house_id,
               visited_at: @ctx[:model].visited_at.to_date.all_day
             ).order(visited_at: :desc, created_at: :desc).first
-          end
-
-          def status_for_house_status(house_status)
-            return 'red' if house_status.infected_containers.to_i.positive?
-            return 'yellow' if house_status.potential_containers.to_i.positive?
-
-            'green'
           end
         end
       end

@@ -133,7 +133,7 @@ module Api
           end
 
           attribute :status do |container|
-            container.status_i18n(container.color)
+            container.status_i18n(container.color, container.language)
           end
 
           attribute :water_source_types do |container, _language|

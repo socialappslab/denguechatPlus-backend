@@ -312,20 +312,20 @@ QUESTIONS_DATA = [
       { name_es: 'Sí, tiene una tapa hermética', name_en: 'Yes, it has a sealed lid',
         name_pt: 'Sim, tem uma tampa hermética', next: 14, group_es: 'Tapa', group_en: 'Lid',
         group_pt: 'Tampa', resource_id: ContainerProtection.find_by(name_es: 'Tapa hermética').id,
-        status_color: Constants::ContainerStatus::NOT_INFECTED },
+        status_color: Constants::RiskColor::GREEN },
       { name_es: 'Sí, tiene una tapa no hermética', name_en: 'Yes, it has a non-sealed lid',
         name_pt: 'Sim, tem uma tampa não hermética', group_es: 'Tapa', group_en: 'Lid', group_pt: 'Tampa',
         next: 14, resource_id: ContainerProtection.find_by(name_es: 'Tapa no hermética').id,
-        status_color: Constants::ContainerStatus::POTENTIALLY_INFECTED },
+        status_color: Constants::RiskColor::YELLOW },
       { name_es: 'Sí, está bajo techo', name_en: 'Yes, it is under a roof', name_pt: 'Sim, está sob um telhado',
         next: 14, group_es: 'Techo', group_en: 'Roof', group_pt: 'Telhado', resource_id: ContainerProtection.find_by(name_es: 'Techo').id,
-        status_color: Constants::ContainerStatus::POTENTIALLY_INFECTED },
+        status_color: Constants::RiskColor::YELLOW },
       { name_es: 'Otro tipo de protección', name_en: 'Another type of protection', name_pt: 'Outro tipo de proteção',
         next: 14, group_es: 'Otros', group_en: 'Others', group_pt: 'Outros', resource_id: ContainerProtection.find_by(name_es: 'Otro').id,
-        status_color: Constants::ContainerStatus::POTENTIALLY_INFECTED },
+        status_color: Constants::RiskColor::YELLOW },
       { name_es: 'No tiene protección', name_en: 'It has no protection', name_pt: 'Não tem proteção', next: 14,
         group_es: 'Otros', group_en: 'Others', group_pt: 'Outros', resource_id: ContainerProtection.find_by(name_es: 'No tiene').id,
-        status_color: Constants::ContainerStatus::POTENTIALLY_INFECTED }
+        status_color: Constants::RiskColor::YELLOW }
     ]
   },
   {
@@ -355,11 +355,11 @@ QUESTIONS_DATA = [
     next: 16,
     options: [
       { name_es: 'Larvas', name_en: 'Larvae', name_pt: 'Larvas', next: 17, group_es: 'Estadios', group_en: 'Stages', group_pt: 'Estágios',
-        resource_id: TypeContent.find_by(name_es: 'Larvas').id, status_color: Constants::ContainerStatus::INFECTED },
+        resource_id: TypeContent.find_by(name_es: 'Larvas').id, status_color: Constants::RiskColor::RED },
       { name_es: 'Pupas', name_en: 'Pupae', name_pt: 'Pupas', next: 17, group_es: 'Estadios', group_en: 'Stages', group_pt: 'Estágios',
-        resource_id: TypeContent.find_by(name_es: 'Pupas').id, status_color: Constants::ContainerStatus::INFECTED },
+        resource_id: TypeContent.find_by(name_es: 'Pupas').id, status_color: Constants::RiskColor::RED },
       { name_es: 'Huevos', name_en: 'Eggs', name_pt: 'Ovos', next: 17, group_es: 'Estadios', group_en: 'Stages', group_pt: 'Estágios',
-        resource_id: TypeContent.find_by(name_es: 'Huevos').id, status_color: Constants::ContainerStatus::INFECTED },
+        resource_id: TypeContent.find_by(name_es: 'Huevos').id, status_color: Constants::RiskColor::YELLOW },
       { name_es: 'Nada', name_en: 'Nothing', name_pt: 'Nada', next: 16, group_es: 'Nada', group_en: 'Nothing', group_pt: 'Nada',
         resource_id: TypeContent.find_by(name_es: 'Nada').id, disable_other_options: true }
     ]
