@@ -69,14 +69,14 @@ module Api
             last_visit_at = @params[:visited_at] || Time.now.utc
 
             if @ctx[:model].inspections.none?
-              Services::VisitHouseStatusUpdater.apply!(
+              ::Services::VisitHouseStatusUpdater.apply!(
                 visit: @ctx[:model],
                 house: @house,
                 last_visit_at:,
                 denied_without_inspections: Constants::RiskColor::GREEN
               )
             else
-              Services::VisitHouseStatusUpdater.apply!(
+              ::Services::VisitHouseStatusUpdater.apply!(
                 visit: @ctx[:model],
                 house: @house,
                 last_visit_at:

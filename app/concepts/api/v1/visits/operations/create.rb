@@ -145,7 +145,7 @@ module Api
             if inspections_clean_format.any?
               inspections_clean_format.each do |inspection_data|
                 type_content_id = inspection_data.delete(:type_content_id) if inspection_data.key?(:type_content_id)
-                inspection_data[:color] = Services::RiskColorCalculator.inspection_color(
+                inspection_data[:color] = ::Services::RiskColorCalculator.inspection_color(
                   has_water: inspection_data[:has_water],
                   type_content_ids: type_content_id,
                   container_protection_ids: inspection_data[:container_protection_ids]
@@ -248,7 +248,7 @@ module Api
               )
               @ctx[:model].update!(status: Constants::RiskColor::YELLOW)
             else
-              Services::VisitHouseStatusUpdater.apply!(
+              ::Services::VisitHouseStatusUpdater.apply!(
                 visit: @ctx[:model],
                 house: @house,
                 last_visit_at:
