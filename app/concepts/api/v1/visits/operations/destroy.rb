@@ -61,7 +61,7 @@ module Api
             house = House.find_by(id: visit.house_id)
             return unless house
 
-            counts = Services::RiskColorCalculator.inspection_counts(visit.inspections.group(:color).count)
+            counts = ::Services::RiskColorCalculator.inspection_counts(visit.inspections.group(:color).count)
             house_status = HouseStatus.find_or_initialize_by(house_id: house.id, date: visit.visited_at.to_date)
             house_status.date = visit.visited_at
             house_status.infected_containers = counts[:infected_containers]
@@ -75,7 +75,7 @@ module Api
             house_status.wedge_id = house.wedge_id
             house_status.last_visit = visit.visited_at
             house_status.house_id = house.id
-            house_status.status = Services::RiskColorCalculator.visit_status(visit)
+            house_status.status = ::Services::RiskColorCalculator.visit_status(visit)
             house_status.save
           end
 

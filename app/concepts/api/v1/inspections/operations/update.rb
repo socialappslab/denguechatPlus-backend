@@ -47,7 +47,7 @@ module Api
             begin
               inspection = Inspection.find_by(id: @params[:id])
               inspection = manage_photo(inspection)
-              @params[:color] = Services::RiskColorCalculator.inspection_color(
+              @params[:color] = ::Services::RiskColorCalculator.inspection_color(
                 has_water: @params.fetch(:has_water, inspection.has_water),
                 type_content_ids: @params[:type_content_ids] || inspection.type_contents.pluck(:id),
                 container_protection_ids: @params[:container_protection_ids] || inspection.container_protections.pluck(:id)
@@ -67,7 +67,7 @@ module Api
             @house = @visit.house
             last_visit_at = @params[:visited_at] || Time.now.utc
 
-            Services::VisitHouseStatusUpdater.apply!(
+            ::Services::VisitHouseStatusUpdater.apply!(
               visit: @visit,
               house: @house,
               last_visit_at:,
