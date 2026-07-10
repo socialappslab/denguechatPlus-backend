@@ -88,8 +88,14 @@ module Api
           end
 
           def add_team
-            return Success({ ctx: @ctx, type: :success }) if @params[:team_id]&.present?
-            return nil unless @current_user.teams.any?
+            return Success({ ctx: @ctx, type: :success }) if @params[:team_id].present?
+
+            unless @current_user&.teams&.any?
+              errors = ErrorFormater.new_error(field: :base, msg: 'the user has no team assigned',
+                                               custom_predicate: :not_found?)
+
+              return Failure({ ctx: @ctx, type: :invalid, errors: })
+            end
 
             @params[:team_id] = @current_user.teams.first.id
             Success({ ctx: @ctx, type: :success })

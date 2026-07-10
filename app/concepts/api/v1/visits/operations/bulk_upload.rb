@@ -498,6 +498,13 @@ module Api
                       msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::BRIGADIST} \"#{row[:brigadist]}\" no existe",
                       custom_predicate: :not_found?
                     )
+                  elsif user.teams.none?
+                    errors += ErrorFormater.new_error(
+                      field: :base,
+                      msg: "#{VISITS_SHEET_NAME} - Fila #{row_number}: #{VisitsHeaderQuestion::BRIGADIST} " \
+                           "\"#{row[:brigadist]}\" no tiene brigada asignada",
+                      custom_predicate: :not_found?
+                    )
                   end
                 else
                   errors += ErrorFormater.new_error(
