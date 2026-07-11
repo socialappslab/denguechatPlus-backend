@@ -50,7 +50,8 @@ module Api
               transformed_text = "%#{transformed_text}%"
 
               relation.where(
-                "unaccent(LOWER(user_profiles.first_name || ' ' || user_profiles.last_name)) ILIKE unaccent(:query)", query: "%#{transformed_text}%"
+                "unaccent(LOWER(user_profiles.first_name || ' ' || user_profiles.last_name)) ILIKE unaccent(:query)",
+                query: "%#{transformed_text}%"
               )
             end
 
@@ -58,14 +59,16 @@ module Api
               return relation if @filter.nil? || @filter[:first_name].blank?
 
               text_searched = @filter[:first_name].downcase
-              relation.where('LOWER(user_profiles.first_name) ilike unaccent(:query)', query: "%#{text_searched}%")
+              relation.where('unaccent(LOWER(user_profiles.first_name)) ILIKE unaccent(:query)',
+                             query: "%#{text_searched}%")
             end
 
             def last_name_clause(relation)
               return relation if @filter.nil? || @filter[:last_name].blank?
 
               text_searched = @filter[:last_name].downcase
-              relation.where('LOWER(user_profiles.last_name) ilike unaccent(:query)', query: "%#{text_searched}%")
+              relation.where('unaccent(LOWER(user_profiles.last_name)) ILIKE unaccent(:query)',
+                             query: "%#{text_searched}%")
             end
 
             def phone_clause(relation)
@@ -78,14 +81,16 @@ module Api
               return relation if @filter.nil? || @filter[:email].blank?
 
               text_searched = @filter[:email].downcase
-              relation.where('LOWER(user_profiles.email) ilike unaccent(:query)', query: "%#{text_searched}%")
+              relation.where('unaccent(LOWER(user_profiles.email)) ILIKE unaccent(:query)',
+                             query: "%#{text_searched}%")
             end
 
             def username_clause(relation)
               return relation if @filter.nil? || @filter[:username].blank?
 
               text_searched = @filter[:username].downcase
-              relation.where('LOWER(user_accounts.username) ilike unaccent(:query)', query: "%#{text_searched}%")
+              relation.where('unaccent(LOWER(user_accounts.username)) ILIKE unaccent(:query)',
+                             query: "%#{text_searched}%")
             end
 
             def status_clause(relation)
@@ -105,7 +110,8 @@ module Api
 
               text_searched = @filter[:role_name].downcase
               relation.joins(user_account: :roles).where(
-                'LOWER(roles.name) ILIKE unaccent(?) OR LOWER(roles.name) ILIKE unaccent(?)', "%#{text_searched}%", '%team_leader%'
+                'LOWER(roles.name) ILIKE unaccent(?) OR LOWER(roles.name) ILIKE unaccent(?)',
+                "%#{text_searched}%", '%team_leader%'
               )
             end
 
