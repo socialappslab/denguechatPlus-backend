@@ -64,7 +64,6 @@ module Constants
       cities_destroy: :cities_destroy,
       house_blocks: :house_blocks_index,
       house_blocks_update: :house_blocks_update,
-      house_blocks_create: :house_blocks_create,
       users_change_status: :users_change_status,
       wedges_index: :wedges_index,
       get_last_params_index: :get_last_params,

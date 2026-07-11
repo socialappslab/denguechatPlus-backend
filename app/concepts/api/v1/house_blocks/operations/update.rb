@@ -30,6 +30,7 @@ module Api
           def transform_params
             @data = @ctx['contract.default'].values.data
             @house_ids = @data.delete(:house_ids)
+            @wedge_id = @data.delete(:wedge_id)
           end
 
           def update_house_blocks
@@ -37,7 +38,8 @@ module Api
               begin
                 @ctx[:model] = HouseBlock.find_by(id: @data[:id])
                 update_houses!(@house_ids) if @house_ids.present?
-                @ctx[:model].update!(@ctx['contract.default'].values.data)
+                @ctx[:model].wedge_ids = [@wedge_id] if @wedge_id
+                @ctx[:model].update!(@data.except(:id))
                 Success({ ctx: @ctx, type: :created })
               rescue ActiveRecord::RecordInvalid => error
                 errors = ErrorFormater.new_error(field: :base, msg: error.message,
@@ -50,13 +52,14 @@ module Api
           private
 
           def update_houses!(new_house_ids)
-            @ctx[:model].house_block_houses
-                        .where.not(house_id: new_house_ids)
-                        .destroy_all
+            removed_house_ids = @ctx[:model].house_block_houses
+                                                .where.not(house_id: new_house_ids)
+                                                .pluck(:house_id)
 
-            House.left_outer_joins(:house_block_houses)
-                 .where(id: @ctx[:model].houses.pluck(:id) - new_house_ids)
-                 .where(house_block_houses: { id: nil }) # sin asignaciones
+            @ctx[:model].house_block_houses.where(house_id: removed_house_ids).destroy_all
+
+            House.where(id: removed_house_ids)
+                 .where.missing(:house_block_houses)
                  .update_all(assignment_status: :orphaned)
 
             new_house_ids.each do |house_id|

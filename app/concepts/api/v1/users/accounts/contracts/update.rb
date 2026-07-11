@@ -69,15 +69,18 @@ module Api
                                       predicate: :not_exists?)
               end
 
-              if value && value[:house_block_id] && !HouseBlock.exists?(id: value[:house_block_id])
-                if value[:house_block_id] && !HouseBlock.exists?(id: value[:house_block_id])
+              if value && value[:house_block_id]
+                house_block = HouseBlock.find_by(id: value[:house_block_id])
+                unless house_block
                   key(:team_id).failure(text: "The HouseBlock with id #{value[:house_block_id]} not exists",
                                         predicate: :not_exists?)
                 end
 
-                if value[:team_id] && value[:house_block_id] && HouseBlock.find_by(id: value[:house_block_id])&.team_id != value[:team_id]
+                team = Team.find_by(id: value[:team_id]) if value[:team_id]
+                if team && house_block && !house_block.wedges.exists?(id: team.wedge_id)
                   key(:house_team_id).failure(
-                    text: "The HouseBlock with id #{values[:house_block_id]} is not belongs to the new team", predicate: :is_new?
+                    text: "The HouseBlock with id #{value[:house_block_id]} does not belongs to the new team",
+                    predicate: :is_new?
                   )
                 end
               end

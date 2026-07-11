@@ -210,7 +210,9 @@ unless SeedTask.find_by(task_name: 'create_house_blocks_v2')
   team = Team.first
   team.members << UserAccount.find_by(username: 'brigadista').user_profile
   team.members.each_with_index do |brigadist, index|
-    HouseBlock.create!(name: "Bloque #{index}", team_id: team.id, wedge: Wedge.last, brigadist:)
+    house_block = HouseBlock.create!(name: "Bloque #{index}", block_type: 'frente_a_frente')
+    house_block.wedges << Wedge.last
+    house_block.brigadists << brigadist
   end
 
   SeedTask.create!(task_name: 'create_house_blocks_v2')
@@ -228,7 +230,7 @@ unless SeedTask.find_by(task_name: 'create_houses_v2')
     house.city = City.first
     house.neighborhood = Neighborhood.first
     house.wedge = Wedge.first
-    house.house_block = house_block
+    house.house_blocks << house_block
     house.created_by = UserProfile.first
     house.reference_code = index
     house.status = 'green'
@@ -344,8 +346,10 @@ unless SeedTask.find_by(task_name: 'permissions_for_list_wedges')
 end
 
 unless SeedTask.find_by(task_name: 'move_brigadists_to_mtm_house_blocks')
-  HouseBlock.where.not(user_profile_id: nil).find_each do |house_block|
-    UserProfileHouseBlock.create!(house_block: house_block, user_profile: house_block.brigadist)
+  if HouseBlock.column_names.include?('user_profile_id')
+    HouseBlock.where.not(user_profile_id: nil).find_each do |house_block|
+      UserProfileHouseBlock.create!(house_block: house_block, user_profile: house_block.brigadist)
+    end
   end
   SeedTask.create(task_name: 'move_brigadists_to_mtm_house_blocks')
 end

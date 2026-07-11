@@ -9,15 +9,6 @@ module Api
 
           attributes :id, :name
 
-          attribute :neighborhood do |house_block|
-            next unless house_block.neighborhood
-
-            {
-              id: house_block.neighborhood&.id,
-              name: house_block.neighborhood&.name
-            }
-          end
-
           attribute :wedge do |house_block|
             next if house_block.wedges.blank?
 
@@ -26,10 +17,6 @@ module Api
               id: wedges&.first&.id,
               name: wedges&.pluck(:name)&.join(', ')
             }
-          end
-
-          attribute :in_use do |house_block|
-            !house_block.brigadist.nil?
           end
 
           attribute :houses do |house_block|
@@ -41,10 +28,6 @@ module Api
                 reference_code: house.reference_code
               }
             end
-          end
-
-          attribute :brigadist do |house_block|
-            "#{house_block.brigadist&.first_name}, #{house_block.brigadist&.last_name}"
           end
 
           attribute :type, &:block_type
