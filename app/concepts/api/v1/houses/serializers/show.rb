@@ -33,8 +33,16 @@ module Api
             { id: house.wedge.id, name: house.wedge.name } if house.wedge
           end
 
-          attribute :house_block do |house|
-            { id: house.house_block.id, name: house.house_block.name } if house.house_block
+          attribute :house_blocks do |house|
+            next if house.house_blocks.blank?
+
+            house.house_blocks.map do |block|
+              {
+                id: block.id,
+                name: block.name,
+                type: block.block_type
+              }
+            end
           end
 
           attribute :special_place do |house|

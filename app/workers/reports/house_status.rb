@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/workers/lock_account_worker.rb
 
 module Reports
@@ -6,7 +8,7 @@ module Reports
 
     def perform
       statuses_to_insert = []
-      House.all.find_each do |house|
+      House.includes(:house_blocks).find_each do |house|
         statuses_to_insert << {
           date: Time.zone.today,
           infected_containers: house.infected_containers,
@@ -15,7 +17,9 @@ module Reports
           house_id: house.id,
           city_id: house.city_id,
           country_id: house.country_id,
-          house_block_id: house.house_block_id,
+          house_block_id: house.house_blocks.find do |house_block|
+            house_block.block_type == 'frente_a_frente'
+          end&.id,
           neighborhood_id: house.neighborhood_id,
           team_id: house.team_id,
           wedge_id: house.wedge_id,

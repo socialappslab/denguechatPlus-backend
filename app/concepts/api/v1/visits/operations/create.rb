@@ -213,6 +213,7 @@ module Api
 
           def create_and_get_house_id
             house_block = HouseBlock.find_by(id: @house_info[:house_block_id])
+            house_block_id = @house_info.delete(:house_block_id)
             team =  @current_user.teams&.first
             wedge = team.wedge
             neighborhood = team.sector
@@ -221,7 +222,11 @@ module Api
             country = neighborhood.country
             user_profile = @current_user.user_profile
             reference_code = @house_info[:reference_code] || generate_code
-            location_status = @house_info[:latitude] && @house_info[:longitude] ? 'with_coordinates' : 'without_coordinates'
+            location_status = if @house_info[:latitude] && @house_info[:longitude]
+                                'with_coordinates'
+                              else
+                                'without_coordinates'
+                              end
             @house_info[:latitude] = @house_info[:latitude] || -3.775520
             @house_info[:longitude] = @house_info[:longitude] || -73.450878
 
@@ -230,13 +235,14 @@ module Api
             @house_info[:city_id] = city.id
             @house_info[:neighborhood_id] = neighborhood.id
             @house_info[:wedge_id] = wedge.id
-            @house_info[:house_block_id] = house_block.id
             @house_info[:team_id] = team.id
             @house_info[:user_profile_id] = user_profile.id
             @house_info[:reference_code] = reference_code
             @house_info[:location_status] = location_status
 
             @house = House.create!(@house_info)
+            HouseBlockHouse.find_or_create_by!(house: @house, house_block_id: house_block_id || house_block.id)
+            @house
           end
 
           def update_house_status
@@ -281,7 +287,6 @@ module Api
             house_status.status = house.status
             house_status.save
           end
-
 
           def visit_permission_granted?
             option = Option.find_by(id: @params[:visit_permission_option_id])

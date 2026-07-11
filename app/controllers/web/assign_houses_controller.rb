@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Web
   class AssignHousesController < ApplicationWebController
     skip_before_action :verify_authenticity_token, only: %i[list houses house_blocks sectors brigadists]
@@ -29,7 +31,7 @@ module Web
     def house_blocks
       neighborhood_id = params[:sector_id]
       if neighborhood_id.present?
-        @house_blocks = HouseBlock.joins(:team).where(teams: { neighborhood_id: neighborhood_id })
+        @house_blocks = HouseBlock.where(neighborhood_id: neighborhood_id)
         render json: @house_blocks.select(:id, :name)
       else
         render json: { error: 'Neighborhood ID is required' }, status: :bad_request
@@ -40,8 +42,9 @@ module Web
     def houses
       house_block_id = params[:house_block_id]
       if house_block_id.present?
-        @houses = House.where(house_block_id: house_block_id)
-        render json: @houses.select(:id, :name, :address)
+        @houses = House.joins(:house_block_houses)
+                       .where(house_block_houses: { house_block_id: house_block_id })
+        render json: @houses.select(:id, :reference_code, :address)
       else
         render json: { error: 'House Block ID is required' }, status: :bad_request
       end

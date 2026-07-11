@@ -67,7 +67,9 @@ module Api
           def user_profile_clause(relation)
             return relation if @filter.nil? || @filter[:user_profile_id].blank?
 
-            relation.where(user_profile_id: @filter[:user_profile_id])
+            relation
+              .joins(:user_profile_house_blocks)
+              .where(user_profile_house_blocks: { user_profile_id: @filter[:user_profile_id] })
           end
 
           def type_clause(relation)
@@ -83,8 +85,8 @@ module Api
             @sort[:field] = 'cities.name' if @sort[:field] == 'city'
             @sort[:field] = 'wedges.id' if @sort[:field] == 'wedge'
             @sort[:field] = 'organizations.name' if @sort[:field] == 'organization'
-            @sort[:field] = "house_blocks.block_type" if @sort[:field] == 'type'
-            @sort[:field] = "house_blocks.name" if @sort[:field] == 'name'
+            @sort[:field] = 'house_blocks.block_type' if @sort[:field] == 'type'
+            @sort[:field] = 'house_blocks.name' if @sort[:field] == 'name'
 
             sort_by_table_columns(relation) if @sort[:field]
           end

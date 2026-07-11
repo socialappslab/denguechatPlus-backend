@@ -15,11 +15,6 @@ module Api
                  renderer_options: { serializer: Api::V1::Wedges::Serializers::Show }
       end
 
-      def house_blocks
-        endpoint operation: Api::V1::Wedges::Operations::HouseBlocks,
-                 renderer_options: { serializer: Api::V1::Wedges::Serializers::HouseBlockList }
-      end
-
       def stats
         endpoint operation: Api::V1::Wedges::Operations::Stats,
                  renderer_options: { serializer: Api::V1::Wedges::Serializers::Stats },

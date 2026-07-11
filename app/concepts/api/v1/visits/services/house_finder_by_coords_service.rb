@@ -12,7 +12,9 @@ module Api
             raise ArgumentError, 'house_block_id cannot be nil' if house_block_id.nil?
             return nil if latitude.nil? || longitude.nil?
 
-            House.where(house_block_id:).find_each do |house|
+            House.joins(:house_block_houses)
+                 .where(house_block_houses: { house_block_id: })
+                 .find_each do |house|
               distance = get_distance(latitude, longitude, house.latitude, house.longitude)
               return house if distance < DISTANCE
             end

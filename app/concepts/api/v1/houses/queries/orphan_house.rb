@@ -62,7 +62,9 @@ module Api
           def house_block_id(relation)
             return relation if @filter.nil? || @filter[:house_block_id].blank?
 
-            relation.where(house_block_id: @filter[:house_block_id])
+            relation
+              .joins(:house_block_houses)
+              .where(house_block_houses: { house_block_id: @filter[:house_block_id] })
           end
 
           def wedge_id(relation)

@@ -59,7 +59,7 @@ Rails.application.routes.draw do
           get :orphan_houses
         end
       end
-      resources :house_blocks, only: %i[index update create]
+      resources :house_blocks, only: %i[index update]
       resources :visits, only: %i[create index show update destroy] do
         collection do
           post :bulk_upload
@@ -129,7 +129,6 @@ Rails.application.routes.draw do
       end
       resources :wedges, except: :index do
         get '/', to: 'public/wedges#index', on: :collection
-        get 'house_blocks', to: 'wedges#house_blocks', on: :member
         get 'stats', to: 'wedges#stats', on: :member
       end
       resources :reports do
