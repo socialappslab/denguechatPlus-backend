@@ -62,6 +62,9 @@
 class House < ApplicationRecord
   include HasRiskColor
 
+  MIN_CONSECUTIVE_GREEN_STATUSES_FOR_TARIKI = 4
+  TARIKI_TIME_WINDOW = 2.months
+
   belongs_to :country
   belongs_to :state
   belongs_to :city
@@ -81,46 +84,67 @@ class House < ApplicationRecord
 
   after_commit :update_consecutive_green_status
 
-  def tariki?(status_on_memory = nil)
+  def tariki?(status_on_memory = nil, reference_time: Time.current)
     status = status_on_memory || self.status
     return false if status.blank?
     return false unless status == Constants::RiskColor::GREEN
 
-    min_consecutive_green = AppConfigParam.find_by(name: 'consecutive_green_statuses_for_tariki_house')&.value.to_i
-    take_same_date_visit = AppConfigParam.find_by(name: 'tariki_point_same_date', value: 1)
-    associated_model = take_same_date_visit ? Visit : HouseStatus
-    return false if min_consecutive_green <= 0
-
-    return true if min_consecutive_green == 1
-
-    statuses = associated_model.where(house_id: id).order(created_at: :desc).limit(min_consecutive_green).pluck(:status)
+    reference_time = tariki_reference_time(reference_time)
+    statuses = tariki_statuses_in_window(MIN_CONSECUTIVE_GREEN_STATUSES_FOR_TARIKI, reference_time)
     statuses&.shift
     statuses&.unshift(status)
-    statuses.all?(Constants::RiskColor::GREEN) && statuses.length >= min_consecutive_green
+    statuses.all?(Constants::RiskColor::GREEN) && statuses.length >= MIN_CONSECUTIVE_GREEN_STATUSES_FOR_TARIKI
   end
 
-  def consecutive_green_status_calculation
-    limit = AppConfigParam.find_by(name: 'consecutive_green_statuses_for_tariki_house')&.value.to_i
-    limit = 4 if limit.zero?
+  def consecutive_green_status_calculation(reference_time: Time.current)
+    reference_time = tariki_reference_time(reference_time)
 
-    use_visits = AppConfigParam.find_by(name: 'tariki_point_same_date')&.value.to_i == 1
-
-    statuses = if use_visits
-                 visits.sort_by(&:created_at).last(limit).reverse.map(&:status)
-               else
-                 house_statuses.sort_by(&:created_at).last(limit).reverse.map(&:status)
-               end
+    statuses = tariki_statuses_in_window(MIN_CONSECUTIVE_GREEN_STATUSES_FOR_TARIKI, reference_time)
 
     statuses.take_while { |entry| entry == Constants::RiskColor::GREEN }.count
   end
 
   private
 
+  def tariki_reference_time(reference_time)
+    return Time.current if reference_time.blank?
+    return reference_time.end_of_day if reference_time.is_a?(Date) && !reference_time.is_a?(Time)
+
+    parsed_time = if reference_time.respond_to?(:in_time_zone)
+                    reference_time.in_time_zone
+                  else
+                    Time.zone.parse(reference_time.to_s)
+                  end
+    parsed_time || Time.current
+  end
+
+  def tariki_statuses_in_window(limit, reference_time)
+    window_start = reference_time - TARIKI_TIME_WINDOW
+    ranked_visits =
+      visits.where(visited_at: window_start..reference_time)
+            .select(
+              <<~SQL.squish
+                visits.status,
+                visits.visited_at,
+                visits.created_at,
+                ROW_NUMBER() OVER (
+                  PARTITION BY DATE(visits.visited_at)
+                  ORDER BY visits.visited_at DESC, visits.created_at DESC
+                ) AS daily_rank
+              SQL
+            )
+
+    Visit.unscoped
+         .from("(#{ranked_visits.to_sql}) daily_visits")
+         .where('daily_rank = 1')
+         .order(Arel.sql('daily_visits.visited_at DESC, daily_visits.created_at DESC'))
+         .limit(limit)
+         .pluck(Arel.sql('daily_visits.status'))
+  end
+
   def update_consecutive_green_status
-    take_same_date_visit = AppConfigParam.find_by(name: 'tariki_point_same_date', value: 1)
-    associated_model = take_same_date_visit ? Visit : HouseStatus
-    statuses = associated_model.where(house_id: id).order(created_at: :desc).pluck(:status)
-    statuses.unshift(status)
+    reference_time = tariki_reference_time(last_visit || Time.current)
+    statuses = tariki_statuses_in_window(MIN_CONSECUTIVE_GREEN_STATUSES_FOR_TARIKI, reference_time)
     consecutive_count = 0
     if statuses.first == Constants::RiskColor::GREEN
       statuses.each do |entry|

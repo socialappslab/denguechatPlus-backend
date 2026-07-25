@@ -44,6 +44,8 @@ class Visit < ApplicationRecord
   include Discard::Model
   include HasRiskColor
 
+  attr_accessor :point_awards
+
   belongs_to :house
   belongs_to :user_account
   belongs_to :team

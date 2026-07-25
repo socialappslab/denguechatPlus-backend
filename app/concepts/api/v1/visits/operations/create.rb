@@ -105,6 +105,7 @@ module Api
             hosts = @params.delete(:host)
             @params[:host] = hosts.join(', ') if hosts
             begin
+              @previous_tariki_status = @house.tariki?(reference_time: @params[:visited_at] || Time.current)
               @ctx[:model] = Visit.create!(@params)
               Success({ ctx: @ctx, type: :created })
             rescue StandardError => error
@@ -244,15 +245,15 @@ module Api
             last_visit_at = @params[:visited_at] || Time.now.utc
 
             if inspections_ids.empty? && !visit_permission_granted?
+              @ctx[:model].update!(status: Constants::RiskColor::YELLOW)
               @house.update!(
                 infected_containers: 0,
                 potential_containers: 0,
                 non_infected_containers: 0,
                 last_visit: last_visit_at,
                 status: Constants::RiskColor::YELLOW,
-                tariki_status: @house.tariki?(Constants::RiskColor::YELLOW)
+                tariki_status: @house.tariki?(Constants::RiskColor::YELLOW, reference_time: last_visit_at)
               )
-              @ctx[:model].update!(status: Constants::RiskColor::YELLOW)
             else
               ::Services::VisitHouseStatusUpdater.apply!(
                 visit: @ctx[:model],
@@ -260,6 +261,8 @@ module Api
                 last_visit_at:
               )
             end
+
+            @tariki_reached = !@previous_tariki_status && @house.tariki_status?
           end
 
           def create_house_status_daily
@@ -282,7 +285,6 @@ module Api
             house_status.save
           end
 
-
           def visit_permission_granted?
             option = Option.find_by(id: @params[:visit_permission_option_id])
             option&.value.to_i == 1
@@ -300,14 +302,14 @@ module Api
           end
 
           def manage_points
-            if @house.tariki_status
-              Api::V1::Points::Services::Transactions.assign_point(earner: @current_user, house_id: @house.id,
-                                                                   visit_id: @ctx[:model].id)
-            end
-            return if @house.tariki_status
+            @ctx[:model].point_awards = []
+            return unless @tariki_reached
 
-            Api::V1::Points::Services::Transactions.remove_point(earner: @current_user, house_id: @house.id,
-                                                                 visit_id: @ctx[:model].id)
+            @ctx[:model].point_awards = Api::V1::Points::Services::Transactions.assign_point(
+              earner: @current_user,
+              house_id: @house.id,
+              visit_id: @ctx[:model].id
+            )
           end
         end
       end

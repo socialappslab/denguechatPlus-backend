@@ -6,6 +6,12 @@ module Api
       module Queries
         class Index
           VersionParamStruct = Struct.new(:id, :version, :resource_name, :resource_data)
+          MOBILE_EXCLUDED_APP_CONFIG_PARAM_NAMES = %w[
+            consecutive_green_statuses_for_tariki_house
+            green_house_points_team
+            green_house_points_user_account
+            tariki_point_same_date
+          ].freeze
 
           include Api::V1::Lib::Queries::QueryHelper
 
@@ -50,6 +56,8 @@ module Api
 
           def get_data(model, allowed_columns)
             records = model.kept.select(*allowed_columns)
+            records = records.where.not(name: MOBILE_EXCLUDED_APP_CONFIG_PARAM_NAMES) if model == AppConfigParam
+
             records.map do |record|
               data = allowed_columns.index_with { |column| record.send(column) }
               if record.respond_to?(:photo) && record.photo.attached?

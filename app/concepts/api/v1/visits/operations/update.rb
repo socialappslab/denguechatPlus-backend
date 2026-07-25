@@ -4,7 +4,7 @@ module Api
   module V1
     module Visits
       module Operations
-        class Update < ApplicationOperation
+        class Update < ApplicationOperation # rubocop:disable Metrics/ClassLength
           include Dry::Transaction
 
           tee :params
@@ -49,6 +49,7 @@ module Api
             @params[:host] = hosts.join(', ') if hosts
             begin
               visit = Visit.find_by(id: @params[:id])
+              @previous_tariki_status = visit.house.tariki_status?
               visit.update!(@params)
               @ctx[:model] = visit.reload
               Success({ ctx: @ctx, type: :created })
@@ -82,6 +83,8 @@ module Api
                 last_visit_at:
               )
             end
+
+            @tariki_reached = !@previous_tariki_status && @house.tariki_status?
           end
 
           def update_house_status_daily
@@ -109,14 +112,21 @@ module Api
           end
 
           def assign_points
-            if @house.tariki_status
-              Api::V1::Points::Services::Transactions.assign_point(earner: @ctx[:model].user_account,
-                                                                   house_id: @house.id, visit_id: @ctx[:model].id)
+            @ctx[:model].point_awards = []
+            if @tariki_reached
+              @ctx[:model].point_awards = Api::V1::Points::Services::Transactions.assign_point(
+                earner: @ctx[:model].user_account,
+                house_id: @house.id,
+                visit_id: @ctx[:model].id
+              )
             end
-            return if @house.tariki_status
+            return if @house.tariki_status?
 
-            Api::V1::Points::Services::Transactions.remove_point(earner: @ctx[:model].user_account, house_id: @house.id,
-                                                                 visit_id: @ctx[:model].id)
+            Api::V1::Points::Services::Transactions.remove_point(
+              earner: @ctx[:model].user_account,
+              house_id: @house.id,
+              visit_id: @ctx[:model].id
+            )
           end
         end
       end

@@ -46,6 +46,7 @@ module Api
           def update_inspection
             begin
               inspection = Inspection.find_by(id: @params[:id])
+              @previous_tariki_status = inspection.visit.house.tariki_status?
               inspection = manage_photo(inspection)
               @params[:color] = ::Services::RiskColorCalculator.inspection_color(
                 has_water: @params.fetch(:has_water, inspection.has_water),
@@ -73,6 +74,7 @@ module Api
               last_visit_at:,
               denied_without_inspections: Constants::RiskColor::RED
             )
+            @tariki_reached = !@previous_tariki_status && @house.tariki_status?
           end
 
           def update_house_status_daily
@@ -89,11 +91,11 @@ module Api
           def assign_points
             user_account = @visit.user_account
 
-            if @house.tariki_status
+            if @tariki_reached
               Api::V1::Points::Services::Transactions.assign_point(earner: user_account, house_id: @house.id,
                                                                    visit_id: @visit.id)
             end
-            return if @house.tariki_status
+            return if @house.tariki_status?
 
             Api::V1::Points::Services::Transactions.remove_point(earner: user_account, house_id: @house.id,
                                                                  visit_id: @visit.id)

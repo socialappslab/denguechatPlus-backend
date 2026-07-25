@@ -31,16 +31,35 @@ module Api
           def fetch_data
             sector_id = @current_user.teams&.first&.neighborhood_id || 0
             month_range = Time.current.beginning_of_month...Time.current.next_month.beginning_of_month
+            tariki_reference_time = Time.current
+            tariki_window_start = ActiveRecord::Base.connection.quote(tariki_reference_time - House::TARIKI_TIME_WINDOW)
+            tariki_window_end = ActiveRecord::Base.connection.quote(tariki_reference_time)
             monthly_inspections = Inspection.joins(visit: :house)
                                             .merge(Visit.kept)
                                             .where(houses: { neighborhood_id: sector_id })
                                             .where(inspections: { created_at: month_range })
 
             query = <<~SQL.squish
-              WITH last_4_statuses AS (
-                SELECT house_id, status, updated_at, neighborhood_id,
-                       ROW_NUMBER() OVER (PARTITION BY house_id ORDER BY updated_at DESC) AS rn
-                FROM house_statuses
+              WITH daily_visits AS (
+                SELECT visits.house_id, visits.status, visits.visited_at, visits.created_at,
+                       houses.neighborhood_id,
+                       ROW_NUMBER() OVER (
+                         PARTITION BY visits.house_id, DATE(visits.visited_at)
+                         ORDER BY visits.visited_at DESC, visits.created_at DESC
+                       ) AS daily_rn
+                FROM visits
+                INNER JOIN houses ON houses.id = visits.house_id
+                WHERE visits.visited_at BETWEEN #{tariki_window_start} AND #{tariki_window_end}
+                  AND visits.discarded_at IS NULL
+              )
+              , last_4_statuses AS (
+                SELECT house_id, status, neighborhood_id,
+                       ROW_NUMBER() OVER (
+                         PARTITION BY house_id
+                         ORDER BY visited_at DESC, created_at DESC
+                       ) AS rn
+                FROM daily_visits
+                WHERE daily_rn = 1
               )
               , filtered_statuses AS (
                 SELECT house_id, status, neighborhood_id
