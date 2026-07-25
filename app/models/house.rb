@@ -62,9 +62,6 @@
 class House < ApplicationRecord
   include HasRiskColor
 
-  MIN_CONSECUTIVE_GREEN_STATUSES_FOR_TARIKI = 4
-  TARIKI_TIME_WINDOW = 2.months
-
   belongs_to :country
   belongs_to :state
   belongs_to :city
@@ -84,27 +81,57 @@ class House < ApplicationRecord
 
   after_commit :update_consecutive_green_status
 
-  def tariki?(status_on_memory = nil, reference_time: Time.current)
-    status = status_on_memory || self.status
-    return false if status.blank?
-    return false unless status == Constants::RiskColor::GREEN
-
-    reference_time = tariki_reference_time(reference_time)
-    statuses = tariki_statuses_in_window(MIN_CONSECUTIVE_GREEN_STATUSES_FOR_TARIKI, reference_time)
-    statuses&.shift
-    statuses&.unshift(status)
-    statuses.all?(Constants::RiskColor::GREEN) && statuses.length >= MIN_CONSECUTIVE_GREEN_STATUSES_FOR_TARIKI
+  def tariki?(status_on_memory = nil, reference_time: Time.current,
+              required_green_visits: AppConfigParam.tariki_required_green_visits,
+              time_window: AppConfigParam.tariki_time_window)
+    tariki_state(
+      status_on_memory || status,
+      reference_time:,
+      required_green_visits:,
+      time_window:
+    )[:tariki_status]
   end
 
-  def consecutive_green_status_calculation(reference_time: Time.current)
-    reference_time = tariki_reference_time(reference_time)
+  def consecutive_green_status_calculation(reference_time: Time.current,
+                                           required_green_visits: AppConfigParam.tariki_required_green_visits,
+                                           time_window: AppConfigParam.tariki_time_window)
+    tariki_state(
+      status,
+      reference_time:,
+      required_green_visits:,
+      time_window:
+    )[:consecutive_green_status]
+  end
 
-    statuses = tariki_statuses_in_window(MIN_CONSECUTIVE_GREEN_STATUSES_FOR_TARIKI, reference_time)
+  def current_tariki_state(required_green_visits: AppConfigParam.tariki_required_green_visits,
+                           time_window: AppConfigParam.tariki_time_window)
+    latest_visit = visits.reorder(visited_at: :desc, created_at: :desc).first
+    return { tariki_status: false, consecutive_green_status: 0 } unless latest_visit
 
-    statuses.take_while { |entry| entry == Constants::RiskColor::GREEN }.count
+    tariki_state(
+      latest_visit.status,
+      reference_time: latest_visit.visited_at,
+      required_green_visits:,
+      time_window:
+    )
   end
 
   private
+
+  def tariki_state(status, reference_time:, required_green_visits:, time_window:)
+    return { tariki_status: false, consecutive_green_status: 0 } unless status == Constants::RiskColor::GREEN
+
+    reference_time = tariki_reference_time(reference_time)
+    statuses = tariki_statuses_in_window(required_green_visits, reference_time, time_window)
+    statuses.shift
+    statuses.unshift(status)
+    consecutive_green_status = statuses.take_while { |entry| entry == Constants::RiskColor::GREEN }.count
+
+    {
+      tariki_status: consecutive_green_status >= required_green_visits,
+      consecutive_green_status:
+    }
+  end
 
   def tariki_reference_time(reference_time)
     return Time.current if reference_time.blank?
@@ -118,8 +145,8 @@ class House < ApplicationRecord
     parsed_time || Time.current
   end
 
-  def tariki_statuses_in_window(limit, reference_time)
-    window_start = reference_time - TARIKI_TIME_WINDOW
+  def tariki_statuses_in_window(limit, reference_time, time_window)
+    window_start = reference_time - time_window
     ranked_visits =
       visits.where(visited_at: window_start..reference_time)
             .select(
@@ -143,19 +170,9 @@ class House < ApplicationRecord
   end
 
   def update_consecutive_green_status
-    reference_time = tariki_reference_time(last_visit || Time.current)
-    statuses = tariki_statuses_in_window(MIN_CONSECUTIVE_GREEN_STATUSES_FOR_TARIKI, reference_time)
-    consecutive_count = 0
-    if statuses.first == Constants::RiskColor::GREEN
-      statuses.each do |entry|
-        break unless entry == Constants::RiskColor::GREEN
-
-        consecutive_count += 1
-      end
-    else
-      consecutive_count = 0
-    end
-
-    update_column(:consecutive_green_status, consecutive_count)
+    update_column( # rubocop:disable Rails/SkipsModelValidations
+      :consecutive_green_status,
+      current_tariki_state[:consecutive_green_status]
+    )
   end
 end

@@ -10,9 +10,10 @@ RSpec.describe Api::V1::Points::Services::Transactions do
 
     let(:house_id) { 17 }
     let(:visit_id) { 29 }
+    let(:visited_at) { Time.zone.parse('2026-07-20 10:00') }
     let(:user_account) { UserAccount.new }
     let(:team) { Team.new }
-    let(:visit) { instance_double(Visit, team:, user_account:) }
+    let(:visit) { instance_double(Visit, team:, user_account:, visited_at:) }
     let(:user_points) { double }
     let(:team_points) { double }
     let(:user_point) { instance_double(Point) }
@@ -22,13 +23,13 @@ RSpec.describe Api::V1::Points::Services::Transactions do
       allow(Visit).to receive(:find_by).with(id: visit_id).and_return(visit)
       allow(user_account).to receive(:points).and_return(user_points)
       allow(team).to receive(:points).and_return(team_points)
-      allow(user_points).to receive(:where).with(house_id:).and_return(user_points)
+      allow(user_points).to receive(:joins).with(:visit).and_return(user_points)
       allow(user_points).to receive(:where)
-        .with('DATE(created_at)::date = ?::date', Date.current)
+        .with(house_id:, visits: { visited_at: visited_at.all_day })
         .and_return(user_points)
     end
 
-    context 'when no points have been awarded for the house today' do
+    context 'when no points have been awarded for the house on the visit day' do
       before do
         allow(user_points).to receive(:first).and_return(nil)
         allow(AppConfigParam).to receive(:find_by)
@@ -50,7 +51,7 @@ RSpec.describe Api::V1::Points::Services::Transactions do
       end
     end
 
-    context 'when points have already been awarded for the house today' do
+    context 'when points have already been awarded for the house on the visit day' do
       before do
         allow(user_points).to receive(:first).and_return(instance_double(Point))
       end

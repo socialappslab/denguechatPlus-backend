@@ -2,8 +2,7 @@
 
 module Services
   class VisitHouseStatusUpdater
-    def self.apply!(visit:, house:, last_visit_at:, denied_without_inspections: Constants::RiskColor::YELLOW,
-                    reference_time: last_visit_at)
+    def self.apply!(visit:, house:, last_visit_at:, denied_without_inspections: Constants::RiskColor::YELLOW)
       status = RiskColorCalculator.visit_status(visit, denied_without_inspections:)
       counts = if visit.inspections.any?
                  RiskColorCalculator.inspection_counts(visit.inspections.group(:color).count)
@@ -15,9 +14,9 @@ module Services
       house.update!(
         **counts,
         last_visit: last_visit_at,
-        status:,
-        tariki_status: house.tariki?(status, reference_time:)
+        status:
       )
+      TarikiStatusRecalculator.recalculate!(house)
     end
   end
 end

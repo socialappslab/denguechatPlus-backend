@@ -59,5 +59,49 @@ RSpec.describe House do
 
       expect(house.tariki?(reference_time:)).to be(false)
     end
+
+    it 'uses the configured number of required green visit days' do
+      create_visit(status: Constants::RiskColor::GREEN, visited_at: reference_time - 2.days)
+      create_visit(status: Constants::RiskColor::GREEN, visited_at: reference_time - 1.day)
+      create_visit(status: Constants::RiskColor::GREEN, visited_at: reference_time)
+
+      house.update!(status: Constants::RiskColor::GREEN)
+
+      expect(house.tariki?(reference_time:, required_green_visits: 3)).to be(true)
+      expect(house.tariki?(reference_time:, required_green_visits: 4)).to be(false)
+    end
+
+    it 'uses the configured time window' do
+      create_visit(status: Constants::RiskColor::GREEN, visited_at: reference_time - 6.weeks)
+      create_visit(status: Constants::RiskColor::GREEN, visited_at: reference_time - 2.days)
+      create_visit(status: Constants::RiskColor::GREEN, visited_at: reference_time - 1.day)
+      create_visit(status: Constants::RiskColor::GREEN, visited_at: reference_time)
+
+      house.update!(status: Constants::RiskColor::GREEN)
+
+      expect(house.tariki?(reference_time:, time_window: 2.months)).to be(true)
+      expect(house.tariki?(reference_time:, time_window: 1.month)).to be(false)
+    end
+
+    it 'ignores discarded visits when deriving the current Tariki state' do
+      create_visit(status: Constants::RiskColor::GREEN, visited_at: reference_time - 3.days)
+      create_visit(status: Constants::RiskColor::GREEN, visited_at: reference_time - 2.days)
+      create_visit(status: Constants::RiskColor::GREEN, visited_at: reference_time - 1.day)
+      create_visit(status: Constants::RiskColor::GREEN, visited_at: reference_time)
+      create_visit(status: Constants::RiskColor::RED, visited_at: reference_time + 1.day).discard!
+
+      expect(house.current_tariki_state).to eq(tariki_status: true, consecutive_green_status: 4)
+    end
+
+    it 'clears persisted Tariki state when there are no kept visits' do
+      house.update_columns( # rubocop:disable Rails/SkipsModelValidations
+        tariki_status: true,
+        consecutive_green_status: 4
+      )
+
+      Services::TarikiStatusRecalculator.recalculate!(house)
+
+      expect(house.reload).to have_attributes(tariki_status: false, consecutive_green_status: 0)
+    end
   end
 end

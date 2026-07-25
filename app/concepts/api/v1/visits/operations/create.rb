@@ -105,7 +105,7 @@ module Api
             hosts = @params.delete(:host)
             @params[:host] = hosts.join(', ') if hosts
             begin
-              @previous_tariki_status = @house.tariki?(reference_time: @params[:visited_at] || Time.current)
+              @previous_tariki_status = @house.tariki_status?
               @ctx[:model] = Visit.create!(@params)
               Success({ ctx: @ctx, type: :created })
             rescue StandardError => error
@@ -251,9 +251,9 @@ module Api
                 potential_containers: 0,
                 non_infected_containers: 0,
                 last_visit: last_visit_at,
-                status: Constants::RiskColor::YELLOW,
-                tariki_status: @house.tariki?(Constants::RiskColor::YELLOW, reference_time: last_visit_at)
+                status: Constants::RiskColor::YELLOW
               )
+              ::Services::TarikiStatusRecalculator.recalculate!(@house)
             else
               ::Services::VisitHouseStatusUpdater.apply!(
                 visit: @ctx[:model],

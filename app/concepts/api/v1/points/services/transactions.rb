@@ -10,19 +10,23 @@ module Api
             return [] unless house_id
             return [] unless visit_id
 
+            visit = Visit.find_by(id: visit_id)
+            return [] unless visit&.visited_at
+
             case earner
             when UserAccount
               user_account = earner
-              team = Visit.find_by(id: visit_id)&.team
+              team = visit.team
             when Team
               team = earner
-              user_account = Visit.find_by(id: visit_id)&.user_account
+              user_account = visit.user_account
             else
               return []
             end
 
-            existing_points = earner.points.where(house_id:).where('DATE(created_at)::date = ?::date',
-                                                                   Date.current)&.first
+            existing_points = earner.points.joins(:visit)
+                                    .where(house_id:, visits: { visited_at: visit.visited_at.all_day })
+                                    .first
 
             return [] if existing_points
 
