@@ -79,52 +79,12 @@ class House < ApplicationRecord
   risk_color_enum :status, allow_nil: true
   enum :assignment_status, { assigned: 1, orphaned: 0 }
 
-  after_commit :update_consecutive_green_status
-
-  def tariki?(status_on_memory = nil, reference_time: Time.current,
-              required_green_visits: AppConfigParam.tariki_required_green_visits,
-              time_window: AppConfigParam.tariki_time_window)
-    tariki_state(
-      status_on_memory || status,
-      reference_time:,
-      required_green_visits:,
-      time_window:
-    )[:tariki_status]
-  end
-
-  def consecutive_green_status_calculation(reference_time: Time.current,
-                                           required_green_visits: AppConfigParam.tariki_required_green_visits,
-                                           time_window: AppConfigParam.tariki_time_window)
-    tariki_state(
-      status,
-      reference_time:,
-      required_green_visits:,
-      time_window:
-    )[:consecutive_green_status]
-  end
-
   def current_tariki_state(required_green_visits: AppConfigParam.tariki_required_green_visits,
                            time_window: AppConfigParam.tariki_time_window)
-    latest_visit = visits.reorder(visited_at: :desc, created_at: :desc).first
+    latest_visit = visits.where.not(visited_at: nil).reorder(visited_at: :desc, created_at: :desc).first
     return { tariki_status: false, consecutive_green_status: 0 } unless latest_visit
 
-    tariki_state(
-      latest_visit.status,
-      reference_time: latest_visit.visited_at,
-      required_green_visits:,
-      time_window:
-    )
-  end
-
-  private
-
-  def tariki_state(status, reference_time:, required_green_visits:, time_window:)
-    return { tariki_status: false, consecutive_green_status: 0 } unless status == Constants::RiskColor::GREEN
-
-    reference_time = tariki_reference_time(reference_time)
-    statuses = tariki_statuses_in_window(required_green_visits, reference_time, time_window)
-    statuses.shift
-    statuses.unshift(status)
+    statuses = tariki_statuses_in_window(required_green_visits, latest_visit.visited_at, time_window)
     consecutive_green_status = statuses.take_while { |entry| entry == Constants::RiskColor::GREEN }.count
 
     {
@@ -133,17 +93,7 @@ class House < ApplicationRecord
     }
   end
 
-  def tariki_reference_time(reference_time)
-    return Time.current if reference_time.blank?
-    return reference_time.end_of_day if reference_time.is_a?(Date) && !reference_time.is_a?(Time)
-
-    parsed_time = if reference_time.respond_to?(:in_time_zone)
-                    reference_time.in_time_zone
-                  else
-                    Time.zone.parse(reference_time.to_s)
-                  end
-    parsed_time || Time.current
-  end
+  private
 
   def tariki_statuses_in_window(limit, reference_time, time_window)
     window_start = reference_time - time_window
@@ -167,12 +117,5 @@ class House < ApplicationRecord
          .order(Arel.sql('daily_visits.visited_at DESC, daily_visits.created_at DESC'))
          .limit(limit)
          .pluck(Arel.sql('daily_visits.status'))
-  end
-
-  def update_consecutive_green_status
-    update_column( # rubocop:disable Rails/SkipsModelValidations
-      :consecutive_green_status,
-      current_tariki_state[:consecutive_green_status]
-    )
   end
 end

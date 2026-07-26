@@ -12,10 +12,7 @@ module Services
       updated = false
 
       house.with_lock do
-        state = house.current_tariki_state(
-          required_green_visits: AppConfigParam.tariki_required_green_visits,
-          time_window: AppConfigParam.tariki_time_window
-        )
+        state = house.current_tariki_state
         changes = state.reject { |attribute, value| house.public_send(attribute) == value }
         next if changes.empty?
 
