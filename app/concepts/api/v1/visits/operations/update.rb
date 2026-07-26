@@ -49,7 +49,6 @@ module Api
             @params[:host] = hosts.join(', ') if hosts
             begin
               visit = Visit.find_by(id: @params[:id])
-              @previous_tariki_status = visit.house.tariki_status?
               visit.update!(@params)
               @ctx[:model] = visit.reload
               Success({ ctx: @ctx, type: :created })
@@ -69,22 +68,12 @@ module Api
             @house = @ctx[:model].house
             last_visit_at = @params[:visited_at] || Time.now.utc
 
-            if @ctx[:model].inspections.none?
-              ::Services::VisitHouseStatusUpdater.apply!(
-                visit: @ctx[:model],
-                house: @house,
-                last_visit_at:,
-                denied_without_inspections: Constants::RiskColor::GREEN
-              )
-            else
-              ::Services::VisitHouseStatusUpdater.apply!(
-                visit: @ctx[:model],
-                house: @house,
-                last_visit_at:
-              )
-            end
-
-            @tariki_reached = !@previous_tariki_status && @house.tariki_status?
+            @tariki_reached = ::Services::VisitHouseStatusUpdater.apply_and_tariki_reached?(
+              visit: @ctx[:model],
+              house: @house,
+              last_visit_at:,
+              denied_without_inspections: Constants::RiskColor::GREEN
+            )
           end
 
           def update_house_status_daily

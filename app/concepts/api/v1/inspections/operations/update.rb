@@ -46,7 +46,6 @@ module Api
           def update_inspection
             begin
               inspection = Inspection.find_by(id: @params[:id])
-              @previous_tariki_status = inspection.visit.house.tariki_status?
               inspection = manage_photo(inspection)
               @params[:color] = ::Services::RiskColorCalculator.inspection_color(
                 has_water: @params.fetch(:has_water, inspection.has_water),
@@ -69,13 +68,12 @@ module Api
             @house = @visit.house
             last_visit_at = @params[:visited_at] || Time.now.utc
 
-            ::Services::VisitHouseStatusUpdater.apply!(
+            @tariki_reached = ::Services::VisitHouseStatusUpdater.apply_and_tariki_reached?(
               visit: @visit,
               house: @house,
               last_visit_at:,
               denied_without_inspections: Constants::RiskColor::RED
             )
-            @tariki_reached = !@previous_tariki_status && @house.tariki_status?
           end
 
           def update_house_status_daily
