@@ -4,7 +4,7 @@ module Api
   module V1
     module Visits
       module Operations
-        class Update < ApplicationOperation # rubocop:disable Metrics/ClassLength
+        class Update < ApplicationOperation
           include Dry::Transaction
 
           tee :params
@@ -113,16 +113,9 @@ module Api
 
           def assign_points
             @ctx[:model].point_awards = []
-            if @tariki_reached
-              @ctx[:model].point_awards = Api::V1::Points::Services::Transactions.assign_point(
-                earner: @ctx[:model].user_account,
-                house_id: @house.id,
-                visit_id: @ctx[:model].id
-              )
-            end
-            return if @house.tariki_status?
+            return unless @tariki_reached
 
-            Api::V1::Points::Services::Transactions.remove_point(
+            @ctx[:model].point_awards = Api::V1::Points::Services::Transactions.assign_point(
               earner: @ctx[:model].user_account,
               house_id: @house.id,
               visit_id: @ctx[:model].id

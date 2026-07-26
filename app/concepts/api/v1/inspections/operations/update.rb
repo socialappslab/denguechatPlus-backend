@@ -51,7 +51,8 @@ module Api
               @params[:color] = ::Services::RiskColorCalculator.inspection_color(
                 has_water: @params.fetch(:has_water, inspection.has_water),
                 type_content_ids: @params[:type_content_ids] || inspection.type_contents.pluck(:id),
-                container_protection_ids: @params[:container_protection_ids] || inspection.container_protections.pluck(:id)
+                container_protection_ids: @params[:container_protection_ids] ||
+                  inspection.container_protections.pluck(:id)
               )
               inspection.update(@params)
               @ctx[:model] = inspection
@@ -90,14 +91,9 @@ module Api
 
           def assign_points
             user_account = @visit.user_account
+            return unless @tariki_reached
 
-            if @tariki_reached
-              Api::V1::Points::Services::Transactions.assign_point(earner: user_account, house_id: @house.id,
-                                                                   visit_id: @visit.id)
-            end
-            return if @house.tariki_status?
-
-            Api::V1::Points::Services::Transactions.remove_point(earner: user_account, house_id: @house.id,
+            Api::V1::Points::Services::Transactions.assign_point(earner: user_account, house_id: @house.id,
                                                                  visit_id: @visit.id)
           end
 

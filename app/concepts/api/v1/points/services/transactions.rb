@@ -38,14 +38,6 @@ module Api
             end
           end
 
-          def self.remove_point(earner: nil, house_id: nil, visit_id: nil)
-            return unless earner
-            return unless house_id
-            return unless visit_id
-
-            remove_points(house_id:, visit_id:)
-          end
-
           def self.assign_by_earner(earner:, house_id:, visit_id:)
             point = if earner.instance_of?(UserAccount)
                       AppConfigParam.find_by('name = ?', 'green_house_points_user_account')&.value
@@ -55,14 +47,6 @@ module Api
             return unless point
 
             earner.points.create!(value: point, house_id:, visit_id:)
-          end
-
-          def self.remove_points(house_id: nil, visit_id: nil)
-            visit = Visit.find_by(id: visit_id)
-
-            Point.where(pointable_id: visit.user_account_id, pointable_type: 'UserAccount', visit_id:,
-                        house_id:).destroy_all
-            Point.where(pointable_id: visit.team_id, pointable_type: 'Team', visit_id:, house_id:).destroy_all
           end
         end
       end
