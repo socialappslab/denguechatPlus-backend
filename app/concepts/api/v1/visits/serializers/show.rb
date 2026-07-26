@@ -13,16 +13,6 @@ module Api
           START_SIDE_QUESTION_TEXT = '¿Dónde comienza la visita?'
           QUESTION_KEY_FORMAT = /\Aquestion_(\d+)_\d+\z/
 
-          attribute :point_awards do |visit|
-            Array(visit.point_awards).map do |point|
-              {
-                recipient: point.pointable_type == 'UserAccount' ? 'brigadist' : 'brigade',
-                amount: point.value,
-                reason: 'tariki_reached'
-              }
-            end
-          end
-
           attribute :visit_permission do |visit|
             Option.where(question_id: 1).order(:id).map do |option|
               {

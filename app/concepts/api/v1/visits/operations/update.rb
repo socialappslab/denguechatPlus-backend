@@ -112,9 +112,8 @@ module Api
           end
 
           def assign_points
-            @ctx[:model].point_awards = []
             if @tariki_reached
-              @ctx[:model].point_awards = Api::V1::Points::Services::Transactions.assign_point(
+              Api::V1::Points::Services::Transactions.assign_point(
                 earner: @ctx[:model].user_account,
                 house_id: @house.id,
                 visit_id: @ctx[:model].id
