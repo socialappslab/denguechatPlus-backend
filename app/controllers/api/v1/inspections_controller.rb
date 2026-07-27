@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     class InspectionsController < AuthorizedApiController
@@ -15,7 +17,7 @@ module Api
 
       def create
         endpoint operation: Api::V1::Inspections::Operations::Create,
-                 renderer_options: { serializer: Api::V1::Inspections::Serializers::Show },
+                 renderer_options: { serializer: Api::V1::Inspections::Serializers::ShowWithoutQuestionnaire },
                  options: { current_user: }
       end
 
