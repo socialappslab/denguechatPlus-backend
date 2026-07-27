@@ -64,7 +64,7 @@ Rails.application.routes.draw do
         collection do
           post :bulk_upload
         end
-        resources :inspections, only: %i[index show update]
+        resources :inspections, only: %i[index show create update]
         member do
           get :download_information
         end
