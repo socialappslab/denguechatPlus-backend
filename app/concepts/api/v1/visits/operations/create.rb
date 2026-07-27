@@ -240,26 +240,13 @@ module Api
           end
 
           def update_house_status
-            inspections_ids = @ctx[:model].inspections.pluck(:id)
             last_visit_at = @params[:visited_at] || Time.now.utc
 
-            if inspections_ids.empty? && !visit_permission_granted?
-              @house.update!(
-                infected_containers: 0,
-                potential_containers: 0,
-                non_infected_containers: 0,
-                last_visit: last_visit_at,
-                status: Constants::RiskColor::YELLOW,
-                tariki_status: @house.tariki?(Constants::RiskColor::YELLOW)
-              )
-              @ctx[:model].update!(status: Constants::RiskColor::YELLOW)
-            else
-              ::Services::VisitHouseStatusUpdater.apply!(
-                visit: @ctx[:model],
-                house: @house,
-                last_visit_at:
-              )
-            end
+            @tariki_reached = ::Services::VisitHouseStatusUpdater.apply_and_tariki_reached?(
+              visit: @ctx[:model],
+              house: @house,
+              last_visit_at:
+            )
           end
 
           def create_house_status_daily
@@ -282,12 +269,6 @@ module Api
             house_status.save
           end
 
-
-          def visit_permission_granted?
-            option = Option.find_by(id: @params[:visit_permission_option_id])
-            option&.value.to_i == 1
-          end
-
           def set_language
             @ctx[:model].define_singleton_method(:language) { @language }
             @ctx[:model].define_singleton_method(:language=) { |value| @language = value }
@@ -300,14 +281,14 @@ module Api
           end
 
           def manage_points
-            if @house.tariki_status
-              Api::V1::Points::Services::Transactions.assign_point(earner: @current_user, house_id: @house.id,
-                                                                   visit_id: @ctx[:model].id)
-            end
-            return if @house.tariki_status
+            @ctx[:model].point_awards = []
+            return unless @tariki_reached
 
-            Api::V1::Points::Services::Transactions.remove_point(earner: @current_user, house_id: @house.id,
-                                                                 visit_id: @ctx[:model].id)
+            @ctx[:model].point_awards = Api::V1::Points::Services::Transactions.assign_point(
+              earner: @current_user,
+              house_id: @house.id,
+              visit_id: @ctx[:model].id
+            )
           end
         end
       end

@@ -19,6 +19,8 @@
 #
 class Point < ApplicationRecord
   belongs_to :pointable, polymorphic: true
+  belongs_to :house, optional: true
+  belongs_to :visit, optional: true
   scope :for_teams, -> { where(pointable_type: 'Team') }
   scope :for_users, -> { where(pointable_type: 'UserAccount') }
 end

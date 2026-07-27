@@ -84,14 +84,14 @@ module Api
             return true unless house
 
             latest_house_status = HouseStatus.where(house_id: house.id).order(date: :desc, created_at: :desc).first
-            return true unless latest_house_status
-
-            house.update(infected_containers: latest_house_status.infected_containers,
-                         non_infected_containers: latest_house_status.non_infected_containers,
-                         potential_containers: latest_house_status.potential_containers,
-                         last_visit: latest_house_status.last_visit,
-                         status: latest_house_status.status,
-                         tariki_status: house.tariki?(latest_house_status.status))
+            if latest_house_status
+              house.update(infected_containers: latest_house_status.infected_containers,
+                           non_infected_containers: latest_house_status.non_infected_containers,
+                           potential_containers: latest_house_status.potential_containers,
+                           last_visit: latest_house_status.last_visit,
+                           status: latest_house_status.status)
+            end
+            ::Services::TarikiStatusRecalculator.recalculate!(house)
 
             true
           end
