@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_07_25_000000) do
+ActiveRecord::Schema[7.1].define(version: 2026_08_02_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -681,6 +681,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_07_25_000000) do
     t.bigint "visit_permission_option_id"
     t.string "visit_permission_other"
     t.index ["discarded_at"], name: "index_visits_on_discarded_at"
+    t.index ["house_id", "visited_at", "created_at", "id"], name: "index_visits_on_latest_active_per_house", order: { visited_at: "DESC NULLS LAST", created_at: :desc, id: :desc }, where: "(discarded_at IS NULL)", include: ["status", "team_id"]
     t.index ["house_id"], name: "index_visits_on_house_id"
     t.index ["questionnaire_id"], name: "index_visits_on_questionnaire_id"
     t.index ["team_id"], name: "index_visits_on_team_id"

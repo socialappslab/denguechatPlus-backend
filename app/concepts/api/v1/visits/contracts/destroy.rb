@@ -14,7 +14,7 @@ module Api
           end
 
           rule(:id) do
-            visit_exists = ::Visit.find_by(id: value).present?
+            visit_exists = ::Visit.with_discarded.exists?(id: value)
             unless visit_exists
               key(:id).failure(text: 'The visit not exists',
                                predicate: :not_exists?)
