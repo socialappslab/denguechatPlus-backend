@@ -95,17 +95,12 @@ module Services
     end
 
     def status_and_counts(visit)
-      inspections = visit.inspections
-      counts = if inspections.any?
-                 RiskColorCalculator.inspection_counts(inspections.group(:color).count)
-               else
-                 { infected_containers: 0, potential_containers: 0, non_infected_containers: 0 }
-               end
+      snapshot = RiskColorCalculator.visit_snapshot(visit)
       stored_status = visit.status
-      status = stored_status.presence || RiskColorCalculator.visit_status(visit)
+      status = stored_status.presence || snapshot[:status]
       visit.update!(status:) if stored_status.blank?
 
-      [status, counts]
+      [status, snapshot[:counts]]
     end
   end
 end
