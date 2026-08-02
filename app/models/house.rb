@@ -81,7 +81,7 @@ class House < ApplicationRecord
 
   def current_tariki_state(required_green_visits: AppConfigParam.tariki_required_green_visits,
                            time_window: AppConfigParam.tariki_time_window)
-    latest_visit = visits.where.not(visited_at: nil).reorder(visited_at: :desc, created_at: :desc).first
+    latest_visit = visits.where.not(visited_at: nil).latest_first.first
     return { tariki_status: false, consecutive_green_status: 0 } unless latest_visit
 
     statuses = tariki_statuses_in_window(required_green_visits, latest_visit.visited_at, time_window)
@@ -104,9 +104,10 @@ class House < ApplicationRecord
                 visits.status,
                 visits.visited_at,
                 visits.created_at,
+                visits.id,
                 ROW_NUMBER() OVER (
                   PARTITION BY DATE(visits.visited_at)
-                  ORDER BY visits.visited_at DESC, visits.created_at DESC
+                  ORDER BY #{Visit.latest_first_order}
                 ) AS daily_rank
               SQL
             )
@@ -114,7 +115,7 @@ class House < ApplicationRecord
     Visit.unscoped
          .from("(#{ranked_visits.to_sql}) daily_visits")
          .where('daily_rank = 1')
-         .order(Arel.sql('daily_visits.visited_at DESC, daily_visits.created_at DESC'))
+         .order(Arel.sql(Visit.latest_first_order(table: 'daily_visits')))
          .limit(limit)
          .pluck(Arel.sql('daily_visits.status'))
   end

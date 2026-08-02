@@ -3,7 +3,6 @@
 module Services
   class VisitStateReconciler
     REPORTING_TIME_ZONE = 'America/Lima'
-    LATEST_VISIT_ORDER = 'visited_at DESC NULLS LAST, created_at DESC, id DESC'
 
     def self.call!(...)
       new(...).call!
@@ -91,7 +90,7 @@ module Services
     end
 
     def latest_active_visit(relation)
-      relation.order(Arel.sql(LATEST_VISIT_ORDER)).first
+      relation.latest_first.first
     end
 
     def status_and_counts(visit)

@@ -11,8 +11,6 @@ module Api
             :house_quantity, :visit_quantity, :site_variation_percentage, :visit_variation_percentage,
             :green_quantity, :orange_quantity, :red_quantity
           )
-          LATEST_VISIT_ORDER =
-            'visits.house_id, visits.visited_at DESC NULLS LAST, visits.created_at DESC, visits.id DESC'
 
           def initialize(filter, current_user)
             @filter = filter || {}
@@ -49,7 +47,7 @@ module Api
           def latest_active_visits
             visits = Visit
                      .select('DISTINCT ON (visits.house_id) visits.id, visits.house_id, visits.status, visits.team_id')
-                     .order(Arel.sql(LATEST_VISIT_ORDER))
+                     .order(Arel.sql("visits.house_id, #{Visit.latest_first_order}"))
 
             latest_visits = Visit
                             .unscoped

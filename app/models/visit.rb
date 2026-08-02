@@ -62,7 +62,12 @@ class Visit < ApplicationRecord
   has_one_attached :upload_file
 
   default_scope -> { kept }
+  scope :latest_first, -> { reorder(Arel.sql(Visit.latest_first_order)) }
   has_paper_trail on: [:update]
+
+  def self.latest_first_order(table: table_name)
+    "#{table}.visited_at DESC NULLS LAST, #{table}.created_at DESC, #{table}.id DESC"
+  end
 
   def possible_duplicate_visit_ids
     direct_duplicates = if duplicate_candidates.loaded?
