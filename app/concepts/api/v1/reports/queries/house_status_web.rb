@@ -7,17 +7,16 @@ module Api
         class HouseStatusWeb
           include Api::V1::Lib::Queries::QueryHelper
 
-          StatusResults = Struct.new(:house_quantity, :visit_quantity, :site_variation_percentage, :visit_variation_percentage,
-                                     :green_quantity, :orange_quantity, :red_quantity)
+          StatusResults = Struct.new(
+            :house_quantity, :visit_quantity, :site_variation_percentage, :visit_variation_percentage,
+            :green_quantity, :orange_quantity, :red_quantity
+          )
+          LATEST_VISIT_ORDER =
+            'visits.house_id, visits.visited_at DESC NULLS LAST, visits.created_at DESC, visits.id DESC'
 
           def initialize(filter, current_user)
-            @model = HouseStatus
-            filter ||= {}
+            @filter = filter || {}
             @current_user = current_user
-            @wedge_id = filter[:wedge_id]
-            @team_id = filter[:team_id]
-            @neighborhood_id = filter[:neighborhood_id]
-            @filter = filter
           end
 
           def self.call(...)
@@ -30,36 +29,45 @@ module Api
 
           private
 
-          attr_reader :team_id, :wedge_id, :neighborhood_id
-
           def fetch_data
-            query = <<~SQL.squish
-              SELECT#{' '}
-                CASE#{' '}
-                  WHEN status = 'green' THEN 'greenQuantity'
-                  WHEN status = 'yellow' THEN 'yellowQuantity'
-                  WHEN status = 'red' THEN 'redQuantity'
-                END AS category,
-                COUNT(*) AS cantidad
-              FROM houses
-              where status is not null
-              GROUP BY status;
-            SQL
-
-            result = ActiveRecord::Base.connection.execute(query)
-            result_hash = result.each_with_object({}) do |row, hash|
-              hash[row['category'].to_sym] = row['cantidad']
-            end || {}
+            status_counts = latest_active_visits
+                            .where.not(status: nil)
+                            .group('visits.status')
+                            .count
 
             StatusResults.new(
               0,
               0,
               0,
               0,
-              result_hash[:greenQuantity] || nil,
-              result_hash[:yellowQuantity] || nil,
-              result_hash[:redQuantity] || nil
+              status_counts[Constants::RiskColor::GREEN] || 0,
+              status_counts[Constants::RiskColor::YELLOW] || 0,
+              status_counts[Constants::RiskColor::RED] || 0
             )
+          end
+
+          def latest_active_visits
+            visits = Visit
+                     .select('DISTINCT ON (visits.house_id) visits.id, visits.house_id, visits.status, visits.team_id')
+                     .order(Arel.sql(LATEST_VISIT_ORDER))
+
+            latest_visits = Visit
+                            .unscoped
+                            .from("(#{visits.to_sql}) visits")
+                            .joins('INNER JOIN houses ON houses.id = visits.house_id')
+                            .where(houses: { city_id: @current_user.city_id, discarded_at: nil })
+                            .yield_self(&method(:house_location_filters))
+            return latest_visits if @filter[:team_id].blank?
+
+            latest_visits.where(team_id: @filter[:team_id])
+          end
+
+          def house_location_filters(relation)
+            relation = relation.where(houses: { wedge_id: @filter[:wedge_id] }) if @filter[:wedge_id].present?
+            neighborhood_id = @filter[:neighborhood_id].presence || @filter[:sector_id].presence
+            return relation if neighborhood_id.blank?
+
+            relation.where(houses: { neighborhood_id: })
           end
         end
       end

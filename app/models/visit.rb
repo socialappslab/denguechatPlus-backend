@@ -27,6 +27,7 @@
 #
 #  index_visits_on_discarded_at                (discarded_at)
 #  index_visits_on_house_id                    (house_id)
+#  index_visits_on_latest_active_per_house     (house_id,visited_at DESC NULLS LAST,created_at DESC,id DESC) WHERE (discarded_at IS NULL)
 #  index_visits_on_questionnaire_id            (questionnaire_id)
 #  index_visits_on_team_id                     (team_id)
 #  index_visits_on_user_account_id             (user_account_id)
