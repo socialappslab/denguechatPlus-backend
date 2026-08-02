@@ -46,7 +46,7 @@ module Api
                       weightedPoints: option&.weighted_points,
                       required: option.required,
                       optionType: option.type_option,
-                      statusColor: option.status_color,
+                      statusColor: option.status_color&.upcase,
                       image: get_image_obj.call(option),
                       position: option.position,
                       next: option.next
