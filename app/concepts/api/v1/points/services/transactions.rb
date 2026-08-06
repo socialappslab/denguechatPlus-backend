@@ -6,43 +6,40 @@ module Api
       module Services
         class Transactions
           def self.assign_point(earner: nil, house_id: nil, visit_id: nil)
-            return unless earner
-            return unless house_id
-            return unless visit_id
+            return [] unless earner
+            return [] unless house_id
+            return [] unless visit_id
 
-            case earner.class.name
-            when 'UserAccount'
+            visit = Visit.find_by(id: visit_id)
+            return [] unless visit&.visited_at
+
+            case earner
+            when UserAccount
               user_account = earner
-              team = Visit.find_by(id: visit_id)&.team
-            when 'Team'
+              team = visit.team
+            when Team
               team = earner
-              user_account = Visit.find_by(id: visit_id)&.user_account
+              user_account = visit.user_account
             else
-              return
+              return []
             end
 
-            unless AppConfigParam.find_by(name: 'tariki_point_same_date', value: 1)
-              existing_points = earner.points.where(house_id:).where('DATE(created_at)::date = ?::date',
-                                                                     Date.current)&.first
+            existing_points = earner.points.joins(:visit)
+                                    .where(house_id:, visits: { visited_at: visit.visited_at.all_day })
+                                    .first
 
-              return if existing_points
+            return [] if existing_points
+
+            Point.transaction do
+              [
+                assign_by_earner(earner: user_account, house_id:, visit_id:),
+                assign_by_earner(earner: team, house_id:, visit_id:)
+              ].compact
             end
-
-            assign_by_earner(earner: user_account, house_id:, visit_id:)
-
-            assign_by_earner(earner: team, house_id:, visit_id:)
-          end
-
-          def self.remove_point(earner: nil, house_id: nil, visit_id: nil)
-            return unless earner
-            return unless house_id
-            return unless visit_id
-
-            remove_points(earner:, house_id:, visit_id:)
           end
 
           def self.assign_by_earner(earner:, house_id:, visit_id:)
-            point = if earner.class.name == 'UserAccount'
+            point = if earner.instance_of?(UserAccount)
                       AppConfigParam.find_by('name = ?', 'green_house_points_user_account')&.value
                     else
                       AppConfigParam.find_by('name = ?', 'green_house_points_team')&.value
@@ -50,14 +47,6 @@ module Api
             return unless point
 
             earner.points.create!(value: point, house_id:, visit_id:)
-          end
-
-          def self.remove_points(earner: nil, house_id: nil, visit_id: nil)
-            visit = Visit.find_by(id: visit_id)
-
-            Point.where(pointable_id: visit.user_account_id, pointable_type: 'UserAccount', visit_id:,
-                        house_id:).destroy_all
-            Point.where(pointable_id: visit.team_id, pointable_type: 'Team', visit_id:, house_id:).destroy_all
           end
         end
       end

@@ -27,11 +27,6 @@ module Api
           private
 
           def create_data_hash(visit_param_versions, ignored_columns = %w[created_at discarded_at])
-            visit_param_versions += [OpenStruct.new(
-              id: 1,
-              version: 1,
-              name: 'AppConfigParam'
-            )]
             visit_param_versions.map do |param_version|
               model = get_model(param_version)
               allowed_columns = get_allowed_columns(model, ignored_columns)
@@ -50,6 +45,7 @@ module Api
 
           def get_data(model, allowed_columns)
             records = model.kept.select(*allowed_columns)
+
             records.map do |record|
               data = allowed_columns.index_with { |column| record.send(column) }
               if record.respond_to?(:photo) && record.photo.attached?

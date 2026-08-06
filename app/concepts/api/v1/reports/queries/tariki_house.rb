@@ -35,35 +35,11 @@ module Api
                                             .merge(Visit.kept)
                                             .where(houses: { neighborhood_id: sector_id })
                                             .where(inspections: { created_at: month_range })
-
-            query = <<~SQL.squish
-              WITH last_4_statuses AS (
-                SELECT house_id, status, updated_at, neighborhood_id,
-                       ROW_NUMBER() OVER (PARTITION BY house_id ORDER BY updated_at DESC) AS rn
-                FROM house_statuses
-              )
-              , filtered_statuses AS (
-                SELECT house_id, status, neighborhood_id
-                FROM last_4_statuses
-                WHERE rn <= 4
-              )
-              , house_status_counts AS (
-                SELECT house_id, neighborhood_id,
-                       COUNT(CASE WHEN status = 'green' THEN 1 END) AS green_status_count
-                FROM filtered_statuses
-                GROUP BY house_id, neighborhood_id
-              )
-              SELECT COUNT(*) AS tariki_count
-              FROM house_status_counts
-              WHERE green_status_count = 4
-                AND neighborhood_id = #{sector_id};
-            SQL
-
-            tariki_houses_qty = ActiveRecord::Base.connection.execute(query)
+            houses = House.where(neighborhood_id: sector_id)
 
             ReportResult.new(
-              House.where(neighborhood_id: sector_id).count,
-              tariki_houses_qty.first&.[]('tariki_count'),
+              houses.count,
+              houses.where(tariki_status: true).count,
               monthly_inspections.count,
               monthly_inspections.where(color: 'green').count
             )

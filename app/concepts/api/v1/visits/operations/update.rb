@@ -68,20 +68,12 @@ module Api
             @house = @ctx[:model].house
             last_visit_at = @params[:visited_at] || Time.now.utc
 
-            if @ctx[:model].inspections.none?
-              ::Services::VisitHouseStatusUpdater.apply!(
-                visit: @ctx[:model],
-                house: @house,
-                last_visit_at:,
-                denied_without_inspections: Constants::RiskColor::GREEN
-              )
-            else
-              ::Services::VisitHouseStatusUpdater.apply!(
-                visit: @ctx[:model],
-                house: @house,
-                last_visit_at:
-              )
-            end
+            @tariki_reached = ::Services::VisitHouseStatusUpdater.apply_and_tariki_reached?(
+              visit: @ctx[:model],
+              house: @house,
+              last_visit_at:,
+              denied_without_inspections: Constants::RiskColor::GREEN
+            )
           end
 
           def update_house_status_daily
@@ -109,14 +101,14 @@ module Api
           end
 
           def assign_points
-            if @house.tariki_status
-              Api::V1::Points::Services::Transactions.assign_point(earner: @ctx[:model].user_account,
-                                                                   house_id: @house.id, visit_id: @ctx[:model].id)
-            end
-            return if @house.tariki_status
+            @ctx[:model].point_awards = []
+            return unless @tariki_reached
 
-            Api::V1::Points::Services::Transactions.remove_point(earner: @ctx[:model].user_account, house_id: @house.id,
-                                                                 visit_id: @ctx[:model].id)
+            @ctx[:model].point_awards = Api::V1::Points::Services::Transactions.assign_point(
+              earner: @ctx[:model].user_account,
+              house_id: @house.id,
+              visit_id: @ctx[:model].id
+            )
           end
         end
       end
