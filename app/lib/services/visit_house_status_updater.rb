@@ -2,10 +2,9 @@
 
 module Services
   class VisitHouseStatusUpdater
-    def self.apply_and_tariki_reached?(visit:, house:, last_visit_at:,
-                                       denied_without_inspections: Constants::RiskColor::YELLOW)
+    def self.apply_and_tariki_reached?(visit:, house:, last_visit_at:)
       previous_tariki_status = house.tariki_status
-      snapshot = RiskColorCalculator.visit_snapshot(visit, denied_without_inspections:)
+      snapshot = RiskColorCalculator.visit_snapshot(visit)
       status = snapshot[:status]
 
       visit.update!(status:)

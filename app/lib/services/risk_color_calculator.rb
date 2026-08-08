@@ -54,21 +54,21 @@ module Services
       }
     end
 
-    def self.visit_snapshot(visit, denied_without_inspections: Constants::RiskColor::YELLOW)
+    def self.visit_snapshot(visit)
       color_counts = visit.inspections.group(:color).count
       status = if color_counts.any?
                  aggregate_from_counts(color_counts)
                elsif visit.visit_permission_granted?
                  Constants::RiskColor::GREEN
                else
-                 denied_without_inspections
+                 Constants::RiskColor::YELLOW
                end
 
       { status:, counts: inspection_counts(color_counts) }
     end
 
-    def self.visit_status(visit, denied_without_inspections: Constants::RiskColor::YELLOW)
-      visit_snapshot(visit, denied_without_inspections:)[:status]
+    def self.visit_status(visit)
+      visit_snapshot(visit)[:status]
     end
   end
 end

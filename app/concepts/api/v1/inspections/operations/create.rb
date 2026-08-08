@@ -77,8 +77,7 @@ module Api
             @tariki_reached = ::Services::VisitHouseStatusUpdater.apply_and_tariki_reached?(
               visit: @visit,
               house: @house,
-              last_visit_at: @visit.visited_at || Time.now.utc,
-              denied_without_inspections: Constants::RiskColor::RED
+              last_visit_at: @visit.visited_at || Time.now.utc
             )
           end
 
