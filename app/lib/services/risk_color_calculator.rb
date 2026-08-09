@@ -66,9 +66,5 @@ module Services
 
       { status:, counts: inspection_counts(color_counts) }
     end
-
-    def self.visit_status(visit)
-      visit_snapshot(visit)[:status]
-    end
   end
 end
