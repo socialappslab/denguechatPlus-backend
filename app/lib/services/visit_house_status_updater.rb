@@ -2,7 +2,8 @@
 
 module Services
   class VisitHouseStatusUpdater
-    def self.apply_and_tariki_reached?(visit:, house:, last_visit_at:)
+    def self.apply_and_tariki_reached?(visit:)
+      house = visit.house
       previous_tariki_status = house.tariki_status
       snapshot = RiskColorCalculator.visit_snapshot(visit)
       status = snapshot[:status]
@@ -10,7 +11,7 @@ module Services
       visit.update!(status:)
       house.update!(
         **snapshot[:counts],
-        last_visit: last_visit_at,
+        last_visit: visit.visited_at || Time.current,
         status:
       )
       TarikiStatusRecalculator.recalculate!(house)

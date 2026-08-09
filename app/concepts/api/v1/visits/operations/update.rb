@@ -66,13 +66,8 @@ module Api
 
           def update_house_status
             @house = @ctx[:model].house
-            last_visit_at = @params[:visited_at] || Time.now.utc
 
-            @tariki_reached = ::Services::VisitHouseStatusUpdater.apply_and_tariki_reached?(
-              visit: @ctx[:model],
-              house: @house,
-              last_visit_at:
-            )
+            @tariki_reached = ::Services::VisitHouseStatusUpdater.apply_and_tariki_reached?(visit: @ctx[:model])
           end
 
           def update_house_status_daily
