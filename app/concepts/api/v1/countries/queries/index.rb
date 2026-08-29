@@ -34,13 +34,9 @@ module Api
           end
 
           def sort_clause(relation)
-            return relation if @sort.nil? || @sort.blank?
+            return relation unless @sort&.dig(:field) == 'countries.name'
 
-            case @sort[:field]
-            when 'name', 'status' then sort_by_status_and_name(relation, :countries)
-            when 'Teams.name' then sort_by_table_columns(relation)
-            else relation
-            end
+            sort_by_table_columns(relation)
           end
         end
       end
