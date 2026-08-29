@@ -53,7 +53,8 @@ module Api
 
             def meta
               @ctx[:meta] = {
-                total: @ctx[:pagy].count
+                total: @ctx[:pagy].count,
+                pending_count: UserAccount.pending.count
               }
             end
           end
