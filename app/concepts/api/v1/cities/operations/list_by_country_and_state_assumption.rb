@@ -29,7 +29,7 @@ module Api
           end
 
           def cursor_and_paginate
-            @ctx[:sort] = { field: 'Cities.name', direction: 'asc' }
+            @ctx[:sort] = { field: 'cities.name', direction: 'asc' }
           end
 
           def list

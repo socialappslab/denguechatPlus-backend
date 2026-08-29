@@ -29,9 +29,9 @@ module Api
           end
 
           def cursor_and_paginate
-            sort = @params['sort'] || 'permissions.id'
-            order = @params['order'] || 'desc'
-            @ctx[:sort] = { field: sort, direction: order }
+            @ctx[:sort] = { field: 'permissions.resource', direction: 'asc' } if @params['sort'].nil?
+            direction = @params['order'].nil? ? 'asc' : @params['order']
+            @ctx[:sort] = { field: @params['sort'], direction: } if @params['sort']
           end
 
           def list
