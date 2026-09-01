@@ -7,10 +7,13 @@ module Api
         class Create < ApplicationOperation # rubocop:disable Metrics/ClassLength
           include Dry::Transaction
 
-          Container = Struct.new(:has_water, :visit_id, :was_chemically_treated, :breeding_site_type_id,
-                                 :elimination_method_type_ids, :water_source_type_ids, :lid_type, :code_reference, :container_test_result,
-                                 :tracking_type_required, :created_by_id, :treated_by_id, :water_source_other, :lid_type_other,
-                                 :container_protection_ids, :other_protection, :other_elimination_method, :type_content_id, :location, keyword_init: true)
+          Container = Struct.new(
+            :has_water, :visit_id, :was_chemically_treated, :breeding_site_type_id,
+            :elimination_method_type_ids, :water_source_type_ids, :lid_type, :code_reference,
+            :container_test_result, :tracking_type_required, :created_by_id, :treated_by_id,
+            :water_source_other, :lid_type_other, :container_protection_ids, :other_protection,
+            :other_elimination_method, :type_content_id, :location, keyword_init: true
+          )
 
           step :check_request_attrs
           tee :params
@@ -178,7 +181,7 @@ module Api
 
               photo = @photos.select do |file|
                 File.basename(file.original_filename,
-                              File.extname(file.original_filename)) == "#{inspection.code_reference}"
+                              File.extname(file.original_filename)) == inspection.code_reference.to_s
               end
               next if photo.blank?
 
@@ -221,7 +224,11 @@ module Api
             country = neighborhood.country
             user_profile = @current_user.user_profile
             reference_code = @house_info[:reference_code] || generate_code
-            location_status = @house_info[:latitude] && @house_info[:longitude] ? 'with_coordinates' : 'without_coordinates'
+            location_status = if @house_info[:latitude] && @house_info[:longitude]
+                                'with_coordinates'
+                              else
+                                'without_coordinates'
+                              end
             @house_info[:latitude] = @house_info[:latitude] || -3.775520
             @house_info[:longitude] = @house_info[:longitude] || -73.450878
 
@@ -240,13 +247,7 @@ module Api
           end
 
           def update_house_status
-            last_visit_at = @params[:visited_at] || Time.now.utc
-
-            @tariki_reached = ::Services::VisitHouseStatusUpdater.apply_and_tariki_reached?(
-              visit: @ctx[:model],
-              house: @house,
-              last_visit_at:
-            )
+            @tariki_reached = ::Services::VisitHouseStatusUpdater.apply_and_tariki_reached?(visit: @ctx[:model])
           end
 
           def create_house_status_daily

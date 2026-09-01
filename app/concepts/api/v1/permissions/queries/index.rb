@@ -46,7 +46,11 @@ module Api
             return relation if @sort.nil? || @sort.blank?
 
             lower_case = %w[permissions.name permissions.resource].include? @sort[:field]
-            sort_by_table_columns(relation, lower_case:)
+            sorted = sort_by_table_columns(relation, lower_case:)
+            return sorted unless @sort[:field] == 'permissions.resource'
+
+            # Permissions are labelled "<resource>.<name>", so keep names ordered within each resource.
+            sorted.order(Arel.sql('LOWER(permissions.name) ASC'))
           end
         end
       end

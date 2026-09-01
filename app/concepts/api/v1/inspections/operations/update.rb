@@ -66,14 +66,8 @@ module Api
           def update_house_and_visit_status
             @visit = @ctx[:model].visit
             @house = @visit.house
-            last_visit_at = @params[:visited_at] || Time.now.utc
 
-            @tariki_reached = ::Services::VisitHouseStatusUpdater.apply_and_tariki_reached?(
-              visit: @visit,
-              house: @house,
-              last_visit_at:,
-              denied_without_inspections: Constants::RiskColor::RED
-            )
+            @tariki_reached = ::Services::VisitHouseStatusUpdater.apply_and_tariki_reached?(visit: @visit)
           end
 
           def update_house_status_daily
