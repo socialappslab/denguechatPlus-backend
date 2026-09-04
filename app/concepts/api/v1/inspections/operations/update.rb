@@ -12,6 +12,7 @@ module Api
           tee :check_if_has_photo
           step :update_inspection
           tee :update_house_and_visit_status
+          tee :update_house_status_daily
           tee :set_language
           tee :assign_points
 
@@ -67,6 +68,17 @@ module Api
             @house = @visit.house
 
             @tariki_reached = ::Services::VisitHouseStatusUpdater.apply_and_tariki_reached?(visit: @visit)
+          end
+
+          def update_house_status_daily
+            house = @house
+            house_status = HouseStatus.find_or_initialize_by(house_id: house.id, date: @visit.visited_at)
+            house_status.infected_containers = house.infected_containers
+            house_status.non_infected_containers = house.non_infected_containers
+            house_status.potential_containers = house.potential_containers
+            house_status.house_id = house.id
+            house_status.status = house.status
+            house_status.save
           end
 
           def assign_points
