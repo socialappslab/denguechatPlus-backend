@@ -37,7 +37,6 @@ module Api
             ActiveRecord::Base.transaction do
               @ctx[:model] = create_inspection_record
               update_visit_and_house_status
-              update_house_status_daily
               assign_points
             end
 
@@ -75,25 +74,6 @@ module Api
           def update_visit_and_house_status
             @house = @visit.house
             @tariki_reached = ::Services::VisitHouseStatusUpdater.apply_and_tariki_reached?(visit: @visit)
-          end
-
-          def update_house_status_daily
-            house = @house.reload
-            house_status = HouseStatus.find_or_initialize_by(house_id: house.id, date: @visit.visited_at)
-            house_status.assign_attributes(
-              city_id: house.city_id,
-              country_id: house.country_id,
-              house_block_id: house.house_blocks.find_by(block_type: 'frente_a_frente')&.id,
-              infected_containers: house.infected_containers,
-              last_visit: house.last_visit,
-              neighborhood_id: house.neighborhood_id,
-              non_infected_containers: house.non_infected_containers,
-              potential_containers: house.potential_containers,
-              status: house.status,
-              team_id: @visit.team_id,
-              wedge_id: house.wedge_id
-            )
-            house_status.save!
           end
 
           def assign_points

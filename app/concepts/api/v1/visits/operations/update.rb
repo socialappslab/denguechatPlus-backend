@@ -13,7 +13,6 @@ module Api
           step :update_visit
           tee :remove_inspections
           tee :update_house_status
-          tee :update_house_status_daily
           tee :set_language
           tee :assign_points
 
@@ -49,6 +48,8 @@ module Api
             @params[:host] = hosts.join(', ') if hosts
             begin
               visit = Visit.find_by(id: @params[:id])
+              @previous_house = visit.house
+              @previous_visited_at = visit.visited_at
               visit.update!(@params)
               @ctx[:model] = visit.reload
               Success({ ctx: @ctx, type: :created })
@@ -67,18 +68,9 @@ module Api
           def update_house_status
             @house = @ctx[:model].house
 
-            @tariki_reached = ::Services::VisitHouseStatusUpdater.apply_and_tariki_reached?(visit: @ctx[:model])
-          end
-
-          def update_house_status_daily
-            house = @house.reload
-            house_status = HouseStatus.find_or_initialize_by(house_id: house.id, date: @ctx[:model].visited_at)
-            house_status.infected_containers = house.infected_containers
-            house_status.non_infected_containers = house.non_infected_containers
-            house_status.potential_containers = house.potential_containers
-            house_status.house_id = house.id
-            house_status.status = house.status
-            house_status.save
+            @tariki_reached = ::Services::VisitHouseStatusUpdater.apply_and_tariki_reached?(
+              visit: @ctx[:model], previous_house: @previous_house, previous_visited_at: @previous_visited_at
+            )
           end
 
           private

@@ -70,6 +70,30 @@ To run this project execute this in the terminal
 
 ## Testing
 
+### Repairing visit summaries
+
+House status and last-visit dates follow the latest non-discarded visit by
+`visited_at`, with `created_at` and `id` breaking ties. Daily summaries use the
+latest visit within each day in `America/Lima`. The mobile house list returns
+the maintained house status and `lastVisit` together; `lastVisit` is Unix time
+in milliseconds, or `null` when the visit date is unknown.
+
+After deploying the visit-ordering fix, repair existing summaries with the
+existing task in the target environment:
+
+```sh
+bundle exec rails visits:repair_state
+APPLY=true bundle exec rails visits:repair_state
+```
+
+The first command prints counts without changing data. The second reconciles
+house summaries, daily history, and Tariki state; it also removes points attached
+to discarded visits. It can be rerun and reports failures. Set `BATCH_SIZE` to
+adjust the default batch size of 100. For production, set `RAILS_ENV=production`
+explicitly when running either command.
+
+### Checks
+
 If you need to check the project's health, run this in the terminal
 - `rubocop --fail-level C --display-only-fail-level-offenses -P`
 - `reek`
@@ -95,4 +119,3 @@ After that, you need to execute:
 
 Finally, to view the documentation, simply run:
 - `http-server -o /api/docs/v1/index.html -p 8088`
-
