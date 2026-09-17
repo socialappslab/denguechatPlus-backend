@@ -70,10 +70,9 @@ module Api
           end
 
           attribute :last_visit do |house|
-            last_visit = Visit.where(house_id: house.id).last
-            next unless last_visit
+            next unless house.last_visit
 
-            last_visit.created_at.to_time.to_i * 1000
+            house.last_visit.to_time.to_i * 1000
           end
         end
       end
