@@ -9,6 +9,10 @@ module Api
 
           attributes :name
 
+          attribute :total_houses do |brigade|
+            brigade.houses.where(discarded_at: nil).count
+          end
+
           attribute :members do |brigade|
             brigade.members
                    .includes(:user_account)
