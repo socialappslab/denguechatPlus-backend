@@ -21,9 +21,8 @@ namespace :data_migration do
   end
 
   desc 'Set the container stage weighted points (Larvas and Pupas 1000, Huevos 100) and recalculate container, ' \
-       'visit and house colors (dry-run by default; use APPLY=true to persist)'
+       'visit and house colors'
   task set_container_stage_weighted_points: :environment do
-    apply = ENV.fetch('APPLY', 'false') == 'true'
     stage_points = { 'Huevos' => 100, 'Larvas' => 1000, 'Pupas' => 1000 }
     stage_options = Option.joins(:question)
                           .where(questions: { resource_name: 'type_content_id' }, name_es: stage_points.keys)
@@ -71,10 +70,6 @@ namespace :data_migration do
       puts "Containers recolored: #{inspection_changes.inspect}"
       puts "Visits recolored: #{visit_changes.inspect}"
       puts "Houses recolored: #{house_changes.inspect}"
-      next if apply
-
-      puts 'Dry run only. Set APPLY=true to persist.'
-      raise ActiveRecord::Rollback
     end
   end
 end
