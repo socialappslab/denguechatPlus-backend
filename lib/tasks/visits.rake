@@ -17,4 +17,12 @@ namespace :visits do
     result = Services::VisitStateRepairer.new(dry_run:, batch_size:).call
     abort("Repair completed with #{result[:failed]} failed houses") if result[:failed].positive?
   end
+
+  desc 'Repair visit duplicate candidates (dry-run by default; use APPLY=true to persist)'
+  task repair_duplicates: :environment do
+    dry_run = ENV.fetch('APPLY', 'false') != 'true'
+    batch_size = [ENV.fetch('BATCH_SIZE', Services::VisitDuplicateCandidateRepairer::DEFAULT_BATCH_SIZE).to_i, 1].max
+    result = Services::VisitDuplicateCandidateRepairer.new(dry_run:, batch_size:).call
+    abort("Repair completed with #{result[:failed]} failed houses") if result[:failed].positive?
+  end
 end

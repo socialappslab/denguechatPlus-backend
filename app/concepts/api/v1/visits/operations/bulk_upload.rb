@@ -962,7 +962,6 @@ module Api
               upload_blob ||= create_bulk_upload_blob(original_file, xlsx_path, attachment_filename,
                                                       attachment_content_type)
               attach_upload_file_to_visit(created_visit, upload_blob)
-              register_duplicate_candidates(created_visit)
               visit_summaries << {
                 id: created_visit.id,
                 houseName: House.find(created_visit.house_id).reference_code,
@@ -1011,16 +1010,6 @@ module Api
 
           def location_to_enum(location_text)
             { 'En la casa' => 'house', 'En la huerta' => 'orchard' }[location_text]
-          end
-
-          def register_duplicate_candidates(visit)
-            return if visit.visited_at.blank?
-
-            Visit.where(house_id: visit.house_id, visited_at: visit.visited_at.all_day)
-                 .where.not(id: visit.id)
-                 .find_each do |duplicate_visit|
-              VisitDuplicateCandidate.find_or_create_by!(visit:, duplicate_visit:)
-            end
           end
 
           def attach_upload_file_to_visit(visit, blob)
