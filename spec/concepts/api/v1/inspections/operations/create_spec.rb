@@ -10,36 +10,15 @@ RSpec.describe Api::V1::Inspections::Operations::Create do
   let(:visit_user) { instance_double(UserAccount) }
   let(:inspection) { instance_double(Inspection) }
   let(:inspections) { double }
-  let(:house_blocks) { double }
-  let(:visited_at) { Time.zone.parse('2026-07-20 10:00:00') }
   let(:visit) do
     instance_double(
       Visit,
       house:,
       inspections:,
-      team_id: 8,
-      user_account: visit_user,
-      visited_at:
+      user_account: visit_user
     )
   end
-  let(:house) do
-    instance_double(
-      House,
-      city_id: 1,
-      country_id: 2,
-      house_blocks:,
-      id: 9,
-      infected_containers: 0,
-      last_visit: visited_at,
-      neighborhood_id: 3,
-      non_infected_containers: 0,
-      potential_containers: 1,
-      reload: nil,
-      status: Constants::RiskColor::YELLOW,
-      wedge_id: 4
-    )
-  end
-  let(:house_status) { instance_double(HouseStatus, assign_attributes: true, save!: true) }
+  let(:house) { instance_double(House) }
   let(:expected_attributes) do
     {
       breeding_site_type_id: 3,
@@ -61,9 +40,6 @@ RSpec.describe Api::V1::Inspections::Operations::Create do
     allow(Services::RiskColorCalculator).to receive(:inspection_color).and_return(Constants::RiskColor::YELLOW)
     allow(inspections).to receive(:create!).and_return(inspection)
     allow(Services::VisitHouseStatusUpdater).to receive(:apply_and_tariki_reached?).and_return(false)
-    allow(house).to receive(:reload).and_return(house)
-    allow(house_blocks).to receive(:find_by).and_return(nil)
-    allow(HouseStatus).to receive(:find_or_initialize_by).and_return(house_status)
   end
 
   it 'creates a container with server-derived attributes' do

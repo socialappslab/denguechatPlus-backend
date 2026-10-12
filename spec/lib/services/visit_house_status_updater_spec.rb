@@ -1,47 +1,115 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require Rails.root.join('app/lib/services/visit_house_status_updater')
 
 RSpec.describe Services::VisitHouseStatusUpdater do
   describe '.apply_and_tariki_reached?' do
-    subject(:apply_status) { described_class.apply_and_tariki_reached?(visit:) }
+    let(:country) { Country.create!(name: 'Peru') }
+    let(:state) { State.create!(name: 'Loreto', country:) }
+    let(:city) { City.create!(name: 'Iquitos', state:, country:) }
+    let(:neighborhood) { Neighborhood.create!(name: 'Sector 1', city:, state:, country:) }
+    let(:wedge) { Wedge.create!(name: 'Wedge 1') }
+    let(:team) do
+      Team.create!(name: 'Team 1', organization: Organization.create!(name: 'Org'), sector: neighborhood, wedge:)
+    end
+    let(:user_account) { UserAccount.create!(username: 'brigadist', phone: '999000111', password: 'Password1') }
+    let(:questionnaire) { Questionnaire.create!(name: 'Questionnaire', current_form: true) }
+    let(:house) { create_house('MY293') }
+    let(:other_house) { create_house('PUC323-324') }
+    let(:morning) { Time.utc(2026, 10, 12, 13, 25) }
+    let(:afternoon) { Time.utc(2026, 10, 12, 19, 40) }
 
-    let(:visit) { instance_double(Visit, house:, visited_at:) }
-    let(:house) { instance_double(House, tariki_status: false, tariki_status?: true) }
-    let(:visited_at) { Time.zone.parse('2026-08-08 10:00:00') }
-    let(:status) { Constants::RiskColor::GREEN }
-    let(:counts) do
-      {
-        infected_containers: 0,
-        potential_containers: 0,
-        non_infected_containers: 1
-      }
+    def create_house(reference_code)
+      House.create!(country:, state:, city:, neighborhood:, wedge:, reference_code:)
     end
 
-    before do
-      allow(Services::RiskColorCalculator).to receive(:visit_snapshot).with(visit).and_return(status:, counts:)
-      allow(Services::TarikiStatusRecalculator).to receive(:recalculate!).with(house)
-      allow(visit).to receive(:update!)
-      allow(house).to receive(:update!)
+    def create_visit(visited_at, house: self.house)
+      visit = Visit.create!(house:, team:, user_account:, questionnaire:, visited_at:)
+      described_class.apply_and_tariki_reached?(visit:)
+      visit
     end
 
-    it 'updates the visit and its house using the visit timestamp' do
-      expect(visit).to receive(:update!).with(status:)
-      expect(house).to receive(:update!).with(**counts, last_visit: visited_at, status:)
-
-      expect(apply_status).to be(true)
+    def daily_last_visits(house)
+      HouseStatus.where(house_id: house.id).order(:date).pluck(:date, :last_visit)
     end
 
-    context 'when the visit timestamp is missing' do
-      let(:visited_at) { nil }
+    it 'keeps the latest visit when an older one is created afterwards' do
+      create_visit(afternoon)
+      create_visit(morning)
 
-      it 'uses the current time' do
-        travel_to(Time.zone.parse('2026-08-09 11:00:00')) do
-          expect(house).to receive(:update!).with(**counts, last_visit: Time.current, status:)
+      expect(house.reload.last_visit).to eq(afternoon)
+      expect(daily_last_visits(house)).to eq([[Date.new(2026, 10, 12), afternoon]])
+    end
 
-          apply_status
+    it 'keeps the latest visit when an older one is edited' do
+      older_visit = create_visit(morning)
+      create_visit(afternoon)
+
+      described_class.apply_and_tariki_reached?(visit: older_visit)
+
+      expect(house.reload.last_visit).to eq(afternoon)
+    end
+
+    it 'falls back to the next latest visit when the latest one is backdated' do
+      create_visit(morning)
+      latest_visit = create_visit(afternoon)
+      backdated_at = Time.utc(2026, 10, 10, 15)
+
+      latest_visit.update!(visited_at: backdated_at)
+      described_class.apply_and_tariki_reached?(visit: latest_visit, previous_house: house,
+                                                previous_visited_at: afternoon)
+
+      expect(house.reload.last_visit).to eq(morning)
+      expect(daily_last_visits(house)).to eq(
+        [[Date.new(2026, 10, 10), backdated_at], [Date.new(2026, 10, 12), morning]]
+      )
+    end
+
+    it 'reconciles both houses when a visit moves to another house' do
+      create_visit(morning)
+      moved_visit = create_visit(afternoon)
+
+      moved_visit.update!(house: other_house)
+      described_class.apply_and_tariki_reached?(visit: moved_visit, previous_house: house,
+                                                previous_visited_at: afternoon)
+
+      expect(house.reload.last_visit).to eq(morning)
+      expect(other_house.reload.last_visit).to eq(afternoon)
+      expect(daily_last_visits(house)).to eq([[Date.new(2026, 10, 12), morning]])
+    end
+
+    it 'clears the previous house when its only visit moves away' do
+      moved_visit = create_visit(morning)
+
+      moved_visit.update!(house: other_house)
+      described_class.apply_and_tariki_reached?(visit: moved_visit, previous_house: house,
+                                                previous_visited_at: morning)
+
+      expect(house.reload).to have_attributes(last_visit: nil, status: nil)
+      expect(daily_last_visits(house)).to be_empty
+    end
+
+    context 'when a visit completes the required streak of green days' do
+      let(:snapshot) do
+        {
+          status: Constants::RiskColor::GREEN,
+          counts: { infected_containers: 0, potential_containers: 0, non_infected_containers: 1 }
+        }
+      end
+
+      before do
+        allow(Services::RiskColorCalculator).to receive(:visit_snapshot).and_return(snapshot)
+        allow(AppConfigParam).to receive(:tariki_required_green_visits).and_return(2)
+      end
+
+      it 'reports the transition only once' do
+        reached = [morning, morning + 1.day, morning + 2.days].map do |visited_at|
+          visit = Visit.create!(house:, team:, user_account:, questionnaire:, visited_at:)
+          described_class.apply_and_tariki_reached?(visit:)
         end
+
+        expect(reached).to eq([false, true, false])
+        expect(house.reload).to have_attributes(status: Constants::RiskColor::GREEN, non_infected_containers: 1)
       end
     end
   end
