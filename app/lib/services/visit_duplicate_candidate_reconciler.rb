@@ -3,7 +3,8 @@
 module Services
   class VisitDuplicateCandidateReconciler
     DUPLICATE_TIME_ZONE = 'America/Lima'
-    Group = Struct.new(:house_id, :date, keyword_init: true)
+    GROUP_ATTRIBUTES = %w[house_id visited_at visit_permission_option_id].freeze
+    Group = Struct.new(:house_id, :date, :visit_permission_option_id, keyword_init: true)
 
     def self.call!(...)
       new(...).call!
@@ -42,10 +43,11 @@ module Services
         all_visit_ids = Visit.with_discarded.where(house_id:).pluck(:id)
         delete_candidates_for(all_visit_ids)
 
-        visits_by_date = Visit.where(house_id:).where.not(visited_at: nil).pluck(:id, :visited_at)
-                              .group_by { |_, visited_at| local_date(visited_at) }
+        visits_by_group = Visit.where(house_id:).where.not(visited_at: nil)
+                               .pluck(:id, :visited_at, :visit_permission_option_id)
+                               .group_by { |_, visited_at, option_id| [local_date(visited_at), option_id] }
 
-        visits_by_date.each_value do |visits|
+        visits_by_group.each_value do |visits|
           insert_pairs(visits.map(&:first).sort)
         end
       end
@@ -56,14 +58,10 @@ module Services
     attr_reader :house_id, :previous_changes, :visit
 
     def affected_groups
-      current_house_id = visit.house_id
-      current_visited_at = visit.visited_at
-      groups = [
-        group_for(current_house_id, current_visited_at),
-        group_for(previous_value(:house_id, current_house_id), previous_value(:visited_at, current_visited_at))
-      ]
+      current = GROUP_ATTRIBUTES.map { |attribute| visit.public_send(attribute) }
+      previous = GROUP_ATTRIBUTES.zip(current).map { |attribute, value| previous_value(attribute, value) }
 
-      groups.compact.uniq { |group| [group.house_id, group.date] }
+      [group_for(*current), group_for(*previous)].compact.uniq
     end
 
     def previous_value(attribute, fallback)
@@ -71,10 +69,10 @@ module Services
       change ? change.first : fallback
     end
 
-    def group_for(group_house_id, visited_at)
+    def group_for(group_house_id, visited_at, visit_permission_option_id)
       return if group_house_id.blank? || visited_at.blank?
 
-      Group.new(house_id: group_house_id, date: local_date(visited_at))
+      Group.new(house_id: group_house_id, date: local_date(visited_at), visit_permission_option_id:)
     end
 
     def local_date(visited_at)
@@ -88,7 +86,11 @@ module Services
     end
 
     def rebuild_group(group)
-      conditions = { house_id: group.house_id, visited_at: date_range(group.date) }
+      conditions = {
+        house_id: group.house_id,
+        visited_at: date_range(group.date),
+        visit_permission_option_id: group.visit_permission_option_id
+      }
       all_visit_ids = Visit.with_discarded.where(conditions).pluck(:id)
       delete_candidates_for(all_visit_ids)
 

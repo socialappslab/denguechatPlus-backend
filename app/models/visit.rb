@@ -96,7 +96,7 @@ class Visit < ApplicationRecord
   end
 
   def duplicate_group_changed?
-    %w[house_id visited_at discarded_at].any? do |attribute|
+    (Services::VisitDuplicateCandidateReconciler::GROUP_ATTRIBUTES + ['discarded_at']).any? do |attribute|
       previous_changes.key?(attribute) || previous_changes.key?(attribute.to_sym)
     end
   end
