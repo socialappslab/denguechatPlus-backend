@@ -4,8 +4,7 @@ module Services
   class VisitDuplicateCandidateRepairer
     DEFAULT_BATCH_SIZE = 100
 
-    def initialize(dry_run: true, batch_size: DEFAULT_BATCH_SIZE, output: $stdout)
-      @dry_run = dry_run
+    def initialize(batch_size: DEFAULT_BATCH_SIZE, output: $stdout)
       @batch_size = batch_size
       @output = output
       @processed = 0
@@ -15,9 +14,6 @@ module Services
     def call
       output.puts("Houses to process: #{House.count}")
       report_candidate_rows('before')
-
-      return dry_run_summary if dry_run
-
       House.find_each(batch_size:) { |house| repair_house(house) }
       report_candidate_rows('after')
       output.puts("Processed houses: #{processed}; failed houses: #{failed}")
@@ -26,12 +22,7 @@ module Services
 
     private
 
-    attr_reader :batch_size, :dry_run, :failed, :output, :processed
-
-    def dry_run_summary
-      output.puts('Dry run only. Set APPLY=true to reconcile data.')
-      { processed: 0, failed: 0 }
-    end
+    attr_reader :batch_size, :failed, :output, :processed
 
     def report_candidate_rows(stage)
       output.puts("Candidate rows #{stage} repair: #{VisitDuplicateCandidate.count}")
