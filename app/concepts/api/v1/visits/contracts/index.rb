@@ -24,6 +24,7 @@ module Api
               optional(:house)
               optional(:house_status)
               optional(:visit_status)
+              optional(:possible_duplicate).filled(:bool)
             end
           end
         end

@@ -70,16 +70,8 @@ class Visit < ApplicationRecord
   end
 
   def possible_duplicate_visit_ids
-    direct_duplicates = if duplicate_candidates.loaded?
-                          duplicate_candidates.map(&:duplicate_visit_id)
-                        else
-                          duplicate_candidates.pluck(:duplicate_visit_id)
-                        end
-    reverse_duplicates = if reverse_duplicate_candidates.loaded?
-                           reverse_duplicate_candidates.map(&:visit_id)
-                         else
-                           reverse_duplicate_candidates.pluck(:visit_id)
-                         end
+    direct_duplicates = duplicate_ids(duplicate_candidates, :duplicate_visit_id, :duplicate_visit)
+    reverse_duplicates = duplicate_ids(reverse_duplicate_candidates, :visit_id, :visit)
 
     (direct_duplicates + reverse_duplicates).compact.uniq
   end
@@ -90,8 +82,36 @@ class Visit < ApplicationRecord
 
   after_discard :discard_inspections
   after_undiscard :undiscard_inspections
+  after_create_commit :reconcile_duplicate_candidates_after_create
+  after_update_commit :reconcile_duplicate_candidates_after_update, if: :duplicate_group_changed?
 
   private
+
+  def duplicate_ids(candidates, id_column, association)
+    if candidates.loaded? && candidates.all? { |candidate| candidate.association(association).loaded? }
+      return candidates.filter_map { |candidate| candidate.public_send(association)&.id }
+    end
+
+    candidates.joins(association).merge(Visit.kept).distinct.pluck(id_column)
+  end
+
+  def duplicate_group_changed?
+    (Services::VisitDuplicateCandidateReconciler::GROUP_ATTRIBUTES + ['discarded_at']).any? do |attribute|
+      previous_changes.key?(attribute) || previous_changes.key?(attribute.to_sym)
+    end
+  end
+
+  def reconcile_duplicate_candidates_after_create
+    Services::VisitDuplicateCandidateReconciler.call!(visit: self)
+  rescue StandardError => error
+    Rails.logger.error("Visit #{id} duplicate reconciliation failed: #{error.message}")
+  end
+
+  def reconcile_duplicate_candidates_after_update
+    Services::VisitDuplicateCandidateReconciler.call!(visit: self, previous_changes:)
+  rescue StandardError => error
+    Rails.logger.error("Visit #{id} duplicate reconciliation failed: #{error.message}")
+  end
 
   def discard_inspections
     Inspection.kept.where(visit_id: id).find_each(&:discard)
