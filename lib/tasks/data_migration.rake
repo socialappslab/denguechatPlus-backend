@@ -72,4 +72,10 @@ namespace :data_migration do
       puts "Houses recolored: #{house_changes.inspect}"
     end
   end
+
+  desc 'Rebuild visit duplicate candidates for every house (same house, day and permission answer)'
+  task rebuild_visit_duplicate_candidates: :environment do
+    result = Services::VisitDuplicateCandidateRepairer.new.call
+    abort("Rebuild completed with #{result[:failed]} failed houses") if result[:failed].positive?
+  end
 end
