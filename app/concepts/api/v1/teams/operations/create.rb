@@ -11,6 +11,7 @@ module Api
           step :validate_schema
           tee :change_sector_for_neighborhood
           step :create_team
+          tee :assign_house_blocks_to_members
           # tee :includes
 
           def params(input)
@@ -36,6 +37,11 @@ module Api
             return Success({ ctx: @ctx, type: :created }) if @ctx[:model].persisted?
 
             Failure({ ctx: @ctx, type: :invalid, model: true })
+          end
+
+          def assign_house_blocks_to_members
+            team = @ctx[:model]
+            Api::V1::Teams::Services::HouseBlockAssigner.assign(team:, member_ids: team.member_ids)
           end
 
           def includes

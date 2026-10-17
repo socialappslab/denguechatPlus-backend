@@ -12,7 +12,7 @@ module Api
           params do
             required(:name).filled(:string)
             required(:organization_id).filled(:integer)
-            required(:member_ids).filled(:array).each(:integer)
+            optional(:member_ids).array(:integer)
             required(:sector_id).filled(:integer)
             required(:wedge_id).filled(:integer)
           end
@@ -21,12 +21,6 @@ module Api
             if values[:member_ids] && !UserProfile.exists?(id: values[:member_ids])
               key(:member_ids).failure(text: 'member (user) does not exist', predicate: :not_found?)
             end
-
-            next unless values[:member_ids] &&
-                        UserProfile.where(id: values[:member_ids], team_id: nil).count != values[:member_ids].count
-
-            key(:member_ids).failure(text: "user_profile with id: '#{value}' is already assigned to a brigade",
-                                     predicate: :unique?)
           end
 
           rule(:organization_id) do
