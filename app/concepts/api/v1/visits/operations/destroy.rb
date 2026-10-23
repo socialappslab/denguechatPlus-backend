@@ -46,11 +46,15 @@ module Api
 
           def invalidate_visit
             visit = @ctx[:model]
-            return Success({ ctx: @ctx, type: :destroyed, model: visit }) if visit.discarded?
+            if visit.discarded?
+              delete_duplicate_candidates(visit)
+              return Success({ ctx: @ctx, type: :destroyed, model: visit })
+            end
 
             ApplicationRecord.transaction do
               visit.house.with_lock do
                 Point.where(visit_id: visit.id).delete_all
+                delete_duplicate_candidates(visit)
                 visit.discard!
                 ::Services::VisitStateReconciler.call!(
                   house: visit.house,
@@ -66,6 +70,12 @@ module Api
           end
 
           private
+
+          def delete_duplicate_candidates(visit)
+            VisitDuplicateCandidate.where(visit_id: visit.id)
+                                   .or(VisitDuplicateCandidate.where(duplicate_visit_id: visit.id))
+                                   .delete_all
+          end
 
           def authorized_admin?
             return false unless @current_user.has_role?(:admin)

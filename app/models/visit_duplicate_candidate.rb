@@ -25,7 +25,14 @@ class VisitDuplicateCandidate < ApplicationRecord
   belongs_to :visit
   belongs_to :duplicate_visit, class_name: 'Visit'
 
-  validates :visit_id, presence: true
-  validates :duplicate_visit_id, presence: true
   validates :duplicate_visit_id, uniqueness: { scope: :visit_id }
+  validate :canonical_pair
+
+  private
+
+  def canonical_pair
+    return if visit_id.blank? || duplicate_visit_id.blank?
+
+    errors.add(:base, 'duplicate visit pair must be canonical and distinct') unless visit_id < duplicate_visit_id
+  end
 end

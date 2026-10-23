@@ -4,16 +4,16 @@ module Api
   module V1
     module Visits
       module Queries
-        class Index
+        class Index # rubocop:disable Metrics/ClassLength
           include Api::V1::Lib::Queries::QueryHelper
 
           def initialize(filter, sort)
             includes = [
-              { house: [:wedge, :neighborhood, :city] },
+              { house: %i[wedge neighborhood city] },
               :team,
               { user_account: :user_profile },
-              :duplicate_candidates,
-              :reverse_duplicate_candidates
+              { duplicate_candidates: :duplicate_visit },
+              { reverse_duplicate_candidates: :visit }
             ]
             if filter
               includes << { house: :city } if filter[:city] || filter[:city_id]
@@ -47,6 +47,7 @@ module Api
               .yield_self(&method(:house_code_clause))
               .yield_self(&method(:house_status_clause))
               .yield_self(&method(:visit_status_clause))
+              .yield_self(&method(:possible_duplicate_clause))
               .yield_self(&method(:sort_clause))
           end
 
@@ -139,6 +140,35 @@ module Api
             return relation if @filter[:visit_status].blank?
 
             relation.where('visits.status ILIKE ?', "%#{@filter[:visit_status]}%")
+          end
+
+          def possible_duplicate_clause(relation)
+            return relation unless @filter.key?(:possible_duplicate)
+
+            candidate_exists = <<~SQL.squish
+              (
+                EXISTS (
+                  SELECT 1
+                  FROM visit_duplicate_candidates candidates
+                  INNER JOIN visits direct_duplicates
+                    ON direct_duplicates.id = candidates.duplicate_visit_id
+                  WHERE candidates.visit_id = visits.id
+                    AND direct_duplicates.discarded_at IS NULL
+                )
+                OR EXISTS (
+                  SELECT 1
+                  FROM visit_duplicate_candidates candidates
+                  INNER JOIN visits reverse_duplicates
+                    ON reverse_duplicates.id = candidates.visit_id
+                  WHERE candidates.duplicate_visit_id = visits.id
+                    AND reverse_duplicates.discarded_at IS NULL
+                )
+              )
+            SQL
+            possible_duplicate = ActiveModel::Type::Boolean.new.cast(@filter[:possible_duplicate])
+            predicate = possible_duplicate ? candidate_exists : "NOT #{candidate_exists}"
+
+            relation.where(Arel.sql(predicate))
           end
 
           def sort_clause(relation)

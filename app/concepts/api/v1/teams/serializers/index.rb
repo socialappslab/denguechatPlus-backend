@@ -9,18 +9,13 @@ module Api
 
           attributes :name
 
-          attribute :member_count do |brigade|
-            brigade.members&.count
-          end
-
-          attribute :leader do |brigade|
-            next if brigade.nil?
-
+          attribute :facilitators do |brigade|
             brigade.members
                    .joins(user_account: :roles)
                    .where(roles: { name: %w[team_leader facilitador] })
-                   .map(&:full_name)
-                   .join(', ')
+                   .distinct
+                   .order(:id)
+                   .map { |user| { id: user.id, fullName: user.full_name } }
           end
 
           attribute :members do |brigade|

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_08_02_000000) do
+ActiveRecord::Schema[7.1].define(version: 2026_09_20_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -653,6 +653,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_02_000000) do
     t.index ["duplicate_visit_id"], name: "index_visit_duplicate_candidates_on_duplicate_visit_id"
     t.index ["visit_id", "duplicate_visit_id"], name: "idx_visit_duplicate_candidates_unique", unique: true
     t.index ["visit_id"], name: "index_visit_duplicate_candidates_on_visit_id"
+    t.check_constraint "visit_id < duplicate_visit_id", name: "chk_visit_duplicate_candidates_canonical_pair"
   end
 
   create_table "visit_param_versions", force: :cascade do |t|

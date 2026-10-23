@@ -27,7 +27,6 @@ module Api
           step :create_inspections
           tee :add_photos
           tee :update_house_status
-          tee :create_house_status_daily
           tee :set_language
           tee :manage_points
 
@@ -248,26 +247,6 @@ module Api
 
           def update_house_status
             @tariki_reached = ::Services::VisitHouseStatusUpdater.apply_and_tariki_reached?(visit: @ctx[:model])
-          end
-
-          def create_house_status_daily
-            team_id = @current_user.teams&.first&.id || Team.first.id
-            house = @house
-            house_status = HouseStatus.find_or_initialize_by(house_id: house.id, date: @ctx[:model].visited_at)
-            house_status.date = @ctx[:model].visited_at
-            house_status.infected_containers = house.infected_containers
-            house_status.non_infected_containers = house.non_infected_containers
-            house_status.potential_containers = house.potential_containers
-            house_status.city_id = house.city_id
-            house_status.country_id = house.country_id
-            house_status.house_block_id = house.house_blocks.find_by(block_type: 'frente_a_frente')&.id
-            house_status.neighborhood_id = house.neighborhood_id
-            house_status.team_id = team_id
-            house_status.wedge_id = house.wedge_id
-            house_status.last_visit = house.last_visit
-            house_status.house_id = house.id
-            house_status.status = house.status
-            house_status.save
           end
 
           def set_language
