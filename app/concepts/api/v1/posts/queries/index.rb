@@ -4,6 +4,7 @@ module Api
   module V1
     module Posts
       module Queries
+        # :reek:RepeatedConditional
         class Index
           include Api::V1::Lib::Queries::QueryHelper
 
@@ -55,8 +56,10 @@ module Api
             return relation if @current_user.nil?
 
             relation.joins(
-              "LEFT OUTER JOIN likes ON likes.likeable_type = 'Post' AND likes.likeable_id = posts.id AND likes.user_account_id = #{@current_user.id}"
-            ).select("posts.*, CASE WHEN likes.user_account_id = #{@current_user.id} THEN true ELSE false END AS like_by_me")
+              "LEFT OUTER JOIN likes ON likes.likeable_type = 'Post' AND likes.likeable_id = posts.id " \
+              "AND likes.user_account_id = #{@current_user.id}"
+            ).select("posts.*, CASE WHEN likes.user_account_id = #{@current_user.id} THEN true ELSE false END " \
+                     'AS like_by_me')
           end
 
           def can_delete_by_me(relation)
@@ -66,7 +69,7 @@ module Api
                 CASE
                   WHEN posts.user_account_id = #{@current_user.id} THEN true
                   WHEN #{@current_user.has_role?(:admin)} THEN true
-                  WHEN #{@current_user.has_role?(:team_leader)} THEN true
+                  WHEN #{@current_user.at_least?(Constants::Role::FACILITATOR)} THEN true
                 ELSE false
                 END AS can_delete_by_me")
           end

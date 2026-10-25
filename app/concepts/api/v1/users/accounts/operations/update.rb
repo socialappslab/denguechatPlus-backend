@@ -63,6 +63,7 @@ module Api
                   attrs[:user_profile_attributes].delete(:house_block_id)
               end
               attrs.delete(:id)
+              attrs[:role_ids] = [attrs.delete(:role_id)] if attrs.key?(:role_id)
               attrs['password'] = @input[:password].downcase if @input['password']
               return Failure({ ctx: @ctx, type: :invalid }) unless @ctx[:model].update(attrs)
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'dry/validation/contract'
 
 module Api
@@ -16,6 +18,7 @@ module Api
               optional(:phone).filled(:string)
               optional(:password).filled(:string, min_size?: Constants::User::PASSWORD_MIN_LENGTH)
               optional(:username).filled(:string)
+              optional(:role_id).filled(:integer)
               optional(:role_ids).filled(:array)
               optional(:status).filled(:string, included_in?: %w[pending active inactive locked])
               optional(:user_profile_attributes).hash do
@@ -40,15 +43,21 @@ module Api
               end
             end
 
+            rule(:role_id) do
+              key.failure(text: 'The rol not exists', predicate: :not_exists?) if value && !Role.exists?(id: value)
+            end
+
             rule(:role_ids) do
-              if values[:role_ids] && !Role.exists?(id: values[:role_ids])
+              if values[:role_ids] && values[:role_ids].size > 1
+                key(:role_ids).failure(text: 'A user can only have one role', predicate: :single_role?)
+              elsif values[:role_ids] && !Role.exists?(id: values[:role_ids])
                 key(:role_ids).failure(text: 'The rol not exists', predicate: :not_exists?)
               end
             end
 
             rule(:user_profile_attributes) do
-              if value && value[:email].present? && UserProfile.where.not(id: values[:id]).exists?(['LOWER(email) = ?',
-                                                                                                    value[:email].downcase])
+              if value && value[:email].present? &&
+                 UserProfile.where.not(id: values[:id]).exists?(['LOWER(email) = ?', value[:email].downcase])
                 key(:email).failure(text: :user_email_unique?, predicate: :user_email_unique?)
               end
 
@@ -75,9 +84,11 @@ module Api
                                         predicate: :not_exists?)
                 end
 
-                if value[:team_id] && value[:house_block_id] && HouseBlock.find_by(id: value[:house_block_id])&.team_id != value[:team_id]
+                if value[:team_id] && value[:house_block_id] &&
+                   HouseBlock.find_by(id: value[:house_block_id])&.team_id != value[:team_id]
                   key(:house_team_id).failure(
-                    text: "The HouseBlock with id #{values[:house_block_id]} is not belongs to the new team", predicate: :is_new?
+                    text: "The HouseBlock with id #{values[:house_block_id]} is not belongs to the new team",
+                    predicate: :is_new?
                   )
                 end
               end
@@ -87,7 +98,8 @@ module Api
               if result.success?
                 if !values[:phone].nil? && values[:phone].blank?
                   key(:phone).failure(text: "Phone can't be null", predicate: :credentials_wrong?)
-                elsif values[:phone] && UserAccount.where.not(user_profile_id: values[:id]).exists?(phone: values[:phone])
+                elsif values[:phone] &&
+                      UserAccount.where.not(user_profile_id: values[:id]).exists?(phone: values[:phone])
                   key(:phone).failure(text: 'The phone already use by other user', predicate: :user_phone_unique?)
                 end
               end

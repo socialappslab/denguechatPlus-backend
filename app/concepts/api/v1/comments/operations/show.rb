@@ -23,7 +23,7 @@ module Api
             else
               @ctx[:data].instance_variable_set(:@current_user_id, @current_user.id)
               is_admin = @current_user.has_role?(:admin)
-              is_team_leader = @current_user.has_role?(:admin)
+              is_team_leader = @current_user.at_least?(Constants::Role::FACILITATOR)
               @ctx[:data].instance_variable_set(:@current_user_is_admin, is_admin)
               @ctx[:data].instance_variable_set(:@is_team_leader, is_team_leader)
               Success({ ctx: @ctx, type: :success })

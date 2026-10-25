@@ -37,7 +37,7 @@ module Api
           end
 
           def check_if_can_be_updated
-            if @current_user.has_role?(:admin) || @current_user.has_role?(:team_leader)
+            if @current_user.at_least?(Constants::Role::FACILITATOR)
               return Success({ ctx: @ctx,
                                type: :success })
             end
@@ -47,7 +47,10 @@ module Api
             end
 
             Failure({ ctx: @ctx, type: :invalid,
-                      errors: ErrorFormater.new_error(field: :base, msg: 'Only an admin/team leader or the owner can update this comment', custom_predicate: :without_permissions) })
+                      errors: ErrorFormater.new_error(
+                        field: :base, msg: 'Only an admin/team leader or the owner can update this comment',
+                        custom_predicate: :without_permissions
+                      ) })
           end
 
           def check_if_has_photo
@@ -77,17 +80,6 @@ module Api
             comment.photo = @photo if @photo && !@delete_photo
             comment.photo.purge if @delete_photo && !@has_photo
             comment
-          end
-
-          private
-
-          def is_team_leader
-            return false unless @current_user.has_role?(:team_leader)
-
-            comment = Comment.find_by(id: @data[:id])
-            owner = UserAccount.find_by(id: comment.user_account_id)
-            owner_team_id = owner.teams&.first&.id
-            owner_team_id.in? @current_user.teams_under_leadership
           end
         end
       end

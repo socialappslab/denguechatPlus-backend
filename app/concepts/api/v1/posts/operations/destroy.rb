@@ -33,14 +33,17 @@ module Api
           end
 
           def authorized_user?
-            if @current_user.has_role?(:admin) || @current_user.has_role?(:team_leader)
+            if @current_user.at_least?(Constants::Role::FACILITATOR)
               return Success({ ctx: @ctx,
                                type: :success })
             end
             return Success({ ctx: @ctx, type: :success }) if @ctx[:model].user_account_id == @current_user.id
 
             Failure({ ctx: @ctx, type: :invalid,
-                      errors: ErrorFormater.new_error(field: :base, msg: 'Only an admin/team leader or the owner can update this post', custom_predicate: :without_permissions) })
+                      errors: ErrorFormater.new_error(
+                        field: :base, msg: 'Only an admin/team leader or the owner can update this post',
+                        custom_predicate: :without_permissions
+                      ) })
           end
 
           def delete_post
@@ -50,14 +53,6 @@ module Api
             rescue StandardError
               Failure({ ctx: @ctx, type: :invalid })
             end
-          end
-
-          private
-
-          def is_team_leader
-            return false unless @current_user.has_role?(:team_leader)
-
-            @ctx[:model].team_id.in? @current_user.teams_under_leadership
           end
         end
       end

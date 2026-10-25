@@ -12,7 +12,7 @@ module Api
           attribute :facilitators do |brigade|
             brigade.members
                    .joins(user_account: :roles)
-                   .where(roles: { name: %w[team_leader facilitador] })
+                   .where(roles: { name: Constants::Role.at_least(Constants::Role::FACILITATOR) })
                    .distinct
                    .order(:id)
                    .map { |user| { id: user.id, fullName: user.full_name } }
