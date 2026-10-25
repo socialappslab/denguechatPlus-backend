@@ -28,6 +28,7 @@ module Api
           def transform_params
             @data = @ctx['contract.default'].values.data
             @house_ids = @data.delete(:house_ids)
+            @data[:wedge_ids] = [@data.delete(:wedge_id)]
           end
 
           def create_house_blocks
@@ -47,9 +48,8 @@ module Api
           private
 
           def update_houses!(house_ids)
-            House.where(id: house_ids)
-                 .where(house_block_id: nil)
-                 .update_all(house_block_id: @ctx[:model].id, assignment_status: :assigned)
+            @ctx[:model].house_ids = house_ids
+            House.where(id: house_ids).update_all(assignment_status: :assigned)
           end
         end
       end

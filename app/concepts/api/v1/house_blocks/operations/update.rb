@@ -30,6 +30,8 @@ module Api
           def transform_params
             @data = @ctx['contract.default'].values.data
             @house_ids = @data.delete(:house_ids)
+            wedge_id = @data.delete(:wedge_id)
+            @data[:wedge_ids] = [wedge_id] if wedge_id
           end
 
           def update_house_blocks
@@ -37,7 +39,7 @@ module Api
               begin
                 @ctx[:model] = HouseBlock.find_by(id: @data[:id])
                 update_houses!(@house_ids) if @house_ids.present?
-                @ctx[:model].update!(@ctx['contract.default'].values.data)
+                @ctx[:model].update!(@data)
                 Success({ ctx: @ctx, type: :created })
               rescue ActiveRecord::RecordInvalid => error
                 errors = ErrorFormater.new_error(field: :base, msg: error.message,
@@ -54,9 +56,8 @@ module Api
                         .where.not(house_id: new_house_ids)
                         .destroy_all
 
-            House.left_outer_joins(:house_block_houses)
+            House.where.missing(:house_block_houses)
                  .where(id: @ctx[:model].houses.pluck(:id) - new_house_ids)
-                 .where(house_block_houses: { id: nil }) # sin asignaciones
                  .update_all(assignment_status: :orphaned)
 
             new_house_ids.each do |house_id|
