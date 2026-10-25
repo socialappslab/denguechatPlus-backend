@@ -29,7 +29,8 @@ module Api
             {
               accountId: post.user_account_id,
               userName: user.first_name,
-              lastName: user.last_name
+              lastName: user.last_name,
+              avatarUrl: user.user_profile&.avatar_url
             }
           end
 
