@@ -19,6 +19,7 @@ module Api
                 userAccountId: user.user_account.id,
                 userProfileId: user.id,
                 fullName: "#{user.first_name} #{user.last_name}",
+                avatarUrl: user.avatar_url,
                 rol: user.user_account&.role&.name
               }
             end

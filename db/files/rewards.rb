@@ -43,3 +43,5 @@ REWARD_TYPES_DATA = [
     ]
   }
 ].freeze
+
+AVATAR_BASE_CODES = %w[avatar-1 avatar-2 avatar-3 avatar-4].freeze
