@@ -11,6 +11,7 @@ module Api
           step :validate_schema
           step :find_visit
           step :create_inspection
+          tee :evaluate_rewards
 
           def params(input)
             @ctx = {}
@@ -45,6 +46,10 @@ module Api
             errors = ErrorFormater.new_error(field: :base, msg: error, custom_predicate: :unexpected_key)
 
             Failure({ ctx: @ctx, type: :invalid, errors: })
+          end
+
+          def evaluate_rewards
+            Api::V1::Rewards::Services::Evaluate.safe_call(user_account: @visit.user_account, trigger_visit: @visit)
           end
 
           private
