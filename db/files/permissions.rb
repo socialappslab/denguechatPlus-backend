@@ -109,7 +109,7 @@ ROLES_PERMISSIONS = {
       ]
     },
     {
-      name: 'team_leader',
+      name: 'facilitador',
       permissions: [
         { name: 'create', resource: 'wedges' },
         { name: 'index', resource: 'visits' },

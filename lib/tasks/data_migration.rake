@@ -73,6 +73,71 @@ namespace :data_migration do
     end
   end
 
+  desc 'Give facilitador the permissions brigadista has and it lacks, and delete the unused ' \
+       'visits_download_information permission'
+  task backfill_facilitador_permissions: :environment do
+    missing = [
+      { name: 'create', resource: 'house_blocks' },
+      { name: 'update', resource: 'house_blocks' },
+      { name: 'orphan_houses', resource: 'houses' },
+      { name: 'change_assignment', resource: 'users' },
+      { name: 'stats', resource: 'wedges' }
+    ]
+    # Seeded databases still call this role team_leader.
+    roles = Role.where(name: %w[facilitador team_leader]).to_a
+    abort('No facilitador or team_leader role found') if roles.empty?
+
+    ApplicationRecord.transaction do
+      permissions = missing.map { |attrs| Permission.find_or_create_by!(attrs) }
+      roles.each do |role|
+        added = permissions.reject { |permission| role.permissions.exists?(permission.id) }
+        role.permissions << added
+        puts "#{role.name}: added #{added.map { |p| "#{p.resource}.#{p.name}" }.inspect}"
+      end
+
+      # No controller action has this name, so check_permissions! never reads it.
+      unused = Permission.where(name: 'visits_download_information', resource: 'visits').to_a
+      RolePermission.where(permission: unused).delete_all
+      unused.each(&:destroy!)
+      puts "visits.visits_download_information: deleted #{unused.size}"
+    end
+  end
+
+  desc 'Leave each user account with only its highest role (admin > facilitador > brigadista). ' \
+       'Run after backfill_facilitador_permissions'
+  task keep_highest_role: :environment do
+    account_ids = UserAccount.with_discarded.joins(:roles).group(:id).having('COUNT(roles.id) > 1').pluck(:id)
+    accounts = UserAccount.with_discarded.where(id: account_ids).includes(roles: :permissions).order(:id).to_a
+
+    unknown = accounts.flat_map(&:roles).map(&:name).uniq - Constants::Role::HIERARCHY
+    abort("Roles outside the hierarchy: #{unknown.inspect}") if unknown.any?
+
+    # Keeping one role must not take a permission away from anyone.
+    gaps = accounts.flat_map do |account|
+      kept = account.role
+      (account.roles - [kept]).filter_map do |dropped|
+        missing = dropped.permissions - kept.permissions
+        "#{kept.name} lacks #{missing.map { |p| "#{p.resource}.#{p.name}" }} from #{dropped.name}" if missing.any?
+      end
+    end.uniq
+    abort("Keeping only the highest role would remove permissions:\n#{gaps.join("\n")}") if gaps.any?
+
+    ApplicationRecord.transaction do
+      accounts.each do |account|
+        before = account.roles.map(&:name).sort_by { |name| Constants::Role.rank(name) }
+        kept = account.role
+        account.roles = [kept]
+        puts "#{account.id} #{account.username}: #{before.join('+')} -> #{kept.name}"
+      end
+
+      orphaned = ApplicationRecord.connection.delete(
+        'DELETE FROM user_accounts_roles WHERE user_account_id NOT IN (SELECT id FROM user_accounts)'
+      )
+      puts "Role rows of deleted accounts removed: #{orphaned}"
+    end
+    puts "Accounts changed: #{accounts.size}"
+  end
+
   desc 'Rebuild visit duplicate candidates for every house (same house, day and permission answer)'
   task rebuild_visit_duplicate_candidates: :environment do
     result = Services::VisitDuplicateCandidateRepairer.new.call

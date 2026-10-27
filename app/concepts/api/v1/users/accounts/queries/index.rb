@@ -108,11 +108,16 @@ module Api
             def role_name_clause(relation)
               return relation if @filter.nil? || @filter[:role_name].blank?
 
-              text_searched = @filter[:role_name].downcase
-              relation.joins(user_account: :roles).where(
-                'LOWER(roles.name) ILIKE unaccent(?) OR LOWER(roles.name) ILIKE unaccent(?)',
-                "%#{text_searched}%", '%team_leader%'
-              )
+              role_name = @filter[:role_name].downcase
+              # A known role also matches the roles above it: asking for brigadistas includes facilitators and admins.
+              matching = if Constants::Role::HIERARCHY.include?(role_name)
+                           UserProfile.joins(user_account: :roles)
+                                      .where(roles: { name: Constants::Role.at_least(role_name) })
+                         else
+                           UserProfile.joins(user_account: :roles)
+                                      .where('LOWER(roles.name) ILIKE unaccent(?)', "%#{role_name}%")
+                         end
+              relation.where(id: matching.select(:id))
             end
 
             def without_team(relation)

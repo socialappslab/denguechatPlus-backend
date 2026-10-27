@@ -85,7 +85,7 @@ module Api
           end
 
           def authorized_team_leader?
-            return false unless @current_user.has_role?(:team_leader)
+            return false unless @current_user.at_least?(Constants::Role::FACILITATOR)
 
             @ctx[:model].team_id.in?(@current_user.teams_under_leadership)
           end

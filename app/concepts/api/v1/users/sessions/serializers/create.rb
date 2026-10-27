@@ -18,7 +18,11 @@ module Api
                        :email
 
             attribute :roles do |user_account|
-              user_account.roles.map { |rol| rol.name }&.uniq
+              user_account.roles.map(&:name)&.uniq
+            end
+
+            attribute :role do |user_account|
+              user_account.role&.name
             end
 
             attribute :permissions do |user_account|

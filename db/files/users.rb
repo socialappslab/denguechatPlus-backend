@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
-USERS = %i[brigadista team_leader admin].freeze
+USERS = {
+  brigadista: Constants::Role::BRIGADIST,
+  team_leader: Constants::Role::FACILITATOR,
+  admin: Constants::Role::ADMIN
+}.freeze
 
 def create_default_users
-  USERS.each do |user|
+  USERS.each do |user, role_name|
     begin
       user_profile = UserProfile.create(first_name: FFaker::NameES.first_name,
                                         last_name: FFaker::NameES.last_name,
@@ -16,7 +20,7 @@ def create_default_users
                                                  phone: FFaker::Number.number(digits: 8),
                                                  password: ENV.fetch("#{user.upcase}_PASSWORD", nil))
 
-      account.roles << Role.where(name: user)
+      account.roles << Role.where(name: role_name)
       account.teams << Team.find_by(id: Team.pluck(:id).sample)
     rescue StandardError => error
       Rails.logger.debug { "error: #{error.message}" }

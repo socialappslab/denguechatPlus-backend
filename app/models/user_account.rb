@@ -35,12 +35,12 @@ class UserAccount < ApplicationRecord
 
   belongs_to :user_profile, optional: true, dependent: :destroy
   has_many :teams, through: :user_profile
-  has_and_belongs_to_many :roles, join_table: :user_accounts_roles
+  has_and_belongs_to_many :roles, join_table: :user_accounts_roles # rubocop:disable Rails/HasAndBelongsToMany
   has_many :permissions, through: :roles
-  has_many :user_code_recoveries
+  has_many :user_code_recoveries # rubocop:disable Rails/HasManyOrHasOneDependent
   accepts_nested_attributes_for :user_profile, update_only: true
   before_save :downcase_username_and_password!
-  has_many :points, as: :pointable
+  has_many :points, as: :pointable # rubocop:disable Rails/HasManyOrHasOneDependent
 
   default_scope { where(discarded_at: nil) }
 
@@ -68,12 +68,20 @@ class UserAccount < ApplicationRecord
     roles.joins(:permissions).exists?(permissions: { name:, resource: })
   end
 
+  def role
+    roles.min_by { |role| Constants::Role.rank(role.name) }
+  end
+
+  def at_least?(role_name)
+    roles.exists?(name: Constants::Role.at_least(role_name))
+  end
+
   def full_name
     "#{first_name} #{last_name}"
   end
 
   def teams_under_leadership
-    return [] unless has_role?(:team_leader)
+    return [] unless at_least?(Constants::Role::FACILITATOR)
 
     teams.pluck(:id)
   end

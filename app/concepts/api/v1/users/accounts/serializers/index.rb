@@ -54,6 +54,13 @@ module Api
                 }
               end
             end
+
+            attribute :role do |user|
+              role = user.user_account&.role
+              next unless role
+
+              { id: role.id, name: role.name }
+            end
           end
         end
       end
