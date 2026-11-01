@@ -391,3 +391,20 @@ unless SeedTask.find_by(task_name: 'create_reward_types_and_levels')
   end
   SeedTask.create!(task_name: 'create_reward_types_and_levels')
 end
+
+unless SeedTask.find_by(task_name: 'create_avatars')
+  attach_avatar_image = lambda do |avatar, filename|
+    path = Rails.root.join('db/files/images/avatars', filename)
+    avatar.image.attach(io: File.open(path), filename:, content_type: 'image/png')
+  end
+
+  skins = RewardLevel.joins(:reward_type).where(reward_types: { code: 'skin' })
+  AVATAR_BASE_CODES.each_with_index do |base_code, index|
+    attach_avatar_image.call(Avatar.create!(base_code:, position: index + 1), "#{base_code}.png")
+    skins.each do |skin|
+      variant = Avatar.create!(base_code:, reward_level: skin, position: index + 1)
+      attach_avatar_image.call(variant, "#{base_code}-#{skin.code}.png")
+    end
+  end
+  SeedTask.create!(task_name: 'create_avatars')
+end

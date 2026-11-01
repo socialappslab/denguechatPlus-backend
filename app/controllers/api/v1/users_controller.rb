@@ -66,6 +66,14 @@ module Api
                  options: { current_user: }
       end
 
+      def change_avatar
+        endpoint operation: Api::V1::Users::Accounts::Operations::ChangeAvatar,
+                 renderer_options: {
+                   serializer: Api::V1::Users::Accounts::Serializers::ShowCurrentUser
+                 },
+                 options: { current_user: }
+      end
+
       def change_assignment
         endpoint operation: Api::V1::Users::Accounts::Operations::ChangeAssignment,
                  renderer_options: {

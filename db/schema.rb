@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_10_25_000001) do
+ActiveRecord::Schema[7.1].define(version: 2026_10_25_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -54,6 +54,19 @@ ActiveRecord::Schema[7.1].define(version: 2026_10_25_000001) do
     t.datetime "discarded_at"
     t.index ["name"], name: "index_app_config_params_on_name", unique: true
     t.index ["param_source", "name"], name: "index_app_config_params_on_param_source_and_name"
+  end
+
+  create_table "avatars", force: :cascade do |t|
+    t.string "base_code", null: false
+    t.bigint "reward_level_id"
+    t.integer "position", default: 0, null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["base_code", "reward_level_id"], name: "index_avatars_on_base_code_and_reward_level_id", unique: true
+    t.index ["base_code"], name: "index_avatars_on_base_code_without_skin", unique: true, where: "(reward_level_id IS NULL)"
+    t.index ["reward_level_id"], name: "index_avatars_on_reward_level_id"
   end
 
   create_table "breeding_site_type_aditional_informations", force: :cascade do |t|
@@ -657,7 +670,12 @@ ActiveRecord::Schema[7.1].define(version: 2026_10_25_000001) do
     t.bigint "neighborhood_id"
     t.bigint "organization_id"
     t.bigint "team_id"
+    t.bigint "avatar_id"
+    t.bigint "equipped_reward_level_id"
+    t.boolean "skin_manually_chosen", default: false, null: false
+    t.index ["avatar_id"], name: "index_user_profiles_on_avatar_id"
     t.index ["city_id"], name: "index_user_profiles_on_city_id"
+    t.index ["equipped_reward_level_id"], name: "index_user_profiles_on_equipped_reward_level_id"
     t.index ["neighborhood_id"], name: "index_user_profiles_on_neighborhood_id"
     t.index ["organization_id"], name: "index_user_profiles_on_organization_id"
     t.index ["team_id"], name: "index_user_profiles_on_team_id"
@@ -766,6 +784,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_10_25_000001) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "avatars", "reward_levels"
   add_foreign_key "breeding_site_type_aditional_informations", "breeding_site_types"
   add_foreign_key "cities", "countries"
   add_foreign_key "cities", "states"
@@ -827,9 +846,11 @@ ActiveRecord::Schema[7.1].define(version: 2026_10_25_000001) do
   add_foreign_key "user_accounts", "user_profiles"
   add_foreign_key "user_profile_house_blocks", "house_blocks"
   add_foreign_key "user_profile_house_blocks", "user_profiles"
+  add_foreign_key "user_profiles", "avatars"
   add_foreign_key "user_profiles", "cities"
   add_foreign_key "user_profiles", "neighborhoods"
   add_foreign_key "user_profiles", "organizations"
+  add_foreign_key "user_profiles", "reward_levels", column: "equipped_reward_level_id"
   add_foreign_key "user_profiles", "teams"
   add_foreign_key "user_rewards", "reward_levels"
   add_foreign_key "user_rewards", "visits", column: "trigger_visit_id"

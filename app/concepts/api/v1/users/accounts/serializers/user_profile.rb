@@ -9,7 +9,7 @@ module Api
             set_type :user_profile
 
             attributes :id, :first_name, :last_name,
-                       :points, :email
+                       :points, :email, :avatar_id, :avatar_url, :skin_manually_chosen, :worn_skin_id
 
             attribute :city do |user_profile|
               next if user_profile.city.nil?

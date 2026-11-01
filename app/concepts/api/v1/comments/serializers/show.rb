@@ -43,7 +43,8 @@ module Api
             {
               accountId: comment.user_account_id,
               userName: user_account.first_name,
-              lastName: user_account.last_name
+              lastName: user_account.last_name,
+              avatarUrl: user_account.user_profile&.avatar_url
             }
           end
 
