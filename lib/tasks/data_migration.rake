@@ -143,4 +143,13 @@ namespace :data_migration do
     result = Services::VisitDuplicateCandidateRepairer.new.call
     abort("Rebuild completed with #{result[:failed]} failed houses") if result[:failed].positive?
   end
+
+  desc 'Grant the rewards every brigadista already reached, marked as seen'
+  task backfill_user_rewards: :environment do
+    granted = 0
+    UserAccount.where(id: Visit.select(:user_account_id)).find_each do |user_account|
+      granted += Api::V1::Rewards::Services::Evaluate.call(user_account:, seen: true).size
+    end
+    puts "Granted #{granted} rewards"
+  end
 end

@@ -4,6 +4,7 @@ require 'json'
 require 'open-uri'
 require_relative '../db/files/permissions'
 require_relative '../db/files/questions'
+require_relative '../db/files/rewards'
 require_relative '../db/files/users'
 
 ###################################
@@ -375,4 +376,18 @@ unless SeedTask.find_by(task_name: 'create_user_delete_ability')
     role.permissions << permission unless role.permissions.exists?(permission.id)
   end
   SeedTask.create(task_name: 'create_user_delete_ability')
+end
+
+unless SeedTask.find_by(task_name: 'create_reward_types_and_levels')
+  REWARD_TYPES_DATA.each do |type_data|
+    levels_data = type_data[:levels]
+    reward_type = RewardType.create!(type_data.except(:levels))
+
+    levels_data.each do |level_data|
+      level = reward_type.reward_levels.create!(level_data.except(:image))
+      image_path = Rails.root.join('db/files/images/rewards', level_data[:image])
+      level.image.attach(io: File.open(image_path), filename: level_data[:image], content_type: 'image/png')
+    end
+  end
+  SeedTask.create!(task_name: 'create_reward_types_and_levels')
 end

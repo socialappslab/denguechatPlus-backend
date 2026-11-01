@@ -14,6 +14,7 @@ module Api
           tee :update_house_and_visit_status
           tee :set_language
           tee :assign_points
+          tee :evaluate_rewards
 
           def params(input)
             @ctx = {}
@@ -75,6 +76,10 @@ module Api
 
             Api::V1::Points::Services::Transactions.assign_point(earner: user_account, house_id: @house.id,
                                                                  visit_id: @visit.id)
+          end
+
+          def evaluate_rewards
+            Api::V1::Rewards::Services::Evaluate.safe_call(user_account: @visit.user_account, trigger_visit: @visit)
           end
 
           private
