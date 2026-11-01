@@ -27,6 +27,10 @@ module Api
 
               user_account.permissions.map { |permission| "#{permission.resource}-#{permission.name}" }
             end
+
+            attribute :rewards do |user_account, params|
+              Api::V1::Rewards::Serializers::Summary.call(user_account, language: params&.dig(:language) || 'es')
+            end
           end
         end
       end
