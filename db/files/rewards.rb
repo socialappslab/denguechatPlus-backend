@@ -3,7 +3,7 @@
 REWARD_TYPES_DATA = [
   {
     code: 'skin', metric: 'worked_houses', position: 1,
-    name_es: 'Skins', name_en: 'Skins', name_pt: 'Skins',
+    name_es: 'Premios', name_en: 'Prizes', name_pt: 'Prêmios',
     levels: [
       { code: 'skin-polo', threshold: 50, position: 1, name_es: 'Polo', name_en: 'Polo shirt', name_pt: 'Camisa polo',
         color_primary: '#8A4B1E', color_secondary: '#A0612F', color_background: '#FBE3CC',
@@ -24,12 +24,12 @@ REWARD_TYPES_DATA = [
         name_en: 'Mosquito Detective', name_pt: 'Detetive do Mosquito',
         color_primary: '#FDEB3D', color_secondary: '#D9B800', color_background: '#FFFBE0',
         ring_gradient: '#FFF59A,#E2C300', image: 'star-1.png' },
-      { code: 'star-sargento', threshold: 5, position: 2, name_es: 'Sargento del Zancudo',
-        name_en: 'Mosquito Sergeant', name_pt: 'Sargento do Mosquito',
+      { code: 'star-sargento', threshold: 5, position: 2, name_es: 'Astro del DengueChat',
+        name_en: 'DengueChat Star', name_pt: 'Astro do DengueChat',
         color_primary: '#FF8133', color_secondary: '#D45A12', color_background: '#FFF0E6',
         ring_gradient: '#FFC199,#E0631A', image: 'star-2.png' },
-      { code: 'star-protector', threshold: 15, position: 3, name_es: 'Protector de la Salud',
-        name_en: 'Health Protector', name_pt: 'Protetor da Saúde',
+      { code: 'star-protector', threshold: 15, position: 3, name_es: 'Guerrero Tariki',
+        name_en: 'Tariki Warrior', name_pt: 'Guerreiro Tariki',
         color_primary: '#62A9EA', color_secondary: '#2F7CC4', color_background: '#EAF4FD',
         ring_gradient: '#B5D9F7,#3A86CC', image: 'star-3.png' },
       { code: 'star-paladin', threshold: 30, position: 4, name_es: 'Paladín de la Salud',
