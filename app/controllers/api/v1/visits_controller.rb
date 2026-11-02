@@ -11,6 +11,12 @@ module Api
                  options: { current_user: }
       end
 
+      def mine
+        endpoint operation: Api::V1::Visits::Operations::Mine,
+                 renderer_options: { serializer: Api::V1::Visits::Serializers::Mine },
+                 options: { current_user: }
+      end
+
       def show
         endpoint operation: Api::V1::Visits::Operations::Show,
                  renderer_options: { serializer: Api::V1::Visits::Serializers::Show },

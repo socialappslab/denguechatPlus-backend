@@ -65,6 +65,7 @@ Rails.application.routes.draw do
       resources :visits, only: %i[create index show update destroy] do
         collection do
           post :bulk_upload
+          get :mine
         end
         resources :inspections, only: %i[index show create update]
         member do

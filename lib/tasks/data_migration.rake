@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../db/files/rewards'
+
 namespace :data_migration do
   desc 'Set the visit start house and orchard options to positions 1 and 2'
   task set_visit_start_option_positions: :environment do
@@ -142,6 +144,24 @@ namespace :data_migration do
   task rebuild_visit_duplicate_candidates: :environment do
     result = Services::VisitDuplicateCandidateRepairer.new.call
     abort("Rebuild completed with #{result[:failed]} failed houses") if result[:failed].positive?
+  end
+
+  desc 'Align prize and renamed medal display names with the updated rewards design'
+  task update_reward_design_names: :environment do
+    name_fields = %i[name_es name_en name_pt]
+
+    ApplicationRecord.transaction do
+      prizes = REWARD_TYPES_DATA.find { |type| type[:code] == 'skin' }
+      RewardType.find_by!(code: prizes[:code]).update!(prizes.slice(*name_fields))
+
+      medals = REWARD_TYPES_DATA.find { |type| type[:code] == 'star' }
+      medal_type = RewardType.find_by!(code: medals[:code])
+      medals[:levels].select { |level| %w[star-sargento star-protector].include?(level[:code]) }.each do |level|
+        medal_type.reward_levels.find_by!(code: level[:code]).update!(level.slice(*name_fields))
+      end
+    end
+
+    puts 'Updated prize and medal display names.'
   end
 
   desc 'Grant the rewards every brigadista already reached, marked as seen'
