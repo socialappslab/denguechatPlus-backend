@@ -10,9 +10,11 @@ module Api
 
             step :params
             tee :include
+            tee :expose
 
             def params(inputs)
               @ctx = {}
+              @params = inputs[:params] || {}
               @ctx[:model] = inputs[:current_user]
               return Success({ ctx: @ctx, type: :success }) if inputs[:current_user].present?
 
@@ -23,6 +25,11 @@ module Api
 
             def include
               @ctx[:include] = 'user_profile'
+            end
+
+            def expose
+              language = @params[:language]
+              @ctx[:expose] = { language: language.in?(%w[en es pt]) ? language : 'es' }
             end
           end
         end

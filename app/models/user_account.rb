@@ -41,6 +41,7 @@ class UserAccount < ApplicationRecord
   accepts_nested_attributes_for :user_profile, update_only: true
   before_save :downcase_username_and_password!
   has_many :points, as: :pointable # rubocop:disable Rails/HasManyOrHasOneDependent
+  has_many :user_rewards, as: :earner, dependent: :destroy
 
   default_scope { where(discarded_at: nil) }
 

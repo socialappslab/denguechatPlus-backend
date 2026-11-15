@@ -17,12 +17,14 @@ Rails.application.routes.draw do
         put 'update_password/', on: :collection, action: :update_password
         put 'change_house_block', on: :collection, action: :change_house_blocks
         put 'change_assignment', on: :collection, action: :change_assignment
+        put 'change_avatar', on: :collection, action: :change_avatar
 
         member do
           put 'change_status'
         end
       end
       resources :roles, only: %i[index update create]
+      resources :avatars, only: %i[index]
       resources :permissions, only: %i[index show]
       namespace :users do
         resource :session, only: %i[create destroy], controller: :sessions do
@@ -63,6 +65,7 @@ Rails.application.routes.draw do
       resources :visits, only: %i[create index show update destroy] do
         collection do
           post :bulk_upload
+          get :mine
         end
         resources :inspections, only: %i[index show create update]
         member do

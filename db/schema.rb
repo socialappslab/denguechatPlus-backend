@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_09_20_000000) do
+ActiveRecord::Schema[7.1].define(version: 2026_10_25_000004) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -54,6 +54,19 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_20_000000) do
     t.datetime "discarded_at"
     t.index ["name"], name: "index_app_config_params_on_name", unique: true
     t.index ["param_source", "name"], name: "index_app_config_params_on_param_source_and_name"
+  end
+
+  create_table "avatars", force: :cascade do |t|
+    t.string "base_code", null: false
+    t.bigint "reward_level_id"
+    t.integer "position", default: 0, null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["base_code", "reward_level_id"], name: "index_avatars_on_base_code_and_reward_level_id", unique: true
+    t.index ["base_code"], name: "index_avatars_on_base_code_without_skin", unique: true, where: "(reward_level_id IS NULL)"
+    t.index ["reward_level_id"], name: "index_avatars_on_reward_level_id"
   end
 
   create_table "breeding_site_type_aditional_informations", force: :cascade do |t|
@@ -459,6 +472,46 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_20_000000) do
     t.index ["questionnaire_id"], name: "index_questions_on_questionnaire_id"
   end
 
+  create_table "reward_levels", force: :cascade do |t|
+    t.bigint "reward_type_id", null: false
+    t.string "code", null: false
+    t.integer "threshold", null: false
+    t.integer "position", default: 0, null: false
+    t.string "name_es"
+    t.string "name_en"
+    t.string "name_pt"
+    t.string "description_es"
+    t.string "description_en"
+    t.string "description_pt"
+    t.string "color_primary"
+    t.string "color_secondary"
+    t.string "color_background"
+    t.string "ring_gradient"
+    t.boolean "active", default: true, null: false
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["discarded_at"], name: "index_reward_levels_on_discarded_at"
+    t.index ["reward_type_id", "code"], name: "index_reward_levels_on_reward_type_id_and_code", unique: true
+    t.index ["reward_type_id", "threshold"], name: "index_reward_levels_on_reward_type_id_and_threshold"
+    t.index ["reward_type_id"], name: "index_reward_levels_on_reward_type_id"
+  end
+
+  create_table "reward_types", force: :cascade do |t|
+    t.string "code", null: false
+    t.string "metric", null: false
+    t.integer "position", default: 0, null: false
+    t.boolean "active", default: true, null: false
+    t.string "name_es"
+    t.string "name_en"
+    t.string "name_pt"
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_reward_types_on_code", unique: true
+    t.index ["discarded_at"], name: "index_reward_types_on_discarded_at"
+  end
+
   create_table "roles", force: :cascade do |t|
     t.string "name"
     t.string "resource_type"
@@ -617,10 +670,30 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_20_000000) do
     t.bigint "neighborhood_id"
     t.bigint "organization_id"
     t.bigint "team_id"
+    t.bigint "avatar_id"
+    t.bigint "equipped_reward_level_id"
+    t.boolean "skin_manually_chosen", default: false, null: false
+    t.index ["avatar_id"], name: "index_user_profiles_on_avatar_id"
     t.index ["city_id"], name: "index_user_profiles_on_city_id"
+    t.index ["equipped_reward_level_id"], name: "index_user_profiles_on_equipped_reward_level_id"
     t.index ["neighborhood_id"], name: "index_user_profiles_on_neighborhood_id"
     t.index ["organization_id"], name: "index_user_profiles_on_organization_id"
     t.index ["team_id"], name: "index_user_profiles_on_team_id"
+  end
+
+  create_table "user_rewards", force: :cascade do |t|
+    t.string "earner_type", null: false
+    t.bigint "earner_id", null: false
+    t.bigint "reward_level_id", null: false
+    t.bigint "trigger_visit_id"
+    t.datetime "earned_at", null: false
+    t.integer "count_at_earn", null: false
+    t.datetime "seen_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["earner_type", "earner_id", "reward_level_id"], name: "index_user_rewards_on_earner_and_level", unique: true
+    t.index ["reward_level_id"], name: "index_user_rewards_on_reward_level_id"
+    t.index ["trigger_visit_id"], name: "index_user_rewards_on_trigger_visit_id"
   end
 
   create_table "user_tokens", force: :cascade do |t|
@@ -711,6 +784,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_20_000000) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "avatars", "reward_levels"
   add_foreign_key "breeding_site_type_aditional_informations", "breeding_site_types"
   add_foreign_key "cities", "countries"
   add_foreign_key "cities", "states"
@@ -762,6 +836,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_20_000000) do
   add_foreign_key "posts", "teams"
   add_foreign_key "posts", "user_accounts"
   add_foreign_key "questions", "questionnaires"
+  add_foreign_key "reward_levels", "reward_types"
   add_foreign_key "states", "countries"
   add_foreign_key "sync_log_errors", "sync_logs"
   add_foreign_key "teams", "cities"
@@ -771,10 +846,14 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_20_000000) do
   add_foreign_key "user_accounts", "user_profiles"
   add_foreign_key "user_profile_house_blocks", "house_blocks"
   add_foreign_key "user_profile_house_blocks", "user_profiles"
+  add_foreign_key "user_profiles", "avatars"
   add_foreign_key "user_profiles", "cities"
   add_foreign_key "user_profiles", "neighborhoods"
   add_foreign_key "user_profiles", "organizations"
+  add_foreign_key "user_profiles", "reward_levels", column: "equipped_reward_level_id"
   add_foreign_key "user_profiles", "teams"
+  add_foreign_key "user_rewards", "reward_levels"
+  add_foreign_key "user_rewards", "visits", column: "trigger_visit_id"
   add_foreign_key "visit_duplicate_candidates", "visits"
   add_foreign_key "visit_duplicate_candidates", "visits", column: "duplicate_visit_id"
   add_foreign_key "visits", "houses"
