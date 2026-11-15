@@ -51,6 +51,14 @@ class UserProfile < ApplicationRecord
   belongs_to :avatar, optional: true
   belongs_to :equipped_reward_level, class_name: 'RewardLevel', optional: true
 
+  before_validation :assign_default_avatar, on: :create
+
+  # Run after the avatar catalog has been seeded. The predicate also preserves concurrent selections.
+  def self.backfill_default_avatar!
+    default_avatar = Avatar.catalog.find_by!(base_code: Avatar::DEFAULT_BASE_CODE)
+    where(avatar_id: nil).update_all(avatar_id: default_avatar.id)
+  end
+
   delegate :confirmed_at, :phone, :username, :status, to: :user_account, allow_nil: true
   delegate :name, to: :role, prefix: true, allow_nil: true
   delegate :name, to: :team, prefix: true, allow_nil: true
@@ -80,5 +88,12 @@ class UserProfile < ApplicationRecord
     return unless image&.attached?
 
     Rails.application.routes.url_helpers.url_for(image)
+  end
+
+  private
+
+  def assign_default_avatar
+    # Profiles can be seeded before the avatar catalog; the post-seed backfill covers those.
+    self.avatar ||= Avatar.catalog.find_by(base_code: Avatar::DEFAULT_BASE_CODE) if avatar_id.nil?
   end
 end
