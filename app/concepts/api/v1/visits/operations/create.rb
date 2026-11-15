@@ -22,6 +22,7 @@ module Api
           tee :split_data
           step :create_house_if_necessary
           step :add_team
+          tee :capture_reward_baseline
           step :create_visit
           tee :set_extra_info_to_inspections
           step :create_inspections
@@ -272,9 +273,19 @@ module Api
             )
           end
 
+          def capture_reward_baseline
+            @eligible_before = Api::V1::Rewards::Services::Baseline.call(@current_user)
+          end
+
           def evaluate_rewards
-            Api::V1::Rewards::Services::Evaluate.safe_call(user_account: @ctx[:model].user_account,
-                                                           trigger_visit: @ctx[:model])
+            ids = Api::V1::Rewards::Services::Evaluate.safe_call(user_account: @ctx[:model].user_account,
+                                                                 trigger_visit: @ctx[:model],
+                                                                 eligible_before: @eligible_before)
+            @ctx[:model].earned_reward_ids = UserReward.where(id: ids, notifiable: true).pluck(:id)
+          rescue StandardError => error
+            Rails.logger.error("Visit rewards failed: #{error.message}")
+            Sentry.capture_exception(error)
+            @ctx[:model].earned_reward_ids = []
           end
         end
       end

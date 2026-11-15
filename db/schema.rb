@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_10_25_000004) do
+ActiveRecord::Schema[7.1].define(version: 2026_11_08_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "unaccent"
@@ -689,6 +689,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_10_25_000004) do
     t.datetime "earned_at", null: false
     t.integer "count_at_earn", null: false
     t.datetime "seen_at"
+    t.boolean "notifiable", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["earner_type", "earner_id", "reward_level_id"], name: "index_user_rewards_on_earner_and_level", unique: true

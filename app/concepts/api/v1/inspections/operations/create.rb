@@ -10,6 +10,7 @@ module Api
           tee :params
           step :validate_schema
           step :find_visit
+          tee :capture_reward_baseline
           step :create_inspection
           tee :evaluate_rewards
 
@@ -48,8 +49,14 @@ module Api
             Failure({ ctx: @ctx, type: :invalid, errors: })
           end
 
+          def capture_reward_baseline
+            @eligible_before = Api::V1::Rewards::Services::Baseline.call(@visit.user_account)
+          end
+
           def evaluate_rewards
-            Api::V1::Rewards::Services::Evaluate.safe_call(user_account: @visit.user_account, trigger_visit: @visit)
+            Api::V1::Rewards::Services::Evaluate.safe_call(
+              user_account: @visit.user_account, trigger_visit: @visit, eligible_before: @eligible_before
+            )
           end
 
           private

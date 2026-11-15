@@ -45,7 +45,9 @@ class Visit < ApplicationRecord
   include Discard::Model
   include HasRiskColor
 
-  attr_accessor :point_awards
+  # Transient awards from this request, passed from operations to the response serializer.
+  # :reek:Attribute
+  attr_accessor :point_awards, :earned_reward_ids
 
   belongs_to :house
   belongs_to :user_account

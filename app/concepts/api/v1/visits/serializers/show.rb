@@ -13,6 +13,10 @@ module Api
           START_SIDE_QUESTION_TEXT = '¿Dónde comienza la visita?'
           QUESTION_KEY_FORMAT = /\Aquestion_(\d+)_\d+\z/
 
+          attribute :earned_rewards do |visit|
+            Api::V1::Rewards::Serializers::VisitAwards.call(visit)
+          end
+
           attribute :point_awards do |visit|
             Array(visit.point_awards).map do |point|
               {
@@ -69,8 +73,8 @@ module Api
             values = Array(current_value)
 
             values.map do |val|
-              match = collection.find do |q|
-                q[:name_en] == val || q[:name_es] == val || q[:name_pt] == val
+              match = collection.find do |translation|
+                translation[:name_en] == val || translation[:name_es] == val || translation[:name_pt] == val
               end
 
               if match

@@ -46,6 +46,7 @@ module Api
           def update_inspection
             begin
               inspection = Inspection.find_by(id: @params[:id])
+              @eligible_before = Api::V1::Rewards::Services::Baseline.call(inspection.visit.user_account)
               inspection = manage_photo(inspection)
               @params[:color] = ::Services::RiskColorCalculator.inspection_color(
                 has_water: @params.fetch(:has_water, inspection.has_water),
@@ -79,7 +80,9 @@ module Api
           end
 
           def evaluate_rewards
-            Api::V1::Rewards::Services::Evaluate.safe_call(user_account: @visit.user_account, trigger_visit: @visit)
+            Api::V1::Rewards::Services::Evaluate.safe_call(
+              user_account: @visit.user_account, trigger_visit: @visit, eligible_before: @eligible_before
+            )
           end
 
           private
