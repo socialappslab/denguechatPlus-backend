@@ -28,6 +28,8 @@
 class Avatar < ApplicationRecord
   include Discard::Model
 
+  DEFAULT_BASE_CODE = 'avatar-1'
+
   belongs_to :reward_level, optional: true
   has_one_attached :image
 

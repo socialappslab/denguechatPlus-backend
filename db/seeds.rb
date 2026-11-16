@@ -408,3 +408,6 @@ unless SeedTask.find_by(task_name: 'create_avatars')
   end
   SeedTask.create!(task_name: 'create_avatars')
 end
+
+# Also run when create_avatars was already seeded, and after any profiles seeded above.
+UserProfile.backfill_default_avatar!

@@ -11,10 +11,11 @@ module Api
             new(...).call
           end
 
-          def initialize(user_account:, trigger_visit: nil, seen: false)
+          def initialize(user_account:, trigger_visit: nil, seen: false, eligible_before: nil)
             @user_account = user_account
             @trigger_visit = trigger_visit
             @seen = seen
+            @eligible_before = eligible_before
           end
 
           def call
@@ -30,7 +31,8 @@ module Api
                 trigger_visit_id: trigger_visit&.id,
                 earned_at: now,
                 count_at_earn: values[level.reward_type.metric],
-                seen_at: seen ? now : nil
+                seen_at: seen ? now : nil,
+                notifiable: new_crossing?(level)
               }
             end
             return [] if rows.empty?
@@ -53,6 +55,14 @@ module Api
           private
 
           attr_reader :user_account, :trigger_visit, :seen
+
+          def new_crossing?(level)
+            baseline = @eligible_before&.[](level.id)
+            return false if seen || baseline.nil?
+            return false unless baseline[:threshold] == level.threshold && baseline[:metric] == level.reward_type.metric
+
+            baseline[:value] < level.threshold
+          end
 
           def reachable_levels(values)
             RewardLevel.usable

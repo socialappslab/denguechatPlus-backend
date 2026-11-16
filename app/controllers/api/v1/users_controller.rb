@@ -3,8 +3,18 @@
 module Api
   module V1
     class UsersController < AuthorizedApiController
-      skip_before_action :check_permissions!, only: %i[show_current_user]
+      skip_before_action :check_permissions!, only: %i[show_current_user acknowledge_rewards]
       skip_before_action :authorize_access_request!, only: %i[show_current_user]
+
+      def acknowledge_rewards
+        return head :unauthorized unless current_user
+
+        ids = params[:ids]
+        return render json: { error: 'ids must be an array' }, status: :unprocessable_entity unless ids.is_a?(Array)
+
+        Api::V1::Rewards::Services::Acknowledge.call(user_account: current_user, ids:)
+        head :no_content
+      end
 
       def index
         endpoint operation: Api::V1::Users::Accounts::Operations::Index,

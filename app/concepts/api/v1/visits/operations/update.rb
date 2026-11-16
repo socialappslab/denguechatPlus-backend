@@ -49,6 +49,7 @@ module Api
             @params[:host] = hosts.join(', ') if hosts
             begin
               visit = Visit.find_by(id: @params[:id])
+              @eligible_before = Api::V1::Rewards::Services::Baseline.call(visit.user_account)
               @previous_house = visit.house
               @previous_visited_at = visit.visited_at
               visit.update!(@params)
@@ -102,7 +103,8 @@ module Api
 
           def evaluate_rewards
             Api::V1::Rewards::Services::Evaluate.safe_call(user_account: @ctx[:model].user_account,
-                                                           trigger_visit: @ctx[:model])
+                                                           trigger_visit: @ctx[:model],
+                                                           eligible_before: @eligible_before)
           end
         end
       end
